@@ -20,7 +20,11 @@
 // target keeps one index (r7) added to the state's base and 0x80700000; (3) after
 // fn_803FFAA8 the target materialises mState >= 4 as a value (li 4; subi;
 // orc; srwi 1; subf; srwi. 31) where we emit cmplwi 4 / blt.
+#ifdef FSA_PORT
+int fsa_game_main() {  // platform/main.cpp sets up the host first
+#else
 int main() {
+#endif
     JFWSystem::setMaxStdHeap(1);
     JFWSystem::setSysHeapSize(0x200000);
     JFWSystem::setFifoBufSize(0x40000);

@@ -29,7 +29,7 @@ add_subdirectory(extern/aurora EXCLUDE_FROM_ALL)
 add_library(fsa_game_flags INTERFACE)
 target_compile_options(fsa_game_flags INTERFACE
   -nostdinc -fno-rtti -fno-exceptions -fsigned-char -ffp-contract=off
-  -Wno-everything -include ${FSA_GAME}/port/port_prefix.h
+  -Wno-everything "SHELL:-include ${FSA_GAME}/port/port_prefix.h"
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
 target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1)
@@ -46,21 +46,35 @@ file(GLOB FSA_PLATFORM_SOURCES CONFIGURE_DEPENDS platform/*.cpp platform/*.c)
 add_library(fsa_platform STATIC ${FSA_PLATFORM_SOURCES})
 target_include_directories(fsa_platform PRIVATE platform
   ${FSA_GAME}/libs/sdk/include ${FSA_GAME}/include)
-target_compile_definitions(fsa_platform PRIVATE FSA_PORT=1)
-target_compile_options(fsa_platform PRIVATE -include ${FSA_GAME}/port/port_prefix.h -Wno-everything)
+target_compile_definitions(fsa_platform PRIVATE FSA_PORT=1 FSA_PLATFORM=1)
+target_compile_options(fsa_platform PRIVATE "SHELL:-include ${FSA_GAME}/port/port_prefix.h" -Wno-everything)
 target_link_libraries(fsa_platform PRIVATE aurora::core)
+
+# Glue built against Aurora's own headers (not the decomp's SDK headers).
+add_library(fsa_glue STATIC platform/glue/gx_pipe.cpp)
+target_include_directories(fsa_glue PRIVATE extern/aurora/lib)
+target_link_libraries(fsa_glue PRIVATE aurora::core aurora::gx)
+
+# The game calls the paired-single matrix names; Aurora provides them with this.
+target_compile_definitions(aurora_mtx PRIVATE MTX_USE_PS=1)
 
 add_executable(fsa platform/web/empty.c)
 target_link_libraries(fsa PRIVATE
-  -Wl,--start-group ${FSA_UNIT_LIBS} fsa_platform -Wl,--end-group
+  -Wl,--start-group ${FSA_UNIT_LIBS} fsa_platform fsa_glue -Wl,--end-group
   aurora::core aurora::gx aurora::gd aurora::si aurora::vi aurora::pad aurora::mtx aurora::os aurora::card)
 set_target_properties(fsa PROPERTIES SUFFIX ".js")
 target_link_options(fsa PRIVATE
   -sJSPI=1
   "-sJSPI_EXPORTS=['fsa_thread_entry']"
   -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=268435456 -sMAXIMUM_MEMORY=2147483648
-  -sSTACK_SIZE=1048576
+  -sSTACK_SIZE=4194304
   -sEXIT_RUNTIME=0 -sFORCE_FILESYSTEM=1 -sINVOKE_RUN=0 -sENVIRONMENT=web
   "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8']"
-  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace']"
-  --profiling-funcs)
+  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms']"
+  "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
+  "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
+  --profiling-funcs -Wl,--error-limit=0)
+set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
+  ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js)
+add_custom_command(TARGET fsa POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html)

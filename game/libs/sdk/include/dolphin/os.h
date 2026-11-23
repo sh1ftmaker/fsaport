@@ -22,9 +22,22 @@ extern "C"
 #else
 #define AT_ADDRESS
 #endif
+#ifdef FSA_PORT
+// Port: low-memory globals are ordinary variables, defined in platform/os.cpp.
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern volatile int __OSTVMode;
+extern u32 __OSBusClock;
+extern u32 __OSCoreClock;
+#ifdef __cplusplus
+}
+#endif
+#else
 volatile int __OSTVMode AT_ADDRESS(OS_BASE_CACHED | 0xCC);
 u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);  // sync with OSLoMem.h
 u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC); // sync with OSLoMem.h
+#endif
 #define OS_BUS_CLOCK (u32) __OSBusClock
 #define OS_CORE_CLOCK __OSCoreClock
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)
