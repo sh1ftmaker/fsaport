@@ -3,6 +3,7 @@
 
 #include <dolphin/mtx.h>
 #include "JSystem/JGeometry.h"
+#include "port/be.h"
 
 static inline u32 COLOR_MULTI(u32 color1, u32 color2) { return (color1 * (color2 + 1) << 16) >> 24; }
 
@@ -13,7 +14,7 @@ void JPAGetXYZRotateMtx(s16, s16, s16, Mtx);
 void JPASetRMtxfromMtx(const Mtx, Mtx);
 void JPASetRMtxTVecfromMtx(const Mtx, Mtx, JGeometry::TVec3f *);
 void JPASetRMtxSTVecfromMtx(const Mtx, Mtx, JGeometry::TVec3f *, JGeometry::TVec3f *);
-f32 JPACalcKeyAnmValue(f32, u16, const f32 *);
+f32 JPACalcKeyAnmValue(f32, u16, const BE<f32> *); // port: big-endian key frames
 
 // there's a good chance this should just be JMath::TRandom_fast_.
 // for now, these seem to match well for JPA stuff - may be worth back-porting them

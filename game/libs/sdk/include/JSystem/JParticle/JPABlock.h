@@ -3,6 +3,7 @@
 
 #include "JSystem/JGeometry.h"
 #include "types.h"
+#include "port/be.h"
 
 #include "JSystem/JParticle/JPAField.h"
 
@@ -45,38 +46,62 @@ enum JPAFieldBlockType
     JPAFIELD_Spin = 8,
 };
 
+// Port: big-endian vectors in JPA file blocks, read as JGeometry vectors.
+struct JPABEVec3f {
+    BE<f32> x, y, z;
+    operator JGeometry::TVec3f() const
+    {
+        JGeometry::TVec3f v;
+        v.x = x;
+        v.y = y;
+        v.z = z;
+        return v;
+    }
+};
+struct JPABEVec3s {
+    BE<s16> x, y, z;
+    operator JGeometry::TVec3<s16>() const
+    {
+        JGeometry::TVec3<s16> v;
+        v.x = x;
+        v.y = y;
+        v.z = z;
+        return v;
+    }
+};
+
 struct JPADynamicsBlockData
 {
     // Representation of the contents in a .jpc file
     u8 mMagic[4]; // _00
-    u32 mSize;    // _04
+    BE<u32> mSize;    // _04
 
-    u32 mFlags;                        // _08
-    u32 mResUserWork;                  // _0C
-    JGeometry::TVec3f mEmitterScl;     // _10
-    JGeometry::TVec3f mEmitterTrs;     // _1C
-    JGeometry::TVec3f mEmitterDir;     // _28
-    f32 mInitialVelOmni;               // _34
-    f32 mInitialVelAxis;               // _38
-    f32 mInitialVelRndm;               // _3C
-    f32 mInitialVelDir;                // _40
-    f32 mSpread;                       // _44
-    f32 mInitialVelRatio;              // _48
-    f32 mRate;                         // _4C
-    f32 mRateRndm;                     // _50
-    f32 mLifeTimeRndm;                 // _54
-    f32 mVolumeSweep;                  // _58
-    f32 mVolumeMinRad;                 // _5C
-    f32 mAirResist;                    // _60
-    f32 mMoment;                       // _64
-    JGeometry::TVec3<s16> mEmitterRot; // _68
-    s16 mMaxFrame;                     // _6E
-    s16 mStartFrame;                   // _70
-    s16 mLifeTime;                     // _72
-    u16 mVolumeSize;                   // _74
-    u16 mDivNumber;                    // _76
+    BE<u32> mFlags;                        // _08
+    BE<u32> mResUserWork;                  // _0C
+    JPABEVec3f mEmitterScl;     // _10
+    JPABEVec3f mEmitterTrs;     // _1C
+    JPABEVec3f mEmitterDir;     // _28
+    BE<f32> mInitialVelOmni;               // _34
+    BE<f32> mInitialVelAxis;               // _38
+    BE<f32> mInitialVelRndm;               // _3C
+    BE<f32> mInitialVelDir;                // _40
+    BE<f32> mSpread;                       // _44
+    BE<f32> mInitialVelRatio;              // _48
+    BE<f32> mRate;                         // _4C
+    BE<f32> mRateRndm;                     // _50
+    BE<f32> mLifeTimeRndm;                 // _54
+    BE<f32> mVolumeSweep;                  // _58
+    BE<f32> mVolumeMinRad;                 // _5C
+    BE<f32> mAirResist;                    // _60
+    BE<f32> mMoment;                       // _64
+    JPABEVec3s mEmitterRot; // _68
+    BE<s16> mMaxFrame;                     // _6E
+    BE<s16> mStartFrame;                   // _70
+    BE<s16> mLifeTime;                     // _72
+    BE<u16> mVolumeSize;                   // _74
+    BE<u16> mDivNumber;                    // _76
     u8 mRateStep;                      // _78
-    u32 _7C;                           // _7C
+    BE<u32> _7C;                           // _7C
 };
 
 /**
@@ -138,17 +163,17 @@ struct JPAFieldBlock
     struct Data
     {
         u8 _00[4];                   // _00
-        u32 _04;                     // _04
-        u32 _08;                     // _08
-        JGeometry::TVec3f mOffset;   // _0C
-        JGeometry::TVec3f mVelocity; // _18
-        f32 mAmplitude;              // _24
-        f32 mMagRndm;                // _28
-        f32 mVal1;                   // _2C
-        f32 mFadeInTime;             // _30
-        f32 mFadeOutTime;            // _34
-        f32 mEnTime;                 // _38
-        f32 mDisTime;                // _3C
+        BE<u32> _04;                     // _04
+        BE<u32> _08;                     // _08
+        JPABEVec3f mOffset;          // _0C
+        JPABEVec3f mVelocity;        // _18
+        BE<f32> mAmplitude;              // _24
+        BE<f32> mMagRndm;                // _28
+        BE<f32> mVal1;                   // _2C
+        BE<f32> mFadeInTime;             // _30
+        BE<f32> mFadeOutTime;            // _34
+        BE<f32> mEnTime;                 // _38
+        BE<f32> mDisTime;                // _3C
         u8 mCycle;                   // _40
     };
 
@@ -180,8 +205,8 @@ struct JPAFieldBlock
     inline f32 getVal1() const { return mData->mVal1; }
     inline u16 getCycle() const { return mData->mCycle; }
 
-    inline void getPosOrig(JGeometry::TVec3f *pos) const { pos->set(mData->mOffset); }
-    inline void getDirOrig(JGeometry::TVec3f *dir) const { dir->set(mData->mVelocity); }
+    inline void getPosOrig(JGeometry::TVec3f *pos) const { pos->set((JGeometry::TVec3f)mData->mOffset); }
+    inline void getDirOrig(JGeometry::TVec3f *dir) const { dir->set((JGeometry::TVec3f)mData->mVelocity); }
     inline f32 getMagOrig() const { return mData->mAmplitude; }
 
     inline void initOpParam() {
@@ -204,8 +229,8 @@ struct JPAFieldBlock
 
 struct JPAKeyBlockData
 {
-    u32 mMagic;        // _00
-    u32 mBlockSize;    // _04
+    BE<u32> mMagic;        // _00
+    BE<u32> mBlockSize;    // _04
     u8 mFlag;          // _08
     u8 mKeyFrameCount; // _09
     u8 mIsLoopEnabled; // _0A
@@ -225,7 +250,7 @@ struct JPAKeyBlock
     void init_jpa(const u8 *, JKRHeap *);
 
     const JPAKeyBlockData *mDataStart; // _00
-    const f32 *mKeyFrameData;          // _04
+    const BE<f32> *mKeyFrameData;      // _04 (port: big-endian key frames in the jpc)
 };
 
 #endif

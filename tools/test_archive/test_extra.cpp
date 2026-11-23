@@ -13,6 +13,8 @@
 #include "JSystem/J3D/J3DShape.h"
 #include "JSystem/J3D/J3DShapeFactory.h"
 #include "JSystem/JMessage/data.h"
+#include "JSystem/JParticle/JPABlock.h"
+#include "JSystem/JParticle/JPAShape.h"
 #include "JSystem/ResTIMG.h"
 #include "port/be.h"
 
@@ -237,9 +239,70 @@ static void checkAnm(const char* name, const u8* file)
     }
 }
 
+// Walks a jpc the way JPAResourceLoader::load_jpc does, through the ported structs.
+static void checkJpc(const char* name, const u8* file)
+{
+    char ver[9] = {0};
+    memcpy(ver, file, 8);
+    u16 resNum = be16(file + 8), texNum = be16(file + 0xA);
+    u32 texOff = be32(file + 0xC);
+    printf("  %s: %s, %u resources, %u textures at %u\n", name, ver, resNum, texNum, (unsigned)texOff);
+    CHECK(be32s(file + 4) == '2-10', "%s: version", name);
+    u32 off = 0x10;
+    int shown = 0, blocks = 0;
+    for (u16 r = 0; r < resNum; r++) {
+        const u8* res = file + off;
+        u16 blockNum = be16(res + 2);
+        off += 8;
+        for (u16 b = 0; b < blockNum; b++, blocks++) {
+            const u8* blk = file + off;
+            u32 type = be32(blk);
+            s32 len = be32s(blk + 4);
+            CHECK(len >= 8 && len < 0x100000, "%s: resource %u block %u length %d", name, r, b, (int)len);
+            if (len < 8)
+                return;
+            if (shown < 6) {
+                if (type == 'BEM1') {
+                    const JPADynamicsBlockData* d = (const JPADynamicsBlockData*)blk;
+                    JGeometry::TVec3f scl = d->mEmitterScl;
+                    printf("    res %u BEM1: scale %.2f,%.2f,%.2f rate %.2f life %d max frame %d volume %u\n", r, scl.x,
+                           scl.y, scl.z, (float)d->mRate, (int)d->mLifeTime, (int)d->mMaxFrame, (unsigned)d->mVolumeSize);
+                    CHECK(d->mLifeTime >= 0 && d->mLifeTime < 10000, "emitter life time");
+                    shown++;
+                } else if (type == 'BSP1') {
+                    const JPABaseShapeData* s = (const JPABaseShapeData*)blk;
+                    printf("    res %u BSP1: base size %.2fx%.2f, blend %04x, colour frames %d\n", r, (float)s->mBaseSizeX,
+                           (float)s->mBaseSizeY, (unsigned)s->mBlendModeCfg, (int)s->mClrAnmFrmMax);
+                    CHECK(s->mBaseSizeX >= 0.0f && s->mBaseSizeX < 10000.0f, "base size");
+                    shown++;
+                } else if (type == 'KFA1') {
+                    const JPAKeyBlockData* k = (const JPAKeyBlockData*)blk;
+                    const BE<f32>* keys = (const BE<f32>*)(blk + 0xC);
+                    printf("    res %u KFA1: %u keys, first (%.2f, %.3f)\n", r, k->mKeyFrameCount, (float)keys[0],
+                           (float)keys[1]);
+                    shown++;
+                }
+            }
+            off += len;
+        }
+    }
+    printf("    %d blocks walked\n", blocks);
+    // Textures: TEX1 blocks holding a ResTIMG at 0x20.
+    u32 t = texOff;
+    for (u16 i = 0; i < texNum && i < 2; i++) {
+        const ResTIMG* timg = (const ResTIMG*)(file + t + 0x20);
+        printf("    texture %u \"%.20s\": %ux%u format %u\n", i, (const char*)file + t + 0xC, (unsigned)timg->mSizeX,
+               (unsigned)timg->mSizeY, timg->mTextureFormat);
+        CHECK(timg->mSizeX > 0 && timg->mSizeX <= 1024, "jpc texture size");
+        t += be32(file + t + 4);
+    }
+}
+
 void testExtra(const char* name, const u8* file, u32 size)
 {
     static int bmds = 0, btks = 0, brks = 0;
+    if (endsWith(name, ".jpc"))
+        checkJpc(name, file);
     if (endsWith(name, ".btk") && btks++ < 1)
         checkAnm(name, file);
     if (endsWith(name, ".brk") && brks++ < 1)

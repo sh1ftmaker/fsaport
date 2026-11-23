@@ -940,7 +940,9 @@ void JPAResource::setPTev()
         if (pEts->isUseIndirect()) {
             GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD1, GX_TEXMAP2);
             GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_1, GX_ITS_1);
-            GXSetIndTexMtx(GX_ITM_0, pEts->getIndTexMtx(), pEts->getExpScale());
+            Mtx23 indMtx; // port: host copy of the big-endian file matrix
+            pEts->getIndTexMtx(indMtx);
+            GXSetIndTexMtx(GX_ITM_0, indMtx, pEts->getExpScale());
             GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_STU, GX_ITM_0, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE,
                              GX_ITBA_OFF);
             coord      = GX_TEXCOORD2;

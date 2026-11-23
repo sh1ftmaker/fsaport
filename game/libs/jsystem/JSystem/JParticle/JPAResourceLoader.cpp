@@ -5,11 +5,19 @@
 #include "JSystem/JUtility/JUTAssert.h"
 #include "types.h"
 
-#define GetTypeFromByteStream(data, type, offset) (*(type*)((data) + (offset)))
+// Port: the jpc file is big-endian.
+template <typename T>
+static inline T portReadBE(const u8* p)
+{
+	T v;
+	__builtin_memcpy(&v, p, sizeof(T));
+	return be_swap_value(v);
+}
+#define GetTypeFromByteStream(data, type, offset) (portReadBE<type>((data) + (offset)))
 
 JPAResourceLoader::JPAResourceLoader(const u8 *p1, JPAResourceManager *p_res_mgr)
 {
-	if (*(int*)(p1 + 4) == '2-10') {
+	if (be32s(p1 + 4) == '2-10') {
 		load_jpc(p1, p_res_mgr);
 	} else {
 #line 48
@@ -48,7 +56,7 @@ void JPAResourceLoader::load_jpc(const u8 *p1, JPAResourceManager *p_res_mgr)
         
 		p_res->texNum    = resourceData[6];
 		p_res->texIdxTbl = nullptr;
-        p_res->mUsrIdx   = *(u16*)resourceData;
+        p_res->mUsrIdx   = be16(resourceData);
 		resourceOffset  += 8;		
         int fld_no       = 0;
 		int key_no       = 0;
@@ -89,7 +97,7 @@ void JPAResourceLoader::load_jpc(const u8 *p1, JPAResourceManager *p_res_mgr)
 				JUT_ASSERT(p_res->pEts != 0);
                 break;
 			case 'TDB1':
-				p_res->texIdxTbl = (u16*)((p1 + resourceOffset) + 8);
+				p_res->texIdxTbl = (const BE<u16>*)((p1 + resourceOffset) + 8);
 				break;
             default: JUT_WARNING_F2("JPA : wrong type block in jpc file %d %x\n", GetTypeFromByteStream(resourceData, u16, 2), resourceOffset); break;
             }

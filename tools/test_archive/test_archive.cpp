@@ -243,6 +243,12 @@ int main(int argc, char** argv)
         testFormats(&msg.data, msg.strings, (void*)msg.files, msg.info->num_file_entries);
     }
 
+    Mounted data;
+    if (mount("data.arc", &data)) {
+        listArchive(&data, 0);
+        testFormats(&data.data, data.strings, (void*)data.files, data.info->num_file_entries);
+    }
+
     gFail |= gFormatFail;
     printf(gFail ? "\nFAILED\n" : "\nall checks passed\n");
     return gFail;
