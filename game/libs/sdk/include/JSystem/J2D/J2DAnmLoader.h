@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_J2D_J2DANMLOADER_H
 #define _JSYSTEM_J2D_J2DANMLOADER_H
 
+#include "port/be.h"
 #include "JSystem/J3D/J3DAnmTevRegKey.h"
 #include "JSystem/J3D/J3DAnmTexPattern.h"
 #include "JSystem/J3D/J3DAnmTextureSRTKey.h"
@@ -15,16 +16,16 @@ struct J2DAnmLoaderDataBase
 
 struct J2DAnmDataBlockHeader
 {
-    u32 mType;       // _00
-    u32 mNextOffset; // _04
+    BE<u32> mType;       // _00
+    BE<u32> mNextOffset; // _04
 };
 
 struct J2DAnmDataHeader
 {
-    u32 mMagic;                   // _00
-    u32 mType;                    // _04
+    BE<u32> mMagic;                   // _00
+    BE<u32> mType;                    // _04
     u8 _08[4];                    // _08
-    u32 mCount;                   // _0C
+    BE<u32> mCount;                   // _0C
     u8 _10[0x20 - 0x10];          // _10
     J2DAnmDataBlockHeader mFirst; // _20
 };

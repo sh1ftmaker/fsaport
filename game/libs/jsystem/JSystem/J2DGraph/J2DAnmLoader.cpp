@@ -1,10 +1,14 @@
 #include "JSystem/J2D/J2DAnimation.h"
 #include "JSystem/J2D/J2DAnmLoader.h"
+#include "JSystem/J3D/J3DAnmLoader.h"
 #include "JSystem/JSupport.h"
 #include "JSystem/JUtility/JUTAssert.h"
 
 J2DAnmBase* J2DAnmLoaderDataBase::load(const void* data)
 {
+#ifdef FSA_PORT
+    J3DPortSwapAnmFile(data); // port: host-order tables, once per file (J3DAnmLoader.cpp)
+#endif
     const J2DAnmDataHeader* hdr = (const J2DAnmDataHeader*)data;
 
     if (hdr == nullptr) {
@@ -90,6 +94,9 @@ J2DAnmKeyLoader_v15::~J2DAnmKeyLoader_v15() { }
 
 J2DAnmBase* J2DAnmKeyLoader_v15::load(const void* data)
 {
+#ifdef FSA_PORT
+    J3DPortSwapAnmFile(data); // port: host-order tables, once per file (J3DAnmLoader.cpp)
+#endif
     const J2DAnmDataHeader* hdr          = (const J2DAnmDataHeader*)data;
     const J2DAnmDataBlockHeader* dataPtr = &hdr->mFirst;
 
@@ -122,6 +129,9 @@ J2DAnmBase* J2DAnmKeyLoader_v15::load(const void* data)
 
 void J2DAnmKeyLoader_v15::setResource(J2DAnmBase* anm, const void* data)
 {
+#ifdef FSA_PORT
+    J3DPortSwapAnmFile(data); // port: host-order tables, once per file (J3DAnmLoader.cpp)
+#endif
     const J2DAnmDataHeader* hdr          = (const J2DAnmDataHeader*)data;
     const J2DAnmDataBlockHeader* dataPtr = &hdr->mFirst;
 
@@ -279,6 +289,9 @@ void J2DAnmKeyLoader_v15::setAnmVtxColor(J2DAnmVtxColorKey* anm, const J3DAnmVtx
 
 J2DAnmBase* J2DAnmFullLoader_v15::load(const void* data)
 {
+#ifdef FSA_PORT
+    J3DPortSwapAnmFile(data); // port: host-order tables, once per file (J3DAnmLoader.cpp)
+#endif
     const J2DAnmDataHeader* hdr          = (const J2DAnmDataHeader*)data;
     const J2DAnmDataBlockHeader* dataPtr = &hdr->mFirst;
 
@@ -310,6 +323,9 @@ J2DAnmBase* J2DAnmFullLoader_v15::load(const void* data)
 
 void J2DAnmFullLoader_v15::setResource(J2DAnmBase* anm, const void* data)
 {
+#ifdef FSA_PORT
+    J3DPortSwapAnmFile(data); // port: host-order tables, once per file (J3DAnmLoader.cpp)
+#endif
     const J2DAnmDataHeader* hdr          = (const J2DAnmDataHeader*)data;
     const J2DAnmDataBlockHeader* dataPtr = &hdr->mFirst;
 
