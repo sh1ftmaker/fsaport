@@ -46,7 +46,7 @@ s32 GBARead(s32, u8*, u8* status) { return GBAGetStatus(0, status); }
 s32 GBAWrite(s32, u8*, u8* status) { return GBAGetStatus(0, status); }
 s32 GBAJoyBoot(s32, s32, s32, u8*, u32, u8* status) { return GBAGetStatus(0, status); }
 
-void __PADDisableRecalibration(BOOL) {}
+BOOL __PADDisableRecalibration(BOOL) { return FALSE; }
 
 // --- GX calls Aurora does not implement ---------------------------------------
 void GXAbortFrame() {}

@@ -4,6 +4,14 @@
 #include "JSystem/JUtility/JUTGamePad.h"
 #include "JSystem/JUtility/JUTVideo.h"
 #include "JSystem/JUtility/JUTXfb.h"
+#ifdef FSA_PORT
+// Port: the save region that survives a reset (0x80700000 on the GameCube) is a
+// plain buffer (game/src/port/missing_functions.cpp).
+extern u8 fsa_save_region[0x20];
+#define FSA_SAVE_REGION fsa_save_region
+#else
+#define FSA_SAVE_REGION 0x80700000
+#endif
 
 void fn_80139994(int port, void* arg);
 extern u8 lbl_8053ACD4[4];
@@ -33,7 +41,7 @@ void cls_804A8578::fn_802B1DE8() {
     field_0x4 = 0;
     field_0x5 = 0;
     for (u32 i = 0; i < sizeof(lbl_80529DEC.mSaveRegion); i++) {
-        ((u8*)0x80700000)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
+        ((u8*)FSA_SAVE_REGION)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
     }
 }
 
@@ -94,7 +102,7 @@ static inline void shutdownForReset() {
 // The save region goes to the area OSSetSaveRegion registered, so it survives the reset.
 static inline void copySaveRegion() {
     for (u32 i = 0; i < sizeof(lbl_80529DEC.mSaveRegion); i++) {
-        ((u8*)0x80700000)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
+        ((u8*)FSA_SAVE_REGION)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
     }
 }
 

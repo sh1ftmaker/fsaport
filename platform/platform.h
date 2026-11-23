@@ -30,5 +30,15 @@ void platform_retrace();                    // one VI retrace "interrupt"
 void platform_frame_begin();                // JFWDisplay::beginRender
 void platform_frame_end();                  // JFWDisplay::endFrame
 
+// Host allocations (libc++, Aurora, this layer) must not land in the game's
+// JKR heaps: JSystem's operator new sends them to malloc while this is > 0.
+extern "C" int fsa_host_alloc_depth;
+struct HostAllocScope {
+  HostAllocScope() { fsa_host_alloc_depth++; }
+  ~HostAllocScope() { fsa_host_alloc_depth--; }
+  HostAllocScope(const HostAllocScope&) = delete;
+  HostAllocScope& operator=(const HostAllocScope&) = delete;
+};
+
 // Log through OSReport's sink (console.log in the browser).
 void platform_log(const char* fmt, ...);

@@ -16,6 +16,19 @@ extern "C"
 
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
+#ifdef FSA_PORT
+// Port: "physical" address 0 is the start of Aurora's MEM1 block, cached and
+// uncached alike (its boot info, e.g. the memory size at +0x28, lives there).
+#undef OS_BASE_CACHED
+#undef OS_BASE_UNCACHED
+#ifdef __cplusplus
+extern "C++" unsigned long OSBaseAddress;
+#else
+extern unsigned long OSBaseAddress;
+#endif
+#define OS_BASE_CACHED ((u32)OSBaseAddress)
+#define OS_BASE_UNCACHED ((u32)OSBaseAddress)
+#endif
 
 #ifdef __MWERKS__
 #define AT_ADDRESS(xyz) : (xyz)

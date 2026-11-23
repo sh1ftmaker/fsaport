@@ -51,7 +51,7 @@
     statusEl.textContent = 'Running';
     Module.fsaDisc = disc;
     Module.fsaClock.start();
-    try { await Module.callMain([]); } catch (e) { log('main: ' + e); statusEl.textContent = 'Crashed: ' + e; }
+    try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
   }
   function maybeAutoStart() {
     const iso = new URLSearchParams(location.search).get('iso');

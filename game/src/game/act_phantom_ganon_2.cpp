@@ -91,7 +91,7 @@ s32 spawnActor_80154310(u32 id, s32 layer, const JGeometry::TVec3f* pos, u32 arg
 u8 fn_8017ECC0();
 u8 fn_8017EC70(const JGeometry::TVec3f* pos, f32 value);
 void fn_8017ED08();
-void fn_8017EC5C(JGeometry::TBox2f* box, f32 x0, f32 y0, f32 x1, f32 y1);
+JGeometry::TBox2f* fn_8017EC5C(JGeometry::TBox2f* box, f32 x0, f32 y0, f32 x1, f32 y1);
 void fn_8017EC38(JGeometry::TBox2f* dst, const JGeometry::TBox2f* src);
 bool fn_8017EB94(const JGeometry::TBox2f* box);
 u8 fn_8017EB44(const JGeometry::TVec3f* pos);

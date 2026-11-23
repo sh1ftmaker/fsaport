@@ -18,21 +18,24 @@ void log_callback(AuroraLogLevel level, const char* module, const char* message,
 }  // namespace
 
 int main(int argc, char** argv) {
-  AuroraConfig config{};
-  config.appName = "fsaport";
-  config.desiredBackend = BACKEND_WEBGPU;
-  config.vsync = true;
-  config.windowWidth = 640;
-  config.windowHeight = 480;
-  config.logCallback = log_callback;
-  config.logLevel = LOG_INFO;
-  config.mem1Size = 64 * 1024 * 1024;  // the GameCube had 24 MB; host structs are larger
-  config.mem2Size = 16 * 1024 * 1024;  // ARAM
-  aurora_initialize(argc, argv, &config);
+  {
+    HostAllocScope host;  // everything here is host memory, not the game's heaps
+    AuroraConfig config{};
+    config.appName = "fsaport";
+    config.desiredBackend = BACKEND_WEBGPU;
+    config.vsync = true;
+    config.windowWidth = 640;
+    config.windowHeight = 480;
+    config.logCallback = log_callback;
+    config.logLevel = LOG_INFO;
+    config.mem1Size = 64 * 1024 * 1024;  // the GameCube had 24 MB; host structs are larger
+    config.mem2Size = 16 * 1024 * 1024;  // ARAM
+    aurora_initialize(argc, argv, &config);
 
-  platform_threads_init();
-  OSInit();
-  platform_dvd_init();
+    platform_threads_init();
+    OSInit();
+    platform_dvd_init();
+  }
   printf("[fsaport] starting the game\n");
   return fsa_game_main();
 }

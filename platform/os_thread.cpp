@@ -141,7 +141,10 @@ void block_current() {
 
 void wait_on(const void* key) {
   g_current->waiting = true;
-  g_waitQueues[key].push_back(g_current);
+  {
+    HostAllocScope host;
+    g_waitQueues[key].push_back(g_current);
+  }
   block_current();
 }
 
@@ -169,6 +172,7 @@ bool wake_one(const void* key) {
 }
 
 Coroutine* make_coroutine(OSThread* t) {
+  HostAllocScope host;
   auto* c = new Coroutine();
   c->thread = t;
   c->id = (int)g_coroutines.size();
@@ -265,6 +269,7 @@ BOOL OSCreateThread(OSThread* thread, OSThreadStartFunction func, void* param, v
     g_byThread.erase(thread);
     g_coroutines[old->id] = nullptr;
   }
+  HostAllocScope host;
   memset(&thread->context, 0, sizeof(thread->context));
   thread->state = OS_THREAD_STATE_READY;
   thread->attr = attr;
@@ -546,6 +551,7 @@ void OSCreateAlarm(OSAlarm* alarm) {
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }
 
 void OSSetAbsAlarm(OSAlarm* alarm, OSTime time, OSAlarmHandler handler) {
+  HostAllocScope host;
   alarm_unlink(alarm);
   alarm->handler = handler;
   alarm->fire = time;
@@ -558,6 +564,7 @@ void OSSetAlarm(OSAlarm* alarm, OSTime tick, OSAlarmHandler handler) {
 }
 
 void OSSetPeriodicAlarm(OSAlarm* alarm, OSTime start, OSTime period, OSAlarmHandler handler) {
+  HostAllocScope host;
   alarm_unlink(alarm);
   alarm->handler = handler;
   alarm->start = start;
@@ -575,6 +582,7 @@ void OSCancelAlarm(OSAlarm* alarm) {
 }
 
 void OSCancelAlarms(u32 tag) {
+  HostAllocScope host;
   std::vector<OSAlarm*> keep;
   for (OSAlarm* a : g_alarms)
     if (a->tag != tag)

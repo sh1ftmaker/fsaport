@@ -371,6 +371,65 @@ bool JKRHeap::isSubHeap(JKRHeap *heap) const
     return false;
 }
 
+#ifdef FSA_PORT
+// Port: JSystem's global operator new/delete replace C++'s for the whole wasm
+// module, but only the game's own allocations belong in JKR heaps. Host code
+// (libc++, Aurora, the platform layer) marks itself with fsa_host_alloc_depth,
+// and anything before the first heap exists goes to malloc too. delete frees by
+// address: memory inside the root heap goes back to its JKR heap.
+extern "C" {
+extern int fsa_host_alloc_depth;
+void *malloc(size_t);
+void free(void *);
+int posix_memalign(void **, size_t, size_t);
+}
+namespace {
+bool use_jkr() { return fsa_host_alloc_depth == 0 && JKRHeap::getCurrentHeap() != nullptr; }
+bool in_jkr(void *p)
+{
+    JKRHeap *root = JKRHeap::getRootHeap();
+    return root && p >= root->getStartAddr() && p < root->getEndAddr();
+}
+void *host_alloc(size_t n, size_t align)
+{
+    void *p = nullptr;
+    if (align <= 8)
+        return malloc(n ? n : 1);
+    posix_memalign(&p, align, n ? n : 1);
+    return p;
+}
+void release(void *p)
+{
+    if (!p)
+        return;
+    if (in_jkr(p))
+        JKRHeap::free(p, nullptr);
+    else
+        free(p);
+}
+} // namespace
+
+void *operator new(size_t byteCount) { return use_jkr() ? JKRHeap::alloc(byteCount, 4, nullptr) : host_alloc(byteCount, 8); }
+void *operator new(size_t byteCount, int alignment)
+{
+    return use_jkr() ? JKRHeap::alloc(byteCount, alignment, nullptr) : host_alloc(byteCount, alignment < 0 ? -alignment : alignment);
+}
+void *operator new(size_t byteCount, JKRHeap *heap, int alignment) { return JKRHeap::alloc(byteCount, alignment, heap); }
+void *operator new[](size_t byteCount) { return operator new(byteCount); }
+void *operator new[](size_t byteCount, int alignment) { return operator new(byteCount, alignment); }
+void *operator new[](size_t byteCount, JKRHeap *heap, int alignment) { return JKRHeap::alloc(byteCount, alignment, heap); }
+void operator delete(void *memory) { release(memory); }
+void operator delete[](void *memory) { release(memory); }
+void operator delete(void *memory, size_t) { release(memory); }
+void operator delete[](void *memory, size_t) { release(memory); }
+namespace std { enum class align_val_t : size_t; }
+void *operator new(size_t n, std::align_val_t a) { return use_jkr() ? JKRHeap::alloc(n, (int)a, nullptr) : host_alloc(n, (size_t)a); }
+void *operator new[](size_t n, std::align_val_t a) { return operator new(n, a); }
+void operator delete(void *memory, std::align_val_t) { release(memory); }
+void operator delete[](void *memory, std::align_val_t) { release(memory); }
+void operator delete(void *memory, size_t, std::align_val_t) { release(memory); }
+void operator delete[](void *memory, size_t, std::align_val_t) { release(memory); }
+#else
 void *operator new(u32 byteCount)
 {
     return JKRHeap::alloc(byteCount, 4, nullptr);
@@ -399,6 +458,7 @@ void *operator new[](u32 byteCount, JKRHeap *heap, int alignment)
 
 void operator delete(void *memory) { JKRHeap::free(memory, nullptr); }
 void operator delete[](void *memory) { JKRHeap::free(memory, nullptr); }
+#endif
 
 JKRHeap::TState::TState(const JKRHeap::TState::TArgument &arg, const JKRHeap::TState::TLocation &location)
     : mArgument(arg), mLocation(location)

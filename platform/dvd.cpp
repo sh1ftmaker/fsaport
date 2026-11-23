@@ -104,6 +104,12 @@ OSMessage g_workerMsgs[1];
 
 void complete(void* arg) {
   auto* req = static_cast<Request*>(arg);
+  Request copy = *req;
+  {
+    HostAllocScope host;
+    delete req;
+  }
+  req = &copy;
   DVDCommandBlock* b = req->block;
   b->transferredSize = req->length;
   b->state = DVD_STATE_END;
@@ -111,7 +117,6 @@ void complete(void* arg) {
     req->file->callback((s32)req->length, req->file);
   else if (!req->file && b->callback)
     b->callback((s32)req->length, b);
-  delete req;
 }
 
 void* worker_main(void*) {
@@ -125,6 +130,7 @@ void* worker_main(void*) {
     if (req.block->state == DVD_STATE_CANCELED)
       continue;
     read_disc(req.addr, req.discOffset, req.length);
+    HostAllocScope host;
     platform_post_callback(complete, new Request(req));
   }
 }
@@ -135,6 +141,7 @@ BOOL queue_read(DVDCommandBlock* block, DVDFileInfo* file, void* addr, u32 discO
   block->length = length;
   block->offset = discOffset;
   block->transferredSize = 0;
+  HostAllocScope host;
   g_requests.push_back({block, file, addr, discOffset, length});
   OSSendMessage(&g_workerQueue, nullptr, OS_MESSAGE_NOBLOCK);
   return TRUE;
@@ -143,6 +150,7 @@ BOOL queue_read(DVDCommandBlock* block, DVDFileInfo* file, void* addr, u32 discO
 }  // namespace
 
 void platform_dvd_init() {
+  HostAllocScope host;
   u8 header[0x440];
   read_disc(header, 0, sizeof(header));
   memcpy(&g_diskId, header, sizeof(g_diskId));

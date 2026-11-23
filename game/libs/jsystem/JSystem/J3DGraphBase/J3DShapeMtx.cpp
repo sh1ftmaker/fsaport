@@ -409,7 +409,11 @@ void J3DShapeMtxConcatView::load() const
 	sMtxPtrTbl[1]                      = j3dSys.getModel()->getMtxBuffer()->getWeightAnmMtx(0);
 	LoadMtxConcatViewFunction function = sMtxLoadPipeline[sCurrentPipeline];
 	j3dSys.mModelDrawMtx               = (Mtx*)sMtxPtrTbl[j3dSys.mModel->mModelData->mJointTree.mMtxData.mDrawMtxFlag[mUseMtxIndex]];
+#ifdef FSA_PORT
+	GXSetArray(GX_POS_MTX_ARRAY, j3dSys.mModelDrawMtx, 0x100 * sizeof(Mtx), sizeof(Mtx), true);
+#else
 	GXSetArray(GX_POS_MTX_ARRAY, j3dSys.mModelDrawMtx, sizeof(Mtx));
+#endif
 	(this->*function)(0, j3dSys.mModel->mModelData->mJointTree.mMtxData.mDrawMtxIdx[mUseMtxIndex]);
 }
 

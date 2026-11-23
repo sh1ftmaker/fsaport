@@ -73,7 +73,7 @@ target_link_options(fsa PRIVATE
   "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
-  --profiling-funcs -Wl,--error-limit=0)
+  --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map)
 set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js)
 add_custom_command(TARGET fsa POST_BUILD

@@ -26,7 +26,11 @@ CardMgr_804AFB48::~CardMgr_804AFB48() {}
 
 // 0x803BA980
 void CardMgr_804AFB48::fn_803BA980() {
+#ifdef FSA_PORT
+    CARDInit("G4SE", "01");
+#else
     CARDInit();
+#endif
     field_0x1ff4 = 0;
     field_0x1fcc = 0;
     mState = 0;

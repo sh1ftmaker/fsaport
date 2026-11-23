@@ -11,12 +11,17 @@
 #include <deque>
 #include <utility>
 
+extern "C" int fsa_host_alloc_depth = 0;
+
 namespace {
 std::deque<std::pair<void (*)(void*), void*>> g_pending;
 bool g_servicing = false;
 }  // namespace
 
-void platform_post_callback(void (*fn)(void*), void* arg) { g_pending.emplace_back(fn, arg); }
+void platform_post_callback(void (*fn)(void*), void* arg) {
+  HostAllocScope host;
+  g_pending.emplace_back(fn, arg);
+}
 
 void platform_service_interrupts() {
   if (g_servicing)

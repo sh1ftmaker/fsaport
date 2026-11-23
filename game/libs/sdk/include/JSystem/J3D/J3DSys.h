@@ -72,13 +72,21 @@ struct J3DSys {
 	void setModelDrawMtx(Mtx* pMtxArr)
 	{
 		mModelDrawMtx = pMtxArr;
+#ifdef FSA_PORT
+		GXSetArray(GX_POS_MTX_ARRAY, mModelDrawMtx, 0x100 * sizeof(*mModelDrawMtx), sizeof(*mModelDrawMtx), true);
+#else
 		GXSetArray(GX_POS_MTX_ARRAY, mModelDrawMtx, sizeof(*mModelDrawMtx));
+#endif
 	}
 
 	void setModelNrmMtx(Mtx* pMtxArr)
 	{
 		mModelNormMtx = pMtxArr;
+#ifdef FSA_PORT
+		GXSetArray(GX_NRM_MTX_ARRAY, mModelNormMtx, 0x100 * sizeof(Mtx33), sizeof(Mtx33), true);
+#else
 		GXSetArray(GX_NRM_MTX_ARRAY, mModelNormMtx, sizeof(Mtx33)); // why???
+#endif
 	}
 
 	// Type 0: Opa Buffer

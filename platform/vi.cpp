@@ -32,6 +32,7 @@ void platform_retrace() {
 void platform_frame_begin() {
   if (g_inFrame)
     return;
+  HostAllocScope host;
   aurora_update();
   g_inFrame = aurora_begin_frame();
 }
@@ -39,6 +40,7 @@ void platform_frame_begin() {
 void platform_frame_end() {
   if (!g_inFrame)
     return;
+  HostAllocScope host;
   aurora_end_frame();
   g_inFrame = false;
 }

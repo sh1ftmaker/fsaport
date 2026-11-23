@@ -24,3 +24,7 @@ void EscortBase_8049E0C8::vfunc_0xA0(u16* outAngle, s32* outDir, f32* outDist, s
 void EscortBase_8049E0C8::vfunc_0xA4(f32* x, f32* y, s32* player) {
     fn_80122F6C(x, y, player);
 }
+
+// The save region that survives a reset (0x80700000 on the GameCube). A reload
+// of the page is a power cycle, so it starts zeroed like a cold boot.
+u8 fsa_save_region[0x20];
