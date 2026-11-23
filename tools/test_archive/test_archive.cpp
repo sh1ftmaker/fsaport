@@ -11,6 +11,7 @@
 #include "JSystem/JUtility/JUTFont.h"
 #include "JSystem/ResTIMG.h"
 #include "test_formats.h"
+#include "test_extra.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -242,6 +243,7 @@ int main(int argc, char** argv)
         testFormats(&msg.data, msg.strings, (void*)msg.files, msg.info->num_file_entries);
     }
 
+    gFail |= gFormatFail;
     printf(gFail ? "\nFAILED\n" : "\nall checks passed\n");
     return gFail;
 }
