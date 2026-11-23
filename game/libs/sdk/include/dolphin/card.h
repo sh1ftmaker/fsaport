@@ -122,7 +122,11 @@ typedef struct CARDStat {
 
 typedef void (*CARDCallback)(s32 chan, s32 result);
 
+#ifdef FSA_PORT
+void CARDInit(const char* game, const char* maker);  // Aurora: names the save folder
+#else
 void CARDInit(void);
+#endif
 BOOL CARDGetFastMode(void);
 BOOL CARDSetFastMode(BOOL enable);
 

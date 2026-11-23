@@ -43,12 +43,18 @@ typedef wchar_t wint_t;
 #define TRUE 1
 #define FALSE 0
 
+// The decompiled code also uses nullptr as an integer 0, so it keeps this shim;
+// the port's platform layer (FSA_PLATFORM) uses the real one with libc++.
+#ifndef FSA_PLATFORM
 #define nullptr 0
+#endif
 
 #ifndef NULL
 #define NULL 0
 #endif
 
+#ifndef UINT32_MAX
 #define UINT32_MAX 0xffffffff
+#endif
 
 #endif // !TYPES_H

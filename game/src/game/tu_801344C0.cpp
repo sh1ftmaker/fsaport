@@ -8,6 +8,14 @@
 #include "JSystem/JUtility/JUTProcBar.h"
 #include <dolphin/dvd.h>
 #include <dolphin/os.h>
+#ifdef FSA_PORT
+// Port: the save region that survives a reset (0x80700000 on the GameCube) is a
+// plain buffer (game/src/port/missing_functions.cpp).
+extern u8 fsa_save_region[0x20];
+#define FSA_SAVE_REGION fsa_save_region
+#else
+#define FSA_SAVE_REGION 0x80700000
+#endif
 
 // The game's entry point (symbol "main", 0x801344C0): sets up the framework,
 // the game pads, the heaps, the loader and the memory card, then runs the
@@ -20,16 +28,20 @@
 // target keeps one index (r7) added to the state's base and 0x80700000; (3) after
 // fn_803FFAA8 the target materialises mState >= 4 as a value (li 4; subi;
 // orc; srwi 1; subf; srwi. 31) where we emit cmplwi 4 / blt.
+#ifdef FSA_PORT
+int fsa_game_main() {  // platform/main.cpp sets up the host first
+#else
 int main() {
+#endif
     JFWSystem::setMaxStdHeap(1);
     JFWSystem::setSysHeapSize(0x200000);
     JFWSystem::setFifoBufSize(0x40000);
 
     // The save region survives a reset; it is checked and preset here.
     for (int i = 0; i < 0x20; i++) {
-        lbl_80529DEC.mSaveRegion.bytes[i] = ((u8*)0x80700000)[i];
+        lbl_80529DEC.mSaveRegion.bytes[i] = ((u8*)FSA_SAVE_REGION)[i];
     }
-    OSSetSaveRegion((void*)0x80700000, (void*)0x8070001F);
+    OSSetSaveRegion((void*)FSA_SAVE_REGION, (void*)(FSA_SAVE_REGION + 0x1F));
     if (lbl_80529DEC.mSaveRegion.f.magic0 != 0xA759 || lbl_80529DEC.mSaveRegion.f.magic1 != 0xDC96) {
         lbl_80529DEC.mSaveRegion.f.magic0 = 0xA759;
         lbl_80529DEC.mSaveRegion.f.magic1 = 0xDC96;

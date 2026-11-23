@@ -15,6 +15,14 @@
 #include "dolphin/os.h"
 #include "dolphin/pad.h"
 #include <string.h>
+#ifdef FSA_PORT
+// Port: the save region that survives a reset (0x80700000 on the GameCube) is a
+// plain buffer (game/src/port/missing_functions.cpp).
+extern u8 fsa_save_region[0x20];
+#define FSA_SAVE_REGION fsa_save_region
+#else
+#define FSA_SAVE_REGION 0x80700000
+#endif
 
 // .rodata: the pane tag tables (J2DPane::search), in address order; the
 // functions address them off one base (lbl_804774C8). Each has an alpha
@@ -938,9 +946,9 @@ void GameMode_804B0688::fn_803DD764() {
                 DVDFileInfo info;
                 if (DVDOpen("/DOL/framework.dol", &info) == TRUE) {
                     for (int i = 0; i < 0x20; i++) {
-                        ((u8*)0x80700000)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
+                        ((u8*)FSA_SAVE_REGION)[i] = lbl_80529DEC.mSaveRegion.bytes[i];
                     }
-                    OSSetSaveRegion((void*)0x80700000, (void*)0x8070001F);
+                    OSSetSaveRegion((void*)FSA_SAVE_REGION, (void*)(FSA_SAVE_REGION + 0x1F));
                     __PADDisableRecalibration(TRUE);
                     lbl_8053ACA8->fn_802B1558();
                     OSSetBootDol(info.startAddr);

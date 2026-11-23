@@ -18,7 +18,13 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
 void GXSetLineWidth(u8 width, GXTexOffset texOffsets);
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets);
 void GXEnableTexOffsets(GXTexCoordID coord, GXBool line_enable, GXBool point_enable);
+#ifdef FSA_PORT
+// Port: Aurora uploads vertex arrays to the GPU, so it needs their byte size,
+// and whether they are host (little-endian) data or big-endian file data.
+void GXSetArray(GXAttr attr, const void* data, u32 size, u8 stride, bool le);
+#else
 void GXSetArray(GXAttr attr, const void* data, u8 stride);
+#endif
 void GXInvalidateVtxCache(void);
 
 static inline void GXSetTexCoordGen(GXTexCoordID dst_coord, GXTexGenType func,

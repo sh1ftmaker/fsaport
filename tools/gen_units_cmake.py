@@ -6,14 +6,24 @@ groups = collections.OrderedDict()
 for line in open(sys.argv[1]):
     path, flags = line.rstrip('\n').split('\t')
     groups.setdefault(flags, []).append(path)
-out = []
+# @GENERATED@ paths are generated from the user's main.dol (tools/gen_globals.py emit) into
+# build/generated, next to build/assets; FSA_GENERATED may point elsewhere.
+out = ['if(NOT DEFINED FSA_GENERATED)',
+       '  set(FSA_GENERATED ${CMAKE_SOURCE_DIR}/build/generated CACHE PATH "sources generated from main.dol by tools/gen_globals.py")',
+       'endif()']
+
+
+def src(p):
+    return p.replace('@GENERATED@', '${FSA_GENERATED}') if p.startswith('@GENERATED@') else f'${{FSA_GAME}}/{p}'
+
+
 for i, (flags, paths) in enumerate(groups.items()):
     f = flags.split()
     incs = [x[2:] for x in f if x.startswith('-I')]
     defs = [x[2:] for x in f if x.startswith('-D')]
     lib = f'fsa_units_{i}'
     out.append(f'add_library({lib} STATIC')
-    out += [f'  ${{FSA_GAME}}/{p}' for p in paths]
+    out += [f'  {src(p)}' for p in paths]
     out.append(')')
     inc = ' '.join('${FSA_ASSETS}' if x == '@ASSETS@' else f'${{FSA_GAME}}/{x}' for x in incs)
     out.append(f'target_include_directories({lib} PRIVATE {inc})')
@@ -23,7 +33,7 @@ for i, (flags, paths) in enumerate(groups.items()):
     if '--language=c++' in f:
         cs = [p for p in paths if p.endswith('.c')]
         if cs:
-            out.append('set_source_files_properties(' + ' '.join(f'${{FSA_GAME}}/{p}' for p in cs) + ' PROPERTIES LANGUAGE CXX)')
+            out.append('set_source_files_properties(' + ' '.join(src(p) for p in cs) + ' PROPERTIES LANGUAGE CXX)')
     out.append(f'list(APPEND FSA_UNIT_LIBS {lib})')
 open(sys.argv[2], 'w').write('\n'.join(out) + '\n')
 print(f'{len(groups)} groups')

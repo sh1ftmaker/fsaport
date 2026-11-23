@@ -3,3 +3,4 @@
 /build/
 *.o
 /extern/aurora/build/
+/.claude/

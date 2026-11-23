@@ -38,6 +38,8 @@ PORT_FLAGS = [
 def units():
     for line in open(os.path.join(GAME, "units.txt")):
         path, flags = line.rstrip("\n").split("\t")
+        # @GENERATED@: sources generated from the user's main.dol (tools/gen_globals.py emit).
+        path = path.replace("@GENERATED@", os.path.join(BUILD, "generated"))
         flags = flags.replace("@ASSETS@", os.path.join(BUILD, "assets"))
         # GNU modes: no trigraphs (the game spells resource types '????'), as MWCC.
         flags = flags.replace("--std=c++98", "--std=gnu++17").replace("--std=c99", "--std=gnu99").split()
@@ -45,7 +47,7 @@ def units():
 
 
 def compile_one(path, flags, syntax_only, opt):
-    obj = os.path.join(BUILD, "obj", path + ".o")
+    obj = os.path.join(BUILD, "obj", os.path.relpath(path, BUILD) if os.path.isabs(path) else path) + ".o"
     os.makedirs(os.path.dirname(obj), exist_ok=True)
     # -include port_prefix.h first: the compatibility layer for Metrowerks-isms.
     cmd = ["em++" if "c++" in flags else "emcc", *PORT_FLAGS, opt,

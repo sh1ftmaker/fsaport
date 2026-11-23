@@ -975,9 +975,21 @@ void TileMap_804AA858::fn_802FC80C() {
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGB, GX_RGBA8, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_ST, GX_F32, 0);
+#ifdef FSA_PORT
+    GXSetArray(GX_VA_POS, mHeightGrid_0x100[mHeightGridIndex_0x2388], 65 * 65 * sizeof(JGeometry::TVec3f),
+               sizeof(JGeometry::TVec3f), true);
+    GXSetArray(GX_VA_CLR0, mHeightGridColors_0x108[mHeightGridIndex_0x2388], 65 * 65 * sizeof(JUtility::TColor),
+               sizeof(JUtility::TColor), true);
+    GXSetArray(GX_VA_TEX0, mTileTexCoords_0x110, 0x1000 * sizeof(JGeometry::TVec2f), sizeof(JGeometry::TVec2f), true);
+#else
     GXSetArray(GX_VA_POS, mHeightGrid_0x100[mHeightGridIndex_0x2388], sizeof(JGeometry::TVec3f));
     GXSetArray(GX_VA_CLR0, mHeightGridColors_0x108[mHeightGridIndex_0x2388], sizeof(JUtility::TColor));
+#ifdef FSA_PORT
+    GXSetArray(GX_VA_TEX0, mTileTexCoords_0x110, 0x1000 * sizeof(JGeometry::TVec2f), sizeof(JGeometry::TVec2f), true);
+#else
     GXSetArray(GX_VA_TEX0, mTileTexCoords_0x110, sizeof(JGeometry::TVec2f));
+#endif
+#endif
     GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_REG, GX_SRC_VTX, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
     GXSetNumChans(1);
     GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
@@ -1335,7 +1347,11 @@ void TileMap_804AA858::fn_802FAC10(s32 layer, s32 x, s32 y, s32 flag, u8 grey, u
     GXSetVtxDesc(GX_VA_TEX0, GX_INDEX16);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
+#ifdef FSA_PORT
+    GXSetArray(GX_VA_TEX0, mTileTexCoords_0x110, 0x1000 * sizeof(JGeometry::TVec2f), sizeof(JGeometry::TVec2f), true);
+#else
     GXSetArray(GX_VA_TEX0, mTileTexCoords_0x110, sizeof(JGeometry::TVec2f));
+#endif
     if (grey == 0xFF && alpha == 0xFF) {
         GXSetTevColor(GX_TEVREG0, lbl_805414F0);
         GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);

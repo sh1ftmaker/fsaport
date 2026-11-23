@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fsaport</title>
+<style>
+  :root { --bg: #0d0f14; --fg: #e6e6e6; --muted: #8a8f99; --accent: #6fbf73; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+               font: 14px/1.4 system-ui, sans-serif; }
+  main { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px; }
+  canvas { width: min(100%, 960px); aspect-ratio: 4 / 3; background: #000; display: block; }
+  #drop { border: 1px dashed var(--muted); padding: 20px; width: min(100%, 928px); text-align: center;
+          box-sizing: border-box; }
+  #drop.hidden { display: none; }
+  #status { color: var(--muted); }
+  #log { width: min(100%, 960px); height: 160px; overflow: auto; font: 12px ui-monospace, monospace;
+         color: var(--muted); white-space: pre-wrap; margin: 0; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="canvas" tabindex="0"></canvas>
+  <div id="drop">Drop your own Four Swords Adventures disc image here (.iso), or
+    <input type="file" id="file" accept=".iso,.gcm"><br>
+    <small>The image is read in this page only. Nothing is uploaded.</small></div>
+  <div id="status">Loading…</div>
+  <pre id="log"></pre>
+</main>
+<script>
+  const logEl = document.getElementById('log');
+  const statusEl = document.getElementById('status');
+  function log(line) {
+    console.log(line);
+    logEl.textContent += line + '\n';
+    if (logEl.textContent.length > 200000) logEl.textContent = logEl.textContent.slice(-100000);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  var Module = {
+    canvas: document.getElementById('canvas'),
+    print: log,
+    printErr: log,
+    onRuntimeInitialized() { statusEl.textContent = 'Ready: choose a disc image.'; maybeAutoStart(); },
+    onAbort(what) { statusEl.textContent = 'Stopped: ' + what; },
+  };
+  let started = false;
+  async function startWith(disc) {
+    if (started) return;
+    started = true;
+    document.getElementById('drop').classList.add('hidden');
+    statusEl.textContent = 'Running';
+    Module.fsaDisc = disc;
+    Module.fsaClock.start();
+    try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
+  }
+  function maybeAutoStart() {
+    const iso = new URLSearchParams(location.search).get('iso');
+    if (iso) Module.fsaDiscFromUrl(iso).then(startWith);
+  }
+  document.getElementById('file').addEventListener('change', (e) => {
+    if (e.target.files[0]) startWith(Module.fsaDiscFromFile(e.target.files[0]));
+  });
+  const drop = document.getElementById('drop');
+  drop.addEventListener('dragover', (e) => e.preventDefault());
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files[0]) startWith(Module.fsaDiscFromFile(e.dataTransfer.files[0]));
+  });
+</script>
+<script src="fsa.js"></script>
+</body>
+</html>

@@ -24,6 +24,28 @@ typedef union {
 
 #ifdef __MWERKS__
 /*volatile*/ PPCWGPipe GXWGFifo : GXFIFO_ADDR;
+#elif defined(FSA_PORT) && defined(__cplusplus)
+// Port: the write-gather pipe is Aurora's command FIFO. Each store appends the
+// value big-endian, as the hardware pipe did (platform/gx_pipe.cpp).
+void fsa_gxpipe_u8(unsigned char v);
+void fsa_gxpipe_u16(unsigned short v);
+void fsa_gxpipe_u32(unsigned int v);
+void fsa_gxpipe_f32(float v);
+struct FsaGXPipeU8 { void operator=(unsigned char v) volatile { fsa_gxpipe_u8(v); } };
+struct FsaGXPipeU16 { void operator=(unsigned short v) volatile { fsa_gxpipe_u16(v); } };
+struct FsaGXPipeU32 { void operator=(unsigned int v) volatile { fsa_gxpipe_u32(v); } };
+struct FsaGXPipeF32 { void operator=(float v) volatile { fsa_gxpipe_f32(v); } };
+struct FsaGXPipe {
+  FsaGXPipeU8 u8;
+  FsaGXPipeU8 s8;
+  FsaGXPipeU16 u16;
+  FsaGXPipeU16 s16;
+  FsaGXPipeU32 u32;
+  FsaGXPipeU32 s32;
+  FsaGXPipeF32 f32;
+};
+extern volatile FsaGXPipe fsa_gx_pipe;
+#define GXWGFifo fsa_gx_pipe
 #else
 #define GXWGFifo (*(volatile PPCWGPipe*)GXFIFO_ADDR)
 #endif

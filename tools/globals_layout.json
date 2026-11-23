@@ -1,0 +1,3113 @@
+{
+ "objects": [
+  {
+   "name": "gAudioMgr_8053AF80",
+   "section": ".sbss",
+   "addr": 2152968064,
+   "size": 8,
+   "decl": "AudioMgr_8045A080* gAudioMgr_8053AF80",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "gBgRewrite_8053AC98",
+   "section": ".sbss",
+   "addr": 2152967320,
+   "size": 8,
+   "decl": "BgRewrite_804A7C98* gBgRewrite_8053AC98",
+   "declared_in": "game/include/game/BgRewrite.h",
+   "kind": "bss"
+  },
+  {
+   "name": "gGameRoot2_8053AB10",
+   "section": ".sbss",
+   "addr": 2152966928,
+   "size": 8,
+   "decl": "GameRoot2_8049F108* gGameRoot2_8053AB10",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "gGameRoot_8053AAF8",
+   "section": ".sbss",
+   "addr": 2152966904,
+   "size": 8,
+   "decl": "GameRoot_8049EF20* gGameRoot_8053AAF8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "gPlayerManager_8053AC90",
+   "section": ".sbss",
+   "addr": 2152967312,
+   "size": 8,
+   "decl": "PlayerManager_804A6F28* gPlayerManager_8053AC90",
+   "declared_in": "game/include/game/Player.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_80463678",
+   "section": ".rodata",
+   "addr": 2152085112,
+   "size": 32,
+   "decl": "const f32 lbl_80463678[]",
+   "declared_in": "game/src/game/act_boulder_800F46C0.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80463800",
+   "section": ".rodata",
+   "addr": 2152085504,
+   "size": 192,
+   "decl": "const s16 lbl_80463800[]",
+   "declared_in": "game/src/game/act_stone_arrghus_800F7FCC.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_804638C0",
+   "section": ".rodata",
+   "addr": 2152085696,
+   "size": 192,
+   "decl": "const s16 lbl_804638C0[]",
+   "declared_in": "game/src/game/act_stone_arrghus_800F7FCC.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_80463A58",
+   "section": ".rodata",
+   "addr": 2152086104,
+   "size": 19,
+   "decl": "const char lbl_80463A58[]",
+   "declared_in": "game/src/game/act_stone_arrghus_800F7FCC.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80464CD8",
+   "section": ".rodata",
+   "addr": 2152090840,
+   "size": 172,
+   "decl": "const u32 lbl_80464CD8[43]",
+   "declared_in": "game/src/game/escort_base_801213EC.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80465920",
+   "section": ".rodata",
+   "addr": 2152093984,
+   "size": 64,
+   "decl": "const char lbl_80465920[]",
+   "declared_in": "game/src/game/game_root_sub_04_80139BE8.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80465960",
+   "section": ".rodata",
+   "addr": 2152094048,
+   "size": 16,
+   "decl": "const char lbl_80465960[]",
+   "declared_in": "game/src/game/game_root_sub_04_80139BE8.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80465DBC",
+   "section": ".rodata",
+   "addr": 2152095164,
+   "size": 20,
+   "decl": "const char lbl_80465DBC[]",
+   "declared_in": "game/src/game/act_sword_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80465DD0",
+   "section": ".rodata",
+   "addr": 2152095184,
+   "size": 19,
+   "decl": "const char lbl_80465DD0[]",
+   "declared_in": "game/src/game/act_sword_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80465E38",
+   "section": ".rodata",
+   "addr": 2152095288,
+   "size": 320,
+   "decl": "const s32 lbl_80465E38[]",
+   "declared_in": "game/src/game/act_liftable_item.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80465F78",
+   "section": ".rodata",
+   "addr": 2152095608,
+   "size": 320,
+   "decl": "const s32 lbl_80465F78[]",
+   "declared_in": "game/src/game/act_liftable_item.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80466110",
+   "section": ".rodata",
+   "addr": 2152096016,
+   "size": 160,
+   "decl": "const Tables_80466110 lbl_80466110",
+   "declared_in": "game/src/game/act_flame.cpp",
+   "kind": "data",
+   "widths": [
+    4,
+    4,
+    4,
+    4,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "name": "lbl_804662E8",
+   "section": ".rodata",
+   "addr": 2152096488,
+   "size": 20,
+   "decl": "const u32 lbl_804662E8[5]",
+   "declared_in": "game/src/game/act_arrow.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804662FC",
+   "section": ".rodata",
+   "addr": 2152096508,
+   "size": 16,
+   "decl": "const u32 lbl_804662FC[4]",
+   "declared_in": "game/src/game/act_arrow.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804689C0",
+   "section": ".rodata",
+   "addr": 2152106432,
+   "size": 16,
+   "decl": "const s32 lbl_804689C0[]",
+   "declared_in": "game/src/game/act_dodongo.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80469AA4",
+   "section": ".rodata",
+   "addr": 2152110756,
+   "size": 19,
+   "decl": "const char lbl_80469AA4[]",
+   "declared_in": "game/src/game/act_frostare_child_frosteye_801DB18C.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80469C40",
+   "section": ".rodata",
+   "addr": 2152111168,
+   "size": 32,
+   "decl": "const s32 lbl_80469C40[4][2]",
+   "declared_in": "game/src/game/act_iron_pot_801E6D48.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8046ACC8",
+   "section": ".rodata",
+   "addr": 2152115400,
+   "size": 296,
+   "decl": "const f32 lbl_8046ACC8[37][2]",
+   "declared_in": "game/src/game/act_player_effect.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8046CB88",
+   "section": ".rodata",
+   "addr": 2152123272,
+   "size": 2048,
+   "decl": "const u16 lbl_8046CB88[0x400]",
+   "declared_in": "game/include/game/Map.h",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_8046D388",
+   "section": ".rodata",
+   "addr": 2152125320,
+   "size": 16,
+   "decl": "const s32 lbl_8046D388[4]",
+   "declared_in": "game/src/game/act_fire_rod_fire.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8046D598",
+   "section": ".rodata",
+   "addr": 2152125848,
+   "size": 624,
+   "decl": "const DoorTiles_8046D598 lbl_8046D598",
+   "declared_in": "game/src/game/act_door.cpp",
+   "kind": "data",
+   "widths": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "name": "lbl_8046E9D8",
+   "section": ".rodata",
+   "addr": 2152131032,
+   "size": 32,
+   "decl": "const u16 lbl_8046E9D8[4][4]",
+   "declared_in": "game/src/game/act_enemy_generator_2_802E2074.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_8046F1C8",
+   "section": ".rodata",
+   "addr": 2152133064,
+   "size": 152,
+   "decl": "const u32 lbl_8046F1C8[38]",
+   "declared_in": "game/src/game/act_bgm_change_npc.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80475600",
+   "section": ".rodata",
+   "addr": 2152158720,
+   "size": 88,
+   "decl": "const s32 lbl_80475600[]",
+   "declared_in": "game/src/game/act_great_fairy_bfry.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8049C3B8",
+   "section": ".data",
+   "addr": 2152317880,
+   "size": 40,
+   "decl": "s16 lbl_8049C3B8[]",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_8049C458",
+   "section": ".data",
+   "addr": 2152318040,
+   "size": 20,
+   "decl": "const char* const lbl_8049C458[]",
+   "declared_in": "game/src/game/act_boulder_800F46C0.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152085144,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152085160,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152085176,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152085192,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152085208,
+     "len": 12
+    }
+   ]
+  },
+  {
+   "name": "lbl_8049F640",
+   "section": ".data",
+   "addr": 2152330816,
+   "size": 56,
+   "decl": "const s32 lbl_8049F640[14]",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8049F678",
+   "section": ".data",
+   "addr": 2152330872,
+   "size": 32,
+   "decl": "const s32 lbl_8049F678[8]",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8049F698",
+   "section": ".data",
+   "addr": 2152330904,
+   "size": 48,
+   "decl": "const char* const lbl_8049F698[]",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152094720,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152094740,
+     "len": 27
+    },
+    {
+     "kind": "string",
+     "addr": 2152094768,
+     "len": 27
+    },
+    {
+     "kind": "string",
+     "addr": 2152094796,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152094820,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152094844,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152094868,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152094892,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152094920,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152094948,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152094968,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152094996,
+     "len": 26
+    }
+   ]
+  },
+  {
+   "name": "lbl_8049FDA8",
+   "section": ".data",
+   "addr": 2152332712,
+   "size": 32,
+   "decl": "const f32 lbl_8049FDA8[4][2]",
+   "declared_in": "game/src/game/act_bow_soldier_801555D8.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8049FDC8",
+   "section": ".data",
+   "addr": 2152332744,
+   "size": 528,
+   "decl": "const s32 lbl_8049FDC8[]",
+   "declared_in": "game/src/game/act_bow_soldier_801555D8.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8049FFD8",
+   "section": ".data",
+   "addr": 2152333272,
+   "size": 240,
+   "decl": "const Table_8049FFD8 lbl_8049FFD8",
+   "declared_in": "game/src/game/act_bow_soldier_801555D8.cpp",
+   "kind": "data",
+   "widths": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0718",
+   "section": ".data",
+   "addr": 2152335128,
+   "size": 32,
+   "decl": "s32 lbl_804A0718[]",
+   "declared_in": "game/src/game/act_unknown_bome_801688AC.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A08C0",
+   "section": ".data",
+   "addr": 2152335552,
+   "size": 32,
+   "decl": "const f32 lbl_804A08C0[][2]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A08E0",
+   "section": ".data",
+   "addr": 2152335584,
+   "size": 64,
+   "inside": "lbl_804A08C0",
+   "decl": "const s32 lbl_804A08E0[][4]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0930",
+   "section": ".data",
+   "addr": 2152335664,
+   "size": 16,
+   "inside": "lbl_804A0920",
+   "decl": "const s32 lbl_804A0930[]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0940",
+   "section": ".data",
+   "addr": 2152335680,
+   "size": 160,
+   "inside": "lbl_804A0920",
+   "decl": "const s32 lbl_804A0940[]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A09E0",
+   "section": ".data",
+   "addr": 2152335840,
+   "size": 96,
+   "inside": "lbl_804A0920",
+   "decl": "const s32 lbl_804A09E0[][6]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0A40",
+   "section": ".data",
+   "addr": 2152335936,
+   "size": 24,
+   "inside": "lbl_804A0920",
+   "decl": "const s32 lbl_804A0A40[]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0A58",
+   "section": ".data",
+   "addr": 2152335960,
+   "size": 128,
+   "decl": "const f32 lbl_804A0A58[][4]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0AD8",
+   "section": ".data",
+   "addr": 2152336088,
+   "size": 32,
+   "decl": "const f32 lbl_804A0AD8[][2]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0AF8",
+   "section": ".data",
+   "addr": 2152336120,
+   "size": 24,
+   "decl": "const s32 lbl_804A0AF8[]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A0B10",
+   "section": ".data",
+   "addr": 2152336144,
+   "size": 128,
+   "decl": "const f32 lbl_804A0B10[][4]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A13E0",
+   "section": ".data",
+   "addr": 2152338400,
+   "size": 96,
+   "decl": "const Unk_804A13E0 lbl_804A13E0",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A1440",
+   "section": ".data",
+   "addr": 2152338496,
+   "size": 32,
+   "decl": "const s32 lbl_804A1440[]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A1460",
+   "section": ".data",
+   "addr": 2152338528,
+   "size": 120,
+   "inside": "lbl_804A1440",
+   "decl": "const char* const lbl_804A1460[30]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152098360,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098376,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098392,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098408,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098424,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098440,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098456,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098472,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098488,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098504,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098520,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098536,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098552,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098568,
+     "len": 12
+    },
+    {
+     "kind": "string",
+     "addr": 2152098584,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098600,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098616,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098632,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098648,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098664,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098680,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098696,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098712,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098728,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098744,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098760,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098776,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098792,
+     "len": 13
+    },
+    {
+     "kind": "string",
+     "addr": 2152098808,
+     "len": 17
+    },
+    {
+     "kind": "string",
+     "addr": 2152098828,
+     "len": 17
+    }
+   ]
+  },
+  {
+   "name": "lbl_804A14D8",
+   "section": ".data",
+   "addr": 2152338648,
+   "size": 120,
+   "inside": "lbl_804A1440",
+   "decl": "const f32 lbl_804A14D8[30]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A1550",
+   "section": ".data",
+   "addr": 2152338768,
+   "size": 112,
+   "inside": "lbl_804A1440",
+   "decl": "const char* const lbl_804A1550[28]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152098848,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098868,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098888,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098908,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098928,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098948,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098968,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152098988,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099008,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099028,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099048,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099068,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099088,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099108,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099128,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099148,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099168,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099188,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099208,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099228,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099248,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099268,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099288,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099308,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099328,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099348,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099368,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152099388,
+     "len": 18
+    }
+   ]
+  },
+  {
+   "name": "lbl_804A15C0",
+   "section": ".data",
+   "addr": 2152338880,
+   "size": 112,
+   "inside": "lbl_804A1440",
+   "decl": "const f32 lbl_804A15C0[28]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A2700",
+   "section": ".data",
+   "addr": 2152343296,
+   "size": 384,
+   "decl": "const s32 lbl_804A2700[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A2880",
+   "section": ".data",
+   "addr": 2152343680,
+   "size": 12,
+   "decl": "const u16 lbl_804A2880[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_804A288C",
+   "section": ".data",
+   "addr": 2152343692,
+   "size": 16,
+   "decl": "const s32 lbl_804A288C[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A289C",
+   "section": ".data",
+   "addr": 2152343708,
+   "size": 20,
+   "decl": "const s32 lbl_804A289C[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A28B0",
+   "section": ".data",
+   "addr": 2152343728,
+   "size": 20,
+   "decl": "const s32 lbl_804A28B0[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A28D8",
+   "section": ".data",
+   "addr": 2152343768,
+   "size": 36,
+   "decl": "const u16 lbl_804A28D8[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_804A28FC",
+   "section": ".data",
+   "addr": 2152343804,
+   "size": 72,
+   "decl": "const u16 lbl_804A28FC[]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_804A3108",
+   "section": ".data",
+   "addr": 2152345864,
+   "size": 192,
+   "decl": "const f32 lbl_804A3108[]",
+   "declared_in": "game/src/game/act_dodongo.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A31C8",
+   "section": ".data",
+   "addr": 2152346056,
+   "size": 64,
+   "decl": "const f32 lbl_804A31C8[]",
+   "declared_in": "game/src/game/act_dodongo.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_804A3208",
+   "section": ".data",
+   "addr": 2152346120,
+   "size": 300,
+   "decl": "const char* lbl_804A3208[]",
+   "declared_in": "game/src/game/act_dodongo.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106472,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106496,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106472,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106496,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106520,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106544,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106568,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106592,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106620,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106648,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106676,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106700,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106676,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106700,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106520,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106724,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106748,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106592,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106772,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106800,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106676,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106676,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106448,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106724,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106520,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106772,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106592,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152106828,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152106828,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152106848,
+     "len": 18
+    },
+    {
+     "kind": "string",
+     "addr": 2152106868,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106916,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106940,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106916,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106940,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106964,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106988,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107012,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107036,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107064,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107092,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107120,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107144,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107120,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107144,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106964,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107168,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107192,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107036,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107216,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107244,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107120,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107120,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152106892,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152107168,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152106964,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107216,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107036,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152107272,
+     "len": 20
+    },
+    {
+     "kind": "string",
+     "addr": 2152107272,
+     "len": 20
+    },
+    {
+     "kind": "string",
+     "addr": 2152107296,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152107316,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152107340,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152107360,
+     "len": 19
+    },
+    {
+     "kind": "string",
+     "addr": 2152107380,
+     "len": 19
+    }
+   ]
+  },
+  {
+   "name": "lbl_804A4DA8",
+   "section": ".data",
+   "addr": 2152353192,
+   "size": 192,
+   "decl": "const char* const lbl_804A4DA8[]",
+   "declared_in": "game/src/game/sequencer_801DA7C0.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "string",
+     "addr": 2152109288,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152109288,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152109312,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152109336,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152109360,
+     "len": 22
+    },
+    {
+     "kind": "string",
+     "addr": 2152109384,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109412,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109440,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109468,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109496,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109524,
+     "len": 24
+    },
+    {
+     "kind": "string",
+     "addr": 2152109552,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109580,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109608,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152109632,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152109656,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152109680,
+     "len": 23
+    },
+    {
+     "kind": "string",
+     "addr": 2152109704,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109732,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109760,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109788,
+     "len": 25
+    },
+    {
+     "kind": "string",
+     "addr": 2152109816,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109844,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109872,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109900,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109928,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109956,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152109984,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110012,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152110036,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152110060,
+     "len": 21
+    },
+    {
+     "kind": "string",
+     "addr": 2152110084,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110112,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110140,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110168,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110196,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110224,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110252,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110280,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110308,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110336,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110364,
+     "len": 26
+    },
+    {
+     "kind": "string",
+     "addr": 2152110392,
+     "len": 28
+    },
+    {
+     "kind": "string",
+     "addr": 2152110424,
+     "len": 28
+    },
+    {
+     "kind": "string",
+     "addr": 2152110456,
+     "len": 28
+    },
+    {
+     "kind": "string",
+     "addr": 2152110488,
+     "len": 28
+    },
+    {
+     "kind": "string",
+     "addr": 2152110520,
+     "len": 28
+    },
+    {
+     "kind": "string",
+     "addr": 2152110552,
+     "len": 28
+    }
+   ]
+  },
+  {
+   "name": "lbl_804A4E68",
+   "section": ".data",
+   "addr": 2152353384,
+   "size": 64,
+   "decl": "const u8* const lbl_804A4E68[]",
+   "declared_in": "game/src/game/sequencer_801DA7C0.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "bytes",
+     "addr": 2152110584,
+     "size": 28
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110640,
+     "size": 16
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985144,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110672,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985160,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985176,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985192,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110696,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985208,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985224,
+     "size": 4
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985232,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985248,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985264,
+     "size": 4
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110720,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985272,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985288,
+     "size": 8
+    }
+   ]
+  },
+  {
+   "name": "lbl_804A4EA8",
+   "section": ".data",
+   "addr": 2152353448,
+   "size": 64,
+   "decl": "const u8* const lbl_804A4EA8[]",
+   "declared_in": "game/src/game/sequencer_801DA7C0.cpp",
+   "kind": "ptrs",
+   "targets": [
+    {
+     "kind": "bytes",
+     "addr": 2152110612,
+     "size": 28
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110656,
+     "size": 16
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985152,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110684,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985168,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985184,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985200,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110708,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985216,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985228,
+     "size": 4
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985240,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985256,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985268,
+     "size": 4
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152110732,
+     "size": 12
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985280,
+     "size": 8
+    },
+    {
+     "kind": "bytes",
+     "addr": 2152985296,
+     "size": 8
+    }
+   ]
+  },
+  {
+   "name": "lbl_80539EA8",
+   "section": ".sdata",
+   "addr": 2152963752,
+   "size": 8,
+   "decl": "const u8 lbl_80539EA8[2]",
+   "declared_in": "game/src/game/act_hammer_shop_minigame_800FF060.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80539EB0",
+   "section": ".sdata",
+   "addr": 2152963760,
+   "size": 8,
+   "decl": "const u8 lbl_80539EB0[2]",
+   "declared_in": "game/src/game/act_whack_a_mole_shop_8010089C.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80539F30",
+   "section": ".sdata",
+   "addr": 2152963888,
+   "size": 8,
+   "decl": "s32 lbl_80539F30",
+   "declared_in": "game/include/game/escort_base_801213EC.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539F58",
+   "section": ".sdata",
+   "addr": 2152963928,
+   "size": 4,
+   "decl": "s32 lbl_80539F58",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539F5C",
+   "section": ".sdata",
+   "addr": 2152963932,
+   "size": 4,
+   "decl": "s32 lbl_80539F5C",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539F60",
+   "section": ".sdata",
+   "addr": 2152963936,
+   "size": 8,
+   "decl": "const u8 lbl_80539F60[]",
+   "declared_in": "game/src/game/act_big_moldorm_80147B50.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80539F68",
+   "section": ".sdata",
+   "addr": 2152963944,
+   "size": 8,
+   "decl": "s32 lbl_80539F68",
+   "declared_in": "game/src/game/act_sword_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539F78",
+   "section": ".sdata",
+   "addr": 2152963960,
+   "size": 8,
+   "decl": "const u8 lbl_80539F78[]",
+   "declared_in": "game/src/game/act_chief_soldier.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80539F98",
+   "section": ".sdata",
+   "addr": 2152963992,
+   "size": 4,
+   "decl": "s32 lbl_80539F98",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539F9C",
+   "section": ".sdata",
+   "addr": 2152963996,
+   "size": 4,
+   "decl": "s32 lbl_80539F9C",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FA0",
+   "section": ".sdata",
+   "addr": 2152964000,
+   "size": 4,
+   "decl": "s32 lbl_80539FA0",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FA4",
+   "section": ".sdata",
+   "addr": 2152964004,
+   "size": 4,
+   "decl": "s32 lbl_80539FA4",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FA8",
+   "section": ".sdata",
+   "addr": 2152964008,
+   "size": 8,
+   "decl": "s32 lbl_80539FA8[2]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FB0",
+   "section": ".sdata",
+   "addr": 2152964016,
+   "size": 8,
+   "decl": "s32 lbl_80539FB0[2]",
+   "declared_in": "game/src/game/act_helmaroc_king_8017EF40.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FB8",
+   "section": ".sdata",
+   "addr": 2152964024,
+   "size": 4,
+   "decl": "s32 lbl_80539FB8",
+   "declared_in": "game/src/game/act_phantom_ganon_2.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FBC",
+   "section": ".sdata",
+   "addr": 2152964028,
+   "size": 1,
+   "decl": "u8 lbl_80539FBC",
+   "declared_in": "game/src/game/act_phantom_ganon_2.cpp",
+   "kind": "data",
+   "widths": [
+    1
+   ]
+  },
+  {
+   "name": "lbl_80539FC0",
+   "section": ".sdata",
+   "addr": 2152964032,
+   "size": 8,
+   "decl": "const u16 lbl_80539FC0[]",
+   "declared_in": "game/src/game/act_phantom_ganon_2.cpp",
+   "kind": "data",
+   "widths": [
+    2
+   ]
+  },
+  {
+   "name": "lbl_80539FC8",
+   "section": ".sdata",
+   "addr": 2152964040,
+   "size": 4,
+   "decl": "s32 lbl_80539FC8",
+   "declared_in": "game/src/game/act_big_poe_2_8018A8D8.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FCC",
+   "section": ".sdata",
+   "addr": 2152964044,
+   "size": 4,
+   "decl": "s32 lbl_80539FCC",
+   "declared_in": "game/src/game/act_big_poe_2_8018A8D8.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80539FD0",
+   "section": ".sdata",
+   "addr": 2152964048,
+   "size": 8,
+   "decl": "s32 lbl_80539FD0",
+   "declared_in": "game/src/game/act_big_poe_2_8018A8D8.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053A0E8",
+   "section": ".sdata",
+   "addr": 2152964328,
+   "size": 8,
+   "decl": "const s32 lbl_8053A0E8[2]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053A0F0",
+   "section": ".sdata",
+   "addr": 2152964336,
+   "size": 8,
+   "decl": "const s32 lbl_8053A0F0[2]",
+   "declared_in": "game/src/game/act_princess_zelda_ganon_battle_80197070.cpp",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053AAA0",
+   "section": ".sbss",
+   "addr": 2152966816,
+   "size": 8,
+   "decl": "u8 lbl_8053AAA0",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AAF0",
+   "section": ".sbss",
+   "addr": 2152966896,
+   "size": 8,
+   "decl": "BootLoader_804B0F50* lbl_8053AAF0",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AB00",
+   "section": ".sbss",
+   "addr": 2152966912,
+   "size": 4,
+   "decl": "JKRHeap* lbl_8053AB00",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AB60",
+   "section": ".sbss",
+   "addr": 2152967008,
+   "size": 8,
+   "decl": "u8 lbl_8053AB60",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AB68",
+   "section": ".sbss",
+   "addr": 2152967016,
+   "size": 8,
+   "decl": "s32 lbl_8053AB68",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ABE0",
+   "section": ".sbss",
+   "addr": 2152967136,
+   "size": 8,
+   "decl": "s32 lbl_8053ABE0",
+   "declared_in": "game/src/game/act_dodongo.cpp",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ABE8",
+   "section": ".sbss",
+   "addr": 2152967144,
+   "size": 1,
+   "decl": "u8 lbl_8053ABE8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ABEC",
+   "section": ".sbss",
+   "addr": 2152967148,
+   "size": 4,
+   "decl": "s32 lbl_8053ABEC",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ABF0",
+   "section": ".sbss",
+   "addr": 2152967152,
+   "size": 8,
+   "decl": "u8 lbl_8053ABF0",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ABF8",
+   "section": ".sbss",
+   "addr": 2152967160,
+   "size": 8,
+   "decl": "u8 lbl_8053ABF8",
+   "declared_in": "game/src/game/act_tingle_tower.cpp",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AC00",
+   "section": ".sbss",
+   "addr": 2152967168,
+   "size": 8,
+   "decl": "u8 lbl_8053AC00",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ACA0",
+   "section": ".sbss",
+   "addr": 2152967328,
+   "size": 8,
+   "decl": "BlackFade_804A8390* lbl_8053ACA0",
+   "declared_in": "game/include/game/cls_804A8390.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ACA8",
+   "section": ".sbss",
+   "addr": 2152967336,
+   "size": 8,
+   "decl": "cls_804A8578* lbl_8053ACA8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AD68",
+   "section": ".sbss",
+   "addr": 2152967528,
+   "size": 8,
+   "decl": "cls_804AE9A0* lbl_8053AD68",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AD90",
+   "section": ".sbss",
+   "addr": 2152967568,
+   "size": 8,
+   "decl": "cls_804AF860* lbl_8053AD90",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADA0",
+   "section": ".sbss",
+   "addr": 2152967584,
+   "size": 8,
+   "decl": "ResultScreen_804AF9A0* lbl_8053ADA0",
+   "declared_in": "game/include/game/result_screen_803A8DFC.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADA8",
+   "section": ".sbss",
+   "addr": 2152967592,
+   "size": 8,
+   "decl": "cls_804AFAB0* lbl_8053ADA8",
+   "declared_in": "game/include/game/tu_80379F84.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADB0",
+   "section": ".sbss",
+   "addr": 2152967600,
+   "size": 8,
+   "decl": "FileSelect_804AFF60* lbl_8053ADB0",
+   "declared_in": "game/include/game/file_select_803BC6F0.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADB8",
+   "section": ".sbss",
+   "addr": 2152967608,
+   "size": 8,
+   "decl": "SaveScreen_804B0288* lbl_8053ADB8",
+   "declared_in": "game/include/game/tu_80379F84.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADC0",
+   "section": ".sbss",
+   "addr": 2152967616,
+   "size": 8,
+   "decl": "TotalScreen_804B03D8* lbl_8053ADC0",
+   "declared_in": "game/include/game/tu_80379F84.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADC8",
+   "section": ".sbss",
+   "addr": 2152967624,
+   "size": 8,
+   "decl": "PressStartOverlay_804B04F8* lbl_8053ADC8",
+   "declared_in": "game/include/game/act/press_start_overlay_803DA6B4.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADD8",
+   "section": ".sbss",
+   "addr": 2152967640,
+   "size": 8,
+   "decl": "AudioResLoader_804B1A38* lbl_8053ADD8",
+   "declared_in": "game/include/game/cls_804B1A38.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053ADF8",
+   "section": ".sbss",
+   "addr": 2152967672,
+   "size": 8,
+   "decl": "MapScreen_804B1288* lbl_8053ADF8",
+   "declared_in": "game/include/game/cls_804B1288.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AE00",
+   "section": ".sbss",
+   "addr": 2152967680,
+   "size": 32,
+   "decl": "BattleStageSelect_804B1378* lbl_8053AE00",
+   "declared_in": "game/include/game/cls_804B1378.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AEC8",
+   "section": ".sbss",
+   "addr": 2152967880,
+   "size": 8,
+   "decl": "GameOverScreen_804B17A0* lbl_8053AEC8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AED0",
+   "section": ".sbss",
+   "addr": 2152967888,
+   "size": 4,
+   "decl": "HudMgr_804B1920* lbl_8053AED0",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AED8",
+   "section": ".sbss",
+   "addr": 2152967896,
+   "size": 8,
+   "decl": "ButtonIcons_804B1988* lbl_8053AED8",
+   "declared_in": "game/include/game/act/button_icons_80440BF4.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AEE0",
+   "section": ".sbss",
+   "addr": 2152967904,
+   "size": 8,
+   "decl": "GbaConnectErrorWindow_804B19F0* lbl_8053AEE0",
+   "declared_in": "game/include/game/cls_804B19F0.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AEF0",
+   "section": ".sbss",
+   "addr": 2152967920,
+   "size": 8,
+   "decl": "MapEdOverlay_804B1AE8* lbl_8053AEF0",
+   "declared_in": "game/include/game/act/map_ed_overlay_804432DC.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AEF8",
+   "section": ".sbss",
+   "addr": 2152967928,
+   "size": 8,
+   "decl": "MgHorseRaceScreen_804B1BB0* lbl_8053AEF8",
+   "declared_in": "game/include/game/mg_horse_race_screen_804455E0.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF00",
+   "section": ".sbss",
+   "addr": 2152967936,
+   "size": 8,
+   "decl": "MgOniScreen_804B1BE8* lbl_8053AF00",
+   "declared_in": "game/include/game/mg_oni_screen_804465B8.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF08",
+   "section": ".sbss",
+   "addr": 2152967944,
+   "size": 8,
+   "decl": "MgKokkoScreen_804B1C20* lbl_8053AF08",
+   "declared_in": "game/include/game/mg_kokko_screen_80447618.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF10",
+   "section": ".sbss",
+   "addr": 2152967952,
+   "size": 8,
+   "decl": "MgShootingScreen_804B1C58* lbl_8053AF10",
+   "declared_in": "game/include/game/cls_804B1C58.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF18",
+   "section": ".sbss",
+   "addr": 2152967960,
+   "size": 8,
+   "decl": "cls_804B1C90* lbl_8053AF18",
+   "declared_in": "game/include/game/tu_80448940.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF20",
+   "section": ".sbss",
+   "addr": 2152967968,
+   "size": 8,
+   "decl": "MgFishingScreen_804B1CC8* lbl_8053AF20",
+   "declared_in": "game/include/game/mg_fishing_screen_8044998C.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF28",
+   "section": ".sbss",
+   "addr": 2152967976,
+   "size": 8,
+   "decl": "MgVolleyballScreen_804B1D00* lbl_8053AF28",
+   "declared_in": "game/include/game/cls_804B1D00.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF30",
+   "section": ".sbss",
+   "addr": 2152967984,
+   "size": 8,
+   "decl": "StaffRollLoader_804B1D10* lbl_8053AF30",
+   "declared_in": "game/include/game/act/staff_roll_loader_8044B80C.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF38",
+   "section": ".sbss",
+   "addr": 2152967992,
+   "size": 8,
+   "decl": "PrologueOverlay_804B1D20* lbl_8053AF38",
+   "declared_in": "game/include/game/act/prologue_overlay_8044C028.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF40",
+   "section": ".sbss",
+   "addr": 2152968000,
+   "size": 8,
+   "decl": "CollectScreen_804B1D58* lbl_8053AF40",
+   "declared_in": "game/include/game/cls_804B1D58.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF48",
+   "section": ".sbss",
+   "addr": 2152968008,
+   "size": 8,
+   "decl": "PauseScreen_804B1DA8* lbl_8053AF48",
+   "declared_in": "game/include/game/cls_804B1DA8.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053AF50",
+   "section": ".sbss",
+   "addr": 2152968016,
+   "size": 8,
+   "decl": "RupeeDigitSprites_804B1E1C* lbl_8053AF50",
+   "declared_in": "game/include/game/cls_804B1E1C.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_8053EDF0",
+   "section": ".sdata2",
+   "addr": 2152984048,
+   "size": 4,
+   "decl": "const f32 lbl_8053EDF0",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053EDF4",
+   "section": ".sdata2",
+   "addr": 2152984052,
+   "size": 4,
+   "decl": "const f32 lbl_8053EDF4",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053EDF8",
+   "section": ".sdata2",
+   "addr": 2152984056,
+   "size": 4,
+   "decl": "const s32 lbl_8053EDF8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053EDFC",
+   "section": ".sdata2",
+   "addr": 2152984060,
+   "size": 4,
+   "decl": "const s32 lbl_8053EDFC",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053EFB8",
+   "section": ".sdata2",
+   "addr": 2152984504,
+   "size": 4,
+   "decl": "const f32 lbl_8053EFB8",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_8053EFBC",
+   "section": ".sdata2",
+   "addr": 2152984508,
+   "size": 4,
+   "decl": "const f32 lbl_8053EFBC",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "data",
+   "widths": [
+    4
+   ]
+  },
+  {
+   "name": "lbl_80543F20",
+   "section": ".sbss2",
+   "addr": 2153004832,
+   "size": 8,
+   "decl": "JUtility::TColor lbl_80543F20",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_80543F28",
+   "section": ".sbss2",
+   "addr": 2153004840,
+   "size": 8,
+   "decl": "JUtility::TColor lbl_80543F28",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  },
+  {
+   "name": "lbl_80543F30",
+   "section": ".sbss2",
+   "addr": 2153004848,
+   "size": 8,
+   "decl": "JUtility::TColor lbl_80543F30",
+   "declared_in": "game/include/game/GameGlobals.h",
+   "kind": "bss"
+  }
+ ],
+ "unresolved": []
+}

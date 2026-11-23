@@ -131,7 +131,7 @@ s32 fn_801542AC(u32 id, s32 layer, ActorBase_804A5770** out, s32 excludeSerial);
 void fn_8017ED08();
 u8 fn_8017ECC0();
 u8 fn_8017EC70(const JGeometry::TVec3f* pos, f32 value);
-void fn_8017EC5C(JGeometry::TBox2f* box, f32 x0, f32 y0, f32 x1, f32 y1);
+JGeometry::TBox2f* fn_8017EC5C(JGeometry::TBox2f* box, f32 x0, f32 y0, f32 x1, f32 y1);
 void fn_8017EC38(JGeometry::TBox2f* dst, const JGeometry::TBox2f* src);
 bool fn_8017EB94(const JGeometry::TBox2f* box);
 void invalidateEmitter_8017EAB4(JPABaseEmitter* emitter);

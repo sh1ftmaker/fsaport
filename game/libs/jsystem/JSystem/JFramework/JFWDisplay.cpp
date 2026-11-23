@@ -3,6 +3,10 @@
 #include "JSystem/JUtility/JUTConsole.h"
 #include "JSystem/JUtility/JUTDbPrint.h"
 #include "JSystem/JUtility/JUTVideo.h"
+#ifdef FSA_PORT
+void platform_frame_begin();
+void platform_frame_end();
+#endif
 #include "JSystem/JUtility/JUTProcBar.h"
 #include "JSystem/JFramework/JFWDisplay.h"
 
@@ -263,6 +267,9 @@ void JFWDisplay::beginRender() {
 
     waitForTick(mTickRate, mFrameRate);
     JUTVideo::getManager()->waitRetraceIfNeed();
+#ifdef FSA_PORT
+    platform_frame_begin();  // one game frame is one Aurora (WebGPU) frame
+#endif
 
     u32 tick = OSGetTick();
     _30 = tick - _2C; // duration of frame in ticks?
@@ -339,6 +346,9 @@ void JFWDisplay::endRender() {
 
 void JFWDisplay::endFrame() {
     JUTProcBar::getManager()->cpuEnd();
+#ifdef FSA_PORT
+    platform_frame_end();
+#endif
 
     if (mIsWaiting) {
         JUTProcBar::getManager()->gpWaitStart();

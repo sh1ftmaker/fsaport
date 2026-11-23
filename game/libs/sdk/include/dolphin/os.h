@@ -16,15 +16,41 @@ extern "C"
 
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
+#ifdef FSA_PORT
+// Port: "physical" address 0 is the start of Aurora's MEM1 block, cached and
+// uncached alike (its boot info, e.g. the memory size at +0x28, lives there).
+#undef OS_BASE_CACHED
+#undef OS_BASE_UNCACHED
+#ifdef __cplusplus
+extern "C++" unsigned long OSBaseAddress;
+#else
+extern unsigned long OSBaseAddress;
+#endif
+#define OS_BASE_CACHED ((u32)OSBaseAddress)
+#define OS_BASE_UNCACHED ((u32)OSBaseAddress)
+#endif
 
 #ifdef __MWERKS__
 #define AT_ADDRESS(xyz) : (xyz)
 #else
 #define AT_ADDRESS
 #endif
+#ifdef FSA_PORT
+// Port: low-memory globals are ordinary variables, defined in platform/os.cpp.
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern volatile int __OSTVMode;
+extern u32 __OSBusClock;
+extern u32 __OSCoreClock;
+#ifdef __cplusplus
+}
+#endif
+#else
 volatile int __OSTVMode AT_ADDRESS(OS_BASE_CACHED | 0xCC);
 u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);  // sync with OSLoMem.h
 u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC); // sync with OSLoMem.h
+#endif
 #define OS_BUS_CLOCK (u32) __OSBusClock
 #define OS_CORE_CLOCK __OSCoreClock
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)

@@ -33,11 +33,19 @@ typedef struct _GXColor {
 } GXColor;
 
 typedef struct _GXTexObj {
+  #ifdef FSA_PORT
+  u32 dummy[16]; // Aurora keeps more state per texture object
+#else
   u32 dummy[8];
+#endif
 } GXTexObj;
 
 typedef struct _GXTlutObj {
+  #ifdef FSA_PORT
+  u32 dummy[10];
+#else
   u32 dummy[3];
+#endif
 } GXTlutObj;
 
 typedef struct _GXLightObj {
