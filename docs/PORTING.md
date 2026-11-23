@@ -142,6 +142,21 @@ reads go through a platform worker thread.
   command FIFO, so inline vertex writes and J3D's raw command writes work.
 - `GXSetArray` takes Aurora's PC form (size, endianness) at every call site.
 
+### Touch controller (platform/web/touch.js, platform/input.cpp)
+
+A GameCube pad on screen, in the style of katamport's: analog stick (the knob
+follows the thumb, a wedge shows the direction), A/B/X/Y in the GameCube
+arrangement, L/R/Z and Start. In portrait the picture sits above a band that
+holds the pads; in landscape they sit beside the 4:3 picture and fade back
+until touched. On by default where the primary pointer is coarse, toggled with
+"Pad" and remembered. Hit-testing is by coordinate from cached geometry with a
+slop margin (nearest centre wins), every finger is tracked on its own, and
+blur / backgrounding / the iOS `touches` backstop release everything. The page
+calls `fsa_touch_set`; `fsa_pad_after_read` (called by `JUTGamePad::read`
+right after `PADRead`) merges it into port 0: buttons ORed, stick and analog
+triggers from whichever source is pushed further. `tools/web_touch_test.mjs`
+drives it as an emulated phone over CDP.
+
 ### Audio
 
 Not audible yet. JAudio initialises fully (its file formats read

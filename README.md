@@ -20,7 +20,7 @@ committed.
 | Boots in Chrome over WebGPU | yes: threads, disc, archives, audio init, the Nintendo boot logo drawn by the game's own code |
 | Title screen | yes, rendered by the game's own code (J2D, J3D, particles) |
 | Menus and the new-quest opening | yes: mode/file/player select and the prologue narration |
-| Input | keyboard: Enter = Start, Space = A, Shift = B, WASD = stick |
+| Input | keyboard (Enter = Start, Space = A, Shift = B, WASD = stick), gamepads, and an on-screen touch controller on phones and tablets |
 | Speed | 60 frames per 60 retraces everywhere tested; <= ~4 ms of CPU per frame |
 | Past the prologue | not yet (a message window does not advance) |
 | Audio output, saves, GBA views, movies | not yet |

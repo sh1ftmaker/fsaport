@@ -116,14 +116,14 @@ void JUTGamePad::clear()
 }
 
 #ifdef FSA_PORT
-extern "C" void fsa_pad_observe(const PADStatus* status);
+extern "C" void fsa_pad_after_read(PADStatus* status);
 #endif
 
 u32 JUTGamePad::read()
 {
     sRumbleSupported = PADRead(mPadStatus);
 #ifdef FSA_PORT
-    fsa_pad_observe(mPadStatus);
+    fsa_pad_after_read(mPadStatus);
 #endif
 
     switch (sClampMode)
