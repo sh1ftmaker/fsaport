@@ -31,6 +31,7 @@ PORT_FLAGS = [
     "-DFSA_PORT=1",
     "-Wno-everything",
     "-ferror-limit=0",
+    "-Wno-register",
 ]
 
 
@@ -39,7 +40,7 @@ def units():
         path, flags = line.rstrip("\n").split("\t")
         flags = flags.replace("@ASSETS@", os.path.join(BUILD, "assets"))
         # GNU modes: no trigraphs (the game spells resource types '????'), as MWCC.
-        flags = flags.replace("--std=c++98", "--std=gnu++98").replace("--std=c99", "--std=gnu99").split()
+        flags = flags.replace("--std=c++98", "--std=gnu++17").replace("--std=c99", "--std=gnu99").split()
         yield path, flags
 
 

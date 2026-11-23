@@ -2,3 +2,4 @@
 # Those are game data: never commit them.
 /build/
 *.o
+/extern/aurora/build/
