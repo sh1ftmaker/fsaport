@@ -27,6 +27,9 @@ HEADERS = [
     'JSystem/J3D/J3DTexMtx.h', 'JSystem/J3D/J3DPE.h', 'JSystem/J3D/J3DMaterial.h',
     'JSystem/J3D/J3DJointFactory.h', 'JSystem/J3D/J3DShape.h', 'JSystem/J3D/J3DShapeFactory.h',
     'JSystem/J3D/J3DModel.h', 'JSystem/J3D/J3DInd.h', 'dolphin/gx.h',
+    'JSystem/J3D/J3DAnmBase.h', 'JSystem/J3D/J3DAnmTransform.h', 'JSystem/J3D/J3DAnmColor.h',
+    'JSystem/J3D/J3DAnmTevRegKey.h', 'JSystem/J3D/J3DAnmTexPattern.h', 'JSystem/J3D/J3DAnmVisibilityFull.h',
+    'JSystem/J3D/J3DAnmCluster.h', 'JSystem/J3D/J3DAnmVtxColor.h', 'JSystem/J3D/J3DAnmTextureSRTKey.h',
 ]
 # Array typedefs clang prints by name: (element type, element count).
 ARRAY_TYPEDEFS = {'Mtx23': ('f32', 6), 'Mtx': ('f32', 12), 'Mtx44': ('f32', 16), 'Mtx33': ('f32', 9),
@@ -78,6 +81,15 @@ def parse(text):
     return records
 
 
+def is_be(typ):
+    """Types from port/be.h, and structs made only of them (J3DFileBlockBase)."""
+    t = re.sub(r'^(struct|class)\s+', '', typ)
+    return t.startswith('BE<') or t.startswith('BEPtr<') or t == 'BEOffset' or t in BE_RECORDS
+
+
+BE_RECORDS = {'J3DFileBlockBase', 'J3DFileHeader', 'J2DScrnBlockHeader'}
+
+
 def leaves(records, name, base=0, seen=None):
     """Multi-byte scalar leaves of a record: [(offset, size)]."""
     size, fields, is_union = records[name]
@@ -93,7 +105,7 @@ def leaves(records, name, base=0, seen=None):
             if decl.endswith('(base)') or decl.endswith('(primary base)'):
                 bname = re.sub(r'\s*\((primary )?base\)$', '', decl)
                 bname = re.sub(r'^(struct|class)\s+', '', bname)
-                if bname in records:
+                if bname in records and not is_be(bname):
                     out += leaves(records, bname, base + off)
             continue
         m = re.match(r'(.+?)\s+(\w+)((?:\[\d+\])*)$', decl)
@@ -110,6 +122,8 @@ def leaves(records, name, base=0, seen=None):
         if typ in ARRAY_TYPEDEFS:
             typ, n = ARRAY_TYPEDEFS[typ]
             count *= n
+        if is_be(typ):
+            continue  # already big-endian by type (port/be.h): converted on access, never swapped
         if typ.endswith('*'):
             esize, sub = 4, None
         elif typ in SCALAR:

@@ -1,6 +1,10 @@
 // BMG, J3D and JPA checks through the ported accessors and structs.
 #include "test_extra.h"
 
+#include "JSystem/J3D/J3DAnmLoader.h"
+#include "JSystem/J3D/J3DAnmTevRegKey.h"
+#include "JSystem/J3D/J3DAnmTextureSRTKey.h"
+#include "JSystem/J3D/J3DAnmTransform.h"
 #include "JSystem/J3D/J3DFileBlock.h"
 #include "JSystem/J3D/J3DJointFactory.h"
 #include "JSystem/J3D/J3DMaterialFactory.h"
@@ -196,9 +200,50 @@ static void checkBmd(const char* name, const u8* file)
     }
 }
 
+static void checkAnm(const char* name, const u8* file)
+{
+    const J3DFileHeader* hdr = (const J3DFileHeader*)file;
+    char a[5], b[5];
+    tag4(hdr->mJ3dVersion, a);
+    tag4(hdr->mFileVersion, b);
+    J3DPortSwapAnmFile(file);
+    J3DPortSwapAnmFile(file); // must not swap twice
+    const J3DFileBlockBase* blk = hdr->getFirstBlock();
+    char t[5];
+    tag4(blk->mBlockType, t);
+    printf("  %s: %s%s, block %s\n", name, a, b, t);
+    if (blk->mBlockType == J3DFBT_AnmTextureSRTKey) {
+        const J3DAnmTextureSRTKeyData* d = (const J3DAnmTextureSRTKeyData*)blk;
+        const J3DAnmTransformKeyTable* tab = (const J3DAnmTransformKeyTable*)((const u8*)d + d->mTableOffset);
+        const f32* scale = (const f32*)((const u8*)d + d->mScaleValOffset);
+        const f32* trans = (const f32*)((const u8*)d + d->mTransValOffset);
+        const u16* mat = (const u16*)((const u8*)d + d->mUpdateMatIDOffset);
+        printf("    %d frames, %u materials (first %u); table 0 scale %u keys at %u, trans %u keys at %u (type %u); "
+               "scale[0] %.3f, trans[0..2] %.3f %.3f %.3f\n",
+               d->mTotalFrameCount, (unsigned)d->mExtraInfo1, mat[0], tab[0].mScaleInfo.mMaxFrame,
+               tab[0].mScaleInfo.mOffset, tab[0].mTranslationInfo.mMaxFrame, tab[0].mTranslationInfo.mOffset,
+               tab[0].mTranslationInfo.mType, scale[0], trans[0], trans[1], trans[2]);
+        CHECK(d->mTotalFrameCount > 0 && d->mTotalFrameCount < 100000, "%s: frame count", name);
+        CHECK(scale[0] > -100.0f && scale[0] < 100.0f, "%s: scale value", name);
+    } else if (blk->mBlockType == J3DFBT_AnmTevRegKey) {
+        const J3DAnmTevRegKeyData* d = (const J3DAnmTevRegKeyData*)blk;
+        const J3DAnmCRegKeyTable* tab = (const J3DAnmCRegKeyTable*)((const u8*)d + d->mCRegTableOffset);
+        const s16* red = (const s16*)((const u8*)d + d->mCRValuesOffset);
+        printf("    %d frames, %u C-reg / %u K-reg materials; C table 0 red %u keys at %u (type %u); red keys %d %d %d %d\n",
+               d->mTotalFrameCount, d->mCRegUpdateMaterialNum, d->mKRegUpdateMaterialNum, tab[0].mTables[0].mMaxFrame,
+               tab[0].mTables[0].mOffset, tab[0].mTables[0].mType, red[0], red[1], red[2], red[3]);
+        CHECK(d->mTotalFrameCount > 0 && d->mTotalFrameCount < 100000, "%s: frame count", name);
+        CHECK(d->mCRegUpdateMaterialNum + d->mKRegUpdateMaterialNum > 0, "%s: materials", name);
+    }
+}
+
 void testExtra(const char* name, const u8* file, u32 size)
 {
-    static int bmds = 0;
+    static int bmds = 0, btks = 0, brks = 0;
+    if (endsWith(name, ".btk") && btks++ < 1)
+        checkAnm(name, file);
+    if (endsWith(name, ".brk") && brks++ < 1)
+        checkAnm(name, file);
     if (endsWith(name, "_text_e.bmg"))
         checkBmg(name, file);
     if ((endsWith(name, ".bmd") || endsWith(name, ".bdl")) && bmds++ < 2)
