@@ -5,4 +5,5 @@
 extern int gFormatFail;
 void testExtra(const char* name, const u8* file, u32 size);
 void testAudio(const u8* baa, u32 size);
+void checkScreenAnm(const char* name, const u8* btk, const u8* blo);
 #endif

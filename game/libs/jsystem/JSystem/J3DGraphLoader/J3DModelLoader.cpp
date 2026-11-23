@@ -195,8 +195,37 @@ static void portSwapBlock(const J3DFileBlockBase* blk)
 		portSwapElements(t.at(o), t.length(o), kPortSwap_GXColorS10, kPortSwapCount_GXColorS10_, 8);
 		o = (u32)b->mFogInfoOffset;           PORT_SWAP(J3DFogInfo, t.at(o), t.length(o));
 		o = (u32)b->mNBTScaleInfoOffset;      PORT_SWAP(J3DNBTScaleInfo, t.at(o), t.length(o));
-		// Not swapped: the light info (J3DLightInfo is an empty placeholder here)
-		// and the byte tables (colours, counts, TEV/blend/z/alpha settings).
+		// Light info: J3DLightInfo is an empty placeholder in the decomp; the file
+		// entries are tp's layout (0x34 bytes: position and direction f32[6], a
+		// GXColor, attenuation f32[6]).
+		o = (u32)b->mLightInfoOffset;
+		if (u8* p = t.at(o)) {
+			for (u32 e = 0; e + 0x34 <= t.length(o); e += 0x34) {
+				portSwapWords(p + e, 0x18, 4);
+				portSwapWords(p + e + 0x1C, 0x18, 4);
+			}
+		}
+		// Not swapped: the byte tables (colours, counts, TEV/blend/z/alpha settings).
+		break;
+	}
+	case J3DFBT_MaterialV21: {
+		const J3DMaterialBlock_v21* b = (const J3DMaterialBlock_v21*)blk;
+		PortBlockTables t(b, size);
+		const BEOffset* offs = &b->mMatEntryDataOffset;
+		for (int i = 0; i < 27; i++)
+			t.add((u32)offs[i]);
+		u32 o;
+		o = (u32)b->mMatEntryDataOffset;      PORT_SWAP(J3DMaterialInitData_v21, t.at(o), t.length(o));
+		o = (u32)b->mMatRemapTableOffset;     portSwapWords(t.at(o), t.length(o), 2);
+		o = (u32)b->mIndTexInfoOffset;        PORT_SWAP(J3DIndInitData, t.at(o), t.length(o));
+		o = (u32)b->mCullModeInfoOffset;      portSwapWords(t.at(o), t.length(o), 4);
+		o = (u32)b->mTexMtxInfoOffset;        PORT_SWAP(J3DTexMtxInfo, t.at(o), t.length(o));
+		o = (u32)b->mTexMtxInfo2Offset;       PORT_SWAP(J3DTexMtxInfo, t.at(o), t.length(o));
+		o = (u32)b->mTextureRemapTableOffset; portSwapWords(t.at(o), t.length(o), 2);
+		o = (u32)b->mTevColorsOffset;
+		portSwapElements(t.at(o), t.length(o), kPortSwap_GXColorS10, kPortSwapCount_GXColorS10_, 8);
+		o = (u32)b->mFogInfoOffset;           PORT_SWAP(J3DFogInfo, t.at(o), t.length(o));
+		o = (u32)b->mNBTScaleInfoOffset;      PORT_SWAP(J3DNBTScaleInfo, t.at(o), t.length(o));
 		break;
 	}
 	case J3DFBT_MaterialDL: {
@@ -213,8 +242,8 @@ static void portSwapBlock(const J3DFileBlockBase* blk)
 		break;
 	}
 	default:
-		// TEX1 (ResTIMG and names are declared big-endian), MAT2 (v21, not
-		// converted yet), and anything else: left alone.
+		// TEX1 (ResTIMG and names are declared big-endian) and anything else:
+		// left alone.
 		break;
 	}
 }
