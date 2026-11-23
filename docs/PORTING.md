@@ -4,8 +4,10 @@
 
 - **A source port, not an emulator.** The game's own C++ runs natively (wasm32
   first); the GameCube SDK is replaced by a platform layer. Correctness means
-  "the game behaves right", not "matches 2003 hardware": no register-level or
-  cycle-level fidelity is a goal anywhere.
+  "the game behaves right", not "matches the GameCube": no hardware, register,
+  timing or memory-layout fidelity is a goal anywhere. Structures may grow
+  (Aurora's GXTexObj is 64 bytes), heaps are larger, floats are IEEE without
+  FMA, threads are cooperative.
 - **GBA support stays, GBA hardware does not.** The four-player modes and
   Shadow Battle keep their per-player screens, but they are rebuilt natively
   instead of being bound to the joybus protocol, GBA timing or the GBA client
@@ -25,7 +27,9 @@ each unit's own flags (from `game/units.txt`):
 
 | Flag | Why |
 |---|---|
-| `--std=gnu++98` / `gnu99` instead of `c++98` / `c99` | strict modes enable trigraphs, and the game spells resource types `'????'` (`??'` is the trigraph for `^`). MWCC has no trigraphs. |
+| `--std=gnu++17` / `gnu99` | GNU modes: no trigraphs (the game spells resource types `'????'`, and `??'` is the trigraph for `^`). C++17 for the `BE<T>` file-struct wrapper (`game/libs/sdk/include/port/be.h`); `register` is allowed with `-Wno-register`. |
+| `-fno-strict-return` | MWCC-era functions that fall off the end without a return were compiled as unreachable code and hung. |
+| `-gline-tables-only` | `tools/wasm_where.sh` maps a Chrome stack offset to a source line. |
 | `-nostdinc` | the units use the decomp's MSL headers for now (see "Open questions"). |
 | `-fsigned-char` | wasm's default too; stated so the 64-bit/ARM builds agree. |
 | `-fno-rtti -fno-exceptions` | the game was built with `-RTTI off`; it has no `try`/`throw`. |
@@ -84,33 +88,94 @@ Every change keeps the original under `#ifdef __MWERKS__` where it was code
   behaviour; 2 game functions have no source (see the decomp's honest report).
 - `fn_80093280` (JMath's fast vector magnitude) is not written upstream either.
 
-## Next: the link (489 undefined symbols)
+## Running in the browser
 
-`python3 tools/undef_report.py` lists them. In groups:
+Built with CMake (`CMakeLists.txt`): one static library per flag group of
+`game/units.txt`, the platform layer, Aurora and its dependencies, linked with
+JSPI. See README for the commands.
 
-| Group | Count | What to do |
-|---|--:|---|
-| Dolphin SDK | 290 | The platform layer: GX (106) through Aurora's GX API; OS (61: threads, heaps, time, interrupts); CARD, DVD, VI, PAD, DSP/AI/AR (audio), GD, GBA (6), and the PSMTX/PSVEC math (C versions). |
-| Game data with no definition | done | 139 globals the matching build takes from dtk's split of the DOL. `tools/gen_globals.py emit main.dol build/generated` writes `build/generated/globals.c` (never committed: it is game data) from the committed `tools/globals_layout.json` (names, addresses, sizes, element widths, pointer targets; no bytes). Each object is a byte image of the DOL's bytes made little-endian per element; pointer tables are typed so they relocate. `units.txt` names it `@GENERATED@/globals.c`. Regenerate the layout with `gen_globals.py layout` when units stop defining or start defining such symbols. |
-| JSystem / game functions | done | `game/src/port/jsystem_statics.cpp` (the `JASGlobalInstance<T>::sInstance` definitions MWCC inferred from declarations, JMessage signatures, `J3DPSMtxArrayConcat`, `JKRFileCache::getDvdPathName`, `JKRThreadSwitch`, `JSUOutputStream::_0C`) and `game/src/port/missing_functions.cpp` (`fn_80093280`, EscortBase's vtable slots 0xA0/0xA4); `JASWaveBank.cpp` added to `units.txt`. |
-| C library / C++ runtime | 26 + 3 | Link against emscripten's libc (see "Open questions") and libc++abi. |
-| Cache maintenance | ~30 | `DCStoreRange`, `DCInvalidateRange`, ...: no-ops on the host. |
+### Threads: JSPI coroutines (platform/os_thread.cpp, platform/web/fsa_sched.js)
 
-Also before anything runs:
+Every OSThread is a coroutine: a JSPI promising export (`fsa_thread_entry`) gives
+it its own wasm stack, and it gets its own region of emscripten's shadow stack
+(saved and restored around each switch). A switch suspends the current
+coroutine on a promise and resumes the target from a microtask, so only one runs
+at a time. Scheduling is by priority like the SDK's, but cooperative: a thread
+runs until it blocks or an OS call readies a higher-priority thread.
 
-- **MMIO addresses**: `dolphin/hw_regs.h` and the inline vertex writes in
-  `dolphin/gx/GXVert.h` (`GXWGFifo`, `0xCC008000`) point at GameCube hardware.
-  The GX inlines must call Aurora instead; nothing may touch `0xCC00xxxx`.
-- **Big-endian data**: every disc format (RARC, Yaz0, BMD/BDL, BTI, BLO, JPA,
-  BMG, BFN, audio banks, FSA's stage/map/actor formats) is big-endian and wasm
-  is little-endian. The JSystem loaders can follow dusk (TP's port); the game's
-  own formats need their own swapping.
-- **Threads**: the game runs several OS threads. The plan is cooperative
-  threads on one wasm thread (JSPI), as the recompilation does in the browser.
-- **GBA**: the GBA screens were drawn by a separate GBA program from a command
-  stream. The port replaces that with native rendering of each player's view;
-  the design is open (draw the sub-area with the TV renderer as a per-player
-  view, or reimplement the client's renderer from the stream).
+- **Interrupts** (VI retrace, alarms, DVD completion) run from the page's event
+  loop as `fsa_retrace` / `fsa_timer`. They only make threads ready; if every
+  thread is blocked the scheduler is idle and the interrupt resumes one.
+- **Polling**: calls the game polls in loops (`DVDGetDriveStatus`,
+  `VIGetRetraceCount`, ...) are poll points: after ~8 ms without blocking the
+  thread sleeps 1 ms so the page's event loop can run.
+- **Starvation**: switches are microtasks, which the browser drains before any
+  task; every ~8 ms a switch goes through a MessageChannel task instead so
+  rendering, input, timers and DevTools still get turns.
+- No Asyncify, no SharedArrayBuffer, no pthreads. Needs `WebAssembly.Suspending`
+  (Chrome/Edge 137+).
+
+### Memory and allocation
+
+Aurora allocates MEM1 (64 MB; `OS_BASE_CACHED` is its base, boot info included)
+and ARAM (16 MB). JSystem's global `operator new/delete` replace C++'s for the
+whole module, so they route by caller: host code (libc++, Aurora, the platform
+layer) marks itself with `HostAllocScope` and gets `malloc`; game code gets the
+current JKR heap; `delete` frees by address (inside the root heap -> JKR).
+
+### Disc (platform/dvd.cpp, platform/web/fsa_disc.js)
+
+The user's image is read from the page (a dropped `File`, or a URL with HTTP
+Range requests) in 1 MiB blocks with an LRU cache; nothing is uploaded. Paths
+resolve through the disc's FST. Reads suspend the calling coroutine; async
+reads go through a platform worker thread.
+
+### Video and graphics (platform/vi.cpp, platform/glue/gx_pipe.cpp)
+
+- Retraces come from `requestAnimationFrame`, paced to 59.94 Hz whatever the
+  display's refresh rate. JUTVideo's retrace callbacks and message queue drive
+  the game's own frame pacing.
+- One game frame is one Aurora frame: `JFWDisplay::beginRender` calls
+  `aurora_begin_frame`, `JFWDisplay::endFrame` calls `aurora_end_frame`.
+- GX calls go to Aurora (GX -> WebGPU via emdawnwebgpu). The write-gather pipe
+  (`GXWGFifo`) is a proxy object whose stores append big-endian to Aurora's
+  command FIFO, so inline vertex writes and J3D's raw command writes work.
+- `GXSetArray` takes Aurora's PC form (size, endianness) at every call site.
+
+### Audio
+
+Not audible yet. JAudio initialises fully (its file formats read
+big-endian), but there is no DSP: the DSP boot handshake is skipped and DSP
+commands complete at once. Next: a host mixer in place of the DSP (decode the
+ADPCM channels JAudio sets up, mix, output through Web Audio).
+
+## Classes of bug found while booting
+
+Worth checking for in any code that misbehaves:
+
+- **5-8 character literals** (`'NIN_Logo'`): MWCC makes them 64-bit; clang keeps
+  4 bytes. `tools/fix_tag64.py` rewrote 4,475 of them as `FSA_TAG64("...")`.
+- **Raw big-endian reads** (`u32 info[2]; read(info, 8)`): any file field read
+  into a plain integer is wrong on wasm.
+- **Functions without a return**: `-fno-strict-return` (above).
+- **Return-type mismatches between a declaration and the definition**: C++
+  mangling hides them, `wasm-ld` turns the call into a trap or emits invalid
+  code. Fixed where found (`fn_8017EC5C`, `CARDInit`, `GXSetArray`).
+- **Fixed addresses** (`0x80700000` save region, `0x80000028` boot info): out
+  of bounds on wasm.
+- **Busy-waits on hardware** (DSP mail, `Dsp_Running_Check`): spin forever in a
+  cooperative scheduler; replace the hardware wait, don't just stub it.
+
+## Current state
+
+- Boots in Chrome: JFW, heaps, threads, the loader thread, archive mounts,
+  audio init, and the Nintendo logo drawn by the game's J2D code through Aurora.
+- Then builds GameRoot and stops in `J2DScreen::setAnimation` (J2D animation
+  formats are still host-endian; being converted).
+- Speed: once loading finishes the game keeps up with the 59.94 Hz retrace.
+- Debugging: `FSA_TRACE=ON` enables `[trace]`/`[heap]`/`[blo]` reports;
+  `tools/web_cycle.sh` rebuilds and runs once in a private Chromium over CDP;
+  `tools/wasm_where.sh` symbolises offsets; `fsa_debug_stack()` prints a stack.
 
 ## Open questions
 

@@ -15,22 +15,35 @@ committed.
 
 | Stage | State |
 |---|---|
-| Game code (528 units) compiles for `wasm32` | yes, 528/528 |
-| JSystem (200 units) compiles for `wasm32` | yes, 200/200 (1 unit has no source upstream, see docs/PORTING.md) |
-| Links | no: 489 undefined symbols, listed by `tools/undef_report.py` |
-| Platform layer (GX via Aurora, OS, DVD, PAD, audio, card, GBA) | not started |
-| Boots | no |
+| Game code (528 units) and JSystem (201 units) compile for `wasm32` | yes |
+| Links (game + platform layer + Aurora) | yes |
+| Boots in Chrome over WebGPU | yes: threads, disc, archives, audio init, the Nintendo boot logo drawn by the game's own code |
+| Title screen | not yet: stops building GameRoot (J2D animation formats still host-endian) |
+| Speed | keeps up with the 59.94 Hz retrace once loading is done |
+| Audio output, saves, GBA views | not yet |
 
-## Build (compile check)
+## Build and run (browser)
+
+Needs emscripten 5.0.6 and Chrome/Edge 137+ (WebGPU and JSPI).
 
 ```sh
-source ../fsadecomp/tools/emsdk/emsdk_env.sh          # emscripten 5.0.6
+source ../fsadecomp/tools/emsdk/emsdk_env.sh
 python3 tools/extract_assets.py path/to/main.dol build/assets
-python3 tools/compile_check.py                         # build/obj/*.o + build/compile_report.txt
-python3 tools/undef_report.py > build/undefined.txt    # what the link still needs
+python3 tools/gen_globals.py emit path/to/main.dol build/generated
+emcmake cmake -S . -B build/web -G Ninja -DCMAKE_BUILD_TYPE=Release
+ninja -C build/web fsa
+python3 tools/serve.py --port 8811 --dir build/web          # then open it and drop your disc image
 ```
 
-`make compile DOL=path/to/main.dol` runs the first three steps.
+`--iso path/to/your.iso` on `tools/serve.py` also serves your image at
+`/local.iso`, for testing with `?iso=local.iso` (local only; never expose it).
+`main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
+
+## Compile check only
+
+```sh
+python3 tools/compile_check.py                         # build/obj/*.o + build/compile_report.txt
+```
 
 ## Layout
 
@@ -39,7 +52,8 @@ python3 tools/undef_report.py > build/undefined.txt    # what the link still nee
 | `game/` | The decomp's `src/`, `include/` and `libs/` at the paths the decomp uses, so its include flags apply unchanged. The first commit is the unmodified import; every later change is a port change. |
 | `game/units.txt` | Every unit the port compiles, with its include paths and defines (from the decomp's `compile_commands.json`). |
 | `game/port/` | Headers force-included into every unit: host versions of Metrowerks intrinsics and attributes. |
-| `platform/` | The port's replacement for the GameCube SDK (empty so far). |
+| `platform/` | The port's replacement for the GameCube SDK: threads, DVD, VI, the GX pipe glue, stubs; `platform/web/` holds the page and its scripts. |
+| `extern/aurora/` | Aurora (MIT): GX -> WebGPU, PAD, CARD, OS memory. |
 | `tools/` | Build and porting scripts. |
 | `docs/PORTING.md` | Every kind of change made to the sources and why, and what comes next. |
 
