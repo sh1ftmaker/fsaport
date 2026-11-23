@@ -1,0 +1,1394 @@
+#include "game/GameAudio.h"
+#include "game/Camera.h"
+#include "game/GameGlobals.h"
+#include "game/GameState.h"
+#include "game/cls_804B13D4.h"
+#include "game/cls_804B146C.h"
+#include "game/cls_804B1C58.h"
+#include "game/cls_804B1D00.h"
+#include "game/act/map_ed_overlay_804432DC.h"
+#include "game/mg_horse_race_screen_804455E0.h"
+#include "game/mg_oni_screen_804465B8.h"
+#include "game/mg_kokko_screen_80447618.h"
+#include "game/tu_80448940.h"
+#include "game/mg_fishing_screen_8044998C.h"
+#include "game/act/prologue_overlay_8044C028.h"
+#include "game/cls_804B1E1C.h"
+#include "game/save_data_803B8C74.h"
+#include "JSystem/J2D/J2DPicture.h"
+#include "JSystem/J2D/J2DScreen.h"
+#include "JSystem/J2D/J2DGrafContext.h"
+#include "JSystem/JUtility/JUTVideo.h"
+#include "game/Message.h"
+#include "game/Player.h"
+#include <string.h>
+#include <math.h>
+
+// Auto-inlining is off for the whole file (docs/INLINING.md, pragma rule 2): the
+// original inlines no same-unit plain function. Checked: built with inlining off,
+// every written function's calls to this unit's functions equal the original's
+// `bl`s. The callers that need it: fn_8043E7CC calls fn_80440928 out of line.
+#pragma auto_inline off
+
+// The panel offsets and the box test the panel checks inline (fn_8043D514 / fn_8043D57C /
+// fn_8043DF24 as written out in fn_8043E398).
+static inline f32 topOffset(HudMgr_804B1920* m) {
+    f32 result = 0.0f;
+    if (m->field_0x10b != 0 && m->field_0x10c == 1) {
+        result = -66.0f * (-87.0f - (m->field_0x40[9]->mPane->getBounds()->i.y - 13.0f)) / 100.0f;
+    }
+    return result;
+}
+
+static inline f32 bottomOffset(HudMgr_804B1920* m) {
+    f32 result = 0.0f;
+    if (m->field_0x10b != 0 && m->field_0x10c == 0) {
+        f32 y = m->field_0x40[0]->mPane->getBounds()->i.y - m->field_0x40[0]->field_0xc;
+        result = -66.0f * (100.0f - y) / 100.0f;
+    }
+    return result;
+}
+
+static inline bool outsideBox(f32 x, f32 y, f32 px, f32 py, f32 margin) {
+    f32 left = x - 94.0f - margin;
+    f32 top = y - 61.5f - margin;
+    f32 right = margin + (94.0f + x);
+    f32 bottom = margin + (61.5f + y);
+    if (px >= left && px <= right && py >= top && py <= bottom) {
+        return false;
+    }
+    return true;
+}
+
+
+void fn_804408F0(JGeometry::TVec3f* pos);
+void fn_80440928(f32 x, f32 y);
+
+// The rank pictures (fn_8043F504).
+static const char* lbl_804B1810[] = {
+    "kk_mainRank_01.bti", "kk_mainRank_02.bti", "kk_mainRank_03.bti", "kk_mainRank_04.bti",
+};
+
+static const char* lbl_804B1820[] = {
+    "w01_01.bti", "w01_02.bti", "w01_03.bti", "w01_04.bti",
+    "w02_01.bti", "w02_02.bti", "w02_03.bti", "w02_04.bti",
+    "w03_01.bti", "w03_02.bti", "w03_03.bti", "w03_04.bti",
+    "w04_01.bti", "w04_02.bti", "w04_03.bti", "w04_04.bti",
+    "w05_01.bti", "w05_02.bti", "w05_03.bti", "w05_04.bti",
+    "w06_01.bti", "w06_02.bti", "w06_03.bti", "w06_04.bti",
+    "w07_01.bti", "w07_02.bti", "w07_03.bti", "w07_04.bti",
+    "w08_01.bti", "w08_02.bti", "w08_03.bti", "w08_04.bti",
+};
+
+// fn_8043D644's steps, indexed by field_0x10b; built at static init time.
+// Declared here, not at its use, to keep the .data order (0x804B1820, 0x804B18D0, 0x804B1900).
+static void (HudMgr_804B1920::*lbl_804B18D0[4])() = {
+    &HudMgr_804B1920::fn_8043D034,
+    &HudMgr_804B1920::fn_8043CF40,
+    &HudMgr_804B1920::fn_8043CEA0,
+    &HudMgr_804B1920::fn_8043CDA0,
+};
+
+static const char* lbl_804B1900[] = {
+    "dB01f.bti", "d01f.bti", "d02f.bti", "d03f.bti", "d04f.bti", "d05f.bti", "d06f.bti", "d07f.bti",
+};
+
+void fn_80440928(f32 x, f32 y) {
+    lbl_8053AED0->fn_8043DF8C(x, y);
+}
+
+// FIXME(shotgun): 57.14 %, scheduling; behaviour clean.
+void fn_804408F0(JGeometry::TVec3f* pos) {
+    lbl_8053AED0->fn_8043E7CC(*pos);
+}
+
+// Differs only in the two setFont calls: the original loads lbl_8053AD78->mFont before the search.
+// FIXME: 98.97 %, missing/extra; behaviour clean.
+HudMgr_804B1920::HudMgr_804B1920() {
+    lbl_8053AED0 = this;
+    lbl_80529DEC.field_0x24a = 0;
+    field_0xdd = 0;
+    field_0xdc = 0;
+    field_0x10e = 0;
+    field_0xde = 0;
+    field_0x255 = 0;
+    field_0x257 = 0;
+    field_0x290 = NULL;
+    field_0x294 = NULL;
+    field_0x298 = NULL;
+    field_0x29c = NULL;
+    field_0x2a0 = NULL;
+    field_0x2a4 = NULL;
+    field_0x2a8 = NULL;
+    field_0x2ac = NULL;
+    field_0x2b0 = NULL;
+    field_0x2b4 = NULL;
+    field_0x2b8 = NULL;
+    field_0x2bc = NULL;
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290 = new AdventureHud_804B13D4;
+        if (lbl_80529DEC.mStage_0x118 == 9 && lbl_80529DEC.mLevel_0x11c == 3) {
+            field_0x298 = new MapEdOverlay_804B1AE8;
+        }
+        if (lbl_80529DEC.mStage_0x118 == 8 && lbl_80529DEC.mLevel_0x11c == 3) {
+            field_0x2b8 = new PrologueOverlay_804B1D20;
+        }
+        if (lbl_80529DEC.mStage_0x118 == 4 && lbl_80529DEC.mLevel_0x11c == 1) {
+            field_0x2b0 = new MgFishingScreen_804B1CC8;
+        } else if (lbl_80529DEC.mStage_0x118 == 0 && lbl_80529DEC.mLevel_0x11c == 2) {
+            field_0x29c = new MgHorseRaceScreen_804B1BB0;
+        } else if (lbl_80529DEC.mStage_0x118 == 1 && lbl_80529DEC.mLevel_0x11c == 1) {
+            field_0x2a8 = new MgShootingScreen_804B1C58;
+        } else if (lbl_80529DEC.mStage_0x118 == 1 && lbl_80529DEC.mLevel_0x11c == 2) {
+            field_0x2a4 = new MgKokkoScreen_804B1C20;
+        } else if (lbl_80529DEC.mStage_0x118 == 2 && lbl_80529DEC.mLevel_0x11c == 2) {
+            field_0x2a0 = new MgOniScreen_804B1BE8;
+        } else if (lbl_80529DEC.mStage_0x118 == 4 && lbl_80529DEC.mLevel_0x11c == 2) {
+            field_0x2b4 = new MgVolleyballScreen_804B1D00;
+        } else if (lbl_80529DEC.mStage_0x118 == 5 && lbl_80529DEC.mLevel_0x11c == 2) {
+            field_0x2ac = new cls_804B1C90;
+        }
+    } else {
+        field_0x294 = new BattleHud_804B146C;
+    }
+    field_0x2bc = new RupeeDigitSprites_804B1E1C;
+    field_0x10a = 0;
+    field_0xfc = 0;
+    field_0xe8 = 0;
+    field_0x100 = 0;
+
+    field_0x4 = new J2DScreen;
+    field_0x4->setPriority("main_message_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
+    field_0x8 = new J2DScreen;
+    field_0x8->setPriority("dungeon_floor.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
+    field_0xc = new J2DScreen;
+    field_0xc->setPriority("op_zelda.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
+    field_0xc->search('Tm02')->hide();
+    field_0xc->search('Tm01')->hide();
+    field_0xc->search('P1b02')->hide();
+    field_0xc->search('P1ar')->hide();
+    field_0xc->search('P5b02')->hide();
+    field_0xc->search('P5ar')->hide();
+    field_0x110 = 370.0f + field_0xc->search('Ndata05')->getBounds()->i.x;
+    field_0x114 = field_0xc->search('Ndata05')->getBounds()->i.y;
+    field_0x106 = 0;
+    field_0x108 = 0;
+    field_0xec = field_0x8->search('Pw0101')->getBounds()->i.x;
+    field_0xf0 = field_0x8->search('Pw0101')->getBounds()->i.y;
+    field_0xf4 = 0.0f;
+    field_0xf8 = 0.0f;
+    field_0x10d = 0;
+    static_cast<J2DTextBox*>(field_0x4->search('Tmmt02'))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(field_0x4->search('Tmmt01'))->setFont(lbl_8053AD78->mFont);
+
+    for (s32 i = 0; i < 12; i++) {
+        field_0x40[i] = new PaneCtrl_804AF86C;
+    }
+    field_0x40[0]->setPane_80402F04(field_0x4->search('Pmmwk02'));
+    field_0x40[1]->setPane_80402F04(field_0x4->search('Pmmwk01'));
+    field_0x40[2]->setPane_80402F04(field_0x4->search('Pmmw09'));
+    field_0x40[3]->setPane_80402F04(field_0x4->search('Pmmw08'));
+    field_0x40[4]->setPane_80402F04(field_0x4->search('Pmmw07'));
+    field_0x40[5]->setPane_80402F04(field_0x4->search('Pmmw06'));
+    field_0x40[6]->setPane_80402F04(field_0x4->search('Pmmw05'));
+    field_0x40[7]->setPane_80402F04(field_0x4->search('Pmmw04'));
+    field_0x40[8]->setPane_80402F04(field_0x4->search('Pmmw03'));
+    field_0x40[9]->setPane_80402F04(field_0x4->search('Pmmw02'));
+    field_0x40[10]->setPane_80402F04(field_0x4->search('Pmmw01'));
+    field_0x40[11]->setPane_80402F04(field_0x4->search('Pmmtp'));
+    static_cast<J2DPicture*>(field_0x40[11]->mPane)->setBlackWhite(JUtility::TColor(0), JUtility::TColor(0));
+
+    field_0x70[0] = new PaneCtrl_804AF86C;
+    field_0x70[0]->setPane_80402F04(field_0x4->search('Tmmt01'));
+    field_0x70[1] = new PaneCtrl_804AF86C;
+    field_0x70[1]->setPane_80402F04(field_0x4->search('Tmmt02'));
+    field_0x104 = 0;
+    field_0x10b = 0;
+    field_0x10c = 0;
+    field_0x78[0] = 0;
+    for (s32 i = 0; i < 12; i++) {
+        field_0x40[i]->moveFromCentre_80402E08(0.0f, 100.0f);
+    }
+
+    const ResTIMG* img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_00.bti");
+    field_0x258[0] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_01.bti");
+    field_0x258[1] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_02.bti");
+    field_0x258[2] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_03.bti");
+    field_0x258[3] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_04.bti");
+    field_0x258[4] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_05.bti");
+    field_0x258[5] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_06.bti");
+    field_0x258[6] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_07.bti");
+    field_0x258[7] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_08.bti");
+    field_0x258[8] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_rupyNum_09.bti");
+    field_0x258[9] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', lbl_804B1810[0]);
+    field_0x280[0] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', lbl_804B1810[1]);
+    field_0x280[1] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', lbl_804B1810[2]);
+    field_0x280[2] = new J2DPicture(img);
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', lbl_804B1810[3]);
+    field_0x280[3] = new J2DPicture(img);
+
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_1Pwin_01.bti");
+
+    field_0x14[0] = new J2DPicture(img);
+    field_0x14[0]->setCornerColor(JUtility::TColor(255, 210, 0, 255), JUtility::TColor(255, 210, 0, 255),
+                                  JUtility::TColor(212, 34, 0, 255), JUtility::TColor(212, 34, 0, 255));
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_2Pwin_01.bti");
+    field_0x14[1] = new J2DPicture(img);
+    field_0x14[1]->setCornerColor(JUtility::TColor(255, 210, 0, 255), JUtility::TColor(255, 210, 0, 255),
+                                  JUtility::TColor(212, 34, 0, 255), JUtility::TColor(212, 34, 0, 255));
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_3Pwin_01.bti");
+    field_0x14[2] = new J2DPicture(img);
+    field_0x14[2]->setCornerColor(JUtility::TColor(255, 210, 0, 255), JUtility::TColor(255, 210, 0, 255),
+                                  JUtility::TColor(212, 34, 0, 255), JUtility::TColor(212, 34, 0, 255));
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_4Pwin_01.bti");
+    field_0x14[3] = new J2DPicture(img);
+    field_0x14[3]->setCornerColor(JUtility::TColor(255, 210, 0, 255), JUtility::TColor(255, 210, 0, 255),
+                                  JUtility::TColor(212, 34, 0, 255), JUtility::TColor(212, 34, 0, 255));
+    img = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_draw_01.bti");
+    field_0x14[4] = new J2DPicture(img);
+    field_0x14[4]->setCornerColor(JUtility::TColor(255, 170, 210, 255), JUtility::TColor(255, 170, 210, 255),
+                                  JUtility::TColor(4, 36, 130, 255), JUtility::TColor(4, 36, 130, 255));
+    // The original loads this texture once more and drops the result.
+    getMain2DResource_804030C4('TIMG', "kk_rupyNum_01.bti");
+
+    for (s32 i = 0; i < 10; i++) {
+        field_0x118[i] = 0.0f;
+        field_0x140[i] = 0.0f;
+        field_0x168[i] = 1.0f;
+        field_0x244[i] = 0xFF;
+        field_0x1f4[0][i] = 0;
+        field_0x1f4[1][i] = 0;
+        field_0x1f4[2][i] = 0;
+        field_0x23a[i] = 0;
+        field_0x226[i] = 0;
+    }
+    field_0x252 = 0;
+    for (s32 i = 0; i < 4; i++) {
+        field_0x190[i] = 0.0f;
+        field_0x1a0[i] = 0.0f;
+        field_0x1b0[i] = 1.0f;
+        field_0x24e[i] = 0xFF;
+        field_0x1d0[i] = 0;
+    }
+    field_0x253 = 0;
+
+    if (gGameRoot_8053AAF8->field_0x7f != 0 && lbl_80529DEC.mStage_0x118 == 8 && lbl_80529DEC.mLevel_0x11c == 3) {
+        img = (const ResTIMG*)getBossArchiveResource_804032E8('TIMG', "kk_op4sbase_01.bti");
+        field_0x10 = new J2DPicture(img);
+    } else {
+        field_0x10 = NULL;
+    }
+    field_0x1c0 = 0.0f;
+    field_0x1c4 = 0.0f;
+    field_0x1c8 = 0.0f;
+    field_0x1cc = 0.0f;
+    field_0x256 = 0xFF;
+    field_0xe4 = 0;
+    for (s32 i = 0; i < 4; i++) {
+        field_0x1e0[i] = 1;
+        field_0x1f0[i] = 0;
+    }
+}
+
+HudMgr_804B1920::~HudMgr_804B1920() {
+    if (field_0x290 != NULL) {
+        delete field_0x290;
+        field_0x290 = NULL;
+    }
+    if (field_0x294 != NULL) {
+        delete field_0x294;
+        field_0x294 = NULL;
+    }
+    if (field_0x298 != NULL) {
+        delete field_0x298;
+        field_0x298 = NULL;
+    }
+    if (field_0x2b8 != NULL) {
+        delete field_0x2b8;
+        field_0x2b8 = NULL;
+    }
+    if (field_0x2b0 != NULL) {
+        delete field_0x2b0;
+        field_0x2b0 = NULL;
+    }
+    if (field_0x29c != NULL) {
+        delete field_0x29c;
+        field_0x29c = NULL;
+    }
+    if (field_0x2a8 != NULL) {
+        delete field_0x2a8;
+        field_0x2a8 = NULL;
+    }
+    if (field_0x2b4 != NULL) {
+        delete field_0x2b4;
+        field_0x2b4 = NULL;
+    }
+    if (field_0x2ac != NULL) {
+        delete field_0x2ac;
+        field_0x2ac = NULL;
+    }
+    if (field_0x2a4 != NULL) {
+        delete field_0x2a4;
+        field_0x2a4 = NULL;
+    }
+    if (field_0x2a0 != NULL) {
+        delete field_0x2a0;
+        field_0x2a0 = NULL;
+    }
+    if (field_0x2bc != NULL) {
+        delete field_0x2bc;
+        field_0x2bc = NULL;
+    }
+    delete field_0x4;
+    field_0x4 = NULL;
+    delete field_0x8;
+    field_0x8 = NULL;
+    delete field_0xc;
+    field_0xc = NULL;
+    for (s32 i = 0; i < 12; i++) {
+        delete field_0x40[i];
+        field_0x40[i] = NULL;
+    }
+    delete field_0x70[0];
+    field_0x70[0] = NULL;
+    delete field_0x70[1];
+    field_0x70[1] = NULL;
+    delete field_0x258[0];
+    field_0x258[0] = NULL;
+    delete field_0x258[1];
+    field_0x258[1] = NULL;
+    delete field_0x258[2];
+    field_0x258[2] = NULL;
+    delete field_0x258[3];
+    field_0x258[3] = NULL;
+    delete field_0x258[4];
+    field_0x258[4] = NULL;
+    delete field_0x258[5];
+    field_0x258[5] = NULL;
+    delete field_0x258[6];
+    field_0x258[6] = NULL;
+    delete field_0x258[7];
+    field_0x258[7] = NULL;
+    delete field_0x258[8];
+    field_0x258[8] = NULL;
+    delete field_0x258[9];
+    field_0x258[9] = NULL;
+    delete field_0x280[0];
+    field_0x280[0] = NULL;
+    delete field_0x280[1];
+    field_0x280[1] = NULL;
+    delete field_0x280[2];
+    field_0x280[2] = NULL;
+    delete field_0x280[3];
+    field_0x280[3] = NULL;
+    for (s32 i = 0; i < 4; i++) {
+        delete field_0x14[i];
+        field_0x14[i] = NULL;
+    }
+    delete field_0x14[4];
+    field_0x14[4] = NULL;
+    if (field_0x10 != NULL) {
+        delete field_0x10;
+        field_0x10 = NULL;
+    }
+    lbl_8053AED0 = NULL;
+}
+
+void HudMgr_804B1920::fn_8043EDF8() {
+    field_0xdd = 0;
+    field_0xdc = 0;
+    field_0x255 = 0;
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290->fn_8041FC2C();
+        if (field_0x2b0 != NULL) {
+            field_0x2b0->fn_8044A06C();
+        }
+        if (field_0x29c != NULL) {
+            field_0x29c->fn_80445D24();
+        }
+        if (field_0x2a8 != NULL) {
+            field_0x2a8->fn_80448334();
+        }
+        if (field_0x2b4 != NULL) {
+            field_0x2b4->fn_8044AFD8();
+        }
+        if (field_0x2ac != NULL) {
+            field_0x2ac->fn_804490B8();
+        }
+        if (field_0x2a4 != NULL) {
+            field_0x2a4->fn_804479A0();
+        }
+        if (field_0x2a0 != NULL) {
+            field_0x2a0->fn_80446DB0();
+        }
+    } else {
+        field_0x294->fn_804263A8();
+    }
+    if (field_0x298 != NULL) {
+        lbl_8053AEF0->fn_80443688();
+    }
+}
+
+void HudMgr_804B1920::fn_8043EDE8(s32 arg) {
+    field_0xe0 = arg;
+    field_0xe4 = 30;
+}
+
+// FIXME(shotgun): 99.99 %, reloc-name; behaviour drift.
+void HudMgr_804B1920::fn_8043E80C(u32 digit, u8 alpha, u32 top, u32 bottom, f32 x, f32 y, f32 scale) {
+    f32 px;
+    f32 py;
+    f32 sx;
+    f32 sy;
+    if ((99.0f == scale) | ((90.0f == scale) | (91.0f == scale))) {
+        f32 size = 96.0f;
+        sx = size;
+        sy = size;
+    } else if (scale > 1.0f) {
+        f32 size = 24.0f * scale;
+        sx = size;
+        sy = size;
+    } else if (1.0f == scale) {
+        f32 size = 19.2f;
+        sx = size;
+        sy = size;
+    } else {
+        f32 size = 9.6f;
+        sx = size;
+        sy = size;
+    }
+    px = (12.0f + x) - sx / 2.0f;
+    py = (12.0f + y) - sy / 2.0f;
+    switch (digit) {
+    case 0:
+        field_0x258[0]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[0]->setAlpha(alpha);
+        field_0x258[0]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 1:
+        field_0x258[1]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[1]->setAlpha(alpha);
+        field_0x258[1]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 2:
+        field_0x258[2]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[2]->setAlpha(alpha);
+        field_0x258[2]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 3:
+        field_0x258[3]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[3]->setAlpha(alpha);
+        field_0x258[3]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 4:
+        field_0x258[4]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[4]->setAlpha(alpha);
+        field_0x258[4]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 5:
+        field_0x258[5]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[5]->setAlpha(alpha);
+        field_0x258[5]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 6:
+        field_0x258[6]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[6]->setAlpha(alpha);
+        field_0x258[6]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 7:
+        field_0x258[7]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[7]->setAlpha(alpha);
+        field_0x258[7]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 8:
+        field_0x258[8]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[8]->setAlpha(alpha);
+        field_0x258[8]->draw(px, py, sx, sy, false, false, false);
+        break;
+    case 9:
+        field_0x258[9]->setBlackWhite(JUtility::TColor(top), JUtility::TColor(bottom));
+        field_0x258[9]->setAlpha(alpha);
+        field_0x258[9]->draw(px, py, sx, sy, false, false, false);
+        break;
+    }
+}
+
+void HudMgr_804B1920::fn_8043E7CC(JGeometry::TVec3f pos) {
+    Vec screen;
+    gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&pos, false, false, &screen);
+    fn_80440928(screen.x, screen.y);
+}
+
+static inline f32 maxf(f32 a, f32 b) {
+    return (a >= b) ? a : b;
+}
+
+// FIXME(shotgun): 99.76 %, regalloc-only + reloc-name; behaviour clean.
+// (the cx / cy and box bounds live in fewer float registers)
+void HudMgr_804B1920::fn_8043E398(JGeometry::TVec3f a, JGeometry::TVec3f b) {
+    Vec screenA;
+    Vec screenB;
+    gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&a, false, false, &screenA);
+    gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&b, false, false, &screenB);
+    f32 margin = maxf(fabs(screenB.x - screenA.x), fabs(screenB.y - screenA.y));
+    f32 cx = (screenA.x + screenB.x) / 2.0f;
+    f32 cy = (screenA.y + screenB.y) / 2.0f;
+    if (!outsideBox(93.0f, 61.5f + topOffset(lbl_8053AED0), cx, cy, margin)) {
+        lbl_8053AED0->field_0xdc |= 1;
+    }
+    if (!outsideBox(514.0f, 61.5f + topOffset(lbl_8053AED0), cx, cy, margin)) {
+        lbl_8053AED0->field_0xdc |= 2;
+    }
+    if (!outsideBox(93.0f, 407.5f + bottomOffset(lbl_8053AED0), cx, cy, margin)) {
+        lbl_8053AED0->field_0xdc |= 4;
+    }
+    if (!outsideBox(514.0f, 407.5f + bottomOffset(lbl_8053AED0), cx, cy, margin)) {
+        lbl_8053AED0->field_0xdc |= 8;
+    }
+}
+
+// FIXME(shotgun): 99.75 %, regalloc-only + reloc-name; behaviour clean.
+void HudMgr_804B1920::fn_8043DF8C(f32 x, f32 y) {
+    Vec screenOrigin;
+    Vec screenUnit;
+    Vec origin;
+    origin.x = 0.0f;
+    origin.y = 0.0f;
+    origin.z = 0.0f;
+    gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&origin, false, false, &screenOrigin);
+    Vec unit;
+    unit.x = 16.0f;
+    unit.y = 0.0f;
+    unit.z = 0.0f;
+    gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&unit, false, false, &screenUnit);
+    f32 margin = screenUnit.x - screenOrigin.x;
+    if (!outsideBox(93.0f, 61.5f + topOffset(lbl_8053AED0), x, y, margin)) {
+        lbl_8053AED0->field_0xdc |= 1;
+    }
+    if (!outsideBox(514.0f, 61.5f + topOffset(lbl_8053AED0), x, y, margin)) {
+        lbl_8053AED0->field_0xdc |= 2;
+    }
+    if (!outsideBox(93.0f, 407.5f + bottomOffset(lbl_8053AED0), x, y, margin)) {
+        lbl_8053AED0->field_0xdc |= 4;
+    }
+    if (!outsideBox(514.0f, 407.5f + bottomOffset(lbl_8053AED0), x, y, margin)) {
+        lbl_8053AED0->field_0xdc |= 8;
+    }
+}
+
+bool HudMgr_804B1920::fn_8043DF24(f32 x, f32 y, f32 px, f32 py, f32 margin) {
+    f32 x0 = x - 94.0f - margin;
+    f32 y0 = y - 61.5f - margin;
+    f32 x1 = margin + (94.0f + x);
+    f32 y1 = margin + (61.5f + y);
+    if (px >= x0 && px <= x1 && py >= y0 && py <= y1) {
+        return false;
+    }
+    return true;
+}
+
+void HudMgr_804B1920::fn_8043DC98() {
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290->fn_8041F720();
+        if (field_0x2b0 != NULL) {
+            field_0x2b0->fn_8044A024();
+        }
+        if (field_0x29c != NULL) {
+            field_0x29c->fn_80445CDC();
+        }
+        if (field_0x2a8 != NULL) {
+            field_0x2a8->fn_804482EC();
+        }
+        if (field_0x2b4 != NULL) {
+            field_0x2b4->fn_8044AF90();
+        }
+        if (field_0x2ac != NULL) {
+            field_0x2ac->fn_80449070();
+        }
+        if (field_0x2a4 != NULL) {
+            field_0x2a4->fn_80447958();
+        }
+        if (field_0x2a0 != NULL) {
+            field_0x2a0->fn_80446D68();
+        }
+        if (field_0x2b8 != NULL) {
+            field_0x2b8->fn_8044C14C();
+        }
+    } else {
+        field_0x294->fn_80425F6C();
+    }
+    if (field_0x2bc != NULL) {
+        field_0x2bc->fn_804556A4();
+    }
+    // The original clears the four player bits twice (two unrolled runs).
+    for (int i = 0; i < 4; i++) {
+        lbl_8053AED0->field_0xdc &= ~(1 << i);
+    }
+    for (int i = 0; i < 4; i++) {
+        lbl_8053AED0->field_0xdc &= ~(1 << i);
+    }
+    gGameRoot2_8053AB10->setPort_8013B490();
+    fn_8043BB84();
+    fn_8043ACE4();
+    fn_8043A638();
+    if (field_0x10 != NULL && field_0x254 != 0) {
+        field_0x10->draw(field_0x1c0, field_0x1c4, field_0x1c8, field_0x1cc, false, false, false);
+        field_0x254 = 0;
+    }
+    if (field_0x298 != NULL) {
+        lbl_8053AEF0->fn_804435E4();
+    }
+    if (field_0x257 != 0) {
+        gGameRoot2_8053AB10->setPort_8013B490();
+        field_0xc->search('Ndata05')->move(field_0x110 + lbl_8050DB0C.field_0x4c[(0x2A2 - 0x4C) / 2],
+                                           field_0x114 + lbl_8050DB0C.field_0x4c[(0x2A4 - 0x4C) / 2]);
+        field_0xc->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+    }
+}
+
+void HudMgr_804B1920::fn_8043DB58() {
+    gGameRoot2_8053AB10->setPort_8013B490();
+    u8 mode = field_0x256;
+    if (mode != 0xFF) {
+        switch (mode) {
+        case 0:
+            field_0x14[0]->draw(179.5f, 173.0f, false, false, false);
+            break;
+        case 1:
+            field_0x14[1]->draw(179.5f, 173.0f, false, false, false);
+            break;
+        case 2:
+            field_0x14[2]->draw(179.5f, 173.0f, false, false, false);
+            break;
+        case 3:
+            field_0x14[3]->draw(179.5f, 173.0f, false, false, false);
+            break;
+        case 4:
+            field_0x14[4]->draw(179.5f, 173.0f, false, false, false);
+            break;
+        }
+    }
+}
+
+void HudMgr_804B1920::fn_8043D8B4() {
+    if (gGameRoot_8053AAF8->field_0x7e == 0) {
+        for (int i = 0; i < 4; i++) {
+            if (gGameRoot_8053AAF8->mPlayerMask & (u8)(1 << i)) {
+                s32 player = getRepresentativePlayer_8022EA0C(i);
+                if (getPlayerLayer_8023DE58(player) < 8) {
+                    JGeometry::TVec3f pos = *getPlayerPos_8023E724(player);
+                    fn_804408F0(&pos);
+                }
+                lbl_80529DEC.field_0xc8[i] = getPlayerMaxLife_80237810(i);
+                lbl_80529DEC.field_0xf8[i] = fn_802373EC(i);
+            }
+        }
+    } else {
+        for (s32 i = 0; i < 4; i++) {
+            if (isPlayerActive_8023F264(i) && getPlayerLayer_8023DE58(i) < 8) {
+                JGeometry::TVec3f pos = *getPlayerPos_8023E724(i);
+                fn_804408F0(&pos);
+            }
+            if (gGameRoot_8053AAF8->mPlayerMask & (u8)(1 << i)) {
+                lbl_80529DEC.field_0xc8[i] = getPlayerMaxLife_80237810(i);
+                lbl_80529DEC.field_0xf8[i] = fn_802373EC(i);
+            }
+        }
+    }
+    if (gGameRoot_8053AAF8->field_0x7e != 0 && fn_8037E4BC()) {
+        lbl_8053AED0->field_0xdc |= 4;
+        lbl_8053AED0->field_0xdc |= 8;
+    }
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290->fn_8041EDB0();
+        if (field_0x2b0 != NULL) {
+            field_0x2b0->fn_8044998C();
+        }
+        if (field_0x29c != NULL) {
+            field_0x29c->fn_804455E0();
+        }
+        if (field_0x2a8 != NULL) {
+            field_0x2a8->fn_80447FAC();
+        }
+        if (field_0x2b4 != NULL) {
+            field_0x2b4->fn_8044A828();
+        }
+        if (field_0x2ac != NULL) {
+            field_0x2ac->fn_80448940();
+        }
+        if (field_0x2a4 != NULL) {
+            field_0x2a4->fn_80447618();
+        }
+        if (field_0x2a0 != NULL) {
+            field_0x2a0->fn_804465B8();
+        }
+        if (field_0x2b8 != NULL) {
+            field_0x2b8->fn_8044C038();
+        }
+    } else {
+        field_0x294->fn_804257E4();
+    }
+    if (field_0x2bc != NULL) {
+        field_0x2bc->fn_8045560C();
+    }
+    field_0x255 = 0;
+    if (field_0x298 != NULL) {
+        lbl_8053AEF0->fn_80443638();
+    }
+    if (gGameRoot_8053AAF8->field_0x85 != 0) {
+        field_0x257 = 1;
+    } else {
+        field_0x257 = 0;
+    }
+}
+
+void HudMgr_804B1920::fn_8043D874(s32 id, s32 arg1, u32 arg2) {
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290->fn_8041E708(id, arg1, arg2);
+    } else {
+        field_0x294->fn_80425234(id, arg1, arg2);
+    }
+}
+
+void HudMgr_804B1920::fn_8043D834() {
+    if (gGameRoot_8053AAF8->field_0x7f != 0) {
+        field_0x290->fn_8041E58C();
+    } else {
+        field_0x294->fn_80425128();
+    }
+}
+
+// Original tests the bool of field_0xde & bit against zero (srwi.; ours: srwi + cmplwi 1),
+// and compares the message type byte signed (cmpwi 0x2A; ours: cmplwi).
+// FIXME: 98.18 %, missing/extra; behaviour drift.
+bool HudMgr_804B1920::requestMessage_8043D67C(s32 id, u32 arg1, u32 arg2) {
+    if (field_0x10a != 0) {
+        return false;
+    }
+    if (id == 0x199u) {
+        if (getGameView_802D6A9C()->testOrSetBit_802D46D8(0, id, false) == true) {
+            return false;
+        }
+        getGameView_802D6A9C()->testOrSetBit_802D46D8(0, id, true);
+    } else if (id == 0x1B5u) {
+        u8 bit = 1 << arg1;
+        if (bool(field_0xde & bit) == true) {
+            return false;
+        }
+        field_0xde |= bit;
+    }
+    u8 type;
+    fn_80383E2C(id, &type);
+    if (type == 0x2A) {
+        if (getGameView_802D6A9C()->testOrSetBit_802D46D8(0, id, false) == true) {
+            return false;
+        }
+        getGameView_802D6A9C()->testOrSetBit_802D46D8(0, id, true);
+    }
+    field_0x10a = 1;
+    field_0xfc = arg1 + 1;
+    field_0xe8 = id;
+    field_0x100 = arg2;
+    switch (id) {
+    case 0x18F:
+    case 0x190:
+    case 0x195:
+    case 0x196:
+    case 0x197:
+    case 0x198:
+    case 0x1A8:
+        gAudioMgr_8053AF80->playSystemSound_80458880(0x40, -1);
+        break;
+    case 0x23F:
+        break;
+    default:
+        gAudioMgr_8053AF80->playSystemSound_80458880(0x39, -1);
+        break;
+    }
+    return true;
+}
+
+void HudMgr_804B1920::fn_8043D644() {
+    (this->*lbl_804B18D0[field_0x10b])();
+}
+
+void HudMgr_804B1920::fn_8043D5F0() {
+    gGameRoot2_8053AB10->setPort_8013B490();
+    field_0x4->setScissor(true);
+    field_0x4->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+}
+
+f32 HudMgr_804B1920::fn_8043D57C() {
+    f32 result = 0.0f;
+    if (field_0x10b != 0 && field_0x10c == 0) {
+        f32 y = field_0x40[0]->mPane->getBounds()->i.y - field_0x40[0]->field_0xc;
+        result = -66.0f * (100.0f - y) / 100.0f;
+    }
+    return result;
+}
+
+// FIXME: 98.85 %, regalloc-only; behaviour clean.
+// Registers differ: the original keeps the bounds value in f1 (the 0.0 default is dead there).
+f32 HudMgr_804B1920::fn_8043D514() {
+    f32 result = 0.0f;
+    if (field_0x10b != 0 && field_0x10c == 1) {
+        result = -66.0f * (-87.0f - (field_0x40[9]->mPane->getBounds()->i.y - 13.0f)) / 100.0f;
+    }
+    return result;
+}
+
+void HudMgr_804B1920::fn_8043D39C() {
+    if (gGameRoot_8053AAF8->field_0x7f) {
+        field_0x290->fn_8041F5FC();
+    } else {
+        field_0x294->fn_80425F24();
+    }
+    if (gGameRoot_8053AAF8->field_0xfe == 1 && field_0xe4 != 0) {
+        gGameRoot2_8053AB10->setPort_8013B490();
+        field_0xe4--;
+        u8 tens = field_0xe0 / 10;
+        u8 ones = field_0xe0 % 10;
+        if (tens != 0) {
+            fn_8043E80C(tens, 0xFF, 0x0A280A00, 0x28FF28FF, 240.0f, 200.0f, 90.0f);
+            fn_8043E80C(ones, 0xFF, 0x0A280A00, 0x28FF28FF, 340.0f, 200.0f, 90.0f);
+        } else if (ones != 0) {
+            fn_8043E80C(ones, 0xFF, 0x50500000, 0xFFFF00FF, 300.0f, 200.0f, 91.0f);
+        } else {
+            fn_8043E80C(ones, 0xFF, 0x50282800, 0xFF5050FF, 300.0f, 200.0f, 99.0f);
+        }
+    }
+}
+
+// FIXME: 99.98 %, reloc-name; behaviour clean.
+// The 1.0 / 16.0 / 100.0 / 13.0 literals sit early in our .sdata2 pool because fn_8043A638..fn_8043CB24
+// (the earlier first uses) are unwritten.
+void HudMgr_804B1920::fn_8043D034() {
+    if (lbl_8053AED0->field_0x10a) {
+        Vec originScreen;
+        Vec topScreen;
+        Vec screen;
+        for (int i = 0; i < 12; i++) {
+            field_0x40[i]->field_0x22 = 0;
+        }
+        fn_803837A4(field_0x78, lbl_8053AED0->field_0xe8, field_0x70[0]->field_0x18, lbl_8053AED0->field_0xfc,
+                    lbl_8053AED0->field_0x100, 1.0f);
+        for (int i = 0; i < 2; i++) {
+            strcpy(((J2DTextBox*)field_0x70[i]->mPane)->getStringPtr(), field_0x78);
+        }
+        // The screen height of 16 units at the origin.
+        JGeometry::TVec3f origin(0.0f, 0.0f, 0.0f);
+        gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&origin, false, false, &originScreen);
+        JGeometry::TVec3f top(0.0f, 16.0f, 0.0f);
+        gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&top, false, false, &topScreen);
+        f32 margin = (topScreen.y - originScreen.y) +
+                     ((s32)JUTVideo::getManager()->getEfbHeight() - field_0x40[9]->field_0xc);
+        u8 side[4];
+        field_0x10c = 0;
+        for (int i = 0; i < 4; i++) {
+            gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(i), false, false, &screen);
+            side[i] = 0;
+            if (screen.x > 0.0f && screen.x < (s32)JUTVideo::getManager()->getFbWidth() && screen.y > 0.0f &&
+                screen.y < (s32)JUTVideo::getManager()->getEfbHeight()) {
+                if (screen.y > (s32)JUTVideo::getManager()->getEfbHeight() - margin) {
+                    side[i] = 1;
+                    field_0x10c = 1;
+                } else if (screen.y < margin) {
+                    side[i] = 2;
+                }
+            }
+        }
+        if (field_0x10c == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (side[i] == 2) {
+                    field_0x10c = 0;
+                }
+            }
+        }
+        f32 y;
+        if (field_0x10c == 0) {
+            y = 100.0f;
+        } else {
+            y = 13.0f - field_0x40[9]->field_0xc - 100.0f;
+        }
+        for (int i = 0; i < 12; i++) {
+            field_0x40[i]->moveFromCentre_80402E08(0.0f, y);
+        }
+        field_0x10b = 1;
+    }
+}
+
+void HudMgr_804B1920::fn_8043CF40() {
+    f32 x;
+    f32 y;
+    if (field_0x10c == 0) {
+        x = 100.0f;
+        y = 0.0f;
+    } else {
+        y = 13.0f - field_0x40[9]->field_0xc;
+        x = y - 100.0f;
+    }
+    u8 done = field_0x40[0]->animateMoveY_80402940(19, 0, x, y);
+    for (int i = 1; i < 12; i++) {
+        field_0x40[i]->animateMoveY_80402940(19, 0, x, y);
+    }
+    if (done) {
+        field_0x104 = 160;
+        field_0x10b = 2;
+    }
+}
+
+void HudMgr_804B1920::fn_8043CEA0() {
+    field_0x104--;
+    if (gGameRoot_8053AAF8->field_0x4c != 7) {
+        field_0x104 = 0;
+    }
+    if (field_0x104 > 0) {
+        return;
+    }
+    for (int i = 0; i < 12; i++) {
+        field_0x40[i]->field_0x22 = 0;
+    }
+    field_0x10b = 3;
+}
+
+void HudMgr_804B1920::fn_8043CDA0() {
+    f32 x;
+    f32 y;
+    if (field_0x10c == 0) {
+        x = 0.0f;
+        y = 100.0f;
+    } else {
+        x = 13.0f - field_0x40[9]->field_0xc;
+        y = x - 100.0f;
+    }
+    u8 done = field_0x40[0]->animateMoveY_80402940(11, 0, x, y);
+    for (int i = 1; i < 12; i++) {
+        field_0x40[i]->animateMoveY_80402940(11, 0, x, y);
+    }
+    if (done) {
+        HudMgr_804B1920* screen = lbl_8053AED0;
+        screen->field_0x10a = 0;
+        screen->field_0xfc = 0;
+        screen->field_0xe8 = 0;
+        screen->field_0x100 = 0;
+        field_0x10b = 0;
+    }
+}
+
+// FIXME(shotgun): 99.91 %, reloc-name; behaviour clean.
+bool HudMgr_804B1920::fn_8043CB24(s32 value, u8 arg2, u8 arg3, u8 digits, bool flag, f32 x, f32 y, f32 scale) {
+    if (field_0x252 < 10) {
+        field_0x118[field_0x252] = x - 0.5f * (19.0f * (digits % 2) * scale) - 16.0f * (digits >> 1) * scale;
+        field_0x140[field_0x252] = y - 0.5f * (19.0f * scale);
+        field_0x168[field_0x252] = scale;
+        field_0x244[field_0x252] = arg2;
+        field_0x226[field_0x252] = digits;
+        field_0x1f4[0][field_0x252] = 0xFF;
+        field_0x1f4[1][field_0x252] = 0xFF;
+        field_0x1f4[2][field_0x252] = 0xFF;
+        field_0x1f4[3][field_0x252] = 0xFF;
+        field_0x1f4[4][field_0x252] = 0xFF;
+        s32 div = 1;
+        bool seen = false;
+        if (flag) {
+            seen = true;
+        }
+        for (s32 i = 0; i < digits; i++) {
+            div *= 10;
+        }
+        if (value > div - 1) {
+            value = div - 1;
+        }
+        if (value < 0) {
+            value = 0;
+        }
+        div /= 10;
+        for (s32 i = 0; i < digits - 1; i++) {
+            s32 digit = value / div;
+            value -= digit * div;
+            if (!seen && digit == 0) {
+                field_0x1f4[i][field_0x252] = 0xFF;
+            } else {
+                if (!seen) {
+                    seen = true;
+                }
+                field_0x1f4[i][field_0x252] = digit;
+            }
+            div /= 10;
+        }
+        field_0x1f4[digits - 1][field_0x252] = value;
+        if (arg3 > 5) {
+            arg3 = 5;
+        }
+        field_0x23a[field_0x252] = arg3;
+        field_0x252++;
+        return true;
+    }
+    return false;
+}
+
+// FIXME: 99.89 %, reloc-name; behaviour drift.
+void HudMgr_804B1920::fn_8043BB84() {
+    static JUtility::TColor lbl_8052C5D8[6] = {
+        JUtility::TColor(0xFF, 0xD2, 0x00, 0xFF),
+        JUtility::TColor(0xB4, 0xFF, 0x00, 0xFF),
+        JUtility::TColor(0xFA, 0x64, 0x32, 0xFF),
+        JUtility::TColor(0x6E, 0xE1, 0xF0, 0xFF),
+        JUtility::TColor(0xE1, 0x82, 0xFF, 0xFF),
+        JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+    };
+    if (field_0x252 != 0) {
+        for (s32 i = 0; i < field_0x252; i++) {
+            f32 alpha = field_0x244[i] / 255.0f;
+            gGameRoot2_8053AB10->setPort_8013B490();
+            for (s32 j = 0; j < 5; j++) {
+                switch (field_0x1f4[j][i]) {
+            case 0:
+                field_0x258[0]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[0]->setAlpha(200.0f * alpha);
+                field_0x258[0]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[0]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[0]->setAlpha(field_0x244[i]);
+                field_0x258[0]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 1:
+                field_0x258[1]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[1]->setAlpha(200.0f * alpha);
+                field_0x258[1]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[1]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[1]->setAlpha(field_0x244[i]);
+                field_0x258[1]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 2:
+                field_0x258[2]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[2]->setAlpha(200.0f * alpha);
+                field_0x258[2]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[2]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[2]->setAlpha(field_0x244[i]);
+                field_0x258[2]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 3:
+                field_0x258[3]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[3]->setAlpha(200.0f * alpha);
+                field_0x258[3]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[3]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[3]->setAlpha(field_0x244[i]);
+                field_0x258[3]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 4:
+                field_0x258[4]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[4]->setAlpha(200.0f * alpha);
+                field_0x258[4]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[4]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[4]->setAlpha(field_0x244[i]);
+                field_0x258[4]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 5:
+                field_0x258[5]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[5]->setAlpha(200.0f * alpha);
+                field_0x258[5]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[5]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[5]->setAlpha(field_0x244[i]);
+                field_0x258[5]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 6:
+                field_0x258[6]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[6]->setAlpha(200.0f * alpha);
+                field_0x258[6]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[6]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[6]->setAlpha(field_0x244[i]);
+                field_0x258[6]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 7:
+                field_0x258[7]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[7]->setAlpha(200.0f * alpha);
+                field_0x258[7]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[7]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[7]->setAlpha(field_0x244[i]);
+                field_0x258[7]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 8:
+                field_0x258[8]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[8]->setAlpha(200.0f * alpha);
+                field_0x258[8]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[8]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[8]->setAlpha(field_0x244[i]);
+                field_0x258[8]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+            case 9:
+                field_0x258[9]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x258[9]->setAlpha(200.0f * alpha);
+                field_0x258[9]->draw(3.0f + field_0x118[i], 3.0f + field_0x140[i], 19.0f * field_0x168[i],
+                                     19.0f * field_0x168[i], false, false, false);
+                field_0x258[9]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), lbl_8052C5D8[field_0x23a[i]]);
+                field_0x258[9]->setAlpha(field_0x244[i]);
+                field_0x258[9]->draw(field_0x118[i], field_0x140[i], 19.0f * field_0x168[i], 19.0f * field_0x168[i],
+                                     false, false, false);
+                break;
+                }
+                field_0x118[i] += 16.0f * field_0x168[i];
+            }
+        }
+        field_0x252 = 0;
+    }
+}
+
+void HudMgr_804B1920::fn_8043ACE4() {
+    // Built once, never read.
+    static JUtility::TColor lbl_8052C5F0[4] = {
+        JUtility::TColor(0xF2, 0x49, 0x12, 0xFF),
+        JUtility::TColor(0xF2, 0x49, 0x12, 0xFF),
+        JUtility::TColor(0xF2, 0x49, 0x12, 0xFF),
+        JUtility::TColor(0xD8, 0xFF, 0xA1, 0xFF),
+    };
+    if (field_0x253 != 0) {
+        for (s32 i = 0; i < field_0x253; i++) {
+            f32 alpha = field_0x24e[i] / 255.0f;
+            gGameRoot2_8053AB10->setPort_8013B490();
+            switch (field_0x1d0[i]) {
+            case 1:
+                field_0x280[0]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x280[0]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[0]->setAlpha(200.0f * alpha);
+                field_0x280[0]->draw(3.0f + field_0x190[i], 3.0f + field_0x1a0[i], 48.0f * field_0x1b0[i],
+                                     48.0f * field_0x1b0[i], false, false, false);
+                field_0x280[0]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[0]->setCornerColor(JUtility::TColor(0xB9, 0x12, 0x12, 0xFF), JUtility::TColor(0xD8, 0x3A, 0x16, 0xFF),
+                                               JUtility::TColor(0xB9, 0x54, 0x12, 0xFF), JUtility::TColor(0xFF, 0x9D, 0x10, 0xFF));
+                field_0x280[0]->setAlpha(field_0x24e[i]);
+                field_0x280[0]->draw(field_0x190[i], field_0x1a0[i], 48.0f * field_0x1b0[i], 48.0f * field_0x1b0[i],
+                                     false, false, false);
+                break;
+            case 2:
+                field_0x280[1]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x280[1]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[1]->setAlpha(200.0f * alpha);
+                field_0x280[1]->draw(3.0f + field_0x190[i], 3.0f + field_0x1a0[i], 48.0f * field_0x1b0[i],
+                                     48.0f * field_0x1b0[i], false, false, false);
+                field_0x280[1]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[1]->setCornerColor(JUtility::TColor(0xF2, 0x48, 0x09, 0xFF), JUtility::TColor(0xF2, 0x48, 0x09, 0xFF),
+                                               JUtility::TColor(0xF2, 0xAB, 0x24, 0xFF), JUtility::TColor(0xFC, 0xFF, 0x21, 0xFF));
+                field_0x280[1]->setAlpha(field_0x24e[i]);
+                field_0x280[1]->draw(field_0x190[i], field_0x1a0[i], 48.0f * field_0x1b0[i], 48.0f * field_0x1b0[i],
+                                     false, false, false);
+                break;
+            case 3:
+                field_0x280[2]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x280[2]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[2]->setAlpha(200.0f * alpha);
+                field_0x280[2]->draw(3.0f + field_0x190[i], 3.0f + field_0x1a0[i], 48.0f * field_0x1b0[i],
+                                     48.0f * field_0x1b0[i], false, false, false);
+                field_0x280[2]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xFF, 0xFF, 0x77, 0xFF));
+                field_0x280[2]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[2]->setAlpha(field_0x24e[i]);
+                field_0x280[2]->draw(field_0x190[i], field_0x1a0[i], 48.0f * field_0x1b0[i], 48.0f * field_0x1b0[i],
+                                     false, false, false);
+                break;
+            case 4:
+                field_0x280[3]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 0xFF));
+                field_0x280[3]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[3]->setAlpha(200.0f * alpha);
+                field_0x280[3]->draw(3.0f + field_0x190[i], 3.0f + field_0x1a0[i], 48.0f * field_0x1b0[i],
+                                     48.0f * field_0x1b0[i], false, false, false);
+                field_0x280[3]->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xD8, 0xFF, 0xA1, 0xFF));
+                field_0x280[3]->setCornerColor(JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF),
+                                               JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF), JUtility::TColor(0xFF, 0xFF, 0xFF, 0xFF));
+                field_0x280[3]->setAlpha(field_0x24e[i]);
+                field_0x280[3]->draw(field_0x190[i], field_0x1a0[i], 48.0f * field_0x1b0[i], 48.0f * field_0x1b0[i],
+                                     false, false, false);
+                break;
+            }
+        }
+        field_0x253 = 0;
+    }
+}
+
+void HudMgr_804B1920::fn_8043ABCC(s32 index, s32 unused) {
+    index = index < 0 ? 0 : index;
+    void* res;
+    if (index != 1) {
+        res = getBossArchiveResource_804032E8('TIMG', lbl_804B1900[index]);
+    } else {
+        res = getMain2DResource_804030C4('TIMG', lbl_804B1900[index]);
+    }
+    static_cast<J2DPicture*>(field_0x8->search('Pdf01'))->changeTexture((const ResTIMG*)res, 0);
+    field_0x8->search('Pdf01')->show();
+    field_0x8->search('Pw0101')->hide();
+    field_0x106 = 1;
+    field_0x10d = 0;
+}
+
+void HudMgr_804B1920::fn_8043A638() {
+    s16 wait;
+    s16 delay;
+    f32 dx = 0.0f;
+    f32 dy = dx;
+    s16 fadeIn = lbl_8050DB0C.field_0x4c[(0x22A - 0x4C) / 2];
+    s16 hold = lbl_8050DB0C.field_0x4c[(0x22C - 0x4C) / 2];
+    s16 fadeOut = lbl_8050DB0C.field_0x4c[(0x22E - 0x4C) / 2];
+    if (field_0x106 == 0) {
+        return;
+    }
+    for (int i = 0; i < 4; i++) {
+        lbl_8053AED0->field_0xdc |= (u8)(1 << i);
+    }
+    if (field_0x10d == 0) {
+        delay = lbl_8050DB0C.field_0x4c[(0x2E6 - 0x4C) / 2] + 80;
+        if (field_0x106 < delay) {
+            field_0x8->search('Pdf01')->setAlpha(0);
+        } else if (field_0x106 <= delay + fadeIn) {
+            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(field_0x106 - delay) / (f32)fadeIn));
+        } else if (field_0x106 > delay + fadeIn + hold) {
+            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(delay + fadeIn + hold + fadeOut - field_0x106) / (f32)fadeOut));
+        }
+        field_0x8->search('Pw0101')->setAlpha(field_0x8->search('Pdf01')->getAlpha());
+        if (field_0x106 < delay + fadeIn + hold + fadeOut) {
+            field_0x106++;
+        } else {
+            field_0x106 = 0;
+        }
+        if (lbl_80529DEC.mStage_0x118 == 8 && lbl_80529DEC.mLevel_0x11c == 3) {
+            dy = 8.0f;
+        }
+        dx += lbl_8050DB0C.field_0x4c[(0x2E2 - 0x4C) / 2];
+        dy += lbl_8050DB0C.field_0x4c[(0x2E4 - 0x4C) / 2];
+        field_0x8->search('Pw0101')->move(field_0xec + dx, field_0xf0 + dy);
+    } else {
+        wait = field_0x108;
+        if (field_0x106 < 20) {
+            field_0x8->search('Pdf01')->setAlpha(0);
+        } else if (field_0x106 <= fadeIn + 20) {
+            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(field_0x106 - 20) / (f32)fadeIn));
+        } else if (field_0x106 > wait + (fadeIn + 20)) {
+            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(fadeOut + (wait + (fadeIn + 20)) - field_0x106) / (f32)fadeOut));
+        }
+        field_0x8->search('Pw0101')->setAlpha(field_0x8->search('Pdf01')->getAlpha());
+        if (field_0x106 < 20 + fadeIn + wait + fadeOut) {
+            field_0x106++;
+        } else {
+            field_0x106 = 0;
+        }
+        field_0x8->search('Pw0101')->move(field_0xf4, field_0xf8);
+    }
+    gGameRoot2_8053AB10->setPort_8013B490();
+    field_0x8->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+}
+
+void HudMgr_804B1920::fn_8043A608() {
+    fn_8043A450(lbl_80529DEC.mStage_0x118, lbl_80529DEC.mLevel_0x11c);
+}
+
+void HudMgr_804B1920::fn_8043A450(s32 stage, s32 sub) {
+    if ((stage == 0 && sub == 2) || (stage == 1 && sub == 2) || (stage == 2 && sub == 2) ||
+        (stage == 3 && sub == 2) || (stage == 4 && sub == 2) || (stage == 5 && sub == 2) ||
+        (stage == 6 && sub == 2) || (stage == 7 && sub == 1)) {
+        return;
+    }
+    if (gGameRoot_8053AAF8->field_0x7f != 0 && stage < 8 && sub < 4) {
+        s32 index = sub + stage * 4;
+        void* res;
+        if (index != 0) {
+            res = getBossArchiveResource_804032E8('TIMG', lbl_804B1820[index]);
+        } else {
+            res = getMain2DResource_804030C4('TIMG', lbl_804B1820[index]);
+        }
+        static_cast<J2DPicture*>(field_0x8->search('Pw0101'))->changeTexture((const ResTIMG*)res, 0);
+        field_0x8->search('Pw0101')->show();
+        field_0x8->search('Pdf01')->hide();
+        field_0x106 = 1;
+        field_0x10d = 0;
+    }
+}
+
+void HudMgr_804B1920::fn_8043A268(s32 stage, s32 sub, s16 value, f32 x, f32 y) {
+    if ((stage == 0 && sub == 2) || (stage == 1 && sub == 2) || (stage == 2 && sub == 2) ||
+        (stage == 3 && sub == 2) || (stage == 4 && sub == 2) || (stage == 5 && sub == 2) ||
+        (stage == 6 && sub == 2) || (stage == 7 && sub == 1)) {
+        return;
+    }
+    if (gGameRoot_8053AAF8->field_0x7f != 0 && stage < 8 && sub < 4) {
+        s32 index = sub + stage * 4;
+        void* res;
+        if (index != 0) {
+            res = getBossArchiveResource_804032E8('TIMG', lbl_804B1820[index]);
+        } else {
+            res = getMain2DResource_804030C4('TIMG', lbl_804B1820[index]);
+        }
+        static_cast<J2DPicture*>(field_0x8->search('Pw0101'))->changeTexture((const ResTIMG*)res, 0);
+        field_0x8->search('Pw0101')->show();
+        field_0x8->search('Pdf01')->hide();
+        field_0x106 = 1;
+        field_0x10d = 1;
+        field_0xf4 = x;
+        field_0xf8 = y;
+        field_0x108 = value;
+    }
+}
+
+void HudMgr_804B1920::fn_8043A208(u8 alpha, f32 a, f32 b, f32 c, f32 d) {
+    if (field_0x10 != NULL) {
+        field_0x1c0 = a;
+        field_0x1c4 = b;
+        field_0x1c8 = c;
+        field_0x1cc = d;
+        field_0x10->setAlpha(alpha);
+        field_0x254 = 1;
+    }
+}
+
+void fn_8043A170(s32 player, bool force) {
+    if (gGameRoot_8053AAF8->field_0x7f != 0 && (lbl_8050EC80.getCurrentFile().mFlags & 1) == 0 &&
+        lbl_80529DEC.mStage_0x118 == 0 && lbl_80529DEC.mLevel_0x11c == 0 && !force) {
+        return;
+    }
+    if (lbl_80529DEC.mStage_0x118 == 10 && lbl_80529DEC.mLevel_0x11c == 2) {
+        return;
+    }
+    lbl_8053AED0->field_0xdd |= (u8)(1 << player);
+}
+
+void fn_8043A0E8(bool force) {
+    if (gGameRoot_8053AAF8->field_0x7f != 0 && (lbl_8050EC80.getCurrentFile().mFlags & 1) == 0 &&
+        lbl_80529DEC.mStage_0x118 == 0 && lbl_80529DEC.mLevel_0x11c == 0 && !force) {
+        return;
+    }
+    if (lbl_80529DEC.mStage_0x118 == 10 && lbl_80529DEC.mLevel_0x11c == 2) {
+        return;
+    }
+    lbl_8053AED0->field_0xdd = 0xF;
+}

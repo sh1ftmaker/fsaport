@@ -1,0 +1,600 @@
+#include "game/GameAudio.h"
+#include "game/act/act_navi.h"
+#include "game/ActorManager.h"
+#include "game/Camera.h"
+#include "game/Effect.h"
+#include "game/GameGlobals.h"
+#include "game/GameState.h"
+#include "game/GameView.h"
+#include "game/Message.h"
+#include "game/Player.h"
+#include "game/SpriteParams.h"
+#include "game/StageFlag.h"
+#include "game/navi_list_8021F064.h"
+#include "JSystem/JMath/JMath.h"
+#include "JSystem/JParticle/JPAEmitter.h"
+#include <float.h>
+#include "std/math.h"
+
+static const s16 lbl_8046A770[] = {
+    0, 1,
+    1, 1,
+    2, 1,
+    3, 1,
+    4, 1,
+    5, 1,
+    -1, -1,
+};
+
+static const u16 lbl_8046A78C[4][4] = {
+    {0x0513, 0x0514, 0x0515, 0x0516},
+    {0x051B, 0x051C, 0x051D, 0x051E},
+    {0x050F, 0x0510, 0x0511, 0x0512},
+    {0x0517, 0x0518, 0x0519, 0x051A},
+};
+
+struct ColorRGB {
+    u8 r, g, b;
+};
+
+static const ColorRGB lbl_8046A7AC[6] = {
+    {0x4B, 0xFF, 0x2D},
+    {0x2D, 0x78, 0xFF},
+    {0xDC, 0x1E, 0xDC},
+    {0xFF, 0x41, 0x37},
+    {0xC8, 0xA0, 0x28},
+    {0x1E, 0xA0, 0xBE},
+};
+
+static const s32 lbl_8046A7C0[6] = {
+    0x1D0, 0x1D6, 0x1DC, 0x1E2, 0x1E8, 0x1EE,
+};
+
+static const s16* lbl_8053A188[] = {lbl_8046A770, NULL};
+s32 lbl_8053A190 = -1;
+
+static const u8 lbl_8053FD50[] = "xi<P_s";
+
+Navi_804A6708::Navi_804A6708() {
+    field_0x2a8 = 0;
+    field_0x2ac = 0;
+    field_0x2ad = 0;
+    field_0x2b0 = 0;
+    field_0x2b4 = -1;
+    field_0x2b8 = 255.0f;
+    field_0x2bc = 0.0f;
+    field_0x2c0.x = 0.0f;
+    field_0x2c0.y = 0.0f;
+    field_0x2c8.x = 0.0f;
+    field_0x2c8.y = 0.0f;
+    mEmitter2D0 = NULL;
+    mEmitter2D4 = NULL;
+}
+
+Navi_804A6708::~Navi_804A6708() {
+    releaseEmitter_801EE434(mEmitter2D0);
+    releaseEmitter_801EE434(mEmitter2D4);
+    if (mFlags & 0x4000) {
+        fn_8021F064()->fn_8021F1F0(mSerial);
+    }
+}
+
+void Navi_804A6708::init() {
+    EnemyBase_804A4808::init();
+    field_0x2a8 = (mSpawnParam_0x90 & 0xFFFF) + 0x12b;
+    s32 param = (mSpawnParam_0x90 >> 16) & 7;
+    if (param > 5) {
+        param = 5;
+    } else if (param < 0) {
+        param = 0;
+    }
+    field_0x2ac = param;
+
+    if (!((mSpawnParam_0x90 >> 19) & 1)) {
+        mFlags |= 0x10000;
+    }
+
+    field_0x2ad = (mSpawnParam_0x90 >> 20) & 0x3F;
+    if (field_0x2ad < 1) {
+        field_0x2ad = 1;
+    }
+
+    field_0x2b0 = (mSpawnParam_0x90 >> 26) & 0x1F;
+
+    if (lbl_80529DEC.mStage_0x118 == 6 && lbl_80529DEC.mLevel_0x11c == 0 && (mSpawnParam_0x90 >> 31)) {
+        mFlags |= 0x4000;
+        if (field_0x2ac == 0) {
+            mFlags |= 0x2000;
+        }
+    } else if (lbl_80529DEC.mStage_0x118 == 6 && lbl_80529DEC.mLevel_0x11c == 1 && (mSpawnParam_0x90 >> 31)) {
+        mFlags |= 0xA000;
+        mFlags &= ~0x10000;
+    } else {
+        mFlags |= 0x2000;
+    }
+
+    if ((mSpawnParam_0x90 >> 31) && lbl_80529DEC.mLevel_0x11c == 0) {
+        switch (lbl_80529DEC.mStage_0x118) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            mFlags |= 0x20000;
+            mFlags &= ~0x10000;
+            break;
+        }
+    }
+
+    mBox.set(1.0f, 1.0f, -1.0f, -1.0f);
+    mBox2.set(mBox);
+    mMapBox_0x80.set(1.0f, 1.0f, -1.0f, -1.0f);
+    field_0xb0 = 0;
+    mDir_0x98 = 2;
+    mFlags |= ENEMY_FLAG_NO_HURT | ENEMY_FLAG_NO_ATTACK | ENEMY_FLAG_KEEP_LIFE;
+    mLife = 1000;
+    mLifeBackup = mLife;
+    field_0x194 = 1;
+
+    if (mFlags & 0x20000) {
+        mPos.z = 18.0f;
+    }
+
+    field_0x2c8.x = mPos.x;
+    field_0x2c8.y = mPos.y;
+
+    if (mFlags & 0x20000) {
+        mState = 0;
+    } else {
+        mState = 3;
+    }
+
+    mStateTimer = 0;
+    field_0x250 = -1;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+
+    mAnim.setKeyTables_801D2608(lbl_8053A188, 1);
+    mAnim.startAnim_801D22DC(0, 2, false);
+    mAnim.setRandomFrame_801D1D60();
+
+    if (mFlags & 0x4000) {
+        fn_8021F064()->fn_8021F25C(mSerial);
+    }
+
+    if (getGameView_802D6A9C()->field_0x131f9 == 2) {
+        markDead_801F3668();
+    } else if (mFlags & 0x20000) {
+        if (isStageFlagSet(lbl_80529DEC.mStage_0x118, lbl_80529DEC.mLevel_0x11c)) {
+            markDead_801F3668();
+        } else {
+            mEmitter2D0 = spawnEmitter_8013CC50(getField_0x4(), &mPos, 0x32C, 0, -1, NULL, NULL, isState9(), 1.0f);
+            mEmitter2D4 = spawnEmitter_8013CC50(getField_0x4(), &mPos, 0x184, 0, -1, NULL, NULL, isState9(), 1.0f);
+            if (mEmitter2D0 != NULL) {
+                mEmitter2D0->setGlobalEnvColor(lbl_8046A7AC[field_0x2ac].r, lbl_8046A7AC[field_0x2ac].g, lbl_8046A7AC[field_0x2ac].b);
+            }
+        }
+    }
+}
+
+
+// FIXME: 90.50 %, missing/extra; behaviour near.
+// Still differs: the original keeps the local TVec2fs in stack slots (dead stores), ours in registers.
+void Navi_804A6708::fn_8021E4F8() {
+    switch (mState) {
+    case 4: {
+        f32 d = (f32)(0x78 - mStateTimer);
+        if (d < FLT_EPSILON) {
+            field_0x2bc = 18.0f;
+        } else {
+            field_0x2bc += (1.0f / d) * (18.0f - field_0x2bc);
+        }
+        break;
+    }
+    case 7: {
+        f32 d = (f32)(0x78 - mStateTimer);
+        if (d < FLT_EPSILON) {
+            field_0x2bc = 1.0f;
+        } else {
+            field_0x2bc += (1.0f / d) * (1.0f - field_0x2bc);
+        }
+        break;
+    }
+    }
+    JGeometry::TVec2f d = field_0x2c0 - field_0x2c8;
+    d.normalize();
+    d.scale(field_0x2bc);
+    s32 player = field_0x2b4;
+    bool follow = false;
+    if (player >= 0 && (mFlags & 0x30000)) {
+        follow = true;
+    }
+    f32 tx, ty;
+    if (follow) {
+        const JGeometry::TVec3f* target = getPlayerPos_8023E724(player);
+        tx = target->x;
+        ty = target->y;
+    } else {
+        tx = mSpawnPos.x;
+        ty = mSpawnPos.y;
+    }
+    approachValue_801CD8E4(&field_0x2c8.x, tx, 1.0f, 0.0f);
+    approachValue_801CD8E4(&field_0x2c8.y, ty, 1.0f, 0.0f);
+    JGeometry::TVec2f goal = field_0x2c8 + d;
+    if (mState == 7 && isFollowing()) {
+        fn_801CD754(&field_0x2c0, &goal, 0.3f, 1.0f, 4.0f);
+    } else {
+        field_0x2c0 = goal;
+    }
+    JGeometry::TVec2f e = field_0x2c0 - field_0x2c8;
+    f32 len = e.length();
+    s16 angle = 0x622;
+    if (len > 0.001f) {
+        s16 v = (s16)(s32)(1.0f / len * (1570.0f * field_0x2bc));
+        if (v > 0x622) {
+            v = 0x622;
+        } else if (v < 0x200) {
+            v = 0x200;
+        }
+        angle = v;
+    }
+    if (mState == 7) {
+        angle = -angle;
+    }
+    const JMath::TSinCosTable<11, f32>& sincos = JMath::sincosTable_;
+    s16 neg = -angle;
+    f32 s = sincos.sinShort(neg);
+    f32 co = sincos.cosShort(neg);
+    field_0x2c0 = field_0x2c8 + JGeometry::TVec2f(e.x * co - e.y * s, e.x * s + e.y * co);
+}
+
+// FIXME(shotgun): 96.86 %, missing/extra; behaviour drift.
+void Navi_804A6708::setState_8021DFAC(s32 newState) {
+    s32 p;
+    switch (newState) {
+    case 1:
+        fn_801F3604();
+        if (mFlags & 0x2000) {
+            for (p = 0; p < 4; p++) {
+                if (isPlayerActive_8023F264(p) && getPlayerLayer_8023DE58(p) == getField_0x4()) {
+                    JGeometry::TVec3f pos(getPlayerPos_8023E724(p)->x, getPlayerPos_8023E724(p)->y, 0.0f);
+                    for (s32 j = 0; j < 4; j++) {
+                        spawnEmitter_8013CC50(mLayer_0x4, &pos, lbl_8046A78C[p][j], 0, 0, NULL, NULL, true, 1.0f);
+                    }
+                    fn_80230FD0(p, 0x20063);
+                }
+            }
+        }
+        break;
+    case 2:
+        if (mFlags & 0x2000) {
+            for (p = 0; p < 4; p++) {
+                if (isPlayerActive_8023F264(p) && getPlayerLayer_8023DE58(p) == getField_0x4()) {
+                    JGeometry::TVec3f pos(getPlayerPos_8023E724(p)->x, getPlayerPos_8023E724(p)->y, 0.0f);
+                    fn_80230498(p, &pos, getPlayerFacing_80230CFC(p) + 0x3C, 0xFF, -0x80, -0x80, true);
+                }
+            }
+        }
+        break;
+    case 3:
+        if (!(mFlags & 0x40000) && (mFlags & 0x2000)) {
+            fn_80230534(false);
+            mFlags |= 0x40000;
+        }
+        markDead_801F3668();
+        break;
+    case 4: {
+        fn_801F3604();
+        field_0x2bc = 1.0f;
+        s32 player = field_0x2b4;
+        bool follow = false;
+        if (player >= 0 && (mFlags & 0x30000)) {
+            follow = true;
+        }
+        if (follow) {
+            JGeometry::TVec3f* target = getPlayerPos_8023E724(player);
+            field_0x2c8.x = target->x;
+            field_0x2c8.y = target->y;
+        } else {
+            field_0x2c8.x = mSpawnPos.x;
+            field_0x2c8.y = mSpawnPos.y;
+        }
+        const JMath::TSinCosTable<11, f32>& sincos = JMath::sincosTable_;
+        field_0x2c0 = field_0x2c8 + JGeometry::TVec2f(sincos.sinShort(-0x4000) * field_0x2bc, sincos.cosShort(-0x4000) * field_0x2bc);
+        mPos.set(field_0x2c0.x, field_0x2c0.y, 0.0f);
+        mEmitter2D0 = spawnEmitter_8013CC50(getField_0x4(), &mPos, 0x32C, 0, -1, NULL, NULL, isState9(), 1.0f);
+        mEmitter2D4 = spawnEmitter_8013CC50(getField_0x4(), &mPos, 0x184, 0, -1, NULL, NULL, isState9(), 1.0f);
+        if (mEmitter2D0 != NULL) {
+            mEmitter2D0->setGlobalEnvColor(lbl_8046A7AC[field_0x2ac].r, lbl_8046A7AC[field_0x2ac].g, lbl_8046A7AC[field_0x2ac].b);
+        }
+        if (mFlags & 0x2000) {
+            startSound_801F0E34(0x40073, 0);
+        }
+        break;
+    }
+    case 6:
+        if (mFlags & 0x2000) {
+            for (p = 0; p < 4; p++) {
+                if (isPlayerActive_8023F264(p) && getPlayerLayer_8023DE58(p) == getField_0x4()) {
+                    s32 v;
+                    if (mFlags & 0x4000) {
+                        v = 3;
+                    } else if (hasPlayerLeader_8022F514(p)) {
+                        v = getPlayerFacing_80230CFC(getPlayerLeader_8022F3DC(p));
+                    } else {
+                        v = oppositeDir_801CD354(fn_801D0020(&mPos, p, false));
+                    }
+                    setPlayerFacing_80230BF4(p, v);
+                    JGeometry::TVec3f pos(getPlayerPos_8023E724(p)->x, getPlayerPos_8023E724(p)->y, 0.0f);
+                    fn_80230498(p, &pos, v + 0x3C, 0xFF, -0x80, -0x80, true);
+                }
+            }
+        }
+        break;
+    case 7: {
+        field_0x2bc = 18.0f;
+        s32 player = field_0x2b4;
+        bool follow = false;
+        if (player >= 0 && (mFlags & 0x30000)) {
+            follow = true;
+        }
+        if (follow) {
+            JGeometry::TVec3f* target = getPlayerPos_8023E724(player);
+            field_0x2c8.x = target->x;
+            field_0x2c8.y = target->y;
+        } else {
+            field_0x2c8.x = mSpawnPos.x;
+            field_0x2c8.y = mSpawnPos.y;
+        }
+        field_0x2c0.x = mPos.x;
+        field_0x2c0.y = mPos.y;
+        if (!(mFlags & 0x40000) && (mFlags & 0x2000)) {
+            fn_80230534(false);
+            mFlags |= 0x40000;
+        }
+        break;
+    }
+    case 8:
+        field_0x250 = lbl_8053FD50[field_0x2ac];
+        if (!(mFlags & 0x40000) && (mFlags & 0x2000)) {
+            fn_80230534(false);
+            mFlags |= 0x40000;
+        }
+        break;
+    case 0:
+    case 10:
+        break;
+    }
+    mStateTimer = 0;
+    mState = newState;
+}
+
+void Navi_804A6708::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        if (mStateTimer >= 5) {
+            setState_8021DFAC(1);
+        }
+        break;
+    case 1:
+        if (mStateTimer >= 45) {
+            setState_8021DFAC(2);
+        }
+        break;
+    case 2:
+        if (mStateTimer >= 45) {
+            field_0x2b4 = fn_801CCE3C(&mPos, mLayer_0x4);
+            if (field_0x2b4 < 0) {
+                field_0x2b4 = 0;
+            }
+            setState_8021DFAC(5);
+        }
+        break;
+    case 3: {
+        field_0x2b4 = findNearestPlayer_801D05F8(&mPos, field_0x2ad * 16.0f);
+        if (field_0x2b4 < 0) {
+            break;
+        }
+        bool flag = false;
+        s32 param = field_0x2b0;
+        if (param != 0) {
+            if (getGameView_802D6A9C()->isScreenFlagSet_802D800C(param)) {
+                flag = true;
+            }
+        } else {
+            flag = true;
+        }
+        if (flag && fn_8023077C()) {
+            setState_8021DFAC(4);
+        }
+        break;
+    }
+    case 4:
+        if (mStateTimer >= 120) {
+            setState_8021DFAC(5);
+        } else {
+            fn_8021E4F8();
+        }
+        break;
+    case 5: {
+        if (!(mFlags & 0x2000)) {
+            break;
+        }
+        if ((mFlags & 0x4000) && !fn_8021F064()->fn_8021F094()) {
+            break;
+        }
+        fn_8022FE80(field_0x2b4, mLayer_0x4, mSerial, false, false);
+        if (field_0x2b4 == fn_8022FD8C(mSerial)) {
+            if (openMessageById_8038C678(field_0x2b4, field_0x2a8, mSerial, mLayer_0x4, JGeometry::TVec3f(0.0f, -10.0f, 0.0f), 0x4002)) {
+                if (mFlags & 0x4000) {
+                    fn_8021F064()->mFlags |= 1;
+                } else {
+                    setState_8021DFAC(6);
+                }
+            }
+        }
+        break;
+    }
+    case 6:
+        if (!(mFlags & 0x2000)) {
+            break;
+        }
+        fn_8022FE80(field_0x2b4, mLayer_0x4, mSerial, false, false);
+        if (stepMessageWindow_803865B8(field_0x2b4) && fn_80384C58(field_0x2b4, mSerial)) {
+            if (mFlags & 0x4000) {
+                fn_8021F064()->mFlags |= 2;
+            } else if (mFlags & 0x8000) {
+                setState_8021DFAC(10);
+            } else {
+                setState_8021DFAC(7);
+            }
+        }
+        break;
+    case 7:
+        if (mStateTimer >= 120) {
+            setState_8021DFAC(3);
+        } else {
+            fn_8021E4F8();
+        }
+        break;
+    case 10:
+        if (mStateTimer >= 240) {
+            setState_8021DFAC(3);
+        } else if (mStateTimer == 120) {
+            if (!(mFlags & 0x40000) && (mFlags & 0x2000)) {
+                fn_80230534(false);
+                mFlags |= 0x40000;
+            }
+        }
+        break;
+    case 8:
+        if (mStateTimer >= field_0x250) {
+            setState_8021DFAC(9);
+        }
+        break;
+    case 9:
+        if (mPos.z >= 350.0f) {
+            setState_8021DFAC(3);
+        }
+        break;
+    }
+}
+
+// FIXME: 99.58 %, regalloc-only + reloc-name; behaviour clean.
+// Registers only; the .sdata2 literals are not split.
+void Navi_804A6708::updateBehavior_0x9C(u8 mapHit) {
+    EnemyBase_804A4808::updateBehavior_0x9C(mapHit);
+    if (mState == 9) {
+        f32 alpha = (mPos.z - 268.0f) * -0.004901961f;
+        if (alpha > 1.0f) {
+            alpha = 1.0f;
+        } else if (alpha < 0.0f) {
+            alpha = 0.0f;
+        }
+        field_0x2b8 = alpha * 255.0f;
+    } else {
+        field_0x2b8 = 255.0f;
+    }
+    setEmitterPos_8013CB44(mEmitter2D0, &mPos, 0, -1, isState9());
+
+    setEmitterPos_8013CB44(mEmitter2D4, &mPos, 0, -1, isState9());
+    if (mEmitter2D0 != NULL) {
+        mEmitter2D0->setGlobalAlpha((u8)field_0x2b8);
+    }
+    if (mEmitter2D4 != NULL) {
+        mEmitter2D4->setGlobalAlpha((u8)field_0x2b8);
+    }
+}
+
+void Navi_804A6708::calcVelocity_0x88() {
+    mVel_0x3c.x = 0.0f;
+    mVel_0x3c.y = 0.0f;
+    mVel_0x3c.z = 0.0f;
+    switch (mState) {
+    case 4:
+        mVel_0x3c.z = 0.15f;
+        break;
+    case 7:
+        mVel_0x3c.z = -0.15f;
+        break;
+    case 9:
+        mVel_0x3c.z = 0.75f;
+        break;
+    }
+    switch (mState) {
+    case 4:
+    case 7: {
+        JGeometry::TVec2f out;
+        // calcVelocityToward_801D01A0 reads only (x, y) of its target, typed TVec3f* in EnemyBase.
+        calcVelocityToward_801D01A0((const JGeometry::TVec3f*)&field_0x2c0, &out, FLT_MAX);
+        mVel_0x3c.x = out.x;
+        mVel_0x3c.y = out.y;
+        break;
+    }
+    case 10:
+        mVel_0x3c.x = 0.116666675f;
+        mVel_0x3c.y = -0.40000004f;
+        break;
+    case 9:
+        mVel_0x3c.y = -0.75f;
+        break;
+    }
+}
+
+void Navi_804A6708::move_0x98() {
+    EnemyBase_804A4808::move_0x98();
+    if (mState == 9 && mPos.z > 350.0f) {
+        mPos.z = 350.0f;
+    }
+}
+
+void Navi_804A6708::vfunc_0xA0() {
+    if (mState == 3) {
+        return;
+    }
+    if ((mFlags & 0x2000) && !(mFlags & 0x40000)) {
+        cls_804A03A8* sub = gGameRoot2_8053AB10->field_0x30;
+        if (sub->field_0x284 == 0) {
+            sub->field_0x284 = 1;
+            sub->field_0x28c = 0.05f;
+        }
+    }
+    if (!(mFlags & 0x10000)) {
+        JGeometry::TVec3f focus(field_0x2c8.x, field_0x2c8.y - mPos.z, 0.0f);
+        gGameRoot2_8053AB10->field_0x24->addFocusPoint_8030C210(&focus);
+    }
+}
+
+// FIXME: 92.15 %, missing/extra; behaviour clean.
+// the flag's 0 shares the constructor's zero register in the original (ours loads a second one)
+void Navi_804A6708::draw() {
+    if (mState != 3 && field_0x2b8 > 0.0f) {
+        SpriteParams_801F5AE0 params;
+        params.field_0x10.a = (s32)field_0x2b8;
+        u8 flag = 0;
+        switch (mState) {
+        case 9:
+            flag = 1;
+            break;
+        }
+        params.field_0x20 = flag;
+        drawSpriteScaled_801F02BC("enemy_both2_sob.bin", lbl_8046A7C0[field_0x2ac] + mAnim.mCel, &params, 0x407, 0, false, 1.0f, 1.0f);
+    }
+}
+
+bool Navi_804A6708::fn_8021D794() {
+    return mState == 5;
+}
+
+void Navi_804A6708::fn_8021D764() {
+    if (mState != 6) {
+        setState_8021DFAC(6);
+    }
+}
+
+void Navi_804A6708::fn_8021D734() {
+    if (mState != 8) {
+        setState_8021DFAC(8);
+    }
+}

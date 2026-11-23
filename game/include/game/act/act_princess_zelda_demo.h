@@ -1,0 +1,88 @@
+#ifndef GAME_ACT_ACT_PRINCESS_ZELDA_DEMO_H
+#define GAME_ACT_ACT_PRINCESS_ZELDA_DEMO_H
+
+// Code: game/act_princess_zelda_demo.cpp.
+
+#include "game/act/demo_actor_base_8010DF44.h"
+#include "game/SpriteAnim.h"
+
+// The DMZL actor ("Princess Zelda (cutscene)", docs/names/actors.tsv). Its
+// ctor calls DemoActorBase_8049D140's ctor, then stores this vtable, 0x8049D208. Named
+// after that vtable. Its last three slots (0x54, 0x58, 0x5C) override
+// DemoActorBase_8049D140's.
+class PrincessZeldaDemo_8049D208 : public DemoActorBase_8049D140 {
+public:
+    PrincessZeldaDemo_8049D208();
+    // Frees the emitters at 0x364, 0x368, 0x36C, 0x370[0..3] and 0x380[0..1]
+    // with releaseEmitter_801EE434, then the members and DemoActorBase_8049D140's destructor run.
+    /* 0x08 */ virtual ~PrincessZeldaDemo_8049D208();
+    // 0x10: copies the Goal (DMGL) and Maiden (DMMD) actors' positions.
+    // 0x0C: reads the actor's parameter word (mSpawnParam_0x90) into the fields below.
+    /* 0x0C */ virtual void init();
+    /* 0x10 */ virtual void vfunc_0x10();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x54 */ virtual void vfunc_0x54();
+    /* 0x58 */ virtual s32 vfunc_0x58();
+
+    void enterDemoState_8010E2D4(s32 arg);
+    void setDemoState_8010F478(s32 arg);
+    bool fn_8010FA54() const;
+    void fn_8010E7E8(s32 arg);
+    void fn_8010F7EC(s32 arg);
+    void fn_8010F4DC();
+    void fn_8010F9F0();
+    void fn_8011093C();
+    void fn_80110454();
+    void fn_80110210();
+    void fn_80110E9C();
+    // Not in the binary: plain functions that fn_80110E9C and fn_8010E7E8 inline.
+    void sinkToPlayer();
+    void lowerPlayers();
+    void pool_8053C570();
+    void pool_8053C574();
+    void flyToGoal();
+    void standBelow(const JGeometry::TVec3f& target);
+    void pool_8053C590();
+    void inl_8011093C(s32 dir);
+    s32 startTalk(u32 msg, bool talkFlag);
+
+    /* 0x230 */ u8 field_0x230; // set to 0 by the ctor
+    /* 0x231 */ u8 field_0x231; // set to 0 by the ctor
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c; // -1 after the ctor
+    /* 0x240 */ s32 field_0x240; // zero after the ctor
+    /* 0x244 */ s32 field_0x244; // bits 8..11 of mSpawnParam_0x90 (init)
+    /* 0x248 */ s32 field_0x248; // bits 12..15 of mSpawnParam_0x90
+    /* 0x24C */ s32 field_0x24c; // zero after the ctor
+    /* 0x250 */ s32 field_0x250; // bits 22..26 of mSpawnParam_0x90: a GameView bit (isScreenFlagSet_802D800C)
+    /* 0x254 */ s32 field_0x254; // bits 17..21 of mSpawnParam_0x90
+    /* 0x258 */ s32 field_0x258; // zero after the ctor
+    /* 0x25C */ s32 field_0x25c; // -1 after the ctor
+    /* 0x260 */ s32 field_0x260; // zero after the ctor
+    /* 0x264 */ s32 field_0x264; // zero after the ctor
+    /* 0x268 */ f32 field_0x268; // 0.0f after the ctor
+    /* 0x26C */ f32 field_0x26c; // 0.0f after the ctor
+    /* 0x270 */ f32 field_0x270; // 0.37f after the ctor
+    /* 0x274 */ f32 field_0x274; // 96.0f after the ctor
+    /* 0x278 */ f32 field_0x278; // 0.0f after the ctor
+    // The position of the Goal (DMGL) actor, copied by vfunc_0x10.
+    /* 0x27C */ JGeometry::TVec3f field_0x27c;
+    // The Maiden (DMMD) actors' positions (0..5) and a copy of mPos (6).
+    /* 0x288 */ JGeometry::TVec3f field_0x288[7];
+    // A start position and the per-frame step towards it (fn_8010E7E8).
+    /* 0x2DC */ JGeometry::TVec3f field_0x2dc;
+    /* 0x2E8 */ JGeometry::TVec3f field_0x2e8;
+    // Two sprite animations; the first one's mAnim (0x2FC) is the animation
+    // index that draw() compares against.
+    /* 0x2F4 */ SpriteAnim_801D267C mAnim0;
+    /* 0x32C */ SpriteAnim_801D267C mAnim1;
+    /* 0x364 */ JPABaseEmitter* field_0x364; // released by the destructor
+    /* 0x368 */ JPABaseEmitter* field_0x368; // released by the destructor
+    /* 0x36C */ JPABaseEmitter* field_0x36c; // released by the destructor
+    /* 0x370 */ JPABaseEmitter* field_0x370[4]; // released by the destructor
+    /* 0x380 */ JPABaseEmitter* field_0x380[2]; // the first two released by the destructor
+}; // Size: unknown (>= 0x388)
+
+#endif

@@ -1,0 +1,776 @@
+#include <stdio.h>
+#include <string.h>
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/GameState.h"
+#include "game/Message.h"
+#include "game/cls_804B1600.h"
+#include "JSystem/J2D/J2DScreen.h"
+#include "JSystem/J2D/J2DPane.h"
+#include "JSystem/J2D/J2DPicture.h"
+#include "JSystem/J2D/J2DGrafContext.h"
+
+// The width of character c in the message font (an int: the asm converts it signed).
+static inline int charWidth(int c) {
+    JUTFont::TWidth w;
+    lbl_8053AD78->mFont->getWidthEntry(c, &w);
+    return w.w1;
+}
+
+WarningWindow_804B1634* lbl_8053AEC0;
+StageSelectWindow_804B1600* lbl_8053AEC4;
+
+// Two 4-entry tables read with lhax by byte index (0xEB); used by fn_80431174 / fn_8042F6DC (not written yet).
+static const s16 lbl_80543AE8[4] = {0x8, 0x154, 0x5, 0x0};
+static const s16 lbl_80543AF0[4] = {0x164, 0xA, 0x160, 0x0};
+
+WarningWindow_804B1634::WarningWindow_804B1634() {
+    JUTResFont* font;
+    lbl_8053AEC0 = this;
+    field_0x4 = new StageSelectWindow_804B1600;
+    field_0x8 = new J2DScreen;
+    field_0x8->setPriority("warning_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
+    field_0xc = new PaneCtrl_804AF86C;
+    field_0xc->setPane_80402F04(field_0x8->search('Ndata01'));
+    field_0x10[0] = new PaneCtrl_804AF86C;
+    field_0x10[0]->setPane_80402F04(field_0x8->search('Pwbb01'));
+    field_0x10[1] = new PaneCtrl_804AF86C;
+    field_0x10[1]->setPane_80402F04(field_0x8->search('Pwbb02'));
+    field_0x10[2] = new PaneCtrl_804AF86C;
+    field_0x10[2]->setPane_80402F04(field_0x8->search('Pwbb03'));
+    field_0x10[3] = new PaneCtrl_804AF86C;
+    field_0x10[3]->setPane_80402F04(field_0x8->search('Pwbb04'));
+    field_0x10[4] = new PaneCtrl_804AF86C;
+    field_0x10[4]->setPane_80402F04(field_0x8->search('Pwbb05'));
+    field_0x24[0] = new PaneCtrl_804AF86C;
+    field_0x24[0]->setPane_80402F04(field_0x8->search('Pwb01'));
+    field_0x24[1] = new PaneCtrl_804AF86C;
+    field_0x24[1]->setPane_80402F04(field_0x8->search('Pwb02'));
+    field_0x24[2] = new PaneCtrl_804AF86C;
+    field_0x24[2]->setPane_80402F04(field_0x8->search('Pwb03'));
+    field_0x24[3] = new PaneCtrl_804AF86C;
+    field_0x24[3]->setPane_80402F04(field_0x8->search('Pwb04'));
+    field_0x24[4] = new PaneCtrl_804AF86C;
+    field_0x24[4]->setPane_80402F04(field_0x8->search('Pwb05'));
+    font = lbl_8053AD78->mFont;
+    static_cast<J2DTextBox*>(field_0x8->search('Twt01'))->setFont(font);
+    for (s32 i = 0; i < 4; i++) {
+        u8 k = 0;
+        for (s32 j = 0; j < 4; j++) {
+            field_0x38[i][j] = static_cast<J2DPicture*>(field_0x10[i]->mPane)->mTexCoords[k];
+            field_0x78[i][j] = static_cast<J2DPicture*>(field_0x24[i]->mPane)->mTexCoords[k];
+            k++;
+        }
+    }
+    field_0xe8 = 0;
+    field_0xec = 0;
+}
+
+WarningWindow_804B1634::~WarningWindow_804B1634() {
+    delete field_0x4;
+    field_0x4 = NULL;
+    delete field_0x8;
+    field_0x8 = NULL;
+    delete field_0xc;
+    field_0xc = NULL;
+    for (s32 i = 0; i < 5; i++) {
+        delete field_0x10[i];
+        field_0x10[i] = NULL;
+        delete field_0x24[i];
+        field_0x24[i] = NULL;
+    }
+    lbl_8053AEC0 = NULL;
+}
+
+bool WarningWindow_804B1634::fn_80431A9C(s32 id, u8 value, u8* out) {
+    if (field_0xec == 0) {
+        fn_8042EF9C(((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getStringPtr(), id, value);
+        if (out != NULL) {
+            field_0x8->search(0x0050776375723031ull)->show();
+            field_0x8->search(0x0050776375723032ull)->show();
+        } else {
+            field_0x8->search(0x0050776375723031ull)->hide();
+            field_0x8->search(0x0050776375723032ull)->hide();
+        }
+        field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+        field_0xc->field_0x22 = 0;
+        field_0xe8 = 0;
+        field_0xeb = 0;
+        field_0xec = 1;
+        fn_8042F6DC();
+        if (out != NULL) {
+            *out = field_0xea;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool WarningWindow_804B1634::fn_80431900(s32 id, u8 value, u8* out) {
+    if (field_0xec == 0) {
+        fn_8042EF9C(((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getStringPtr(), id, value);
+        if (out != NULL) {
+            field_0x8->search(0x0050776375723031ull)->show();
+            field_0x8->search(0x0050776375723032ull)->show();
+        } else {
+            field_0x8->search(0x0050776375723031ull)->hide();
+            field_0x8->search(0x0050776375723032ull)->hide();
+        }
+        field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+        field_0xc->field_0x22 = 0;
+        field_0xe8 = 0;
+        field_0xeb = 0;
+        field_0xec = 1;
+        fn_8042F6DC();
+        if (out != NULL) {
+            *out = field_0xea;
+        }
+        return true;
+    }
+    return false;
+}
+
+BOOL WarningWindow_804B1634::fn_804317AC() {
+    if (field_0xec != 0) {
+        field_0xe8++;
+        if (field_0xe8 < 10) {
+            s32 n = (10 - field_0xe8) * (10 - field_0xe8);
+            field_0xc->moveFromCentre_80402E08(0.0f, 20.0f + -500.0f * n / 100.0f);
+        } else {
+            s32 n = (13 - field_0xe8) * (13 - field_0xe8);
+            field_0xc->moveFromCentre_80402E08(0.0f, 20.0f * n / 9.0f);
+            if (field_0xe8 >= 13) {
+                field_0xe8 = 10 + (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1());
+                field_0xc->field_0x22 = 0;
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
+}
+
+BOOL WarningWindow_804B1634::fn_80431740() {
+    if (field_0xec != 0) {
+        if (field_0xc->animateMoveY_80402940(10, 0, 0.0f, 480.0f) == 0) {
+            return FALSE;
+        }
+        field_0xe8 = 0;
+        field_0xec = 0;
+    }
+    return TRUE;
+}
+
+void WarningWindow_804B1634::fn_804316EC() {
+    if (field_0xec != 0) {
+        gGameRoot2_8053AB10->setPort_8013B490();
+        field_0x8->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+    }
+}
+
+bool WarningWindow_804B1634::fn_80431174(u8 cursor) {
+    if (field_0x8->search(0x0050776375723031ull)->mIsVisible) {
+        field_0xe8--;
+        if (field_0xe8 <= 0) {
+            field_0xe8 = 10 + (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1());
+            if (field_0xeb < 2) {
+                field_0xeb++;
+            } else {
+                field_0xeb = 0;
+            }
+        }
+        // y is declared first: the original keeps y in f31 and x in f30.
+        f32 y;
+        f32 x;
+        J2DPane* textX = field_0x8->search(0x0000005477743031ull);
+        x = ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getBounds()->i.x + textX->getWidth() / 2.0f;
+        J2DPane* textY = field_0x8->search(0x0000005477743031ull);
+        y = ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getBounds()->i.y + textY->getHeight() / 2.0f;
+        if (cursor == 0) {
+            x += (field_0xb8[1] - field_0xc8 - field_0x8->search(0x0050776375723031ull)->getWidth()) / 2.0f;
+        } else {
+            x += (field_0xb8[2] - field_0xc8 - field_0x8->search(0x0050776375723031ull)->getWidth()) / 2.0f +
+                 (field_0xcc[1] - field_0xcc[0]);
+        }
+        f32 curHeight = field_0x8->search(0x0050776375723031ull)->getHeight();
+        y += (field_0xd8[cursor] - (f32)field_0xe4 / 2.0f - 1.0f) *
+                 ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getLineSpace() +
+             (((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getLineSpace() - curHeight) / 2.0f;
+        field_0x8->search(0x0050776375723031ull)->move(x, y);
+        field_0x8->search(0x0050776375723032ull)->move(x, y);
+        f32 height1 = field_0x8->search(0x0050776375723031ull)->getHeight();
+        J2DPane* cur1 = field_0x8->search(0x0050776375723031ull);
+        field_0x8->search(0x0050776375723031ull)
+            ->rotate(0.5f * cur1->getWidth(), 0.5f * height1, J2DROTATE_Z, lbl_80543AE8[field_0xeb]);
+        f32 height2 = field_0x8->search(0x0050776375723032ull)->getHeight();
+        J2DPane* cur2 = field_0x8->search(0x0050776375723032ull);
+        field_0x8->search(0x0050776375723032ull)
+            ->rotate(0.5f * cur2->getWidth(), 0.5f * height2, J2DROTATE_Z, lbl_80543AF0[field_0xeb]);
+    }
+    return false;
+}
+
+void WarningWindow_804B1634::fn_804310CC() {
+    field_0x8->search(0x0050776375723031ull)->hide();
+    field_0x8->search(0x0050776375723032ull)->hide();
+    field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+    field_0xc->field_0x22 = 0;
+    field_0xe8 = 0;
+    field_0xeb = 0;
+    field_0xec = 0;
+}
+
+void WarningWindow_804B1634::fn_804310BC() {
+    field_0xe8 = 0;
+    field_0xec = 0;
+}
+
+// The width of the noun fn_80430368 appends (only nouns 1-5; the space is the font's 0xA0).
+f32 WarningWindow_804B1634::fn_80430518(u8 noun, s32 count, f32 scale) {
+    f32 total = 0.0f;
+    switch (noun) {
+    case 1:
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('F');
+        total += scale * charWidth('o');
+        total += scale * charWidth('r');
+        total += scale * charWidth('c');
+        total += scale * charWidth('e');
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('G');
+        total += scale * charWidth('e');
+        total += scale * charWidth('m');
+        if (count != 1) {
+            total += scale * charWidth('s');
+        }
+        break;
+    case 2:
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('C');
+        total += scale * charWidth('u');
+        total += scale * charWidth('c');
+        total += scale * charWidth('c');
+        total += scale * charWidth('o');
+        if (count != 1) {
+            total += scale * charWidth('s');
+        }
+        break;
+    case 3:
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('b');
+        total += scale * charWidth('a');
+        total += scale * charWidth('d');
+        total += scale * charWidth('d');
+        if (count == 1) {
+            total += scale * charWidth('y');
+        } else {
+            total += scale * charWidth('i');
+            total += scale * charWidth('e');
+            total += scale * charWidth('s');
+        }
+        break;
+    case 4:
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('t');
+        total += scale * charWidth('i');
+        total += scale * charWidth('m');
+        total += scale * charWidth('e');
+        if (count != 1) {
+            total += scale * charWidth('s');
+        }
+        break;
+    case 5:
+        total += scale * charWidth(0xA0);
+        total += scale * charWidth('s');
+        total += scale * charWidth('y');
+        total += scale * charWidth('s');
+        total += scale * charWidth('t');
+        total += scale * charWidth('e');
+        total += scale * charWidth('m');
+        if (count != 1) {
+            total += scale * charWidth('s');
+        }
+        break;
+    }
+    return total;
+}
+
+// FIXME(shotgun): 99.68 %, same-text; behaviour drift.
+// (string literal pool offsets)
+f32 WarningWindow_804B1634::fn_80430368(u8 noun, s32 count, char* out) {
+    switch (noun) {
+    case 1:
+        if (count != 1) {
+            strcat(out, " Force Gems");
+        } else {
+            strcat(out, " Force Gem");
+        }
+        break;
+    case 2:
+        if (count != 1) {
+            strcat(out, " Cuccos");
+        } else {
+            strcat(out, " Cucco");
+        }
+        break;
+    case 3:
+        if (count != 1) {
+            strcat(out, " baddies");
+        } else {
+            strcat(out, " baddy");
+        }
+        break;
+    case 4:
+        if (count != 1) {
+            strcat(out, " times");
+        } else {
+            strcat(out, " time");
+        }
+        break;
+    case 5:
+        if (count != 1) {
+            strcat(out, " systems");
+        } else {
+            strcat(out, " system");
+        }
+        break;
+    case 6:
+        if (count != 1) {
+            strcat(out, " theves");
+        } else {
+            strcat(out, " thief");
+        }
+        break;
+    case 7:
+        if (count != 1) {
+            strcat(out, " moles");
+        } else {
+            strcat(out, " mole");
+        }
+        break;
+    case 8:
+        if (count != 1) {
+            strcat(out, " returns");
+        } else {
+            strcat(out, " return");
+        }
+        break;
+    case 9:
+        if (count != 1) {
+            strcat(out, " Force Fairies");
+        } else {
+            strcat(out, " Force Fairy");
+        }
+        break;
+    }
+    return 0.0f;
+}
+
+// FIXME(shotgun): 99.12 %, scheduling+regalloc; behaviour clean.
+// WarningWindow_804B1634
+void WarningWindow_804B1634::fn_8042F6DC() {
+    f32 w = field_0xb8[0] + 48.0f;
+    f32 lineSpace = static_cast<J2DTextBox*>(field_0x8->search(0x0000005477743031ull))->getLineSpace();
+    f32 h = (f32)field_0xe4 * lineSpace + 24.0f;
+    if (w < 128.0f) {
+        w = 128.0f;
+    }
+    if (h < 128.0f) {
+        h = 128.0f;
+    }
+    s16 tilesW = (s32)(w + 64.0f) / 128;
+    s16 tilesH = (s32)(h + 64.0f) / 128;
+    if (tilesW <= 1) {
+        tilesW++;
+    }
+    if (tilesH <= 1) {
+        tilesH++;
+    }
+    scaleFrames(w, h);
+
+    f32 dx4 = field_0x24[4]->field_0x8 - field_0x24[4]->mPane->getBounds()->i.x;
+    field_0x24[0]->moveFromCentre_80402E08(dx4, 0.0f);
+    field_0x24[1]->moveFromCentre_80402E08(dx4, field_0x24[4]->mPane->getHeight() - field_0x24[4]->field_0x1c);
+
+    f32 dy4 = field_0x24[4]->field_0xc - field_0x24[4]->mPane->getBounds()->i.y;
+    field_0x24[2]->moveFromCentre_80402E08(0.0f, dy4);
+    field_0x24[3]->moveFromCentre_80402E08(field_0x24[4]->mPane->getWidth() - field_0x24[4]->field_0x18, dy4);
+
+    f32 dx_bb4 = field_0x10[4]->field_0x8 - field_0x10[4]->mPane->getBounds()->i.x;
+    field_0x10[0]->moveFromCentre_80402E08(dx_bb4, 0.0f);
+    field_0x10[1]->moveFromCentre_80402E08(dx_bb4, field_0x10[4]->mPane->getHeight() - field_0x10[4]->field_0x1c);
+
+    f32 dy_bb4 = field_0x10[4]->field_0xc - field_0x10[4]->mPane->getBounds()->i.y;
+    field_0x10[2]->moveFromCentre_80402E08(0.0f, dy_bb4);
+    field_0x10[3]->moveFromCentre_80402E08(field_0x10[4]->mPane->getWidth() - field_0x10[4]->field_0x18, dy_bb4);
+
+    JGeometry::TVec2<s16> tcA[4];
+    JGeometry::TVec2<s16> tcB[4];
+    s32 tx = tilesW << 8;
+    for (s32 i = 0; i < 4; i++) {
+        tcA[i] = field_0x38[0][i];
+        tcB[i] = field_0x78[0][i];
+    }
+    tcA[1].x = tx;
+    tcA[3].x = tx;
+    tcB[1].x = tx;
+    tcB[3].x = tx;
+    static_cast<J2DPicture*>(field_0x10[0]->mPane)->setTexCoord(tcA);
+    static_cast<J2DPicture*>(field_0x24[0]->mPane)->setTexCoord(tcB);
+
+    for (s32 i = 0; i < 4; i++) {
+        tcA[i] = field_0x38[1][i];
+        tcB[i] = field_0x78[1][i];
+    }
+    tcA[0].x = tx;
+    tcA[2].x = tx;
+    tcB[0].x = tx;
+    tcB[2].x = tx;
+    static_cast<J2DPicture*>(field_0x10[1]->mPane)->setTexCoord(tcA);
+    static_cast<J2DPicture*>(field_0x24[1]->mPane)->setTexCoord(tcB);
+
+    s32 ty = tilesH << 8;
+    for (s32 i = 0; i < 4; i++) {
+        tcA[i] = field_0x38[2][i];
+        tcB[i] = field_0x78[2][i];
+    }
+    tcA[2].x = ty;
+    tcA[3].x = ty;
+    tcB[2].x = ty;
+    tcB[3].x = ty;
+    static_cast<J2DPicture*>(field_0x10[2]->mPane)->setTexCoord(tcA);
+    static_cast<J2DPicture*>(field_0x24[2]->mPane)->setTexCoord(tcB);
+
+    for (s32 i = 0; i < 4; i++) {
+        tcA[i] = field_0x38[3][i];
+        tcB[i] = field_0x78[3][i];
+    }
+    tcA[0].x = ty;
+    tcA[1].x = ty;
+    tcB[0].x = ty;
+    tcB[1].x = ty;
+    static_cast<J2DPicture*>(field_0x10[3]->mPane)->setTexCoord(tcA);
+    static_cast<J2DPicture*>(field_0x24[3]->mPane)->setTexCoord(tcB);
+
+    if (field_0xea != 0xFF) {
+        if (field_0xb8[1] >= field_0xb8[2]) {
+            J2DPane* cur1 = field_0x8->search(0x0050776375723031ull);
+            field_0x8->search(0x0050776375723031ull)->resize(field_0xb8[1], cur1->getHeight());
+            J2DPane* cur2 = field_0x8->search(0x0050776375723032ull);
+            field_0x8->search(0x0050776375723032ull)->resize(field_0xb8[1], cur2->getHeight());
+        } else {
+            J2DPane* cur1 = field_0x8->search(0x0050776375723031ull);
+            field_0x8->search(0x0050776375723031ull)->resize(field_0xb8[2], cur1->getHeight());
+            J2DPane* cur2 = field_0x8->search(0x0050776375723032ull);
+            field_0x8->search(0x0050776375723032ull)->resize(field_0xb8[2], cur2->getHeight());
+        }
+        u8 cursor = field_0xea;
+        f32 y;
+        f32 x;
+        J2DPane* textX = field_0x8->search(0x0000005477743031ull);
+        x = ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getBounds()->i.x + textX->getWidth() * 0.5f;
+        J2DPane* textY = field_0x8->search(0x0000005477743031ull);
+        y = ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getBounds()->i.y + textY->getHeight() * 0.5f;
+        if (cursor == 0) {
+            x += (field_0xb8[1] - field_0xc8 - field_0x8->search(0x0050776375723031ull)->getWidth()) * 0.5f;
+        } else {
+            x += (field_0xb8[2] - field_0xc8 - field_0x8->search(0x0050776375723031ull)->getWidth()) * 0.5f +
+                 (field_0xcc[1] - field_0xcc[0]);
+        }
+        f32 curHeight = field_0x8->search(0x0050776375723031ull)->getHeight();
+        f32 ls1 = ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getLineSpace();
+        y += (field_0xd8[cursor] - (f32)field_0xe4 * 0.5f - 1.0f) *
+                 ((J2DTextBox*)field_0x8->search(0x0000005477743031ull))->getLineSpace() +
+             (ls1 - curHeight) * 0.5f;
+        field_0x8->search(0x0050776375723031ull)->move(x, y);
+        field_0x8->search(0x0050776375723032ull)->move(x, y);
+        f32 height1 = field_0x8->search(0x0050776375723031ull)->getHeight();
+        J2DPane* cur1 = field_0x8->search(0x0050776375723031ull);
+        field_0x8->search(0x0050776375723031ull)
+            ->rotate(0.5f * cur1->getWidth(), 0.5f * height1, J2DROTATE_Z, lbl_80543AE8[field_0xeb]);
+        f32 height2 = field_0x8->search(0x0050776375723032ull)->getHeight();
+        J2DPane* cur2 = field_0x8->search(0x0050776375723032ull);
+        field_0x8->search(0x0050776375723032ull)
+            ->rotate(0.5f * cur2->getWidth(), 0.5f * height2, J2DROTATE_Z, lbl_80543AF0[field_0xeb]);
+    }
+}
+
+// A plain function that fn_8042F6DC inlines and whose own copy the linker dropped: the original's
+// .sdata2 has 1.0f between fn_8042EF9C's literals and fn_8042F6DC's 48.0f, so it was generated here
+// (tools/pool.py). Scales the edge and centre panes of the two window frames (field_0x24 and
+// field_0x10) to the inner size w x h.
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 21-line definition): split out only where the .sdata2 order needs it.
+void WarningWindow_804B1634::scaleFrames(f32 w, f32 h) {
+    f32 sx0 = (w + (field_0x24[0]->field_0x18 - field_0x24[4]->field_0x18)) / field_0x24[0]->field_0x18;
+    field_0x24[0]->scaleKeepCentre_80402CE0(sx0, 1.0f);
+    field_0x24[1]->scaleKeepCentre_80402CE0(sx0, 1.0f);
+    f32 sy2 = h / field_0x24[4]->field_0x1c;
+    f32 sx2 = w / field_0x24[4]->field_0x18;
+    field_0x24[2]->scaleKeepCentre_80402CE0(1.0f, sy2);
+    field_0x24[3]->scaleKeepCentre_80402CE0(1.0f, sy2);
+    field_0x24[4]->scaleKeepCentre_80402CE0(sx2, sy2);
+
+    f32 sx_bb0 = (w + (field_0x10[0]->field_0x18 - field_0x24[4]->field_0x18)) / field_0x10[0]->field_0x18;
+    field_0x10[0]->scaleKeepCentre_80402CE0(sx_bb0, 1.0f);
+    field_0x10[1]->scaleKeepCentre_80402CE0(sx_bb0, 1.0f);
+
+    f32 w4 = field_0x24[4]->field_0x18;
+    f32 w_bb4 = field_0x10[4]->field_0x18;
+    f32 sy_bb2 = (h + (field_0x10[4]->field_0x1c - field_0x24[4]->field_0x1c)) / field_0x10[4]->field_0x1c;
+    field_0x10[2]->scaleKeepCentre_80402CE0(1.0f, sy_bb2);
+    field_0x10[3]->scaleKeepCentre_80402CE0(1.0f, sy_bb2);
+    field_0x10[4]->scaleKeepCentre_80402CE0((w + (w_bb4 - w4)) / w_bb4, sy_bb2);
+}
+
+// FIXME(shotgun): 96.14 %, missing/extra + reloc-name; behaviour near.
+// Lays message `id` out into `str` with each line centred in 428 (a "\x1BCR[n]" prefix), the
+// 0x1A size-3 commands replaced by the digit `value` and its counted noun; on the way it
+// measures the lines and the two choices (0x1A size-2 commands) into field_0xb8-field_0xe4.
+void WarningWindow_804B1634::fn_8042EF9C(char* str, s32 id, u8 value) {
+    MessageInf1_804AF070* inf1 =
+        &static_cast<MessageFile_804AF070*>(gGameRoot_8053AAF8->mMsgArchive_0xa8->getResource('????', "gc_four_swords_text_e.bmg"))->inf1;
+    const char* text = (const char*)inf1 + (inf1->size + inf1->entries[id].textOffset + 8);
+    // The font width of the text box 'Twt01' (J2DTextBox::mFontSize at 0x11C).
+    f32 fontSize = static_cast<J2DTextBox*>(field_0x8->search('Twt01'))->mFontSize.x;
+    f32 scale = fontSize / (f32)lbl_8053AD78->mFont->getCellWidth();
+    lbl_8053AD78->mFont->getCellHeight();
+    field_0xea = 0xFF;
+    field_0xe4 = 1;
+    int code = 0;
+    int digit = value + '0';
+    s32 i = 0;
+    u8 choice = 0;
+    f32 lineW = 0.0f;
+    f32 spaceW = 0.0f;
+    field_0xb8[0] = 0.0f;
+    field_0xb8[1] = 0.0f;
+    field_0xb8[2] = 0.0f;
+    field_0xc4 = 0.0f;
+    field_0xc8 = 0.0f;
+    f32 widths[10];
+    widths[0] = 0.0f;
+    widths[1] = 0.0f;
+    widths[2] = 0.0f;
+    widths[3] = 0.0f;
+    widths[4] = 0.0f;
+    widths[5] = 0.0f;
+    widths[6] = 0.0f;
+    widths[7] = 0.0f;
+    widths[8] = 0.0f;
+    widths[9] = 0.0f;
+    const char* p;
+    while ((p = text + i)[0] != 0) {
+        if (p[0] == '\n') {
+            if (field_0xb8[0] < lineW) {
+                field_0xb8[0] = lineW;
+            }
+            i++;
+            widths[field_0xe4++ - 1] = lineW;
+            lineW = 0.0f;
+        } else if (p[0] == 0x1A) {
+            if (p[2] == 2) {
+                if (p[4] == 0 || p[4] == 10 || p[4] == 0x12 || p[4] == 0x19) {
+                    if (choice == 1) {
+                        field_0xb8[1] -= spaceW;
+                        spaceW = 0.0f;
+                    }
+                    if (choice < 2) {
+                        field_0xcc[choice] = lineW;
+                        field_0xd8[choice] = field_0xe4;
+                        choice++;
+                    }
+                } else if (p[4] == 1 || p[4] == 9 || p[4] == 0x11 || p[4] == 0x1A) {
+                    if (choice == 1) {
+                        field_0xb8[1] -= spaceW;
+                        spaceW = 0.0f;
+                    }
+                    if (choice < 2) {
+                        field_0xcc[choice] = lineW;
+                        field_0xd8[choice] = field_0xe4;
+                        field_0xea = choice;
+                        choice++;
+                    }
+                }
+            } else if (p[2] == 3) {
+                code = digit;
+                lineW += scale * charWidth(digit);
+                if (choice != 0) {
+                    field_0xb8[choice] += scale * charWidth(digit);
+                }
+                f32 nounW = fn_80430518(p[5], value, scale);
+                lineW += nounW;
+                if (choice != 0) {
+                    field_0xb8[choice] += nounW;
+                }
+            }
+            i += p[1];
+        } else {
+            code = (u8)p[0];
+            i++;
+            if (lbl_8053AD78->mFont->isLeadByte(code)) {
+                code = (code << 8) | (u8)text[i];
+                i++;
+            }
+            lineW += scale * charWidth(code);
+            if (choice != 0) {
+                if (code == ' ' || code == 0x8140) {
+                    spaceW += scale * charWidth(code);
+                }
+                field_0xb8[choice] += scale * charWidth(code);
+            }
+        }
+    }
+    widths[field_0xe4 - 1] = lineW;
+    if (field_0xb8[0] < lineW) {
+        field_0xb8[0] = lineW;
+    }
+    field_0xc8 = lineW;
+    field_0xe4 = 1;
+    i = 0;
+    char ch[3];
+    ch[2] = 0;
+    ch[1] = 0;
+    ch[0] = 0;
+    str[0] = 0;
+    char prefix[16];
+    s32 pad = (s32)((428.0f - widths[field_0xe4 - 1]) * 0.5f + 0.5f);
+    if (pad > 0) {
+        snprintf(prefix, 15, "\x1B" "CR[%d]", pad);
+        strcat(str, prefix);
+    }
+    while ((p = text + i)[0] != 0) {
+        if (p[0] == '\n') {
+            ch[0] = p[0];
+            ch[1] = 0;
+            strcat(str, ch);
+            i++;
+            field_0xe4++;
+            pad = (s32)((428.0f - widths[field_0xe4 - 1]) * 0.5f + 0.5f);
+            if (pad > 0) {
+                snprintf(prefix, 15, "\x1B" "CR[%d]", pad);
+                strcat(str, prefix);
+            }
+        } else if (p[0] == 0x1A) {
+            if (p[2] == 3) {
+                ch[0] = digit;
+                code = digit;
+                ch[1] = 0;
+                strcat(str, ch);
+                fn_80430368(p[5], value, str);
+            }
+            i += p[1];
+        } else if (lbl_8053AD78->mFont->isLeadByte(code)) {
+            // The original tests the previous character's code here (r31), not p[0].
+            ch[0] = p[0];
+            ch[1] = p[1];
+            ch[2] = 0;
+            strcat(str, ch);
+            i += 2;
+        } else {
+            ch[0] = p[0];
+            ch[1] = 0;
+            strcat(str, ch);
+            i++;
+        }
+    }
+    ch[0] = p[0];
+    ch[1] = 0;
+    strcat(str, ch);
+}
+
+// The window the warning text slides over: inlined by WarningWindow_804B1634's constructor and dead-stripped.
+StageSelectWindow_804B1600::StageSelectWindow_804B1600() {
+    JUTResFont* font;
+    lbl_8053AEC4 = this;
+    field_0x4 = new J2DScreen;
+    field_0x4->setPriority("bat_stage_select_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
+    field_0x8 = new PaneCtrl_804AF86C;
+    field_0x8->setPane_80402F04(field_0x4->search('Pmmwk02'));
+    field_0xc = new PaneCtrl_804AF86C;
+    field_0xc->setPane_80402F04(field_0x4->search('Pbl01'));
+    font = lbl_8053AD78->mFont;
+    static_cast<J2DTextBox*>(field_0x4->search('Tmmt01'))->setFont(font);
+    font = lbl_8053AD78->mFont;
+    static_cast<J2DTextBox*>(field_0x4->search('Tmmt02'))->setFont(font);
+    field_0x10 = 0;
+    field_0x12 = 0;
+}
+
+StageSelectWindow_804B1600::~StageSelectWindow_804B1600() {
+    delete field_0x4;
+    field_0x4 = NULL;
+    delete field_0x8;
+    field_0x8 = NULL;
+    delete field_0xc;
+    field_0xc = NULL;
+    lbl_8053AEC4 = NULL;
+}
+
+bool StageSelectWindow_804B1600::fn_8042EDAC(u32 message, u8 value) {
+    if (field_0x12 == 0) {
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(0x0000546d6d743031ull))->getStringPtr(), message, value, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(0x0000546d6d743032ull))->getStringPtr(), message, value, NULL, NULL);
+        field_0x8->moveFromCentre_80402E08(0.0f, -480.0f);
+        field_0x8->field_0x22 = 0;
+        field_0xc->mPane->setAlpha(0);
+        field_0xc->field_0x26 = 0;
+        field_0x10 = 0;
+        field_0x12 = 1;
+        return true;
+    }
+    return false;
+}
+
+BOOL StageSelectWindow_804B1600::fn_8042EC7C() {
+    if (field_0x12 != 0) {
+        field_0x10++;
+        if (field_0x10 < 8) {
+            s32 n = (8 - field_0x10) * (8 - field_0x10);
+            field_0x8->moveFromCentre_80402E08(0.0f, -500.0f * n / 64.0f + 26.0f);
+            field_0xc->animateAlpha_80402628(8, 0, field_0xc->field_0x28);
+        } else {
+            s32 n = (11 - field_0x10) * (11 - field_0x10);
+            field_0x8->moveFromCentre_80402E08(0.0f, 26.0f * n / 9.0f);
+            field_0xc->mPane->setAlpha(field_0xc->field_0x28);
+            if (field_0x10 >= 11) {
+                field_0x8->field_0x22 = 0;
+                field_0xc->field_0x26 = 0;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+BOOL StageSelectWindow_804B1600::fn_8042EBEC() {
+    if (field_0x12 != 0) {
+        u8 done = field_0x8->animateMoveY_80402940(10, 0, 0.0f, -480.0f);
+        field_0xc->animateAlpha_80402628(10, field_0xc->field_0x28, 0);
+        if (done == 0) {
+            return false;
+        }
+        field_0x10 = 0;
+        field_0x12 = 0;
+    }
+    return true;
+}
+
+void StageSelectWindow_804B1600::fn_8042EB98() {
+    if (field_0x12 != 0) {
+        gGameRoot2_8053AB10->setPort_8013B490();
+        field_0x4->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+    }
+}
+
+void StageSelectWindow_804B1600::fn_8042EB24() {
+    field_0x8->moveFromCentre_80402E08(0.0f, -480.0f);
+    field_0x8->field_0x22 = 0;
+    field_0xc->mPane->setAlpha(0);
+    field_0xc->field_0x26 = 0;
+    field_0x10 = 0;
+    field_0x12 = 0;
+}
+
+void StageSelectWindow_804B1600::fn_8042EB14() {
+    field_0x10 = 0;
+    field_0x12 = 0;
+}

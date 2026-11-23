@@ -1,0 +1,67 @@
+#include "game/GameAudio.h"
+#include "game/Effect.h"
+#include "game/GameGlobals.h"
+#include "game/GameState.h"
+#include "game/act/tu_801D8400.h"
+#include "game/act/singleton_801DAC6C.h"
+
+void Frostare_804A4C58::fn_801E63D8() {
+    mEmitter2c[0] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x25e, 0, 0, NULL, NULL, true, 1.0f);
+    mEmitter2c[1] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x25f, 0, 0, NULL, NULL, true, 1.0f);
+}
+
+void Frostare_804A4C58::fn_801E6394() {
+    releaseEmitter_801EE434(mEmitter2c[0]);
+    releaseEmitter_801EE434(mEmitter2c[1]);
+    mEmitter2c[0] = NULL;
+    mEmitter2c[1] = NULL;
+}
+
+void Frostare_804A4C58::fn_801E631C() const {
+    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x25a, 0, 0, NULL, NULL, true, 1.0f);
+    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x25b, 0, 0, NULL, NULL, true, 1.0f);
+}
+
+void Frostare_804A4C58::fn_801E62D4() const {
+    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x259, 0, 0, NULL, NULL, true, 1.0f);
+}
+
+void Frostare_804A4C58::fn_801E6234() {
+    JGeometry::TVec3f pos(mPos.x, -40.0f + mPos.y, mPos.z);
+    mEmitter2c[2] = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x25c, 0, 0, NULL, NULL, true, 1.0f);
+    mEmitter2c[3] = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x25d, 0, 0, NULL, NULL, true, 1.0f);
+}
+
+void Frostare_804A4C58::fn_801E61C4() {
+    JGeometry::TVec3f pos(mPos.x, -40.0f + mPos.y, mPos.z);
+    fn_801CB71C(&mEmitter2c[2], &pos, 0, 0);
+    fn_801CB71C(&mEmitter2c[3], &pos, 0, 0);
+}
+
+void Frostare_804A4C58::draw() {
+    void* res = getBossArchiveResource_804032E8('ICEB', mSeq2a8.fn_801DA938());
+    if (res != NULL) {
+        SpriteParams_801F5AE0 params;
+        Mtx mtx;
+        if ((mFlags & 0x2000) != 0 && mSeq2a8.fn_801DA904()) {
+            mtx[0][3] = 0.0f;
+            mtx[1][3] = 0.0f;
+            mtx[2][3] = 0.0f;
+            mtx[0][0] = -1.0f;
+            mtx[0][1] = 0.0f;
+            mtx[0][2] = 0.0f;
+            mtx[1][0] = 0.0f;
+            mtx[1][1] = 1.0f;
+            mtx[1][2] = 0.0f;
+            mtx[2][0] = 0.0f;
+            mtx[2][1] = 0.0f;
+            mtx[2][2] = 1.0f;
+            params.mMtx = mtx;
+        }
+        u8 d = fn_801DAC6C()->fn_801DAD2C();
+        params.field_0x14.r += d;
+        params.field_0x14.g += d;
+        params.field_0x14.b += d;
+        drawSpriteRes_801EFD34(res, &params, -1, 0.0f, mState < 8 ? 0.0f : -40.0f, 0.0f);
+    }
+}

@@ -1,0 +1,23 @@
+#ifndef GAME_ACT_ACT_ZOOM_OUT_NPC_H
+#define GAME_ACT_ACT_ZOOM_OUT_NPC_H
+
+// Code: game/act_zoom_out_npc.cpp.
+
+#include "game/ActorBase.h"
+#include "game/Camera.h"
+#include "game/GameGlobals.h"
+
+// Named after its vtable, 0x804AA228.
+class ZoomOutNPC_804AA228 : public ActorBase_804A5770 {
+public:
+    ZoomOutNPC_804AA228() {}
+    /* 0x08 */ virtual ~ZoomOutNPC_804AA228();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x230 */ s32 mState;     // 0 waiting, 1 counting down
+    /* 0x234 */ s32 mDuration;  // mSpawnParam_0x90 & 0xFFF, set by init
+    /* 0x238 */ s32 mTimer;
+}; // Size: 0x23C
+
+#endif

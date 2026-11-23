@@ -1,0 +1,284 @@
+#include "game/GameAudio.h"
+#include "game/ActorManager.h"
+#include "game/GameGlobals.h"
+#include "game/GameView.h"
+#include "game/Message.h"
+#include "game/Player.h"
+#include "JSystem/JMath/JMath.h"
+#include "std/math.h"
+#include "game/act/act_princess_zelda_motion_spawner.h"
+
+void PrincessZeldaMotionObjectSpawner_804A375C::init() {
+    mBox.i.x = -8.0f;
+    mBox.i.y = -8.0f;
+    mBox.f.x = 8.0f;
+    mBox.f.y = 8.0f;
+    mBox2.i.x = -8.0f;
+    mBox2.i.y = -8.0f;
+    mBox2.f.x = 8.0f;
+    mBox2.f.y = 8.0f;
+    field_0x240 = 0;
+    field_0x244 = 0;
+    field_0x248 = 0;
+    field_0x234 = 0;
+    field_0x238 = 0;
+    field_0x23c = 0;
+    mKind = mSpawnParam_0x90 & 0xFF;
+    field_0x254 = (mSpawnParam_0x90 >> 22) & 0x1F;
+    field_0x258 = (mSpawnParam_0x90 >> 8) & 0xF;
+    field_0x24c = 0;
+    mHomePos.x = mPos.x;
+    mHomePos.y = mPos.y;
+    mHomePos.z = mPos.z;
+    mVel_0x3c.z = 0.0f;
+    mVel_0x3c.y = 0.0f;
+    mVel_0x3c.x = 0.0f;
+    field_0x25c = 0;
+    field_0x94 = 0;
+    mParamDstr_0x1a8 = false;
+    switch (mKind) {
+    case 0:
+        mState = 0;
+        break;
+    case 2:
+        mState = 1;
+        break;
+    case 1:
+        mState = 2;
+        break;
+    case 3:
+    case 7:
+        mState = 4;
+        break;
+    default:
+        mState = 10;
+        break;
+    }
+}
+
+static inline void setViewBit(s32 bit) {
+    if (bit != 0) {
+        getGameView_802D6A9C()->setSwitchBit_802D8050(bit, true, 0xFF);
+    }
+}
+
+// Message ids by the spawner's bits 8-11 (field_0x258).
+static u32 lbl_804A3740[] = {0x2D6, 0x2F0, 0x2F1, 0x2F3, 0x2F7, 0x2F8, 0x2F9};
+
+// FIXME(shotgun): 89.77 %, missing/extra + reloc-name; behaviour drift.
+// States 6-8 and the camera setup at the start of state 9 are not written
+void PrincessZeldaMotionObjectSpawner_804A375C::update() {
+    s32 dir = -1;
+    f32 dist = 0.0f;
+    switch (mState) {
+    case 0:
+        if (field_0x25c != 0) {
+            if (isScreenFlagSet_0x34()) {
+                setViewBit(field_0x254);
+                field_0x94 = 1;
+            } else {
+                field_0x94 = 0;
+                JGeometry::TBox2f box = mBox2;
+                box.addPos(mHomePos.x, mHomePos.y);
+                fn_8022FEB8(&box, mLayer_0x4, mSerial, false, false);
+                field_0x248 = fn_8022FD8C(mSerial);
+                if (field_0x248 >= 0 && fn_802300EC(field_0x248)) {
+                    JGeometry::TVec3f pos = mPos;
+                    pos.x -= 50.0f;
+                    if (openMessage_8038AD24(field_0x248, lbl_804A3740[field_0x258], mSerial, mLayer_0x4, pos, 0)) {
+                        mState = 3;
+                    }
+                }
+            }
+        }
+        break;
+    case 1:
+        if (field_0x25c != 0) {
+            setScreenFlag_0x30(0xFF, true);
+            mState = 10;
+        }
+        break;
+    case 2:
+        if (field_0x25c != 0) {
+            if (!isScreenFlagSet_0x34()) {
+                setViewBit(field_0x254);
+                field_0x94 = 1;
+            } else {
+                field_0x94 = 0;
+            }
+        }
+        break;
+    case 3:
+        fn_8022FE80(field_0x248, mLayer_0x4, mSerial, true, false);
+        if (stepMessageWindow_803865B8(field_0x248)) {
+            if (fn_80384C58(field_0x248, mSerial)) {
+                mState = 0;
+            }
+        }
+        break;
+    case 4: {
+        if (field_0x25c == 0) {
+            break;
+        }
+        findTargetPlayer_801EEC98(mSerial, NULL, &dir, &dist, NULL, 0, 0);
+        if (mKind == 3) {
+            if (dir < 0 || dist > 32.0f) {
+                break;
+            }
+        } else {
+            s32 count = 0;
+            for (s32 i = 0; i < 4; i++) {
+                if (isPlayerActive_8023F264(i) && i == getRepresentativePlayer_8022EA0C(i) && mLayer_0x4 == getPlayerLayer_8023DE58(i) &&
+                    !fn_80230188(i) && !fn_8022DCD8(i) && !isPlayerDead_80236B50(i) && !fn_8022D534(i)) {
+                    f32 dx = getPlayerPos_8023E724(i)->x - mPos.x;
+                    f32 dy = getPlayerPos_8023E724(i)->y - mPos.y;
+                    if (std::sqrtf(dx * dx + dy * dy) < 64.0f) {
+                        count++;
+                    }
+                }
+            }
+            if (count < gGameRoot_8053AAF8->getPlayerCount_80138A30() || dir < 0 || dist > 32.0f) {
+                break;
+            }
+        }
+        if (field_0x258 == 0) {
+            setViewBit(field_0x254);
+            mAlive = false;
+            break;
+        }
+        mState = 5;
+    }
+        // fall through
+    case 5:
+        if (getActorManager_801F856C()->fn_801F68E0() == 0) {
+            break;
+        }
+        for (s32 i = 0; i < 4; i++) {
+            fn_80230C6C(i);
+        }
+        mState = 6;
+        // fall through
+    case 6: {
+        Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+        JGeometry::TVec3f pos(mPos.x, mPos.y, mPos.z);
+        pos.y -= 8.0f;
+        if (cam->mBlendBoxOn_0x840 == 0) {
+            cam->mBlendBoxOn_0x840 = 1;
+            cam->mBlendBox_0x844.set(pos.x, pos.y, pos.x, pos.y);
+            cam->mBlendWeight_0x854 = 1.0f;
+            cam->mMargin_0x1d4 = -1.0f;
+            cam->mMinHalfWidth_0x1d8 = -1.0f;
+        }
+        cls_804A03A8* spot = gGameRoot2_8053AB10->field_0x30;
+        if (spot->field_0x284 == 0) {
+            spot->field_0x284 = 1;
+            spot->field_0x28c = 0.05f;
+        }
+        JGeometry::TBox2f box;
+        box.set(-64.0f, -64.0f, 64.0f, 64.0f);
+        box.addPos(mHomePos.x, mHomePos.y);
+        fn_8022FEB8(&box, mLayer_0x4, mSerial, false, false);
+        field_0x248 = fn_8022FD8C(mSerial);
+        if (field_0x248 < 0) {
+            field_0x248 = 0;
+        }
+        pos.set(0.0f, 0.0f, 0.0f);
+        pos.y = -10.0f;
+        if (openMessage_8038AD24(field_0x248, lbl_804A3740[field_0x258], mSerial, mLayer_0x4, pos, 0x4102)) {
+            mState = 7;
+        }
+        break;
+    }
+    case 7: {
+        Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+        JGeometry::TVec3f pos(mPos.x, mPos.y, mPos.z);
+        pos.y -= 8.0f;
+        if (cam->mBlendBoxOn_0x840 == 0) {
+            cam->mBlendBoxOn_0x840 = 1;
+            cam->mBlendBox_0x844.set(pos.x, pos.y, pos.x, pos.y);
+            cam->mBlendWeight_0x854 = 1.0f;
+            cam->mMargin_0x1d4 = -1.0f;
+            cam->mMinHalfWidth_0x1d8 = -1.0f;
+        }
+        cls_804A03A8* spot = gGameRoot2_8053AB10->field_0x30;
+        if (spot->field_0x284 == 0) {
+            spot->field_0x284 = 1;
+            spot->field_0x28c = 0.05f;
+        }
+        fn_8022FE80(field_0x248, mLayer_0x4, mSerial, false, false);
+        if (fn_80388CAC(field_0x248, mSerial)) {
+            if (mKind == 3) {
+                getActorManager_801F856C()->fn_801F6884();
+                setViewBit(field_0x254);
+                mAlive = false;
+            } else {
+                field_0x234 = 90;
+                mState = 8;
+            }
+        }
+        break;
+    }
+    case 8:
+        if (field_0x234 != 0) {
+            getGameView_802D6A9C()->fn_802D79E8(mLayer_0x4, 4.0f, 0.0f, false);
+            playSe_801F0D20(0x50);
+            if (field_0x234 == 1) {
+                setScreenFlag_0x30(0xFF, true);
+            }
+        } else if (!isScreenFlagSet_0x34()) {
+            getGameView_802D6A9C()->fn_802D79E8(mLayer_0x4, 4.0f, 0.0f, false);
+            playSe_801F0D20(0x50);
+            getActorManager_801F856C()->fn_801F6884();
+            setViewBit(field_0x254);
+            fn_80119DD0()->startFade_80119998(200, 0, 2, 0, 0, 100, 0);
+            startSound_801F0E34(0x400B7, 0);
+            for (s32 i = 0; i < 4; i++) {
+                fn_80230FD0(i, 0x10003);
+            }
+            field_0x234 = 200;
+            mState = 9;
+        }
+        break;
+    case 9: {
+        Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+        if (cam->mShowWholeArea_0x7f5 == 0) {
+            cam->mFocusOverride_0x7f4 = 1;
+            cam->mFocusMode_0x7f8 = 4;
+            cam->mFocusPos_0x7fc.set(mPos.x, mPos.y, mPos.z);
+            cam->mOverrideBlend_0x7f6 = 0;
+        }
+        cls_804A03A8* spot = gGameRoot2_8053AB10->field_0x30;
+        if (spot->field_0x284 == 0) {
+            spot->field_0x284 = 1;
+            spot->field_0x28c = 0.05f;
+        }
+        getGameView_802D6A9C()->fn_802D79E8(mLayer_0x4, 4.0f, 0.0f, false);
+        playSe_801F0D20(0x50);
+        if (field_0x234 == 0) {
+            for (s32 i = 0; i < 4; i++) {
+                if (isPlayerActive_8023F264(i) && mLayer_0x4 == getPlayerLayer_8023DE58(i)) {
+                    healPlayerGroup_80236554(i, 0x20, false);
+                }
+            }
+            getGameView_802D6A9C()->fn_802D9FF4(0, 9);
+            getGameView_802D6A9C()->restartStage_802DBD60();
+        }
+        break;
+    }
+    case 10:
+        break;
+    }
+    if (field_0x234 > 0) {
+        field_0x234--;
+    }
+    if (field_0x238 > 0) {
+        field_0x238--;
+    }
+    if (field_0x23c > 0) {
+        field_0x23c--;
+    }
+}
+
+void PrincessZeldaMotionObjectSpawner_804A375C::draw() {}
+
+PrincessZeldaMotionObjectSpawner_804A375C::~PrincessZeldaMotionObjectSpawner_804A375C() {}

@@ -1,0 +1,959 @@
+#ifndef GAME_ACT_TU_801F9484_H
+#define GAME_ACT_TU_801F9484_H
+
+// Actor classes the spawner (game/tu_801F9484.cpp) constructs whose own units are not written
+// yet: what their inline constructors show (vtable store, member initialisers, size from
+// __nw__), named after their vtables. When a class's unit is written, move it to that
+// unit's act header.
+
+#include "game/ActorBase.h"
+#include "game/RailBase.h"
+#include "game/act/act_all_enemies_defeated.h"
+#include "game/act/act_arrow.h"
+#include "game/act/act_flame.h"
+#include "game/act/act_gohma.h"
+#include "game/act/act_great_fairy_bfry.h"
+#include "game/act/act_wallmaster.h"
+#include "game/act/act_wizzrobe.h"
+#include "game/act/act_zora_fish_herder.h"
+#include "game/act/act_big_moldorm_tail_8018EB94.h"
+#include "game/act/act_goal_warp_801B6C50.h"
+#include "game/act/act_tingle_803D9944.h"
+#include "game/act/act_princess_zelda_ending.h"
+#include "game/act/demo_actor_base_8010DF44.h"
+#include "game/act/tu_801D2C60.h"
+#include "game/act/act_frostare_tail.h"
+#include "game/act/act_navi.h"
+#include "game/act/act_dodongo.h"
+#include "game/act/act_other_characters_ending_80362634.h"
+#include "game/SpriteAnim.h"
+#include "game/act/tu_801F9484_elems.h"
+#include "JSystem/JUtility/TColor.h"
+
+class JPABaseEmitter;
+
+// Spawned for 'LPLK'.
+class ForceLike_8049C578 : public ActorBase_804A5770 {
+public:
+    ForceLike_8049C578() {}
+    /* 0x08 */ virtual ~ForceLike_8049C578();
+    /* 0x0C */ virtual void init(); // game/act_force_like.cpp (0x800F7CC8)
+    virtual void update(); // 0x14: 0x800F6D80
+    virtual void draw();   // 0x20: 0x800F6AB4
+    virtual void die_0x24(); // 0x800F6820
+    // Not in the binary: a plain function that die_0x24 and update inline (game/act_force_like.cpp).
+    void pool_8053BF30();
+    // SHARED-EDIT: carved from field_0x230[0x38] (game/act_force_like.cpp).
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ u8 field_0x234;
+    /* 0x235 */ u8 field_0x235;
+    /* 0x236 */ u8 field_0x236[2];
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ u8 field_0x23c;
+    /* 0x23D */ u8 field_0x23d;
+    /* 0x23E */ s16 field_0x23e; // heading (JMath angle)
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ JGeometry::TVec3f field_0x254; // direction away from the player, plain float pair + z in the asm
+    /* 0x260 */ f32 field_0x260;
+    /* 0x264 */ f32 field_0x264;
+}; // Size: 0x268
+
+// Spawned for 'SIBT'.
+#include "game/act/act_temple_bti_display.h"
+
+#include "game/act/act_princess_zelda.h"
+
+#include "game/act/act_snowball.h"
+
+// Spawned for 'DMCR'.
+class CrystalCutscene_8049D83C : public ActorBase_804A5770 {
+public:
+    CrystalCutscene_8049D83C();
+    /* 0x08 */ virtual ~CrystalCutscene_8049D83C();
+    /* 0x230 */ u8 field_0x230[0xC0];
+}; // Size: 0x2F0
+
+// Spawned for 'DMGA'.
+#include "game/act/act_after_goal_opening_8011CEC8.h"
+
+// Spawned for 'RNBW'.
+#include "game/act/act_rainbow_bridge.h"
+
+// Spawned for 'DMTW'.
+class TowerAppearanceDemo_8049E770 : public ActorBase_804A5770 {
+public:
+    TowerAppearanceDemo_8049E770() {}
+    /* 0x08 */ virtual ~TowerAppearanceDemo_8049E770();
+    /* 0x0C */ virtual void init();
+    /* 0x10 */ virtual void reset();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+
+    void fn_8012C334();
+    void fn_8012C170();
+    void fn_8012C030();
+    void fn_8012BE2C();
+    void fn_8012BC40();
+    void fn_8012B218();
+    void fn_8012B0D8();
+    void fn_8012B02C();
+    void fn_8012AA84();
+    void fn_8012A9A0();
+    void fn_8012A8C0();
+    bool fn_8012A5EC();
+    // the message of the current step (lbl_804650C8[field_0x254]) at a by-value position
+    inline bool talk(s32 layer, const JGeometry::TVec3f& pos);
+    inline void spawnEmitters();
+
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ JGeometry::TVec3f field_0x238;
+    /* 0x244 */ f32 field_0x244;
+    /* 0x248 */ f32 field_0x248;
+    /* 0x24C */ f32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ JGeometry::TVec3f field_0x25c[6];
+    /* 0x2A4 */ s32 field_0x2a4[6];
+    /* 0x2BC */ s32 field_0x2bc;
+    /* 0x2C0 */ s32 field_0x2c0;
+    /* 0x2C4 */ s32 field_0x2c4;
+    /* 0x2C8 */ JGeometry::TVec3f field_0x2c8[4];
+    /* 0x2F8 */ JGeometry::TVec3f field_0x2f8[4];
+    /* 0x328 */ JPABaseEmitter* field_0x328[3][4];
+    /* 0x358 */ JPABaseEmitter* field_0x358[3][4];
+    /* 0x388 */ JPABaseEmitter* field_0x388[3][4];
+    /* 0x3B8 */ JGeometry::TVec3f field_0x3b8[4];
+    /* 0x3E8 */ s32 field_0x3e8;
+    /* 0x3EC */ s32 field_0x3ec;
+    /* 0x3F0 */ s32 field_0x3f0;
+    /* 0x3F4 */ f32 field_0x3f4;
+    /* 0x3F8 */ f32 field_0x3f8;
+    /* 0x3FC */ f32 field_0x3fc;
+    /* 0x400 */ f32 field_0x400;
+    /* 0x404 */ u8 field_0x404;
+}; // Size: 0x408
+
+// Spawned for 'SNWL'.
+class SnowWall_8049E8A0 : public ActorBase_804A5770 {
+public:
+    SnowWall_8049E8A0();
+    /* 0x08 */ virtual ~SnowWall_8049E8A0();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // No address (dead-stripped; update inlines both): state 0 once the fire
+    // rod hits (emitters, then after 60 frames the melt), state 1 (shrink).
+    void melt();
+    void shrink();
+
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ f32 field_0x238;
+    /* 0x23C */ void* field_0x23c;
+    /* 0x240 */ JPABaseEmitter* field_0x240;
+    /* 0x244 */ JPABaseEmitter* field_0x244;
+}; // Size: 0x248
+
+// Spawned for 'CRNV'.
+class NaviAfterCrystalCutscene_8049ED30 : public ActorBase_804A5770 {
+public:
+    NaviAfterCrystalCutscene_8049ED30() : field_0x230(0), field_0x234(0), field_0x238(-1), field_0x23c(0.0f) {
+        mEmitters[0] = NULL;
+        mEmitters[1] = NULL;
+    }
+    /* 0x08 */ virtual ~NaviAfterCrystalCutscene_8049ED30();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    void fn_801339EC();
+    // Not in the binary: a plain function that init inlines.
+    void spawnEmitters();
+
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ f32 field_0x23c;
+    /* 0x240 */ SpriteAnim_801D267C field_0x240;
+    /* 0x278 */ JPABaseEmitter* mEmitters[2];
+}; // Size: 0x280
+
+bool fn_80133B58();
+
+#include "game/act/act_big_moldorm_80147B50.h"
+
+#include "game/act/act_hinox.h"
+
+// Spawned for 'SLR2'. Code: game/act_bow_soldier_801555D8.cpp.
+class BowSoldier_804A00C8 : public ActorBase_804A5770 {
+public:
+    BowSoldier_804A00C8() {}
+    /* 0x08 */ virtual ~BowSoldier_804A00C8();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // 0x80157E20: clears the partner's (field_0x284) knock-back velocity, takes one off the count of
+    // the actor field_0x280 names when this one's life is spent.
+    /* 0x44 */ virtual void vfunc_0x44();
+    // 0x80157C68: after a landing on a tile of kind 2, 3 or 0xE puts it in state 0xC; true when it did.
+    /* 0x54 */ virtual bool vfunc_0x54();
+    /* 0x230 */ s32 mState;
+    /* 0x234 */ s16 field_0x234;
+    /* 0x236 */ u8 field_0x236[2];
+    // SHARED-EDIT: written by the 'SLR4' actor (game/act_chief_soldier.cpp).
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268;
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ s32 field_0x270;
+    /* 0x274 */ s32 field_0x274;
+    /* 0x278 */ s32 field_0x278;
+    /* 0x27C */ s32 field_0x27c;
+    /* 0x280 */ s32 field_0x280;
+    /* 0x284 */ s32 field_0x284;
+    /* 0x288 */ s32 field_0x288;
+    /* 0x28C */ s32 field_0x28c;
+    /* 0x290 */ s32 field_0x290;
+    /* 0x294 */ f32 field_0x294;
+    /* 0x298 */ f32 field_0x298;
+    /* 0x29C */ f32 field_0x29c;
+    /* 0x2A0 */ f32 field_0x2a0;
+    /* 0x2A4 */ f32 field_0x2a4;
+    /* 0x2A8 */ u8 field_0x2a8;
+    /* 0x2A9 */ u8 field_0x2a9;
+    /* 0x2AA */ s16 field_0x2aa;
+    /* 0x2AC */ f32 field_0x2ac;
+    /* 0x2B0 */ f32 field_0x2b0;
+    /* 0x2B4 */ f32 field_0x2b4;
+    /* 0x2B8 */ JGeometry::TVec3f field_0x2b8;
+}; // Size: 0x2C4
+
+// Spawned for 'BPOH'. Code: game/act_big_poe_801618D0.cpp.
+class BigPoe_804A0440 : public ActorBase_804A5770 {
+public:
+    BigPoe_804A0440() {}
+    /* 0x08 */ virtual ~BigPoe_804A0440();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x24 */ virtual void die_0x24();
+    // 0x80161F98: switches to colour set `set` (fading over `frames`; keeps fading when called again).
+    void fn_80161F98(s32 set, s32 frames);
+    // 0x801618D0: draws the ghost quad (obake_*.bti, four TEV stages) at pos; the colours
+    // come from field_0x2f4 and, if given, params' two colours.
+    void fn_801618D0(const JGeometry::TVec3f* pos, SpriteParams_801F5AE0* params);
+    /* 0x230 */ s32 field_0x230; // state
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ u8 field_0x264[4]; // not yet known
+    /* 0x268 */ s32 field_0x268; // kind (low 2 bits of mSpawnParam_0x90)
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ s32 field_0x270; // GameView bit set by die_0x24 (bits 2-6 of mSpawnParam_0x90)
+    /* 0x274 */ f32 field_0x274;
+    /* 0x278 */ f32 field_0x278;
+    /* 0x27C */ f32 field_0x27c;
+    /* 0x280 */ f32 field_0x280;
+    /* 0x284 */ f32 field_0x284;
+    /* 0x288 */ f32 field_0x288;
+    /* 0x28C */ f32 field_0x28c;
+    /* 0x290 */ u16 field_0x290;
+    /* 0x292 */ u8 field_0x292[2]; // not yet known
+    /* 0x294 */ f32 field_0x294[9]; // three positions (x, y, z) copied from mPos by init
+    /* 0x2B8 */ JGeometry::TVec3f field_0x2b8[4];
+    /* 0x2E8 */ JPABaseEmitter* field_0x2e8;
+    /* 0x2EC */ s32 field_0x2ec; // colour set in use (-1: none yet)
+    /* 0x2F0 */ s32 field_0x2f0; // frames left of the fade
+    /* 0x2F4 */ JUtility::TColor field_0x2f4[3];
+}; // Size: 0x300
+
+// Spawned for 'SLR3'. Code: game/act_ball_and_chain_soldier_80170008.cpp.
+class BallAndChainSoldier_804A0810 : public ActorBase_804A5770 {
+public:
+    BallAndChainSoldier_804A0810() {}
+    /* 0x08 */ virtual ~BallAndChainSoldier_804A0810();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x44 */ virtual void vfunc_0x44();
+    /* 0x230 */ s32 field_0x230; // state (0-3)
+    /* 0x234 */ s32 mTimers[5]; // update counts all five down to 0
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268; // the life at init
+    /* 0x26C */ s32 field_0x26c; // serial of the 'SLR3' helper actor, 0 for none
+    /* 0x270 */ s32 field_0x270; // bit 8 of mSpawnParam_0x90
+    /* 0x274 */ u8 field_0x274;
+    /* 0x275 */ u8 field_0x275[3]; // not yet known
+    /* 0x278 */ f32 field_0x278;
+    /* 0x27C */ f32 field_0x27c;
+    /* 0x280 */ f32 field_0x280;
+    /* 0x284 */ f32 field_0x284;
+    /* 0x288 */ f32 field_0x288;
+    /* 0x28C */ JPABaseEmitter* field_0x28c;
+    /* 0x290 */ f32 field_0x290[3];
+    /* 0x29C */ JGeometry::TVec3f field_0x29c[10];
+    /* 0x314 */ JGeometry::TVec3f field_0x314; // the shell's draw position
+    /* 0x320 */ JGeometry::TVec3f field_0x320; // the shell's target position
+    /* 0x32C */ f32 field_0x32c[3]; // copy of mPos made by init
+}; // Size: 0x338
+
+
+// Spawned for 'FGAN'.
+class PhantomGanon_804A1318 : public ActorBase_804A5770 {
+public:
+    PhantomGanon_804A1318() {}
+    /* 0x08 */ virtual ~PhantomGanon_804A1318();
+    /* 0x0C */ virtual void init();   // fn_8017E770
+    /* 0x14 */ virtual void update(); // fn_8017C40C
+    /* 0x20 */ virtual void draw();   // fn_8017C078
+    /* 0x24 */ virtual void die_0x24(); // fn_8017C01C
+    // SHARED-EDIT: carved from field_0x230[0x8A] / field_0x2bb[0x25] (game/act_phantom_ganon_8017C01C.cpp).
+    /* 0x230 */ s32 mState;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268;
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ s32 field_0x270;
+    /* 0x274 */ s32 field_0x274;
+    /* 0x278 */ s32 field_0x278;
+    /* 0x27C */ s32 field_0x27c;
+    /* 0x280 */ f32 field_0x280;
+    /* 0x284 */ f32 field_0x284;
+    /* 0x288 */ f32 field_0x288;
+    /* 0x28C */ f32 field_0x28c;
+    /* 0x290 */ f32 field_0x290;
+    /* 0x294 */ JGeometry::TVec3f field_0x294; // zeroed as a whole by update() (zeroVec_801546BC)
+    /* 0x2A0 */ JGeometry::TVec3f field_0x2a0;
+    /* 0x2AC */ JGeometry::TVec3f field_0x2ac; // draw scale; set as a whole by update() (setVec3_8017EADC)
+    /* 0x2B8 */ u16 field_0x2b8; // angle step (lhz in update())
+    /* 0x2BA */ s8 field_0x2ba;
+    /* 0x2BB */ u8 field_0x2bb;
+    /* 0x2BC */ JPABaseEmitter* mEmitters2bc[4];
+    /* 0x2CC */ JPABaseEmitter* mEmitters2cc[4];
+    /* 0x2DC */ JPABaseEmitter* mEmitter2dc;
+}; // Size: 0x2E0
+
+// Spawned for 'BPH2'.
+class BigPoe2_804A1E50 : public ActorBase_804A5770 {
+public:
+    BigPoe2_804A1E50() {}
+    /* 0x08 */ virtual ~BigPoe2_804A1E50();
+    /* 0x230 */ u8 field_0x230[0xC8];
+    /* 0x2F8 */ JGeometry::TVec3f field_0x2f8[4];
+    /* 0x328 */ u8 field_0x328[0xC];
+}; // Size: 0x334
+
+// Spawned for 'ZLD2'.
+class PrincessZeldaGanonBattle_804A2944 : public ActorBase_804A5770 {
+public:
+    PrincessZeldaGanonBattle_804A2944() {}
+    /* 0x08 */ virtual ~PrincessZeldaGanonBattle_804A2944();
+    // 0x8019C500 (game/act_princess_zelda_ganon_battle_80197070.cpp): for each present player on this actor's
+    // layer, draws a marker (fn_80230498) at its stored position field_0x2a4[i];
+    // the y is this actor's y plus a constant unless `keepY`.
+    void fn_8019C500(s32 keepY);
+    // 0x80197070 (draw), 0x80197550 (update), 0x8019C8A4 (init), 0x8019C5B8 (vfunc_0x44):
+    // game/act_princess_zelda_ganon_battle_80197070.cpp.
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x44 */ virtual void vfunc_0x44();
+    void fn_801976E8();
+    void fn_801979C4();
+    void fn_80197EB0();
+    void fn_80198828();
+    // SHARED-EDIT: carved from field_0x230[0x74] (game/act_princess_zelda_ganon_battle_80197070.cpp).
+    /* 0x230 */ s32 mState;
+    /* 0x234 */ s32 mTimers[4]; // update counts them down to 0
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ u8 field_0x268;
+    /* 0x269 */ u8 field_0x269[3];
+    /* 0x26C */ f32 field_0x26c;
+    /* 0x270 */ f32 field_0x270;
+    // A whole vector: fn_80198828 zeroes it with zeroVec_801546BC.
+    /* 0x274 */ JGeometry::TVec3f field_0x274;
+    // Plain SDK Vec, not TVec3f: the spawner's inline constructor (PrincessZeldaGanonBattle_804A2944() {}) emits no
+    // __construct_array for this range, and every use is a component-wise x/y/z copy.
+    /* 0x280 */ Vec field_0x280[3];
+    /* 0x2A4 */ JGeometry::TVec3f field_0x2a4[4];
+    /* 0x2D4 */ JGeometry::TVec3f field_0x2d4[4];
+    // SHARED-EDIT: thirteen emitters, each freed by the destructor (game/act_princess_zelda_ganon_battle_80197070.cpp).
+    /* 0x304 */ JPABaseEmitter* mEmitters[13];
+}; // Size: 0x338
+
+
+#include "game/act/act_shooting_gallery.h"
+
+// Spawned for 'TENN'.
+#include "game/act/act_tennis_shop_801A0710.h"
+
+// Spawned for 'ZLD3'. Code: game/act_princess_zelda_spawner_801B0A00.cpp.
+class PrincessZeldaSpawner_804A35AC : public ActorBase_804A5770 {
+public:
+    PrincessZeldaSpawner_804A35AC() {}
+    /* 0x08 */ virtual ~PrincessZeldaSpawner_804A35AC();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // 0x801B2000: moves the players' positions (mode 0) or eases them to y - yOffset (mode 1).
+    void fn_801B2000(f32 yOffset, s32 mode);
+    void fn_801B2138(s32 arg);
+    /* 0x230 */ s32 field_0x230; // state
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ u8 field_0x258;
+    /* 0x259 */ u8 field_0x259;
+    /* 0x25A */ u8 field_0x25a[2]; // not yet known
+    /* 0x25C */ f32 field_0x25c;
+    /* 0x260 */ f32 field_0x260;
+    /* 0x264 */ JGeometry::TVec3f field_0x264; // init: mPos; the camera target of the later states
+    /* 0x270 */ JGeometry::TVec3f field_0x270; // init: mPos; update state 10 stores mPos
+    /* 0x27C */ JGeometry::TVec3f field_0x27c; // init: mPos; the two emitters' position
+    /* 0x288 */ JGeometry::TVec3f field_0x288[4];
+    /* 0x2B8 */ JPABaseEmitter* mEmitters[2];
+}; // Size: 0x2C0
+
+// Spawned for 'ZLD4'.
+class PrincessZeldaSpawnerEscape_804A3698 : public ActorBase_804A5770 {
+public:
+    PrincessZeldaSpawnerEscape_804A3698() {}
+    /* 0x08 */ virtual ~PrincessZeldaSpawnerEscape_804A3698();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x4C */ virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos);
+    /* 0x230 */ cls_800FE3EC mRail; // update steps it (stepAlongRail_800FDEA0) while field_0x2f8 != 0
+    /* 0x2F8 */ s32 field_0x2f8; // state
+    /* 0x2FC */ u8 field_0x2fc;
+    /* 0x2FD */ u8 field_0x2fd[3]; // not yet known
+    /* 0x300 */ s32 field_0x300;
+    /* 0x304 */ s32 field_0x304;
+    /* 0x308 */ s32 field_0x308; // draw skips the sprite while bit 1 is clear and it is non-zero
+    /* 0x30C */ s32 field_0x30c;
+    /* 0x310 */ s32 field_0x310;
+    /* 0x314 */ s32 field_0x314;
+    /* 0x318 */ s32 field_0x318;
+    /* 0x31C */ s32 field_0x31c;
+    /* 0x320 */ s32 field_0x320; // draw's frame - 0x9B
+    /* 0x324 */ s32 field_0x324; // serial of the 'LIMT' life meter init spawns
+    /* 0x328 */ s32 field_0x328; // init: 5; the life meter's heart index
+    /* 0x32C */ u8 field_0x32c;
+    /* 0x32D */ u8 field_0x32d;
+    /* 0x32E */ u8 field_0x32e[2]; // not yet known
+    /* 0x330 */ s32 field_0x330; // init: mSpawnParam_0x90 & 7
+    /* 0x334 */ f32 field_0x334; // update eases mVel_0x3c.x towards it
+    /* 0x338 */ f32 field_0x338; // update eases mVel_0x3c.y towards it
+    /* 0x33C */ f32 field_0x33c;
+    /* 0x340 */ f32 field_0x340; // init: mPos.z
+}; // Size: 0x344
+
+// Spawned for 'TLWP'.
+class TinglesTowerWarp_804A38D4 : public ActorBase_804A5770 {
+public:
+    TinglesTowerWarp_804A38D4() {}
+    /* 0x08 */ virtual ~TinglesTowerWarp_804A38D4();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    void fn_801B4EC8();
+    void fn_801B5228();
+    void fn_801B56A0();
+    /* 0x230 */ s32 field_0x230; // state; init: 0, or 8 when field_0x250 != 0
+    /* 0x234 */ s32 mTimers[3]; // update counts them down to 0
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250; // bits 4-7 of mSpawnParam_0x90: update runs fn_801B56A0 at 0, fn_801B5228 at 1-3
+    /* 0x254 */ s32 field_0x254; // bits 0-3 of mSpawnParam_0x90
+    /* 0x258 */ f32 field_0x258;
+    /* 0x25C */ f32 field_0x25c; // init: 1.0f
+    /* 0x260 */ u16 field_0x260;
+    /* 0x262 */ u8 field_0x262[2]; // not yet known
+    /* 0x264 */ JGeometry::TVec3f field_0x264[4];
+    /* 0x294 */ JPABaseEmitter* mEmitters294[3];
+    /* 0x2A0 */ JPABaseEmitter* mEmitters2A0[20]; // init spawns one per lbl_804A37E0 id
+}; // Size: 0x2F0
+
+#include "game/act/act_bird_manager.h"
+
+
+// Spawned for 'ZSLD': ShadowLinkThwompMinor_804A6D00, game/act/act_shadow_link_thwomp_minor_802233A4.h.
+#include "game/act/act_shadow_link_thwomp_minor_802233A4.h"
+
+// Spawned for 'GOAL'. Code: game/act_goal_802A4654.cpp.
+class Goal_804A7EB0 : public ActorBase_804A5770 {
+public:
+    Goal_804A7EB0() {}
+    /* 0x08 */ virtual ~Goal_804A7EB0();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // Slot 0x54: shakes the actor over four steps (a camera focus point each) and restores mPos.
+    /* 0x54 */ virtual void vfunc_0x54();
+    /* 0x230 */ s32 field_0x230; // state
+    /* 0x234 */ s32 field_0x234; // bits 12-16 of mSpawnParam_0x90: index into the shake tables
+    /* 0x238 */ s32 field_0x238; // bits 0-4
+    /* 0x23C */ s32 field_0x23c; // bits 17-21
+    /* 0x240 */ s32 field_0x240; // bits 22-26
+    /* 0x244 */ s32 field_0x244; // state timer (update)
+    /* 0x248 */ s32 field_0x248; // step of the show in states 4 and 5
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254[4];
+    /* 0x264 */ JGeometry::TVec3f field_0x264[4];
+    /* 0x294 */ u8 field_0x294[0x2A4 - 0x294]; // not yet known
+    /* 0x2A4 */ s32 field_0x2a4[4];
+    /* 0x2B4 */ JPABaseEmitter* mEmitters[5][4];
+    /* 0x304 */ s32 field_0x304;
+    /* 0x308 */ s32 field_0x308; // alpha of the show effects
+    /* 0x30C */ s32 field_0x30c;
+    /* 0x310 */ u8 field_0x310;
+    /* 0x311 */ u8 field_0x311[3]; // not yet known
+    /* 0x314 */ s32 field_0x314;
+    /* 0x318 */ s32 field_0x318;
+    /* 0x31C */ s32 field_0x31c;
+}; // Size: 0x320
+
+// Spawned for 'SWTH'.
+class Switch_804A7F38 : public ActorBase_804A5770 {
+public:
+    Switch_804A7F38() {}
+    /* 0x08 */ virtual ~Switch_804A7F38();
+    /* 0x0C */ virtual void init();
+    /* 0x10 */ virtual void vfunc_0x10();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x54 */ virtual void vfunc_0x54(s32 arg1);
+    void readTileId();
+
+    /* 0x230 */ s32 mState;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ u16 field_0x258;
+    /* 0x25A */ u8 field_0x25a[2];
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+}; // Size: 0x268
+
+// Spawned for 'FIRE'.
+class FireRodFire_804A89F0 : public ActorBase_804A5770 {
+public:
+    FireRodFire_804A89F0() {}
+    /* 0x08 */ virtual ~FireRodFire_804A89F0();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x24 */ virtual void die_0x24();
+    /* 0x4C */ virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos);
+    /* 0x54 */ virtual void vfunc_0x54(const JGeometry::TVec3f* pos, bool arg2);
+    /* 0x58 */ virtual void vfunc_0x58();
+
+    s32 fn_802BA9F0();
+    s32 fn_802BA9F8();
+    void fn_802BAA0C(const JGeometry::TBox2f* box);
+    bool fn_802BACE4();
+
+    /* 0x230 */ JPABaseEmitter* mEmitter230;
+    /* 0x234 */ JPABaseEmitter* mEmitter234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ JGeometry::TVec3f field_0x23c;
+    /* 0x248 */ JGeometry::TVec3f field_0x248;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268;
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ s32 field_0x270;
+    /* 0x274 */ s32 field_0x274;
+    /* 0x278 */ s32 field_0x278;
+    /* 0x27C */ s32 field_0x27c;
+    /* 0x280 */ s32 field_0x280;
+    /* 0x284 */ s32 field_0x284;
+    /* 0x288 */ u16 field_0x288;
+    /* 0x28A */ u8 field_0x28a[2];
+    /* 0x28C */ f32 field_0x28c;
+    /* 0x290 */ u8 field_0x290;
+    /* 0x291 */ u8 field_0x291;
+    /* 0x292 */ u8 field_0x292;
+    /* 0x293 */ u8 field_0x293;
+}; // Size: 0x294
+
+// Spawned for 'TUBO'.
+class Pot_804A9428 : public ActorBase_804A5770 {
+public:
+    Pot_804A9428() {}
+    /* 0x08 */ virtual ~Pot_804A9428();
+    /* 0x230 */ u8 field_0x230[0x28];
+}; // Size: 0x258
+
+// Spawned for 'GOL2'.
+class Goal2_804A9C20 : public ActorBase_804A5770 {
+public:
+    Goal2_804A9C20() {}
+    /* 0x08 */ virtual ~Goal2_804A9C20();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // Code: game/act_goal_2_802E2990.cpp.
+    void fn_802E2990(u8 value);
+    /* 0x230 */ s32 field_0x230; // state; draw shows the four sprites in states 0-3
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238; // mode; 5 draws the shikimono.bti tile (the destructor skips the audio call)
+    /* 0x23C */ s32 field_0x23c; // the player count
+    /* 0x240 */ s32 field_0x240; // bits 12-16 of mSpawnParam_0x90
+    /* 0x244 */ s32 field_0x244; // bit 7 of mSpawnParam_0x90
+    /* 0x248 */ s32 field_0x248;
+    // mPos at init. Plain floats: a TVec3f member would add construct calls to the inline
+    // constructor the spawner (tu_801F9484) emits, which has none.
+    /* 0x24C */ f32 field_0x24c[3];
+    /* 0x258 */ JGeometry::TVec3f field_0x258[4];
+    /* 0x288 */ s32 field_0x288[4]; // per sprite: 1 picks frame 0x25A, else 0x25B
+    /* 0x298 */ s32 field_0x298[4];
+    /* 0x2A8 */ s32 field_0x2a8[4];
+    /* 0x2B8 */ u16 field_0x2b8[4]; // emitter ids of the second set
+    /* 0x2C0 */ u8 field_0x2c0[4]; // per-sprite alpha
+    /* 0x2C4 */ s32 field_0x2c4; // countdown
+    /* 0x2C8 */ JPABaseEmitter* mEmitters2c8[4]; // released by the destructor
+    /* 0x2D8 */ JPABaseEmitter* mEmitters2d8[4];
+    /* 0x2E8 */ JPABaseEmitter* mEmitter2e8;
+    /* 0x2EC */ JPABaseEmitter* mEmitter2ec;
+    /* 0x2F0 */ u8 field_0x2f0[4];
+    /* 0x2F4 */ u8 field_0x2f4;
+    /* 0x2F5 */ u8 field_0x2f5[3];
+}; // Size: 0x2F8
+
+// Spawned for 'SWDL'. Code: game/act_player_sword_level_check_npc.cpp.
+class ActorSoundObj_804578F4;
+class PlayerSwordLevelCheckNPC_804AA590 : public ActorBase_804A5770 {
+public:
+    PlayerSwordLevelCheckNPC_804AA590() {}
+    /* 0x08 */ virtual ~PlayerSwordLevelCheckNPC_804AA590();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    // 0x802F032C: empty.
+    /* 0x20 */ virtual void draw();
+    /* 0x230 */ ActorSoundObj_804578F4* mSoundObj;
+    /* 0x234 */ JPABaseEmitter* mEmitters[4];
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s16 field_0x260;
+    /* 0x262 */ s16 field_0x262;
+    /* 0x264 */ s32 field_0x264[4];
+}; // Size: 0x274
+
+// Spawned for 'TWTG'.
+class SoundEffectSeq_8031709C;
+
+class TinglesTowerTingleAndSign_804AAD60 : public ActorBase_804A5770 {
+public:
+    TinglesTowerTingleAndSign_804AAD60();
+    /* 0x08 */ virtual ~TinglesTowerTingleAndSign_804AAD60();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+
+    void fn_80313C20();
+    void fn_80313D7C();
+    void fn_803142E4();
+    void fn_803146DC();
+    void fn_80314B1C();
+    void fn_80315080();
+    void fn_80315460();
+    void fn_80315864();
+    void fn_80315C80();
+    void fn_80315C84();
+    void fn_80315EE8();
+    void updateFacing();
+    bool startMessage(s32 player, u32 msg, u32 flags);
+    bool nextMessage(u32 msg);
+
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244[4];
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ JGeometry::TBox2f field_0x258;
+    /* 0x268 */ u32 field_0x268;
+    /* 0x26C */ u8 field_0x26c;
+    /* 0x270 */ s32 field_0x270;
+    /* 0x274 */ s32 field_0x274;
+    /* 0x278 */ SoundEffectSeq_8031709C* field_0x278;
+}; // Size: 0x27C
+
+// Spawned for 'SBAL'. Code: game/act_iron_ball_homing_80334318.cpp.
+class IronBallHoming_804AB9C0 : public ActorBase_804A5770 {
+public:
+    IronBallHoming_804AB9C0() {}
+    /* 0x08 */ virtual ~IronBallHoming_804AB9C0();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x4C */ virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos);
+    // Slot 0x54 (an extra virtual of this class). Looks for a 'WARP' actor with
+    // (param & 0xFF) == 7 and moves the ball there with fn_801F349C; returns its serial or -1.
+    /* 0x54 */ virtual s32 vfunc_0x54();
+    /* 0x230 */ s32 field_0x230; // state (0-7)
+    /* 0x234 */ f32 field_0x234;
+    /* 0x238 */ f32 field_0x238;
+    /* 0x23C */ f32 field_0x23c;
+    /* 0x240 */ f32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250; // bit 0 of mSpawnParam_0x90: the big ball
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ JGeometry::TVec3f field_0x260; // the last player position seen (update)
+    /* 0x26C */ s16 field_0x26c; // heading (sincosTable_ index)
+    /* 0x26E */ u8 field_0x26e[2];
+}; // Size: 0x270
+
+#include "game/act/act_giant_bomb.h"
+
+#include "game/act/act_bee_manager.h"
+
+// Spawned for 'MRTA'.
+class Log_804ACD70 : public ActorBase_804A5770 {
+public:
+    Log_804ACD70() {}
+    /* 0x08 */ virtual ~Log_804ACD70();
+    /* 0x230 */ u8 field_0x230[0x38];
+    /* 0x268 */ Elem_801FFCDC field_0x268[4];
+    /* 0x2B8 */ u8 field_0x2b8[0x2C];
+}; // Size: 0x2E4
+
+// Spawned for 'EMIK'.
+class MaidenEnding_804AD5B8 : public EndingActorBase_804A5958 {
+public:
+    MaidenEnding_804AD5B8() {}
+    /* 0x08 */ virtual ~MaidenEnding_804AD5B8();
+    /* 0x254 */ u8 field_0x254[0x28];
+}; // Size: 0x27C
+
+// Spawned for 'DCR2'.
+class Navi54MaidenCrystalCutscene_804ADFE8;
+class J2DPicture;
+class CrystalCutscene5464_804AE088 : public DemoActorBase_8049D140 {
+public:
+    CrystalCutscene5464_804AE088();
+    /* 0x08 */ virtual ~CrystalCutscene5464_804AE088();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    /* 0x54 */ virtual void vfunc_0x54();
+    /* 0x58 */ virtual s32 vfunc_0x58();
+    /* 0x5C */ virtual s32 vfunc_0x5C();
+    /* 0x60 */ virtual void vfunc_0x60(s32 arg);
+
+    void fn_8036AC58(s32 arg);
+    void fn_8036AA60();
+    void fn_8036A894();
+    void fn_8036A65C();
+    void fn_80369DDC();
+    void fn_80368CD8();
+    void fn_80368660();
+    void fn_803683AC();
+    void fn_80368198();
+
+    /* 0x230 */ Navi54MaidenCrystalCutscene_804ADFE8* mNaviActor;
+    /* 0x234 */ u8 field_0x234;
+    /* 0x235 */ u8 field_0x235;
+    /* 0x236 */ u8 field_0x236;
+    /* 0x237 */ u8 field_0x237;
+    /* 0x238 */ u8 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ f32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268;
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ u8 field_0x270;
+    /* 0x274 */ s32 field_0x274;
+    /* 0x278 */ f32 field_0x278;
+    /* 0x27C */ f32 field_0x27c;
+    /* 0x280 */ f32 field_0x280;
+    /* 0x284 */ f32 field_0x284;
+    /* 0x288 */ f32 field_0x288;
+    /* 0x28C */ s32 field_0x28c;
+    /* 0x290 */ f32 field_0x290;
+    /* 0x294 */ s32 field_0x294[5];
+    /* 0x2A8 */ JGeometry::TVec3f field_0x2a8[6];
+    /* 0x2F0 */ s32 field_0x2f0;
+    /* 0x2F4 */ Goal2_804A9C20* field_0x2f4;
+    /* 0x2F8 */ s32 field_0x2f8[6];
+    /* 0x310 */ void* field_0x310;
+    /* 0x314 */ J2DPicture* field_0x314;
+    /* 0x318 */ SpriteAnim_801D267C field_0x318;
+    /* 0x350 */ JPABaseEmitter* field_0x350;
+    /* 0x354 */ JPABaseEmitter* field_0x354;
+    /* 0x358 */ JPABaseEmitter* field_0x358;
+    /* 0x35C */ JPABaseEmitter* field_0x35c[7];
+    /* 0x378 */ JPABaseEmitter* field_0x378[3];
+    /* 0x384 */ JPABaseEmitter* field_0x384[5];
+    /* 0x398 */ JPABaseEmitter* field_0x398;
+    /* 0x39C */ JPABaseEmitter* field_0x39c[6];
+    /* 0x3B4 */ JPABaseEmitter* field_0x3b4[2];
+    /* 0x3BC */ JPABaseEmitter* field_0x3bc[6];
+    /* 0x3D4 */ JPABaseEmitter* field_0x3d4[6];
+    /* 0x3EC */ JPABaseEmitter* field_0x3ec[5];
+    /* 0x400 */ JPABaseEmitter* field_0x400[5];
+}; // Size: 0x414
+
+class SoundEffectSeq_8031709C;
+
+// Spawned for 'JIJI'.
+class OldMan_804AEED0 : public ActorBase_804A5770 {
+public:
+    OldMan_804AEED0();
+    /* 0x08 */ virtual ~OldMan_804AEED0();
+    /* 0x0C */ virtual void init();   // fn_8037C788
+    /* 0x14 */ virtual void update(); // fn_8037BC30
+    /* 0x20 */ virtual void draw();   // fn_8037B7F8
+
+    // Animation steppers (game/act_old_man.cpp): each counts field_0x234 down
+    // and picks the next step's length and frame.
+    void fn_8037B374(JGeometry::TVec3f pos, s32 arg);
+    void fn_8037B3A8();
+    void fn_8037B3E0();
+    void fn_8037B488();
+    void fn_8037B4D0();
+    void fn_8037B554();
+    void fn_8037B5B4();
+    void fn_8037B5FC();
+    void fn_8037B634();
+    void fn_8037B67C();
+    void fn_8037B6C4();
+    void fn_8037B70C();
+    void fn_8037B744();
+    void fn_8037B78C();
+    void fn_8037B7BC();
+    void fn_8037B7EC();
+
+    // No address (dead-stripped; init and update inline it): updates field_0x248
+    // towards the nearest player (or player + 1) every 20 frames.
+    void pool_80543048(s32 target);
+
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234;
+    /* 0x238 */ s32 field_0x238;
+    /* 0x23C */ s32 field_0x23c;
+    /* 0x240 */ s32 field_0x240;
+    /* 0x244 */ s32 field_0x244;
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ s32 field_0x258;
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ s32 field_0x268;
+    /* 0x26C */ s32 field_0x26c;
+    /* 0x270 */ u8 field_0x270;
+    /* 0x271 */ u8 field_0x271;
+    /* 0x272 */ u8 field_0x272;
+    /* 0x273 */ u8 field_0x273;
+    /* 0x274 */ SoundEffectSeq_8031709C* field_0x274;
+    /* 0x278 */ JPABaseEmitter* field_0x278;
+}; // Size: 0x27C
+
+// ZOSH and ARSH ("ZOSH"/"ARSH", unwritten units): sub-classes of cls_804A48B0 that only add a
+// destructor (the base destructors are inlined into it, as in IronPot_804A5418). Named after their
+// vtables, 0x804A5810 and 0x804A58B4.
+class cls_804A5810 : public cls_804A48B0 {
+public:
+    // The body names the base's constructor again, which builds and destroys a temporary.
+    cls_804A5810() { cls_804A48B0(); }
+    virtual ~cls_804A5810() {}
+}; // Size: 0x2AC
+
+class UnknownARSH_804A58B4 : public cls_804A48B0 {
+public:
+    UnknownARSH_804A58B4() { cls_804A48B0(); }
+    virtual ~UnknownARSH_804A58B4() {}
+}; // Size: 0x2AC
+
+#endif

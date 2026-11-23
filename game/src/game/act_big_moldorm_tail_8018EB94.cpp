@@ -1,0 +1,269 @@
+#include "game/GameAudio.h"
+#include "JSystem/JParticle/JPAEmitter.h"
+#include "game/act/act_big_moldorm_tail_8018EB94.h"
+#include "game/GameGlobals.h"
+#include "game/Effect.h"
+#include "game/RotMatrix.h"
+#include "game/SpriteParams.h"
+#include "game/ActorManager.h"
+#include "JSystem/JMath/JMath.h"
+
+s32 lbl_8053AB88;
+s32 lbl_80539FD8[2] = {8, 14};
+s32 lbl_80539FE0[2] = {3, 5};
+
+
+// FIXME(shotgun): 96.78 %, missing/extra; behaviour drift.
+// the original addresses the 0x2d0 array off the this pointer (mr r5, r3) and has no
+// inner compare; the random/sin part allocates f-registers differently.
+void BigMoldormTail_804A1FA0::init() {
+    mMapBox_0x80.i.x = -6.0f;
+    mMapBox_0x80.i.y = -6.0f;
+    mMapBox_0x80.f.x = 6.0f;
+    mMapBox_0x80.f.y = 6.0f;
+    mBox.i.x = -6.0f;
+    mBox.i.y = -6.0f;
+    mBox.f.x = 6.0f;
+    mBox.f.y = 6.0f;
+    field_0x248 = 0;
+    field_0x24c = 0;
+    field_0x250 = 0;
+    field_0x234[0] = 0;
+    field_0x234[1] = 0;
+    field_0x234[2] = 0;
+    field_0x234[3] = 0;
+    field_0x234[4] = 0;
+    field_0x288[0].set(mPos);
+    field_0x288[1].set(mPos);
+    field_0x288[2].set(mPos);
+    field_0x288[3].set(mPos);
+    field_0x288[4].set(mPos);
+    field_0x288[5].set(mPos);
+    JGeometry::TVec3f* p = field_0x2d0;
+    for (s32 i = 0; i < 2; i++, p += 10) {
+        for (s32 j = 0; j < 10; j++) {
+            p[j].set(mPos);
+        }
+    }
+    mEmitters[0] = NULL;
+    mEmitters[1] = NULL;
+    mEmitters[2] = NULL;
+    mDir_0x98 = (s32)(15.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1());
+    field_0x25c = mDir_0x98;
+    field_0x260 = mDir_0x98;
+    field_0x264 = -1;
+    field_0x27c.x = field_0x278 * JMath::sincosTable_.sinShort((s32)(4000.0f * (f32)mDir_0x98));
+    field_0x27c.y = field_0x278 * JMath::sincosTable_.cosShort((s32)(4000.0f * (f32)mDir_0x98));
+    field_0x27c.z = 0.0f;
+    field_0x234[2] = 8;
+    mVel_0x3c.set(0.0f, 0.0f, 0.0f);
+    field_0x268 = 0.3f;
+    field_0x26c = 1.0f;
+    field_0x270 = 1.0f;
+    field_0x274 = 0.0f;
+    field_0x278 = 1.3f;
+    if ((lbl_8053AB88 & 1) == 0) {
+        field_0x254 = 1;
+    } else {
+        field_0x254 = -1;
+    }
+    lbl_8053AB88++;
+    lbl_8053AB88 = lbl_8053AB88 & 1;
+    field_0xb0 = 0x12202;
+    field_0x230 = 0;
+    s16 angle = (s32)(4000.0f * (f32)mDir_0x98);
+    field_0x27c.x = field_0x278 * JMath::sincosTable_.sinShort(angle);
+    field_0x27c.y = field_0x278 * JMath::sincosTable_.cosShort((s32)(4000.0f * (f32)mDir_0x98));
+    field_0x288[3].set(mPos);
+    angle = (s32)(4000.0f * (f32)((mDir_0x98 - 2) & 0xF));
+    field_0x288[3].x += 6.0f * JMath::sincosTable_.sinShort(angle);
+    field_0x288[3].y += 6.0f * JMath::sincosTable_.cosShort(angle);
+    field_0x288[4].set(mPos);
+    angle = (s32)(4000.0f * (f32)((mDir_0x98 + 2) & 0xF));
+    field_0x288[4].x += 6.0f * JMath::sincosTable_.sinShort(angle);
+    field_0x288[4].y += 6.0f * JMath::sincosTable_.cosShort(angle);
+}
+
+// Destructor at 0x8018FB24.
+BigMoldormTail_804A1FA0::~BigMoldormTail_804A1FA0() {
+    for (int i = 0; i < 3; i++) {
+        releaseEmitter_801EE434(mEmitters[i]);
+    }
+}
+
+// 0x8018FAB4.
+void BigMoldormTail_804A1FA0::vfunc_0x44() {
+    for (int i = 0; i < 3; i++) {
+        if (mEmitters[i] != NULL) {
+            mEmitters[i]->becomeInvalidEmitter();
+            mEmitters[i] = NULL;
+        }
+    }
+}
+
+// FIXME(shotgun): 96.39 %, different; behaviour drift.
+// the body of `if (field_0x230 == 0)` is laid out
+// with beq/b in the original, ours skips it with bne; register and literal differences in the rest.
+void BigMoldormTail_804A1FA0::update() {
+    JGeometry::TVec3f savedPos = mPos;
+    f32 z0 = mPos.z;
+    JGeometry::TVec3f savedVel = mVel_0x3c;
+    s32 hit = 0;
+    for (s32 i = 0; i < 5; i++) {
+        if (field_0x234[i] > 0) {
+            field_0x234[i]--;
+        }
+    }
+    if (field_0x230 == 0) {
+        for (s32 i = 0; i < 3; i++) {
+            mPos = field_0x288[i];
+            if (updateHitReaction_801F3D94(true) != 0 || checkHits_801F305C()) {
+                sweepMapBox_801F2618(NULL, false);
+                hit = 1;
+                break;
+            }
+        }
+        if (!hit) {
+            mPos = savedPos;
+            mPos.z = z0;
+            addCalc2_801F71A4(&mVel_0x3c.x, field_0x27c.x, field_0x268, field_0x26c);
+            addCalc2_801F71A4(&mVel_0x3c.y, field_0x27c.y, field_0x268, field_0x26c);
+            mPos += mVel_0x3c;
+            damagePlayersInBox_801F2B7C(mParamAtcp_0x114, -1, 1);
+            if (sweepMapBox_801F2618(NULL, false) && field_0x234[1] == 0) {
+                mDir_0x98 += 8;
+                mDir_0x98 &= 0xF;
+                if (field_0x264 == mDir_0x98) {
+                    mDir_0x98 += field_0x254 * 4;
+                    mDir_0x98 &= 0xF;
+                }
+                field_0x264 = field_0x260;
+                field_0x260 = mDir_0x98;
+                field_0x25c = mDir_0x98;
+                field_0x234[1] = 8;
+                field_0x234[2] = 8;
+                if (gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f) {
+                    field_0x254 *= -1;
+                }
+                startSound_801F0E34(0x4000B, 0);
+                field_0x27c.x = field_0x278 * JMath::sincosTable_.sinShort((s32)(4000.0f * (f32)mDir_0x98));
+                field_0x27c.y = field_0x278 * JMath::sincosTable_.cosShort((s32)(4000.0f * (f32)mDir_0x98));
+                mVel_0x3c = field_0x27c;
+            }
+        }
+        for (s32 i = 18; i >= 0; i--) {
+            field_0x2d0[i + 1] = field_0x2d0[i];
+            field_0x2d0[i + 1].z = z0;
+        }
+        mPos.z = z0;
+        field_0x2d0[0].set(mPos);
+        if (hit) {
+            field_0x288[1].set(field_0x2d0[lbl_80539FE0[0]]);
+            field_0x288[2].set(field_0x2d0[lbl_80539FE0[1]]);
+            field_0x288[0].set(field_0x2d0[0]);
+        } else {
+            field_0x288[1].set(field_0x2d0[lbl_80539FD8[0]]);
+            field_0x288[2].set(field_0x2d0[lbl_80539FD8[1]]);
+            field_0x288[0].set(field_0x2d0[0]);
+        }
+        if (mEmitters[1] == NULL) {
+            mEmitters[1] = spawnEmitter_8013CC50(mLayer_0x4, &field_0x288[1], 0x11C, 0, -1, NULL, NULL, true, 0.4f);
+        } else {
+            setEmitterPos_8013CB44(mEmitters[1], &field_0x288[1], 0, -1, true);
+        }
+        if (field_0x234[2] == 0 && !hit) {
+            u16 outAngle = 0;
+            field_0x234[2] = (s32)(30.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 30;
+            findTargetPlayer_801EEC98(mSerial, &outAngle, NULL, NULL, NULL, 0, 0);
+            f32 a = (f32)outAngle;
+            s32 idx = 0;
+            for (s32 i = 0; i < 15; i++) {
+                a -= 4000.0f;
+                if (a < 0.0f) {
+                    break;
+                }
+                idx++;
+            }
+            field_0x25c = idx;
+        }
+        if (field_0x25c != mDir_0x98 && (field_0x234[2] & 3) == 0) {
+            mDir_0x98 += field_0x254;
+            mDir_0x98 &= 0xF;
+        }
+        setHeading();
+        field_0x270 += 500.0f;
+    }
+    if (field_0x234[0] == 0) {
+        field_0x234[0] = 2;
+        field_0x274 += 0.5f;
+    }
+}
+
+// FIXME(shotgun): 97.92 %, missing/extra; behaviour near.
+void BigMoldormTail_804A1FA0::draw() {
+    SpriteParams_801F5AE0 params;
+    Mtx mtx;
+    f32 z0 = mPos.z;
+    if (field_0x234[3] & 1) {
+        params.field_0x14.set(0x80, 0x80, 0x80, 0);
+    }
+    params.field_0x1d = 1;
+    PSMTXIdentity(mtx);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x270, 0.0f), 0.5f);
+    params.mMtx = mtx;
+    mPos = field_0x288[2];
+    mPos.z = z0;
+    drawSprite_801F06F0("enemy_gc_sob.bin", 0x29, &params, -1, 1.0f, 1.0f);
+
+    PSMTXIdentity(mtx);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x270, 0.0f), 0.5f);
+    params.mMtx = mtx;
+    mPos = field_0x288[1];
+    mPos.z = z0;
+    params.field_0x1d = 2;
+    drawSprite_801F06F0("enemy_gc_sob.bin", 0x27, &params, -1, 1.0f, 1.0f);
+
+    PSMTXIdentity(mtx);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x270, 0.0f), 0.5f);
+    params.mMtx = mtx;
+    mPos = field_0x288[0];
+    mPos.z = z0;
+    params.field_0x1d = 3;
+    drawSprite_801F06F0("enemy_gc_sob.bin", 0x26, &params, -1, 1.0f, 1.0f);
+
+    params.field_0x1d = 4;
+    PSMTXIdentity(mtx);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x274, 0.0f), 0.5f);
+    params.mMtx = mtx;
+    mPos = field_0x288[4];
+    mPos.z = z0;
+    drawSprite_801F06F0("enemy_gc_sob.bin", 0x2A, &params, -1, 1.0f, 1.0f);
+
+    PSMTXIdentity(mtx);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x274, 0.0f), 0.5f);
+    params.mMtx = mtx;
+    mPos = field_0x288[5];
+    mPos.z = z0;
+    drawSprite_801F06F0("enemy_gc_sob.bin", 0x2A, &params, -1, 1.0f, 1.0f);
+
+    mPos = field_0x288[0];
+    mPos.z = z0;
+}
+
+// Not in the binary (update inlines it); the pool has its literals ahead of every other function's.
+// The velocity along heading mDir_0x98 (sixteenths of a turn) and the two points 6 away, two
+// steps to either side of it.
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 13-line definition): split out only where the .sdata2 order needs it.
+void BigMoldormTail_804A1FA0::setHeading() {
+    s16 angle = (s32)(4000.0f * (f32)mDir_0x98);
+    field_0x27c.x = field_0x278 * JMath::sincosTable_.sinShort(angle);
+    field_0x27c.y = field_0x278 * JMath::sincosTable_.cosShort((s32)(4000.0f * (f32)mDir_0x98));
+    field_0x288[3] = mPos;
+    angle = (s32)(4000.0f * (f32)((mDir_0x98 - 2) & 0xF));
+    field_0x288[3].x += 6.0f * JMath::sincosTable_.sinShort(angle);
+    field_0x288[3].y += 6.0f * JMath::sincosTable_.cosShort(angle);
+    field_0x288[4] = mPos;
+    angle = (s32)(4000.0f * (f32)((mDir_0x98 + 2) & 0xF));
+    field_0x288[4].x += 6.0f * JMath::sincosTable_.sinShort(angle);
+    field_0x288[4].y += 6.0f * JMath::sincosTable_.cosShort(angle);
+}

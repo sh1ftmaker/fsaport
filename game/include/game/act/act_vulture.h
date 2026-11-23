@@ -1,0 +1,39 @@
+#ifndef GAME_ACT_ACT_VULTURE_H
+#define GAME_ACT_ACT_VULTURE_H
+
+// Code: game/act_vulture.cpp.
+
+#include "game/EnemyBase.h"
+
+// The TNDR actor ("Vulture", docs/names/actors.tsv, med confidence): the
+// spawner constructs it with fn_801C0AD8, which stores this vtable
+// (config/G4SE01/game_units.tsv). Named after its vtable, 0x804A4230.
+class Vulture_804A4230 : public EnemyBase_804A4808 {
+public:
+    Vulture_804A4230();
+    /* 0x08 */ virtual ~Vulture_804A4230();
+    /* 0x0C */ virtual void init();
+    /* 0x20 */ virtual void draw();
+    /* 0x58 */ virtual bool vfunc_0x58();
+    /* 0x5C */ virtual u8 checkHitByPlayer_0x5C();
+    /* 0x60 */ virtual u8 checkHitByActor_0x60();
+    /* 0x74 */ virtual void onHitReactionEnd_0x74();
+    /* 0x88 */ virtual void calcVelocity_0x88();
+    /* 0x90 */ virtual void updateState_0x90(u8 mapHit);
+    /* 0x94 */ virtual void updateAnim_0x94();
+
+    void setState_801C0438(s32 state);
+    void fn_801C0634();
+
+    /* 0x2A8 */ s32 field_0x2a8;
+    /* 0x2AC */ f32 field_0x2ac;
+    /* 0x2B0 */ s16 field_0x2b0;
+    /* 0x2B2 */ s16 field_0x2b2;
+    /* 0x2B4 */ u8 field_0x2b4;
+    /* 0x2B5 */ u8 padding_0x2b5[3];
+    /* 0x2B8 */ JGeometry::TVec2f field_0x2b8;
+    /* 0x2C0 */ JGeometry::TVec2f field_0x2c0;
+    /* 0x2C8 */ JGeometry::TVec2f field_0x2c8;
+}; // Size: 0x2D0
+
+#endif

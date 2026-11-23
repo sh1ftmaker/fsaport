@@ -1,0 +1,446 @@
+#include "game/ActorId.h"
+#include "game/ActorManager.h"
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/Camera.h"
+#include "game/Effect.h"
+#include "game/EmitterDelete.h"
+#include "game/Map.h"
+#include "game/Player.h"
+#include "game/SpriteParams.h"
+#include "game/act/act_giant_generator_effect_802ED538.h"
+#include "JSystem/JMath/JMath.h"
+#include "std/math.h"
+
+// The TIMG resources by the spawn parameter (bits 17-18).
+const char* lbl_804AA330[4] = {"jen_blue.bti", "jen_green.bti", "jen_red.bti", "jen_purple.bti"};
+
+// Emitter ids by the spawn parameter (bits 17-18): three each in the first two tables, five in the third.
+static const u16 lbl_8046F544[12] = {234, 235, 236, 237, 238, 239, 243, 244, 245, 240, 241, 242};
+static const u16 lbl_8046F55C[12] = {960, 961, 962, 963, 964, 965, 969, 970, 971, 966, 967, 968};
+
+const char* lbl_804AA340[4] = {"jen_blue_tsume.bti", "jen_green_tsume.bti", "jen_red_tsume.bti", "jen_purple_tsume.bti"};
+
+static const u16 lbl_8046F5C8[4][4] = {{2, 3, 4, 5}, {6, 7, 8, 9}, {14, 15, 16, 17}, {10, 11, 12, 13}};
+static const u16 lbl_8046F5E8[20] = {1206, 1207, 1208, 1209, 1210, 1211, 1212, 1213, 1214, 1215,
+                                     1221, 1222, 1223, 1224, 1225, 1216, 1217, 1218, 1219, 1220};
+
+// Not auto-inlined: vfunc_0x10 and the callers below call fn_802EEA24 out of line in the original (docs/INLINING.md, pragma rule 1).
+#pragma auto_inline off
+void fn_802EEA24(u8 value) {
+    lbl_8053AB60 = value;
+}
+#pragma auto_inline reset
+
+void GiantGeneratorEffect_804AA350::init() {
+    mEmitter230 = NULL;
+    mEmitter234 = NULL;
+    mEmitter238 = NULL;
+    mEmitter23c = NULL;
+    mEmitter240 = NULL;
+    mEmitter244 = NULL;
+    mEmitter248 = NULL;
+    mPos.x = (f32)(((s32)mPos.x / 16) * 16 + 8);
+    field_0x24c = 0;
+    field_0x254 = (mSpawnParam_0x90 >> 17) & 3;
+    field_0x250 = 0;
+    field_0x258 = (mSpawnParam_0x90 >> 12) & 0x1F;
+    field_0x25c = (mSpawnParam_0x90 >> 7) & 0x1F;
+    field_0x276 = 0;
+    field_0x277 = 0;
+    field_0x278 = 0;
+    field_0x268.x = mPos.x;
+    field_0x268.y = mPos.y;
+    field_0x268.z = mPos.z;
+    field_0x268.y -= 32.0f;
+    field_0x260[0] = -1;
+    field_0x260[1] = -1;
+    field_0x275 = 0xFF;
+    field_0x279 = 0;
+    if (isScreenFlagSet_0x34() == true) {
+        mAlive = false;
+        field_0x2cc = NULL;
+        field_0x24c = 16;
+    } else {
+        field_0x2cc = getBossArchiveResource_804032E8('TIMG', lbl_804AA330[field_0x254]);
+        mEmitter230 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x4E, 0, 0, NULL, NULL, true, 1.0f);
+    }
+    for (s32 i = 0; i < 4; i++) {
+        field_0x27c[i].mPos.x = 0.0f;
+        field_0x27c[i].mPos.y = 0.0f;
+        field_0x27c[i].mPos.z = 0.0f;
+        field_0x27c[i].mDist = 0.0f;
+        field_0x27c[i].mAngle = 0;
+        field_0x27c[i].mActive = 0;
+    }
+    mUpdateWhilePaused_0x11f = 1;
+}
+
+// FIXME(shotgun): 98.40 %, regalloc-only; behaviour clean.
+void GiantGeneratorEffect_804AA350::vfunc_0x10() {
+    s32 count = getActorManager_801F856C()->getActorEnd();
+    for (s32 i = 0; i < count; i++) {
+        ActorBase_804A5770* actor = getActorManager_801F856C()->mActors[i];
+        if (actor != NULL && actor->mActorId == ACTOR_WARP && field_0x25c == actor->getScreenFlagBit_0x3C()) {
+            JGeometry::TVec3f pos = actor->mPos;
+            pos.x = mPos.x;
+            pos.y = 32.0f + mPos.y;
+            actor->mPos = pos;
+        }
+    }
+    s32 found = 0;
+    for (s32 i = 0; i < count; i++) {
+        ActorBase_804A5770* actor = getActorManager_801F856C()->mActors[i];
+        if (actor != NULL && actor->mActorId == ACTOR_SLR4) {
+            field_0x260[found++] = i;
+            fn_802EEA24(1);
+            if (found >= 2) {
+                break;
+            }
+        }
+    }
+}
+
+GiantGeneratorEffect_804AA350::~GiantGeneratorEffect_804AA350() {
+    if (mEmitter230 != NULL) {
+        releaseEmitter_801EE434(mEmitter230);
+    }
+    if (mEmitter234 != NULL) {
+        releaseEmitter_801EE434(mEmitter234);
+    }
+    if (mEmitter238 != NULL) {
+        releaseEmitter_801EE434(mEmitter238);
+    }
+    if (mEmitter23c != NULL) {
+        releaseEmitter_801EE434(mEmitter23c);
+    }
+    if (mEmitter240 != NULL) {
+        releaseEmitter_801EE434(mEmitter240);
+    }
+    if (mEmitter244 != NULL) {
+        releaseEmitter_801EE434(mEmitter244);
+    }
+    if (mEmitter248 != NULL) {
+        releaseEmitter_801EE434(mEmitter248);
+    }
+}
+
+static inline void setCameraScript(const JGeometry::TVec3f& pos) {
+    Camera_804AA9E4* camera = gGameRoot2_8053AB10->field_0x24;
+    if (camera->mShowWholeArea_0x7f5 == 0) {
+        camera->mFocusOverride_0x7f4 = 1;
+        camera->mFocusMode_0x7f8 = 4;
+        camera->mFocusPos_0x7fc.x = pos.x;
+        camera->mFocusPos_0x7fc.y = pos.y;
+        camera->mFocusPos_0x7fc.z = pos.z;
+        camera->mOverrideBlend_0x7f6 = 0;
+    }
+}
+
+static inline void armFlag() {
+    cls_804A03A8* obj = gGameRoot2_8053AB10->field_0x30;
+    if (obj->field_0x284 == 0) {
+        obj->field_0x284 = 1;
+        obj->field_0x28c = 0.05f;
+    }
+}
+
+static inline void stopEmitter(JPABaseEmitter*& emitter) {
+    if (emitter != NULL) {
+        emitter->stopCreateParticle();
+        emitter = NULL;
+    }
+}
+
+// Notifies the SLR4 actor in slot `slot`, if there is one.
+static inline void notifySlr4(s32 slot, u8 arg) {
+    if (slot >= 0) {
+        ActorManager_804A5800* manager = getActorManager_801F856C();
+        ActorBase_804A5770* actor = manager->mActors[slot];
+        if (actor != NULL && actor->mActorId == ACTOR_SLR4) {
+            fn_802EEA24(arg);
+        }
+    }
+}
+
+// FIXME(shotgun): 98.45 %, missing/extra; behaviour drift.
+void GiantGeneratorEffect_804AA350::update() {
+    switch (field_0x24c) {
+    case 0:
+        if (!getGameView_802D6A9C()->isInTransition_802DCD0C()) {
+            setCameraScript(mPos);
+            if (getActorManager_801F856C()->fn_801F68E0() != 0) {
+                field_0x250 = 20;
+                field_0x24c++;
+                gAudioMgr_8053AF80->startBgm_80458FF0(0x100000D, false, 0);
+                fn_8022ADE4();
+            }
+        }
+        break;
+    case 1:
+        setCameraScript(mPos);
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            field_0x250 = 60;
+            field_0x24c++;
+        }
+        break;
+    case 2:
+        setCameraScript(mPos);
+        armFlag();
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            getGameView_802D6A9C()->setSwitchBit_802D8050(mSpawnParam_0x90 & 0x1F, true, 0xFF);
+            field_0x250 = 180;
+            field_0x24c++;
+        }
+        break;
+    case 3:
+        setCameraScript(mPos);
+        armFlag();
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            getActorManager_801F856C()->fn_801F6884();
+            notifySlr4(field_0x260[0], 0);
+            notifySlr4(field_0x260[1], 0);
+            field_0x24c++;
+        }
+        break;
+    case 4:
+        if (getGameView_802D6A9C()->isScreenFlagSet_802D800C(field_0x258)) {
+            if (getActorManager_801F856C()->fn_801F68E0() != 0) {
+                notifySlr4(field_0x260[0], 1);
+                notifySlr4(field_0x260[1], 1);
+                field_0x250 = 60;
+                field_0x24c = 5;
+            }
+        }
+        break;
+    case 5:
+        setCameraScript(mPos);
+        armFlag();
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            stopEmitter(mEmitter230);
+            s32 type = field_0x254;
+            mEmitter230 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5C8[type][0], 0, -1, NULL, NULL, true, 1.0f);
+            mEmitter234 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5C8[type][1], 0, -1, NULL, NULL, true, 1.0f);
+            mEmitter238 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5C8[type][2], 0, -1, NULL, NULL, true, 1.0f);
+            mEmitter23c = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5C8[type][3], 0, -1, NULL, NULL, true, 1.0f);
+            field_0x250 = 180;
+            field_0x24c++;
+            startSound_801F0E34(0x5005A, 0);
+        }
+        break;
+    case 6:
+        setCameraScript(mPos);
+        armFlag();
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            getGameView_802D6A9C()->setSwitchBit_802D8050(field_0x25c, true, 0xFF);
+            getActorManager_801F856C()->fn_801F6884();
+            for (s32 p = 0; p < 4; p++) {
+                fn_8022CA6C(p, 5, false);
+            }
+            notifySlr4(field_0x260[0], 0);
+            notifySlr4(field_0x260[1], 0);
+            field_0x24c++;
+            startSound_801F0E34(0x5005B, 0);
+        }
+        break;
+    case 7:
+        if (field_0x279) {
+            if (field_0x276) {
+                getGameView_802D6A9C()->setSwitchBit_802D8050(field_0x25c, false, 0xFF);
+                field_0x250 = 0x7C;
+                field_0x24c++;
+                startSound_801F0E34(0x5005C, 0);
+            }
+        } else if (fn_802ED538()) {
+            stopEmitter(mEmitter23c);
+            if (gGameRoot_8053AAF8->field_0x7e == 1) {
+                gAudioMgr_8053AF80->setMusicSlow_8045815C(true);
+                field_0x279 = 1;
+            } else {
+                startSound_801F0E34(0x5005B, 0);
+            }
+        }
+        break;
+    case 8:
+        field_0x275 -= 2;
+        mEmitter234->mGlobalPrmClr.a = field_0x275;
+        mEmitter238->mGlobalPrmClr.a = field_0x275;
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            getEffectSystem_8013C824()->mEmitterManager->forceDeleteEmitter(mEmitter234);
+            mEmitter234 = NULL;
+            getEffectSystem_8013C824()->mEmitterManager->forceDeleteEmitter(mEmitter238);
+            mEmitter238 = NULL;
+            field_0x275 = 0xFF;
+            field_0x24c++;
+        }
+        break;
+    case 9:
+        if (field_0x277) {
+            s32 base = field_0x254 * 3;
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F544[base], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F544[base + 1], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F544[base + 2], 0, 0, NULL, NULL, true, 1.0f);
+            startSound_801F0E34(0x50058, 0);
+            field_0x250 = 0x78;
+            field_0x24c = 10;
+        }
+        break;
+    case 10:
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            s32 base = field_0x254 * 3;
+            mEmitter240 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x268, lbl_8046F55C[base], 0, 0, NULL, NULL, true, 1.0f);
+            mEmitter244 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x268, lbl_8046F55C[base + 1], 0, 0, NULL, NULL, true, 1.0f);
+            field_0x2cc = getBossArchiveResource_804032E8('TIMG', lbl_804AA340[field_0x254]);
+            mVel_0x3c.z = 0.3f;
+            field_0x24c++;
+        }
+        break;
+    case 11:
+        setEmitterPos_8013CB44(mEmitter240, &field_0x268, 0, -1, false);
+        setEmitterPos_8013CB44(mEmitter244, &field_0x268, 0, -1, false);
+        if (field_0x275 > 2) {
+            field_0x275 -= 2;
+        } else {
+            field_0x275 = 0;
+        }
+        mEmitter230->mGlobalPrmClr.a = field_0x275;
+        if (field_0x268.z >= 40.0f) {
+            field_0x268.z = 40.0f;
+            getEffectSystem_8013C824()->mEmitterManager->forceDeleteEmitter(mEmitter230);
+            mEmitter230 = NULL;
+            field_0x24c = 12;
+        }
+        break;
+    case 12:
+        if (field_0x278) {
+            s32 base = field_0x254 * 5;
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5E8[base], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5E8[base + 1], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5E8[base + 2], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5E8[base + 3], 0, 0, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_8046F5E8[base + 4], 0, 0, NULL, NULL, true, 1.0f);
+            startSound_801F0E34(0x5006F, 0);
+            field_0x24c = 13;
+            field_0x250 = 180;
+        }
+        break;
+    case 13:
+        field_0x250--;
+        if (field_0x250 <= 0) {
+            getGameView_802D6A9C()->setSwitchBit_802D8050(mSpawnParam_0x90 >> 27, true, 0xFF);
+            field_0x2cc = NULL;
+            field_0x24c++;
+        }
+        break;
+    case 14:
+        setEmitterPos_8013CB44(mEmitter240, &field_0x268, 0, -1, false);
+        setEmitterPos_8013CB44(mEmitter244, &field_0x268, 0, -1, false);
+        break;
+    case 15:
+        if (field_0x275 > 8) {
+            field_0x275 -= 8;
+        } else {
+            field_0x275 = 0;
+        }
+        if (field_0x275 != 0) {
+            mEmitter240->mGlobalPrmClr.a = field_0x275;
+            mEmitter244->mGlobalPrmClr.a = field_0x275;
+            setEmitterPos_8013CB44(mEmitter240, &field_0x268, 0, -1, false);
+            setEmitterPos_8013CB44(mEmitter244, &field_0x268, 0, -1, false);
+        } else {
+            getEffectSystem_8013C824()->mEmitterManager->forceDeleteEmitter(mEmitter240);
+            mEmitter240 = NULL;
+            getEffectSystem_8013C824()->mEmitterManager->forceDeleteEmitter(mEmitter244);
+            mEmitter244 = NULL;
+            field_0x24c = 16;
+        }
+        break;
+    case 16:
+        break;
+    }
+}
+
+static inline void drawSprite(s32 layer, const JGeometry::TVec3f* pos, void* res, SpriteParams_801F5AE0* params) {
+    if (layer < 8) {
+        gGameRoot2_8053AB10->field_0x20->drawTimgImage_802F745C(pos, res, params);
+    }
+}
+
+void GiantGeneratorEffect_804AA350::draw() {
+    if (field_0x2cc != NULL) {
+        SpriteParams_801F5AE0 params;
+        params.field_0x1c = 0;
+        params.field_0x1d = -3;
+        params.field_0x24 = 1;
+        params.field_0x23 = 1;
+        params.field_0x21 = 1;
+        drawSprite(mLayer_0x4, &mPos, field_0x2cc, &params);
+    }
+}
+
+u8 GiantGeneratorEffect_804AA350::fn_802ED7F0(f32 value) {
+    if (field_0x24c < 11) {
+        return 0;
+    }
+    if (field_0x274) {
+        field_0x268.z = value;
+    } else if (value == 0.0f) {
+        field_0x274 = 1;
+    }
+    return field_0x274;
+}
+
+void GiantGeneratorEffect_804AA350::fn_802ED7D8() {
+    field_0x275 = 0xFF;
+    field_0x24c++;
+}
+
+// FIXME: 82.43 %, missing/extra + reloc-name; behaviour drift.
+// FIXME(shotgun): missing/extra + reloc-name (TUtilf::sqrt tests x > 0 in the original, not x <= 0; fn_802303FC's flag is passed as 0xFF there; mLayer_0x4 is loaded late)
+bool GiantGeneratorEffect_804AA350::fn_802ED538() {
+    bool result = true;
+    for (s32 p = 0; p < 4; p++) {
+        if (isPlayerActive_8023F264(p) && getPlayerLayer_8023DE58(p) == mLayer_0x4) {
+            if (!isPlayerDead_80236B50(p) && !fn_8023EA28(p) && !fn_80230188(p) && !fn_8022D534(p) &&
+                !field_0x27c[p].mActive && fn_802300EC(p)) {
+                JGeometry::TVec3f* pos = getPlayerPos_8023E724(p);
+                if (pos->z == 0.0f) {
+                    f32 dx = mPos.x - pos->x;
+                    f32 dy = (32.0f + mPos.y) - pos->y;
+                    field_0x27c[p].mPos = *getPlayerPos_8023E724(p);
+                    f32 len = dx * dx + dy * dy;
+                    field_0x27c[p].mDist = JGeometry::TUtilf::sqrt(len);
+                    field_0x27c[p].mAngle = (s16)(s32)(JMath::atanTable_.atan2_(-dx, -dy) * 10430.378f);
+                    field_0x27c[p].mActive = 1;
+                    fn_80230AD4(p);
+                    fn_8022CA6C(p, 5, false);
+                }
+            }
+        }
+        if (field_0x27c[p].mActive && fn_80230188(p) && !fn_8022D75C(p)) {
+            if (field_0x27c[p].mDist > 4.0f) {
+                field_0x27c[p].mDist = field_0x27c[p].mDist - 4.0f;
+            } else {
+                field_0x27c[p].mDist = 0.0f;
+            }
+            const JMath::TSinCosTable<11, f32>& sincos = JMath::sincosTable_;
+            field_0x27c[p].mPos.x = mPos.x + field_0x27c[p].mDist * sincos.sinShort(field_0x27c[p].mAngle);
+            field_0x27c[p].mPos.y = (32.0f + mPos.y) + field_0x27c[p].mDist * sincos.cosShort(field_0x27c[p].mAngle);
+            fn_802303FC(p, &field_0x27c[p].mPos, true);
+            if (field_0x27c[p].mDist < 1.0f) {
+                fn_80230224(p, 0);
+            }
+        }
+        if (getPlayerLayer_8023DE58(p) == mLayer_0x4) {
+            result = false;
+        }
+    }
+    return result;
+}

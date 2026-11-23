@@ -1,0 +1,371 @@
+#include "game/GameAudio.h"
+#include "game/act/act_gibdo.h"
+#include "game/ActorManager.h"
+#include "game/Effect.h"
+#include "game/GameGlobals.h"
+#include "JSystem/JParticle/JPAEmitter.h"
+
+// Animation sequences of (cel, duration) pairs, ended by -1.
+static const s16 lbl_804691B0[10] = {0, 8, 1, 0x12, 0, 8, 2, 0x12, -1, -1};
+static const s16 lbl_804691C4[10] = {5, 8, 6, 0x12, 5, 8, 7, 0x12, -1, -1};
+static const s16 lbl_804691D8[10] = {10, 8, 11, 0x12, 10, 8, 12, 0x12, -1, -1};
+static const s16 lbl_804691EC[10] = {15, 8, 16, 0x12, 15, 8, 17, 0x12, -1, -1};
+static const s16 lbl_80469200[12] = {0, 0xF, 3, 0xF, 0, 0xF, 4, 0xF, 0, 0xF, -1, -1};
+static const s16 lbl_80469218[12] = {5, 0xF, 8, 0xF, 5, 0xF, 9, 0xF, 5, 0xF, -1, -1};
+static const s16 lbl_80469230[12] = {10, 0xF, 13, 0xF, 10, 0xF, 14, 0xF, 10, 0xF, -1, -1};
+static const s16 lbl_80469248[12] = {15, 0xF, 18, 0xF, 15, 0xF, 19, 0xF, 15, 0xF, -1, -1};
+static const s16 lbl_80469260[10] = {0, 5, 3, 0xA, 13, 0xA, 10, 5, -1, -1};
+static const s16 lbl_80469274[10] = {0, 5, 4, 0xA, 18, 0xA, 15, 5, -1, -1};
+static const s16 lbl_80469288[10] = {5, 5, 8, 0xA, 14, 0xA, 10, 5, -1, -1};
+static const s16 lbl_8046929C[10] = {5, 5, 9, 0xA, 19, 0xA, 15, 5, -1, -1};
+static const s16 lbl_804692B0[10] = {10, 5, 13, 0xA, 3, 0xA, 0, 5, -1, -1};
+static const s16 lbl_804692C4[10] = {10, 5, 14, 0xA, 8, 0xA, 5, 5, -1, -1};
+static const s16 lbl_804692D8[10] = {15, 5, 18, 0xA, 4, 0xA, 0, 5, -1, -1};
+static const s16 lbl_804692EC[10] = {15, 5, 19, 0xA, 9, 0xA, 5, 5, -1, -1};
+
+// The sprite's animation table: one pointer per sequence above.
+static const s16* lbl_804A3BB8[16] = {
+    lbl_804691B0, lbl_804691C4, lbl_804691D8, lbl_804691EC,
+    lbl_80469200, lbl_80469218, lbl_80469230, lbl_80469248,
+    lbl_80469260, lbl_80469274, lbl_80469288, lbl_8046929C,
+    lbl_804692B0, lbl_804692C4, lbl_804692D8, lbl_804692EC,
+};
+
+Gibdo_804A3BF8::Gibdo_804A3BF8() {}
+
+void Gibdo_804A3BF8::init() {
+    EnemyBase_804A4808::init();
+    if (mSpawnParam_0x90 == 1) {
+        mFlags |= 0x4000;
+    }
+    mBox.set(-8.0f, -24.0f, 8.0f, 8.0f);
+    mMapBox_0x80.set(-10.0f, -10.0f, 10.0f, 10.0f);
+    mFlags |= ENEMY_FLAG_NO_HURT;
+    mState = 0;
+    mStateTimer = 0;
+    field_0x250 = randInt_801CD664(0x3D) + 0x3C;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.setKeyTables_801D2608(lbl_804A3BB8, 0x10);
+    mAnim.startAnim_801D22DC(mDir_0x98, 2, false);
+    mAnim.setRandomFrame_801D1D60();
+}
+
+// FIXME(shotgun): 99.47 %, missing/extra; behaviour drift.
+// the original keeps fewer values live (saves r30-r31 only)
+// and its jump table is named jumptable_804A3D24.
+void Gibdo_804A3BF8::fn_801B9DD4(s32 mode) {
+    mFlags &= ~0x8000;
+    switch (mode) {
+    case 0:
+        if (mState != 0) {
+            mFlags |= 0x8000;
+            mTargetSpeed = 0.0f;
+        }
+        field_0x250 = randInt_801CD664(0x3D) + 0x3C;
+        mAnim.startAnimIfChanged_801D22A0(mDir_0x98, 2);
+        break;
+    case 1:
+        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
+        mAnim.startAnim_801D22DC(mDir_0x98 + 4, 0, false);
+        break;
+    case 2: {
+        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
+        s32 kind = 0;
+        s32 dir = mDir_0x98;
+        switch (mAnim.mAnim) {
+        case 0:
+        case 4:
+        case 12:
+        case 14:
+            kind = 0;
+            break;
+        case 1:
+        case 5:
+        case 13:
+        case 15:
+            kind = 1;
+            break;
+        case 2:
+        case 6:
+        case 8:
+        case 10:
+            kind = 2;
+            break;
+        case 3:
+        case 7:
+        case 9:
+        case 11:
+            kind = 3;
+            break;
+        }
+        s32 anim = 8;
+        switch (kind) {
+        case 0:
+            switch (dir) {
+            case 3:
+                anim = 9;
+                break;
+            case 2:
+                break;
+            default:
+                anim = gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f ? 8 : 9;
+                break;
+            }
+            break;
+        case 1:
+            switch (dir) {
+            case 3:
+                anim = 11;
+                break;
+            case 2:
+                anim = 10;
+                break;
+            default:
+                anim = gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f ? 10 : 11;
+                break;
+            }
+            break;
+        case 2:
+            switch (dir) {
+            case 1:
+                anim = 13;
+                break;
+            case 0:
+                anim = 12;
+                break;
+            default:
+                anim = gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f ? 12 : 13;
+                break;
+            }
+            break;
+        case 3:
+            switch (dir) {
+            case 1:
+                anim = 15;
+                break;
+            case 0:
+                anim = 14;
+                break;
+            default:
+                anim = gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f ? 14 : 15;
+                break;
+            }
+            break;
+        }
+        mAnim.startAnim_801D22DC(anim, 0, false);
+        break;
+    }
+    case 3: {
+        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
+        mVel_0x3c.set(0.0f, 0.0f, 0.0f);
+        mBox.set(1.0f, 1.0f, -1.0f, -1.0f);
+        mBox2.i = mBox.i;
+        mBox2.f = mBox.f;
+        mMapBox_0x80.set(1.0f, 1.0f, -1.0f, -1.0f);
+        field_0xb0 = 0;
+        mFlags |= 0x300;
+        mLife = 1;
+        JUtility::TColor color = gGameRoot2_8053AB10->field_0x2c->field_0x4;
+        JPABaseEmitter* emitters[3];
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x329, 0, 0, NULL, NULL, true, 1.0f);
+        emitters[0] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x32A, 0, 0, NULL, NULL, true, 1.0f);
+        emitters[1] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x41B, 0, 0, NULL, NULL, true, 1.0f);
+        emitters[2] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x41C, 0, 0, NULL, NULL, true, 1.0f);
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x54F, 0, 0, NULL, NULL, true, 1.0f);
+        for (s32 i = 0; i < 3; i++) {
+            if (emitters[i] != NULL) {
+                emitters[i]->setColorRGB(color.r, color.g, color.b);
+            }
+        }
+        startSound_801F0E34(0x5007E, 0);
+        startSound_801F0E34(0x40003, 0);
+        mDrawEnabled = false;
+        break;
+    }
+    }
+    mStateTimer = 0;
+    mState = mode;
+}
+
+// FIXME: 96.86 %, missing/extra; behaviour drift.
+// The original reloads mFlags before clearing 0x8000 (lwz after
+// the timer compare); ours reuses the first load. The two jump tables
+// (jumptable_804A3C9C, jumptable_804A3CE4) and the 120.0f / 0.1f literals are
+// @NNN here (reloc-name, a data split).
+void Gibdo_804A3BF8::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        if (mFlags & 0x8000) {
+            if (mStateTimer >= 5) {
+                mFlags &= ~0x8000;
+            }
+        }
+        if (mapHit) {
+            s32 dir = fn_801CF1B0(true, 120.0f, 0.1f);
+            if (dir == mDir_0x98) {
+                field_0x250 += 10;
+            } else if (findNearestPlayer_801D05F8(&mPos, 120.0f) < 0) {
+                mFlags |= 0x2000;
+                fn_801B9DD4(1);
+            } else {
+                mDir_0x98 = dir;
+                fn_801B9DD4(2);
+            }
+        } else if (mStateTimer >= field_0x250) {
+            if (findNearestPlayer_801D05F8(&mPos, 120.0f) < 0) {
+                fn_801B9DD4(1);
+            } else {
+                bool turn = false;
+                if (mFlags & 0x2000) {
+                    mFlags &= ~0x2000;
+                    turn = true;
+                }
+                s32 dir = fn_801CF1B0(turn, 120.0f, 0.1f);
+                if (dir == mDir_0x98) {
+                    fn_801B9DD4(0);
+                } else {
+                    mDir_0x98 = dir;
+                    fn_801B9DD4(2);
+                }
+            }
+        }
+        break;
+    case 1:
+        if (mStateTimer > 1 && mAnim.isStopped_801D21F0()) {
+            bool turn = false;
+            if (mFlags & 0x2000) {
+                mFlags &= ~0x2000;
+                turn = true;
+            }
+            s32 dir = fn_801CF1B0(turn, 120.0f, 0.1f);
+            if (dir == mDir_0x98) {
+                fn_801B9DD4(0);
+            } else {
+                mDir_0x98 = dir;
+                fn_801B9DD4(2);
+            }
+        }
+        break;
+    case 2:
+        if (mStateTimer > 1 && mAnim.isStopped_801D21F0()) {
+            s32 dir = 0;
+            switch (mAnim.mAnim) {
+            case 0:
+            case 4:
+            case 12:
+            case 14:
+                dir = 0;
+                break;
+            case 1:
+            case 5:
+            case 13:
+            case 15:
+                dir = 1;
+                break;
+            case 2:
+            case 6:
+            case 8:
+            case 10:
+                dir = 2;
+                break;
+            case 3:
+            case 7:
+            case 9:
+            case 11:
+                dir = 3;
+                break;
+            }
+            if (mDir_0x98 == dir) {
+                fn_801B9DD4(0);
+            } else {
+                fn_801B9DD4(2);
+            }
+        }
+        break;
+    case 3:
+        if (mStateTimer >= 180) {
+            JGeometry::TVec3f pos;
+            fn_801CD150(&mPos, &pos);
+            s32 serial = getActorManager_801F856C()->spawnActor_801F9484('STAL', 8, &pos, 3, field_0x16c, -1);
+            if (serial >= 0) {
+                ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                if (actor != NULL) {
+                    actor->mDir_0x98 = 2;
+                }
+            }
+            mAlive = false;
+        }
+        break;
+    }
+
+    if (mState != 0 || (mFlags & 0x8000)) {
+        mTargetSpeed = 0.0f;
+    } else {
+        switch (mAnim.mCel) {
+        case 1:
+        case 2:
+        case 6:
+        case 7:
+        case 11:
+        case 12:
+        case 16:
+        case 17:
+            mTargetSpeed = 0.0f;
+            mAccel = 0.05f;
+            break;
+        default:
+            mTargetSpeed = 0.8f;
+            mAccel = 0.2f;
+            break;
+        }
+    }
+}
+
+void Gibdo_804A3BF8::die_0x24() {
+    if (mFlags & 0x4000) {
+        ActorBase_804A5770::die_0x24();
+        JPABaseEmitter* emitter = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x32B, 1, 1, NULL, NULL, true, 1.0f);
+        if (emitter != NULL) {
+            JUtility::TColor color = gGameRoot2_8053AB10->field_0x2c->field_0x4;
+            emitter->setColorRGB(color.r, color.g, color.b);
+        }
+    } else {
+        fn_801B9DD4(3);
+    }
+}
+
+void Gibdo_804A3BF8::move_0x98() {
+    bool step = false;
+    const u32 hits = ENEMY_FLAG_HIT | ENEMY_FLAG_HIT_PLAYER | ENEMY_FLAG_HIT_ACTOR;
+    if (mState == 3 || (mLife > 0 && ((mFlags & hits) == 0 || mHitType_0xfc != 5))) {
+        step = true;
+    }
+    if (step) {
+        fn_801CE32C();
+    }
+}
+
+void Gibdo_804A3BF8::updateBehavior_0x9C(u8 mapHit) {
+    bool step = false;
+    const u32 hits = ENEMY_FLAG_HIT | ENEMY_FLAG_HIT_PLAYER | ENEMY_FLAG_HIT_ACTOR;
+    if (mState == 3 || (mLife > 0 && ((mFlags & hits) == 0 || mHitType_0xfc != 5))) {
+        step = true;
+    }
+    if (step) {
+        fn_801CE2BC(mapHit);
+    }
+}
+
+void Gibdo_804A3BF8::draw() {
+    SpriteParams_801F5AE0 params;
+    if (mFlags & 0x4000) {
+        params.field_0x0[3] = 6;
+    }
+    drawSprite_801F06F0("enemy_gc_sob.bin", mAnim.mCel + 0xC1, &params, 7, 1.0f, 1.0f);
+}
+
+Gibdo_804A3BF8::~Gibdo_804A3BF8() {}

@@ -1,0 +1,225 @@
+#ifndef GAME_ACT_ACT_SHADOW_LINK_2_H
+#define GAME_ACT_ACT_SHADOW_LINK_2_H
+
+// Code: game/act_shadow_link_2.cpp (not written yet). Only the members that
+// game/bomb_drop_timer_802188B0.cpp and game/act_shadow_link_2_8021CDE4.cpp use are declared.
+
+#include "game/cls_800FE8C0.h"
+#include "game/cls_804A46F4.h"
+#include "game/cls_80214244.h"
+#include "game/cls_802150B8.h"
+#include "game/cls_80217128.h"
+#include "game/cls_80217374.h"
+#include "game/cls_80218A8C.h"
+#include "game/cls_802157B8.h"
+#include "game/cls_802153A8.h"
+
+// The SLK2 actor ("Shadow Link 2", docs/names/actors.tsv, high confidence):
+// the spawner constructs it with fn_801C573C, which calls the shared base's
+// constructor and stores this vtable (0x804A43E8). Named after its vtable.
+class ShadowLink2_804A43E8 : public cls_804A46F4 {
+public:
+    // 0x801C573C (game/act_shadow_link_2.cpp); the spawner calls it out of line.
+    ShadowLink2_804A43E8();
+    /* 0x08 */ virtual ~ShadowLink2_804A43E8();
+    /* 0x0C */ virtual void init();
+    /* 0x74 */ virtual void onHitReactionEnd_0x74();
+    /* 0x88 */ virtual void calcVelocity_0x88();
+    /* 0x90 */ virtual void updateState_0x90(u8 mapHit);
+    /* 0x98 */ virtual void move_0x98();
+    /* 0x9C */ virtual void updateBehavior_0x9C(u8 mapHit);
+    /* 0xA0 */ virtual void vfunc_0xA0();
+    // 0x801C50A8: setState_801C3B7C calls it.
+    void fn_801C50A8(int state);
+    // game/shadow_link_fight_801C0D70.cpp. Whether a player is near mPos (findNearestPlayer_801D05F8 with
+    // 1.0f, then fn_801D0D50 with `range`); 0 or 1.
+    bool fn_801C5348(f32 range);
+    // game/act_shadow_link_2_8021CDE4.cpp: state change; 1, 2 and 3 set up the members
+    // below and call setState_801C3B7C. The old state ends up in field_0x564.
+    void fn_8021CDE4(int state);
+    // Whether field_0x564 is 3 and the timer field_0x59e ran out.
+    bool fn_8021CFF8();
+    // Whether the life lost since init is at least field_0x568.
+    bool fn_8021D020();
+    // act_shadow_link_2.cpp: switches the animation/state by number.
+    void setState_801C3B7C(int);
+    // game/act_shadow_link_2_801C5B08.cpp (0x801C6784): turns field_0x33c to the side of
+    // player field_0x590 that mPos is on (0x4000 or -0x4000), or to the
+    // angle toward that player (getAngleToPlayer_801D0280) when the layer's view flag is
+    // clear or fn_801CC9F8 holds.
+    void fn_801C6784();
+    // game/act_shadow_link_2_801C5B08.cpp (0x801C5EBC): the turn toward player `player`,
+    // called by fn_801C5B08 with its flag argument.
+    void fn_801C5EBC(s32 player, bool flag);
+    // game/act_shadow_link_2_801C5B08.cpp (0x801C5B08): the per-tick driver of the Shadow
+    // Link 2 state machine (fn_801C2ED4 calls it).
+    void fn_801C5B08(bool flag);
+    // game/act_shadow_link_2_801C5B08.cpp (0x801C6260, not written yet): called by fn_801C5B08
+    // after field_0x338 is set to the nearest player.
+    void fn_801C6260();
+    // act_shadow_link_2.cpp: true if mFlags has bit 0x40000 and the byte at
+    // 0x55C is at most 0x14.
+    bool fn_801C53C4();
+    // act_shadow_link_2.cpp: gravity, EnemyBase's applyGravity_0x84 override. Unless
+    // mHitTimer_0xd8 > 0 && mKnockbackKind_0xf8 == 2, mVel_0x3c.z += lbl_8053EFB8, clamped
+    // at -lbl_8053EFBC from below.
+    /* 0x84 */ virtual void applyGravity_0x84();
+    // act_shadow_link_2.cpp: copies mDir_0x98 (direction) into the animation
+    // sequencer's mDir, advances the sequencer unless it is in state 0x13 past
+    // its first tick or mFlags has bit 0x80000, then updates the hit box.
+    void fn_801C2E70();
+    // act_shadow_link_2.cpp: switches to state 0xD (setState_801C3B7C only).
+    void fn_801C26D8();
+    // act_shadow_link_2.cpp (0x801C27F0): passes mFlags bit 0x08000000 to the getShadowLinkFight_801C0D70 object's
+    // fn_801C1374, then die_0x24.
+    void fn_801C27F0();
+    // act_shadow_link_2.cpp: switches to state 0xE unless mState is 0xE.
+    void fn_801C26FC();
+    // act_shadow_link_2.cpp (0x801C272C, not written yet): sets the byte at
+    // 0x11D, then picks a state by the getShadowLinkFight_801C0D70 object (fn_801C11F0 and
+    // its bit 1). Called by ShadowLinkFight_801C0D70::fn_801C0DCC.
+    void fn_801C272C();
+    // act_shadow_link_2.cpp: if the object from getShadowLinkFight_801C0D70 has bit 0x80000000
+    // at 0x50 and mFlags has bit 0x2000, calls its fn_801C12B8.
+    void fn_801C53F8();
+    // act_shadow_link_2.cpp: if mFlags has bit 0x4000 and mState is 0 or 1,
+    // switches to state 2 (setState_801C3B7C).
+    void fn_801C27A8();
+    // game/act_shadow_link_2_801C6A4C.cpp: per-tick state handlers (field_0x340 anim
+    // finished flags, then the next setState_801C3B7C state).
+    void fn_801C6A4C();
+    void fn_801C6BA8();
+    void fn_801C6C7C();
+    // game/act_shadow_link_2_801C71BC.cpp: for a nonzero flag, sets the byte at 0x55D from
+    // a rail query (fn_800FD894 on field_0x358) and randInt_801CD664; otherwise
+    // from randInt_801CD664(0xC) alone.
+    void fn_801C8BC4(u8 flag);
+    // game/act_shadow_link_2_801C71BC.cpp: rail step. Clears mFlags 0x2000000, sets or clears
+    // 0x20000 from fn_800FD594 on field_0x358, reads the rail point at 0xFF
+    // into field_0x32c, mPos and mPrevPos, steps the rail (fn_800FD818) in the
+    // direction of its field_0x1, then fn_801C8BC4(1) and setState_801C3B7C 0x17/0x18.
+    void fn_801C79A0();
+    // game/act_shadow_link_2_801C71BC.cpp (0x801C7EE4): sets mFlags 0x400000 when the rail point
+    // is out of reach (z too far on view layers with the flag, or isWayBlocked_801CF888 blocked).
+    void fn_801C7EE4();
+    // game/act_shadow_link_2_801C71BC.cpp (0x801C71BC): picks a neighbouring rail point (fn_800FD4C0), else
+    // resets (fn_801C8B50) and turns by a random angle.
+    void fn_801C71BC();
+    // game/act_shadow_link_2_801C71BC.cpp (0x801C8B50): resets the path and the rail, then turns
+    // toward field_0x32c.
+    void fn_801C8B50();
+    void fn_801C9420(JGeometry::TVec2f* dir);
+    void fn_801C9234(JGeometry::TVec2f* out);
+    // game/act_shadow_link_2_801C71BC.cpp: updates field_0x32c and path waypoints.
+    void fn_801C8C84(s32, s32);
+    void fn_801C887C();
+    void fn_801C844C();
+    void fn_801C7F98();
+    u8 fn_801C7BD0();
+    void fn_801C7370(u8 flag);
+    // game/act_shadow_link_2_801C9AF8.cpp (not written yet): 0 if field_0x560 is 4 or
+    // `player`, else 1.
+    bool fn_801CAED4(int player);
+    u8 fn_801C976C();
+    // Inlined in fn_801C976C: the rail indices one step forward and one step
+    // back from the current point; the current index is restored after each step.
+    void getRailNeighbours(u8* next, u8* prev) {
+        u8 start = field_0x358.fn_80214244()->field_0x3;
+        u8 forward = stepRail(1, start);
+        u8 back = stepRail(-1, start);
+        if (prev != NULL) {
+            *prev = back;
+        }
+        if (next != NULL) {
+            *next = forward;
+        }
+    }
+    // One step in direction dir, then back to `start`: the index the step reached.
+    u8 stepRail(s32 dir, u8 start) {
+        field_0x358.fn_80214244()->fn_800FD818(dir);
+        u8 index = field_0x358.fn_80214244()->field_0x3;
+        field_0x358.fn_80214244()->setIndex(start);
+        return index;
+    }
+    // The same with the current index as well.
+    void getRailNeighbours(u8* next, u8* current, u8* prev) {
+        u8 start = field_0x358.fn_80214244()->field_0x3;
+        u8 forward = stepRail(1, start);
+        u8 back = stepRail(-1, start);
+        if (prev != NULL) {
+            *prev = back;
+        }
+        if (current != NULL) {
+            *current = start;
+        }
+        if (next != NULL) {
+            *next = forward;
+        }
+    }
+    bool fn_801CAEF4(const JGeometry::TVec3f* pos, s32 layer);
+    // game/act_shadow_link_2_801C9AF8.cpp (0x801CA0F8): hits the actor overlapping this one
+    // (findOverlappingActor_801F82CC) with takeHit_801F37AC unless it is 'SWBM' or 'FLME'; true if it hit.
+    bool fn_801CA0F8();
+    bool fn_801CA564();
+    u8 fn_801CA274();
+    bool fn_801C9EB8();
+    u8 fn_801C9CB0();
+    // game/act_shadow_link_2_801C9AF8.cpp (0x801C9AF8): whether the tile/box at `pos` on `layer` blocks
+    // this actor (states 0x11 and 0x17 pass through some tile codes).
+    bool fn_801C9AF8(s32 layer, const JGeometry::TVec3f* pos);
+    // game/act_shadow_link_2_801D3320.cpp: picks the next waypoint of the rail in
+    // field_0x358 and moves field_0x32c toward it.
+    void fn_801D3320();
+    // game/act_shadow_link_2_801D3CBC.cpp: per-tick draw by state (mState 0-3, 0xD: none;
+    // 0x17 calls fn_801D41B8 while field_0x524 has bit 0x200).
+    void fn_801D3CBC();
+    // game/act_shadow_link_2_801D3CBC.cpp: draws the player sprite (player_sob.bin) at mPos,
+    // frame `frame`, faded in states 8 and 9, then the shadow sprite.
+    void fn_801D3DAC(s32 frame) const;
+    // game/act_shadow_link_2_801D3CBC.cpp: draws a sprite at field_0xc or field_0x570 with an
+    // alpha ramped by mStateTimer when the tile there is 0x9B or 0x9C.
+    void fn_801D41B8() const;
+
+    /* 0x340 */ AnimFrameSeq_800FE8C0 field_0x340; // animation sequencer (mIndex at 0x34D, mFlags at 0x354)
+    /* 0x358 */ cls_80214244 field_0x358;
+    /* 0x4EC */ cls_802150B8 field_0x4ec; // the destructor destroys it
+    /* 0x524 */ cls_802157B8 field_0x524; // bits 0x8, 0x10, 0x20 pick the attack
+    /* 0x528 */ SwordHitBox_80217128 mHitBox; // mOwner is this actor
+    /* 0x540 */ BombDropTimer_80218A8C mHelper540;       // fn_801C573C calls its constructor
+    /* 0x548 */ cls_802153A8 field_0x548;
+    /* 0x54E */ u8 pad_0x54e[2];
+    /* 0x550 */ WanderTurnTimer_80217374 field_0x550;
+    /* 0x55C */ u8 field_0x55c[0x560 - 0x55C];
+    /* 0x560 */ s32 field_0x560;
+    /* 0x564 */ s32 field_0x564;
+    /* 0x568 */ s32 field_0x568;
+    /* 0x56C */ s32 field_0x56c;
+    /* 0x570 */ JGeometry::TVec3f field_0x570;
+    /* 0x57C */ s32 field_0x57c;
+    /* 0x580 */ JGeometry::TVec3f field_0x580;
+    /* 0x58C */ s32 field_0x58c;
+    /* 0x590 */ s32 field_0x590; // a player index (0-3), lwz / mulli 12 in fn_801C6784
+    /* 0x594 */ u8 field_0x594; // counts finished animation loops
+    /* 0x595 */ u8 field_0x595; // counts ticks without a turn (fn_801C5EBC)
+    /* 0x596 */ u8 field_0x596; // the tick count it waits for (fn_801C5EBC)
+    /* 0x597 */ u8 field_0x597;
+    /* 0x598 */ u8 field_0x598; // a timer (fn_801C5B08 sets 0x78)
+    /* 0x599 */ u8 field_0x599;
+    /* 0x59A */ u8 field_0x59a; // fn_801C5B08 stores 0xB4 here
+    /* 0x59B */ u8 field_0x59b;
+    /* 0x59C */ u8 field_0x59c; // updateBehavior_0x9C counts it down to 0
+    /* 0x59D */ u8 field_0x59d;
+    /* 0x59E */ u16 field_0x59e;
+    /* 0x5A0 */ u16 field_0x5a0;
+    /* 0x5A2 */ u16 field_0x5a2;
+    /* 0x5A4 */ f32 field_0x5a4;
+    /* 0x5A8 */ f32 field_0x5a8;
+    /* 0x5AC */ f32 field_0x5ac; // the range fn_801C5B08 gives findNearestPlayer_801D05F8
+    /* 0x5B0 */ f32 field_0x5b0; // squared against the distance to the player
+}; // Size: at least 0x5B4
+
+
+// Table at 0x8046A748 (0x28 bytes, 5 u16 per state; only [0] is read).
+extern const u16 lbl_8046A748[][5];
+
+#endif

@@ -1,0 +1,118 @@
+#include "game/GameAudio.h"
+#include "game/ActorBase.h"
+#include "game/ActorManager.h"
+#include "game/BgRewrite.h"
+#include "game/GameGlobals.h"
+#include "game/GameView.h"
+#include "game/Map.h"
+#include "game/act/act_shutter.h"
+
+void Shutter_804A8118::init() {
+    mSwitch = (mSpawnParam_0x90 >> 22) & 0x1F;
+    mFlag = (mSpawnParam_0x90 >> 17) & 0x1F;
+    mState = 0;
+    mTile = gGameRoot2_8053AB10->field_0x20->getTile_802F9908(mLayer_0x4, getCellIndexVec3_80226AE0(&mPos, mLayer_0x4));
+    if (getGameView_802D6A9C()->isScreenFlagSet_802D800C(mSwitch)) {
+        gBgRewrite_8053AC98->writeTileMarkView_802A3884(&mPos, 0, mLayer_0x4, mTile);
+        s32 layer = mLayer_0x4 + 1;
+        JGeometry::TVec3f p(mPos.x, mPos.y - 16.0f, 0.0f);
+        gBgRewrite_8053AC98->writeTileMarkView_802A3884(&p, 0, layer, 0);
+        gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+            gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0x180, 0, 0x40, 0xC0);
+        mAlive = false;
+    } else {
+        gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+            gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0, 0, 0x40, 0xC0);
+    }
+}
+
+void Shutter_804A8118::update() {
+    switch (mState) {
+    case 0:
+        if (isScreenFlagSet_0x34() == true) {
+            gBgRewrite_8053AC98->fn_802A3948(&mPos, 0, mLayer_0x4, 0x38);
+            s32 layer = mLayer_0x4 + 1;
+            JGeometry::TVec3f p(mPos.x, mPos.y - 16.0f, 0.0f);
+            gBgRewrite_8053AC98->fn_802A3948(&p, 0, layer, 0x39);
+            startSound_801F0E34(0x30016, 0);
+            if (mLayer_0x4 < 8) {
+                mState = 2;
+                mTimer = 2;
+            } else {
+                gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                    gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0, 0, 0x40, 0xC0);
+                mState = 1;
+            }
+        }
+        break;
+    case 1:
+        if (getGameView_802D6A9C()->isScreenFlagSet_802D800C(mSwitch)) {
+            playSe_801F0D20(3);
+            mState = 4;
+        }
+        break;
+    case 2:
+        mTimer--;
+        if (mTimer == 0) {
+            gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0xC0, 0, 0x40, 0xC0);
+            startSound_801F0E34(0x30016, 0);
+            mState = 3;
+            mTimer = 2;
+        }
+        break;
+    case 3:
+        mTimer--;
+        if (mTimer == 0) {
+            gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0, 0, 0x40, 0xC0);
+            mState = 1;
+            mTimer = 2;
+        }
+        break;
+    case 4:
+        mTimer--;
+        if (mTimer == 0) {
+            if (mLayer_0x4 < 8) {
+                gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                    gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0xC0, 0, 0x40, 0xC0);
+                mState = 5;
+                mTimer = 2;
+            } else {
+                gBgRewrite_8053AC98->writeTileMarkView_802A3884(&mPos, 0, mLayer_0x4, mTile);
+                s32 layer = mLayer_0x4 + 1;
+                JGeometry::TVec3f p(mPos.x, mPos.y - 16.0f, 0.0f);
+                gBgRewrite_8053AC98->writeTileMarkView_802A3884(&p, 0, layer, 0);
+                gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                    gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0x180, 0, 0x40, 0xC0);
+                if (mFlag == 0) {
+                    markDead_801F35AC();
+                } else {
+                    mAlive = false;
+                }
+            }
+            startSound_801F0E34(0x30015, 0);
+        }
+        break;
+    case 5:
+        mTimer--;
+        if (mTimer == 0) {
+            gBgRewrite_8053AC98->writeTileMarkView_802A3884(&mPos, 0, mLayer_0x4, mTile);
+            s32 layer = mLayer_0x4 + 1;
+            JGeometry::TVec3f p(mPos.x, mPos.y - 16.0f, 0.0f);
+            gBgRewrite_8053AC98->writeTileMarkView_802A3884(&p, 0, layer, 0);
+            gGameRoot2_8053AB10->field_0x20->loadTileImages_802FA160(
+                gGameRoot_8053AAF8->field_0xa4->getResource('SCH ', "bg_tenso_sch.bin"), 0x180, 0, 0x40, 0xC0);
+            if (mFlag == 0) {
+                markDead_801F35AC();
+            } else {
+                mAlive = false;
+            }
+        }
+        break;
+    }
+}
+
+void Shutter_804A8118::draw() {}
+
+Shutter_804A8118::~Shutter_804A8118() {}

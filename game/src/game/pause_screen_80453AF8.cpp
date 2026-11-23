@@ -1,0 +1,297 @@
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/GameState.h"
+#include "game/Message.h"
+#include "game/cls_804B1DA8.h"
+#include "JSystem/J2D/J2DScreen.h"
+#include "JSystem/J2D/J2DPicture.h"
+#include "JSystem/J2D/J2DGrafContext.h"
+
+// Pane tags of the three rows ('Pcntn01', 'Psc01', 'Psg01').
+static const u64 lbl_80491470[3] = {
+    0x0050636E746E3031ull, /* "Pcntn01" */
+    0x0000005073633031ull, /* "Psc01" */
+    0x0000005073673031ull, /* "Psg01" */
+};
+
+// The three rows' colours: the selected one is lit.
+static inline void setRowColors(PauseScreen_804B1DA8* self, s32 selected) {
+    for (s32 i = 0; i < 3; i++) {
+        if (i == selected) {
+            static_cast<J2DPicture*>(self->mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xFF, 0xED, 0xA0, 0xFF));
+            static_cast<J2DPicture*>(self->mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0x27, 0x10, 0, 0));
+        } else {
+            static_cast<J2DPicture*>(self->mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xA7, 0x4C, 0x2A, 0xFF));
+            static_cast<J2DPicture*>(self->mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0, 0, 0, 0));
+        }
+    }
+}
+
+// The bounce of the selected row: its two frame panes and its pane controller move by off, the other rows stay.
+static inline void bounceRows(PauseScreen_804B1DA8* self, s32 k) {
+    f32 off = 5.0f * (f32)(k * k) / 25.0f;
+    self->mScreen->search('Pkenc01')->move(self->field_0x24[self->field_0x1c], self->field_0x30[self->field_0x1c] + off);
+    self->mScreen->search('Pkenc02')->move(self->field_0x3c[self->field_0x1c], self->field_0x48[self->field_0x1c] + off);
+    for (s32 i = 0; i < 3; i++) {
+        if (i == self->field_0x1c) {
+            self->field_0x10[i]->moveFromCentre_80402E08(0.0f, off);
+        } else {
+            self->field_0x10[i]->moveFromCentre_80402E08(0.0f, 0.0f);
+        }
+    }
+}
+
+PauseScreen_804B1DA8::PauseScreen_804B1DA8() {
+    lbl_8053AF48 = this;
+    mScreen = new J2DScreen;
+    mScreen->setPriority("pause.blo", 0x1100000, lbl_80529DEC.mGame2DArchive_0x4c);
+    field_0x24[0] = mScreen->search('Pkenc01')->getBounds()->i.x;
+    field_0x30[0] = mScreen->search('Pkenc01')->getBounds()->i.y;
+    field_0x3c[0] = mScreen->search('Pkenc02')->getBounds()->i.x;
+    field_0x48[0] = mScreen->search('Pkenc02')->getBounds()->i.y;
+    f32 dx = mScreen->search(lbl_80491470[0])->getBounds()->i.x - field_0x24[0];
+    f32 dy = field_0x3c[0] - mScreen->search(lbl_80491470[0])->getBounds()->f.x;
+    field_0x24[1] = mScreen->search(lbl_80491470[1])->getBounds()->i.x - dx;
+    field_0x30[1] = mScreen->search(lbl_80491470[1])->getBounds()->i.y;
+    field_0x3c[1] = dy + mScreen->search(lbl_80491470[1])->getBounds()->f.x;
+    field_0x48[1] = mScreen->search(lbl_80491470[1])->getBounds()->i.y;
+    field_0x24[2] = mScreen->search(lbl_80491470[2])->getBounds()->i.x - dx;
+    field_0x30[2] = mScreen->search(lbl_80491470[2])->getBounds()->i.y;
+    field_0x3c[2] = dy + mScreen->search(lbl_80491470[2])->getBounds()->f.x;
+    field_0x48[2] = mScreen->search(lbl_80491470[2])->getBounds()->i.y;
+    field_0x8 = new PaneCtrl_804AF86C;
+    field_0x8->setPane_80402F04(mScreen->search('Pblack'));
+    field_0xc = new PaneCtrl_804AF86C;
+    field_0xc->setPane_80402F04(mScreen->search('Ndata01'));
+    for (s32 i = 0; i < 3; i++) {
+        field_0x10[i] = new PaneCtrl_804AF86C;
+        field_0x10[i]->setPane_80402F04(mScreen->search(lbl_80491470[i]));
+    }
+    field_0x1c = 0;
+    field_0x1e = 2;
+    field_0x20 = 0;
+    field_0x8->mPane->setAlpha(0);
+    field_0x8->field_0x26 = 0;
+    field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+    field_0xc->field_0x22 = 0;
+    for (s32 i = 0; i < 3; i++) {
+        if (i == field_0x1c) {
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xFF, 0xED, 0xA0, 0xFF));
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0x27, 0x10, 0, 0));
+        } else {
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xA7, 0x4C, 0x2A, 0xFF));
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0, 0, 0, 0));
+        }
+    }
+    field_0x55 = 0;
+    field_0x54 = 1;
+}
+
+PauseScreen_804B1DA8::~PauseScreen_804B1DA8() {
+    gAudioMgr_8053AF80->resumeSe_80459274();
+    delete mScreen;
+    mScreen = NULL;
+    delete field_0x8;
+    field_0x8 = NULL;
+    delete field_0xc;
+    field_0xc = NULL;
+    for (s32 i = 0; i < 3; i++) {
+        delete field_0x10[i];
+        field_0x10[i] = NULL;
+    }
+    lbl_8053AF48 = NULL;
+}
+
+void PauseScreen_804B1DA8::fn_80454A6C() {
+    lbl_8053AEC0->fn_804310CC();
+    field_0x1c = 0;
+    field_0x1e = 2;
+    field_0x20 = 0;
+    field_0x8->mPane->setAlpha(0);
+    field_0x8->field_0x26 = 0;
+    field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+    field_0xc->field_0x22 = 0;
+    const ResTIMG* image = static_cast<const ResTIMG*>(getGame2DArchiveResource_80403084('TIMG', "kk_pCselect_01.bti"));
+    static_cast<J2DPicture*>(mScreen->search('Psc01'))->changeTexture(image, 0);
+    for (s32 i = 0; i < 3; i++) {
+        if (i == field_0x1c) {
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xFF, 0xED, 0xA0, 0xFF));
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0x27, 0x10, 0, 0));
+        } else {
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xA7, 0x4C, 0x2A, 0xFF));
+            static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setBlack(JUtility::TColor(0, 0, 0, 0));
+        }
+    }
+    field_0x58 = 9;
+}
+
+void PauseScreen_804B1DA8::fn_80454A00() {
+    gGameRoot2_8053AB10->setPort_8013B490();
+    mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
+    if (field_0x1e == 7 || field_0x1e == 8 || field_0x1e == 9) {
+        lbl_8053AEC0->fn_804316EC();
+    }
+}
+
+// FIXME(shotgun): 97.85 %, missing/extra; behaviour drift.
+// (states 2-13 follow the asm incl. the 13 -> 7 -> 8 -> 9 fallthroughs; the
+// A/B-button chain of state 8 skips the rest on a mismatched flag in the original, ours does not)
+s32 PauseScreen_804B1DA8::fn_80453B14() {
+    field_0x58 = 9;
+    switch (field_0x1e) {
+    case 2:
+        field_0x8->animateAlpha_80402628(lbl_8050DB0C.field_0x4c[32], 0, field_0x8->field_0x28);
+        if (field_0xc->animateMoveY_80402940(lbl_8050DB0C.field_0x4c[32], 0, -480.0f, (f32)lbl_8050DB0C.field_0x4c[34])) {
+            field_0xc->field_0x22 = 0;
+            field_0x1e = 3;
+        }
+        break;
+    case 3:
+        if (field_0xc->animateMoveY_80402940(lbl_8050DB0C.field_0x4c[33], 2, (f32)lbl_8050DB0C.field_0x4c[34], 0.0f)) {
+            field_0x1e = 5;
+        }
+        break;
+    case 5:
+        if (field_0x20 != 0) {
+            field_0x20++;
+            if (field_0x20 > 10) {
+                field_0x20 = 0;
+            }
+        }
+        if (field_0x1c > 0 && lbl_8053AD30->fn_80309A9C(0x8, -1)) {
+            field_0x1c--;
+            field_0x20 = 1;
+            setRowColors(this, field_0x1c);
+            gAudioMgr_8053AF80->playSystemSound_80458880(0, -1);
+        } else if (field_0x1c < 2 && lbl_8053AD30->fn_80309A9C(0x4, -1)) {
+            field_0x1c++;
+            field_0x20 = 1;
+            setRowColors(this, field_0x1c);
+            gAudioMgr_8053AF80->playSystemSound_80458880(0, -1);
+        } else if (lbl_8053AD30->fn_80309C4C(0x1100, -1)) {
+            field_0x1e = 0xA;
+            field_0x20 = 1;
+            gAudioMgr_8053AF80->playSystemSound_80458880(0xB, -1);
+        } else if (lbl_8053AD30->fn_80309C4C(0x200, -1)) {
+            field_0x1c = 0;
+            setRowColors(this, field_0x1c);
+            field_0x1e = 0xA;
+            field_0x20 = 1;
+            gAudioMgr_8053AF80->playSystemSound_80458880(0xB, -1);
+        }
+        bounceRows(this, field_0x20 < 5 ? field_0x20 : 10 - field_0x20);
+        break;
+    case 10: {
+        field_0x20++;
+        s32 k;
+        if (field_0x20 < 5) {
+            k = field_0x20;
+        } else if (field_0x20 < 10) {
+            k = 10 - field_0x20;
+        } else {
+            k = 0;
+        }
+        bounceRows(this, k);
+        if (field_0x20 >= 15) {
+            if (field_0x1c == 0) {
+                field_0x1e = 0xB;
+                field_0x8->field_0x26 = 0;
+            } else {
+                field_0x1e = 0xD;
+            }
+            field_0x20 = 0;
+            field_0xc->field_0x22 = 0;
+        }
+        break;
+    }
+    case 11:
+        if (field_0xc->animateMoveY_80402940(lbl_8050DB0C.field_0x4c[35], 2, 0.0f, (f32)lbl_8050DB0C.field_0x4c[34])) {
+            field_0xc->field_0x22 = 0;
+            field_0x1e = 0xC;
+        }
+        break;
+    case 12:
+        field_0x8->animateAlpha_80402628(lbl_8050DB0C.field_0x4c[36], field_0x8->field_0x28, 0);
+        if (field_0xc->animateMoveY_80402940(lbl_8050DB0C.field_0x4c[36], 0, (f32)lbl_8050DB0C.field_0x4c[34], -480.0f)) {
+            field_0x1e = 2;
+            field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+            field_0xc->field_0x22 = 0;
+            field_0x58 = 7;
+            gAudioMgr_8053AF80->playSystemSound_80458880(2, -1);
+            gAudioMgr_8053AF80->resumeSe_80459274();
+        }
+        break;
+    case 13:
+        if (field_0xc->animateMoveY_80402940(10, 0, 0.0f, 480.0f)) {
+            field_0x1e = 7;
+            lbl_8053AEC0->fn_80431A9C(0x10A, 0, &field_0x55);
+        }
+        break;
+    case 7:
+        if (lbl_8053AEC0->fn_804317AC()) {
+            field_0x1e = 8;
+        }
+        break;
+    case 8:
+        if (lbl_8053AD30->fn_80309A9C(0x2, -1)) {
+            if (field_0x55 == 0) {
+                field_0x55 = 1;
+                gAudioMgr_8053AF80->playSystemSound_80458880(0, -1);
+            }
+        } else if (lbl_8053AD30->fn_80309A9C(0x1, -1)) {
+            if (field_0x55 == 1) {
+                field_0x55 = 0;
+                gAudioMgr_8053AF80->playSystemSound_80458880(0, -1);
+            }
+        } else if (lbl_8053AD30->fn_80309C4C(0x1100, -1)) {
+            field_0x1e = 9;
+            if (field_0x55 == 1) {
+                gAudioMgr_8053AF80->playSystemSound_80458880(0xB, -1);
+            }
+        } else if (lbl_8053AD30->fn_80309C4C(0x200, -1)) {
+            field_0x55 = 1;
+            field_0x1e = 9;
+            if (field_0x55 == 1) {
+                gAudioMgr_8053AF80->playSystemSound_80458880(0xB, -1);
+            }
+        }
+        lbl_8053AEC0->fn_80431174(field_0x55);
+        break;
+    case 9:
+        if (lbl_8053AEC0->fn_80431740()) {
+            if (field_0x55 == 0) {
+                if (field_0x1c == 1) {
+                    gAudioMgr_8053AF80->playSystemSound_80458880(0xC, -1);
+                    gAudioMgr_8053AF80->stopBgm_80458F9C(0);
+                    gAudioMgr_8053AF80->resumeSe_80459274();
+                    field_0x58 = 6;
+                } else {
+                    field_0x58 = 2;
+                    gAudioMgr_8053AF80->playSystemSound_80458880(0xC, -1);
+                    gAudioMgr_8053AF80->stopBgm_80458F9C(0);
+                    gAudioMgr_8053AF80->resumeSe_80459274();
+                }
+            } else {
+                field_0x1e = 2;
+                field_0x20 = 0;
+                field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
+                field_0xc->field_0x22 = 0;
+                field_0x1c = 0;
+                setRowColors(this, field_0x1c);
+                mScreen->search('Pkenc01')->move(field_0x24[field_0x1c], field_0x30[field_0x1c]);
+                mScreen->search('Pkenc02')->move(field_0x3c[field_0x1c], field_0x48[field_0x1c]);
+            }
+            lbl_8053AEC0->fn_804310BC();
+        }
+        break;
+    }
+    return 0;
+}
+
+s32 fn_80453AF8() {
+    if (lbl_8053AF48 != NULL) {
+        return lbl_8053AF48->field_0x58;
+    }
+    return 9;
+}
+

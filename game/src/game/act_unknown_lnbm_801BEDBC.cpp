@@ -1,0 +1,148 @@
+#include "game/GameAudio.h"
+#include "game/ActorManager.h"
+#include "game/BgRewrite.h"
+#include "game/Effect.h"
+#include "game/EmitterDelete.h"
+#include "game/GameGlobals.h"
+#include "game/GameView.h"
+#include "game/Map.h"
+#include "game/act/act_unknown_lnbm_801BEDBC.h"
+
+static inline bool contains(const JGeometry::TBox2f& b, const JGeometry::TVec3f& p) {
+    return p.x >= b.i.x && p.y >= b.i.y && p.x < b.f.x && p.y < b.f.y;
+}
+
+// The two burst effects (0x1E, 0x1F) and their sound.
+inline void UnknownLNBM_804A4188::spawnBurst() {
+    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x1E, 0, -1, NULL, NULL, true, 1.0f);
+    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x1F, 0, 0, NULL, NULL, true, 1.0f);
+    startSound_801F0E34(0x30061, 0);
+    mFlags |= FLAG_BURST;
+}
+
+// The effect follows the actor; its angle is the direction of mVel_0x3c.
+inline void UnknownLNBM_804A4188::moveEmitter() {
+    if (mEmitter2a8 != NULL) {
+        s32 depth = 1;
+        if (mStateTimer < 2) {
+            depth = field_0x94;
+        }
+        setEmitterPos_8013CB44(mEmitter2a8, &mPos, 0, depth, true);
+        s16 angle = JMath::atanTable_.atan2_(mVel_0x3c.x, mVel_0x3c.y) *
+                    (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180());
+        fn_8013CAA4(mEmitter2a8, 0.017453294f * (0.005493164f * angle));
+    }
+}
+
+// Whether the point (dx, dy) from the actor is blocked.
+inline bool UnknownLNBM_804A4188::blockedAt(f32 dx, f32 dy) {
+    JGeometry::TVec3f p(mPos.x + dx, mPos.y + dy, mPos.z);
+    return isBlocked_0x4C(mLayer_0x4, &p);
+}
+
+// Burns the tiles under the box (a 2x2 grid of points over it).
+inline void UnknownLNBM_804A4188::burnTiles() {
+    JGeometry::TVec3f p(mPos);
+    p.x = mPos.x + mMapBox_0x80.i.x;
+    for (s32 i = 0; i < 2; i++) {
+        p.y = mPos.y + mMapBox_0x80.i.y;
+        for (s32 j = 0; j < 2; j++) {
+            if (fn_801CCC78(&p, mLayer_0x4)) {
+                gBgRewrite_8053AC98->fn_802A20F0(&p, -1, mLayer_0x4, 0, 0);
+            }
+            p.y += mMapBox_0x80.f.y - mMapBox_0x80.i.y;
+        }
+        p.x += mMapBox_0x80.f.x - mMapBox_0x80.i.x;
+    }
+}
+
+UnknownLNBM_804A4188::UnknownLNBM_804A4188() : mEmitter2a8(NULL) {}
+
+UnknownLNBM_804A4188::~UnknownLNBM_804A4188() {
+    releaseEmitter_801EE434(mEmitter2a8);
+}
+
+void UnknownLNBM_804A4188::init() {
+    EnemyBase_804A4808::init();
+    mBox.set(-2.0f, -2.0f, 2.0f, 2.0f);
+    mBox2.set(1.0f, 1.0f, -1.0f, -1.0f);
+    mMapBox_0x80.set(-1.0f, -1.0f, 1.0f, 1.0f);
+    field_0xb0 = 0;
+    mDir_0x98 = 2;
+    mFlags |= ENEMY_FLAG_NO_HURT | ENEMY_FLAG_KEEP_LIFE;
+    mLife = 1000;
+    mLifeBackup = mLife;
+    field_0x194 = 1;
+    mParamAtcp_0x114 = 2;
+    mStateTimer = 0;
+}
+
+void UnknownLNBM_804A4188::onFirstUpdate_0x54() {
+    mEmitter2a8 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x1B, 0, field_0x94, NULL, NULL, true, 1.0f);
+    moveEmitter();
+}
+
+// FIXME: 98.3 %. Scheduling only: the target loads mFlags again for the ENEMY_FLAG_STARTED test
+// (lwz r0; this code reuses the first load in r3), keeps layer in r29 (this code r30), mPos.x of
+// the view test in f2 (f3 here) and loads the probe operands in the order y, dy, x, dx.
+void UnknownLNBM_804A4188::update() {
+    if (mFlags & FLAG_BURST) {
+        releaseEmitter_801EE434(mEmitter2a8);
+        mEmitter2a8 = NULL;
+        mAlive = false;
+        return;
+    }
+    mStateTimer++;
+    if (mStateTimer < 0) {
+        mStateTimer = 0;
+    }
+    if (!(mFlags & ENEMY_FLAG_STARTED)) {
+        mFlags |= ENEMY_FLAG_STARTED;
+        onFirstUpdate_0x54();
+        return;
+    }
+    mPos += mVel_0x3c;
+    moveEmitter();
+    s32 layer = mLayer_0x4;
+    GameView_804A9950* view = getGameView_802D6A9C();
+    const JGeometry::TBox2f& box = layer < 8 ? view->mVisibleBox : view->field_0xdc;
+    if (!contains(box, mPos)) {
+        mFlags |= FLAG_BURST;
+        return;
+    }
+    if (blockedAt(mMapBox_0x80.i.x, mMapBox_0x80.i.y) || blockedAt(mMapBox_0x80.f.x, mMapBox_0x80.i.y) ||
+        blockedAt(mMapBox_0x80.i.x, mMapBox_0x80.f.y) || blockedAt(mMapBox_0x80.f.x, mMapBox_0x80.f.y)) {
+        burnTiles();
+        spawnBurst();
+    } else {
+        damagePlayersInBox_801F2B7C(mParamAtcp_0x114, -1, 1);
+    }
+}
+
+// FIXME: 91.0 %. Same instructions as ActorBase_804A5770::isBlocked_0x4C (actor_base_801EE24C); only the saved
+// registers differ: the target keeps this in r31, the result in r30, layer in r29 and pos in r28
+// (this code: result r31, this r30, pos r29, layer r28), so the prologue stores and the argument
+// moves are ordered differently.
+bool UnknownLNBM_804A4188::isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos) {
+    switch (getTileCollisionCode_8022461C(pos, layer)) {
+    case 3:
+    case 0xD:
+    case 0xE:
+        return false;
+    }
+    bool blocked = true;
+    if (!fn_802265DC(pos, layer, false)) {
+        s32 serial = mSpawnParam_0x90;
+        CollisionBoxes_8020D58C* boxes = fn_8020D58C();
+        if (!boxes->mLists[boxes->field_0x1].containsPointOfOther_8020D6AC(layer, pos, serial, NULL)) {
+            blocked = false;
+        }
+    }
+    return blocked;
+}
+
+void UnknownLNBM_804A4188::fn_801BEDBC() {
+    if (mAlive && !(mFlags & FLAG_BURST)) {
+        spawnBurst();
+    }
+}

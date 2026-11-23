@@ -1,0 +1,41 @@
+#include "JSystem/JAudio/Interface/JAISound.h"
+#include "JSystem/JAudio/System/JASTrack.h"  // FSA's __sinit constructs the JASTrack/JASChannel pools
+
+// .text ordering is incorrect here(debug only), luckily it doesn't matter
+
+#ifdef DEBUG
+#pragma sym on
+#endif
+
+JAISoundStarter::JAISoundStarter(bool p1) : JASGlobalInstance<JAISoundStarter>(p1) {}
+
+JAISoundStarter::~JAISoundStarter() {}
+
+bool JAISoundStarter::startLevelSound(JAISoundID soundID, JAISoundHandle *handlePtr, const JGeometry::TVec3f *pos)
+{
+    // UNUSED
+    JUT_ASSERT(handlePtr)
+
+    if (*handlePtr) {
+        if ((u32)soundID == (u32)(*handlePtr)->getID())
+        {
+            (*handlePtr)->updateLifeTime(1);
+
+            if(pos) {
+                (*handlePtr)->setPos(*pos);
+            }
+        }
+
+        return true;
+    }
+
+    bool ret = startSound(soundID, handlePtr, pos);
+    if (ret && (*handlePtr))
+        (*handlePtr)->setLifeTime(1, false);
+    return ret;
+}
+
+#ifdef DEBUG
+#pragma sym off
+#endif
+

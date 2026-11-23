@@ -1,0 +1,99 @@
+#include "game/GameAudio.h"
+#include "game/ActorId.h"
+#include "game/ActorManager.h"
+#include "game/BgRewrite.h"
+#include "game/Effect.h"
+#include "game/GameGlobals.h"
+#include "game/GameView.h"
+#include "game/Map.h"
+#include "game/Player.h"
+#include "game/act/act_coconut.h"
+
+void Coconut_804A9968::init() {
+    mBox.i.x = -8.0f;
+    mBox.i.y = -8.0f;
+    mBox.f.x = 8.0f;
+    mBox.f.y = 8.0f;
+    mMapBox_0x80.i.x = -4.0f;
+    mMapBox_0x80.i.y = -4.0f;
+    mMapBox_0x80.f.x = 4.0f;
+    mMapBox_0x80.f.y = 4.0f;
+    field_0x230 = 0;
+    field_0x234 = 0xFF;
+}
+
+void Coconut_804A9968::update() {
+    field_0x234 = 0xFF;
+    if (field_0xc4) {
+        mPos.set(*fn_8023E7B0(field_0xc8));
+        mLayer_0x4 = getPlayerLayer_8023DE58(field_0xc8);
+        field_0x234 = fn_8023BCD4(field_0xc8);
+    } else {
+        mVel_0x3c.z += -0.15f;
+        mPos += mVel_0x3c;
+        s32 damage = mParamAtcp_0x114;
+        if (gGameRoot_8053AAF8->field_0x7f) {
+            damage = 0;
+        }
+        if (mPos.z < 0.0f || sweepMapBox_801F2618(NULL, false)) {
+            if (mPos.z < 0.0f) {
+                if (getRawTile_80226850(&mPos, mLayer_0x4) == 0x90) {
+                    gBgRewrite_8053AC98->writeTile_802A381C(&mPos, mLayer_0x4, 0x91);
+                } else if (getRawTile_80226850(&mPos, mLayer_0x4) == 0x91) {
+                    gBgRewrite_8053AC98->writeTile_802A381C(&mPos, mLayer_0x4, 0x92);
+                }
+            }
+            die_0x24();
+        } else if (damagePlayersInBox_801F2B7C(damage, field_0xc8, 4) || fn_801F2B20(0)) {
+            die_0x24();
+        }
+    }
+}
+
+void Coconut_804A9968::draw() {
+    SpriteParams_801F5AE0 params;
+    params.field_0x10.a = field_0x234;
+    if (field_0xc4 != 0) {
+        params.field_0x20 = 0;
+        params.field_0x1d = fn_8023CB24(field_0xc8) + 1;
+        params.field_0x1c = fn_8023CA88(field_0xc8);
+    }
+    drawSpriteScaled_801F02BC("enemy_both2_sob.bin", 0x1AE, &params, 7, 0, true, 1.0f, 1.0f);
+}
+
+void Coconut_804A9968::die_0x24() {
+    if (mLayer_0x4 >= 8) {
+        JGeometry::TVec3f pos(mPos);
+        pos.z = 0.0f;
+        getActorManager_801F856C()->spawnActor_801F9484(ACTOR_KMRI, mLayer_0x4, &pos, 0, -1, -1);
+    }
+    if (getTileCollisionCode_8022461C(&mPos, mLayer_0x4) == 0xD || getTileCollisionCode_8022461C(&mPos, mLayer_0x4) == 0x39) {
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x3D0, 0, 1, NULL, NULL, true, 1.0f);
+        startSound_801F0E34(0x30022, 0);
+    } else if (getTileCollisionCode_8022461C(&mPos, mLayer_0x4) == 0xE) {
+        if (fn_802DE9A0()) {
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x2A9, -1, 1, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x2AA, 0, 0, NULL, NULL, true, 1.0f);
+            startSound_801F0E34(0x5005F, 0);
+        } else if (fn_802DEB58()) {
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x45E, -1, 1, NULL, NULL, true, 1.0f);
+            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x45F, 0, 0, NULL, NULL, true, 1.0f);
+            startSound_801F0E34(0x5003F, 0);
+        }
+    } else {
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x8C, 1, 0, NULL, NULL, true, 1.0f);
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x7A, 1, 0, NULL, NULL, true, 1.0f);
+        startSound_801F0E34(0x30003, 0);
+    }
+    mAlive = false;
+}
+
+bool Coconut_804A9968::isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos) {
+    return isBlockedCommon_801F132C(layer, pos, &field_0x230);
+}
+
+void Coconut_804A9968::vfunc_0x48() {
+    die_0x24();
+}
+
+Coconut_804A9968::~Coconut_804A9968() {}

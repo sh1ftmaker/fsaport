@@ -1,0 +1,291 @@
+#include "game/GameAudio.h"
+#include "game/ActorBase.h"
+#include "game/DrawShadow.h"
+#include "game/Effect.h"
+#include "game/ActorManager.h"
+#include "game/GameView.h"
+#include "game/Map.h"
+#include "game/Player.h"
+#include "game/act/act_inextinguishable_flame.h"
+#include "JSystem/JParticle/JPAEmitter.h"
+
+// Offsets of the eight neighbouring flames (update) and of the four
+// neighbours tested by vfunc_0x58.
+static const f32 lbl_8046F0C8[16] = {
+    -16.0f, 0.0f, 16.0f, -16.0f, 16.0f, -16.0f, 0.0f, 16.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+};
+static const f32 lbl_8046F108[16] = {
+    -16.0f, -16.0f, -16.0f, 0.0f, 0.0f, 16.0f, 16.0f, 16.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+};
+static const f32 lbl_8046F148[16] = {
+    0.0f, -16.0f, 16.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+};
+static const f32 lbl_8046F188[16] = {
+    -16.0f, 0.0f, 0.0f, 16.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+};
+
+static inline void invalidateEmitter(JPABaseEmitter*& emitter) {
+    if (emitter != NULL) {
+        emitter->becomeInvalidEmitter();
+        emitter = NULL;
+    }
+}
+
+// FIXME: 98.37 %, missing/extra; behaviour clean.
+// One instruction more than the original: it sets the zero it
+// reuses for the state-0 store (`li r28, 0`) before the first loop's
+// float literal load, ours has it later.
+void InextinguishableFlame_804A9D28::init() {
+    mCountX = ((mSpawnParam_0x90 >> 22) & 0x1F) + 1;
+    mCountY = ((mSpawnParam_0x90 >> 17) & 0x1F) + 1;
+    mKind = mSpawnParam_0x90 & 0xF;
+    mFlag300 = (mSpawnParam_0x90 >> 4) & 1;
+    mViewBit = (mSpawnParam_0x90 >> 12) & 0x1F;
+
+    for (int i = 0; i < 16; i++) {
+        mEmitters[0][i] = NULL;
+        mEmitters[1][i] = NULL;
+        mEmitters[2][i] = NULL;
+    }
+
+    if (mFlag300 == 0) {
+        JGeometry::TVec3f pos = mPos;
+        s32 n = 0;
+        for (s32 i = 0; i < mCountX; i++) {
+            for (s32 j = 0; j < mCountY; j++) {
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x34c, 0, 0, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x34d, 0, 0, NULL, NULL, true, 1.0f);
+                mEmitters[2][n] = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x54d, 1, 0, NULL, NULL, true, 1.0f);
+                pos.y += 16.0f;
+                n++;
+            }
+            pos.y = mPos.y;
+            pos.x += 16.0f;
+        }
+        mState = 2;
+        field_0x94 = 1;
+    } else {
+        mState = 0;
+        field_0x94 = 0;
+    }
+
+    mBox.i.x = -8.0f;
+    mBox.i.y = -8.0f;
+    mBox.f.x = 8.0f;
+    mBox.f.y = 8.0f;
+    mMapBox_0x80.i.x = -7.0f;
+    mMapBox_0x80.i.y = -7.0f;
+    mMapBox_0x80.f.x = 7.0f;
+    mMapBox_0x80.f.y = 7.0f;
+    mParamAtcp_0x114 = 1;
+}
+
+InextinguishableFlame_804A9D28::~InextinguishableFlame_804A9D28() {
+    for (s32 i = 0; i < 16; i++) {
+        if (mEmitters[0][i] != NULL) {
+            releaseEmitter_801EE434(mEmitters[0][i]);
+        }
+        if (mEmitters[1][i] != NULL) {
+            releaseEmitter_801EE434(mEmitters[1][i]);
+        }
+        if (mEmitters[2][i] != NULL) {
+            releaseEmitter_801EE434(mEmitters[2][i]);
+        }
+    }
+}
+
+// The state machine. States: 0 wait for the view (field_0x300), 1 search for a
+// tile, 2 spawn the grid, 3 hit, 4 spawn a BLZE actor, 5 count down, 6 wait
+// for the player's hit. The grids are walked in the order of the spawn loops.
+// FIXME: 99.57 %, operands; behaviour drift.
+void InextinguishableFlame_804A9D28::update() {
+    JGeometry::TVec3f pos = mPos;
+    if (mState >= 1) {
+        fn_8020D58C()->addBox(mSerial);
+    }
+    pos = mPos;
+    findOverlappingActor_801F2718('TUBO');
+
+    switch (mState) {
+    case 0: {
+        if (mFlag300 == 0 || (mFlag300 != 0 && isScreenFlagSet_0x34() == true)) {
+            JGeometry::TVec3f grid = mPos;
+            s32 n = 0;
+            for (s32 i = 0; i < mCountX; i++) {
+                for (s32 j = 0; j < mCountY; j++) {
+                    mEmitters[0][n] = spawnEmitter_8013CC50(mLayer_0x4, &grid, 0x34c, 0, 0, NULL, NULL, true, 1.0f);
+                    mEmitters[1][n] = spawnEmitter_8013CC50(mLayer_0x4, &grid, 0x34d, 0, 0, NULL, NULL, true, 1.0f);
+                    mEmitters[2][n] = spawnEmitter_8013CC50(mLayer_0x4, &grid, 0x54d, 1, 0, NULL, NULL, true, 1.0f);
+                    grid.y += 16.0f;
+                    n++;
+                }
+                grid.y = mPos.y;
+                grid.x += 16.0f;
+            }
+            if (mKind == 0) {
+                mState = 2;
+            } else if (mKind == 3) {
+                mState = 6;
+            } else {
+                mState = 1;
+            }
+            field_0x94 = 1;
+        }
+        break;
+    }
+    case 1:
+        for (s32 i = 0; i < 8; i++) {
+            JGeometry::TVec3f tile;
+            tile.x = mPos.x + lbl_8046F0C8[i];
+            tile.y = mPos.y + lbl_8046F108[i];
+            tile.z = mPos.z;
+            if (fn_801EE3C0(getRawTile_80226850(&tile, mLayer_0x4)) == true) {
+                getActorManager_801F856C()->spawnActor_801F9484('BLZE', mLayer_0x4, &tile, (mDir_0x98 << 4) | 0xF, -1, -1);
+                mActorId = 'BLZE';
+                mState = 4;
+                mTimer = 40;
+                break;
+            }
+        }
+        break;
+    case 2:
+        if (field_0x94 == 2 || (mKind == 2 && isScreenFlagSet_0x34() == true)) {
+            getGameView_802D6A9C()->setSwitchBit_802D8050(mViewBit, true, 0xFF);
+            vfunc_0x54();
+            s32 n = 0;
+            for (s32 i = 0; i < mCountX; i++) {
+                for (s32 j = 0; j < mCountY; j++) {
+                    mEmitters[0][n] = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x4f2, 1, 0, NULL, NULL, true, 1.0f);
+                    pos.y += 16.0f;
+                    n++;
+                }
+                pos.y = mPos.y;
+                pos.x += 16.0f;
+            }
+            mState = 5;
+            mTimer = 60;
+            field_0x94 = 0;
+            break;
+        }
+        {
+            JGeometry::TVec3f origin = mPos;
+            for (s32 i = 0; i < mCountX; i++) {
+                for (s32 j = 0; j < mCountY; j++) {
+                    JGeometry::TVec3f probe = mPos;
+                    if (vfunc_0x58(&probe) == true) {
+                        mState = 3;
+                        return;
+                    }
+                    JGeometry::TBox2f box(mBox);
+                    box.addPos(mPos.x, mPos.y);
+                    damagePlayersInBox_801F2B7C(mParamAtcp_0x114, -1, 7);
+                    box = mMapBox_0x80;
+                    box.addPos(mPos.x, mPos.y);
+                    fn_80239914(&box, mLayer_0x4, mSerial);
+                    mPos.y += 16.0f;
+                }
+                mPos.y = origin.y;
+                mPos.x += 16.0f;
+            }
+            mPos.x = origin.x;
+            mPos.y = origin.y;
+            mPos.z = origin.z;
+        }
+        break;
+    case 3:
+        vfunc_0x54();
+        for (s32 i = 0; i < mCountX; i++) {
+            for (s32 j = 0; j < mCountY; j++) {
+                getActorManager_801F856C()->spawnActor_801F9484('BLZE', mLayer_0x4, &pos, (mDir_0x98 << 4) | 0xF, -1, -1);
+                mActorId = 'BLZE';
+                pos.y += 16.0f;
+            }
+            pos.y = mPos.y;
+            pos.x += 16.0f;
+        }
+        field_0x94 = 0;
+        die_0x24();
+        break;
+    case 4:
+        mTimer--;
+        if (mTimer == 0) {
+            die_0x24();
+        }
+        break;
+    case 5:
+        mTimer--;
+        if (mTimer == 0) {
+            die_0x24();
+        } else if (mTimer == 0x34) {
+            startSound_801F0E34(0x30061, 0);
+        }
+        break;
+    case 6:
+        if (damagePlayersInBox_801F2B7C(mParamAtcp_0x114, -1, 7)) {
+            if (!fn_80234CF8(0)) {
+                mTimer = 1;
+            } else {
+                mTimer = 0;
+            }
+        }
+        if (mFlag300 != 0 && !isScreenFlagSet_0x34()) {
+            vfunc_0x54();
+            field_0x94 = 0;
+            mState = 0;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void InextinguishableFlame_804A9D28::draw() {
+    JGeometry::TVec3f pos = mPos;
+    if (mState >= 1) {
+        for (s32 i = 0; i < mCountX; i++) {
+            for (s32 j = 0; j < mCountY; j++) {
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x34c, 0, 0, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x34d, 0, 0, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x54d, 1, 0, NULL, NULL, true, 1.0f);
+                drawShadow(mLayer_0x4, &pos, JUtility::TColor(0, 0, 0, 0x80), 32.0f);
+                pos.y += 16.0f;
+            }
+            pos.y = mPos.y;
+            pos.x += 16.0f;
+        }
+    }
+}
+
+void InextinguishableFlame_804A9D28::vfunc_0x54() {
+    for (s32 i = 0; i < 16; i++) {
+        invalidateEmitter(mEmitters[0][i]);
+        invalidateEmitter(mEmitters[1][i]);
+        invalidateEmitter(mEmitters[2][i]);
+    }
+}
+
+void InextinguishableFlame_804A9D28::die_0x24() {
+    vfunc_0x54();
+    markDead_801F35AC();
+}
+
+// Returns 1 when one of the four neighbours of pos is a tile in the
+// fn_801EE3C0 set.
+// FIXME: 97.81 %, scheduling+regalloc + reloc-name; behaviour clean.
+// Same instructions; the original loads the table bases in
+// the other order (lis lbl_8046F148 first, its pointer in r31), ours loads
+// lbl_8046F188 first.
+bool InextinguishableFlame_804A9D28::vfunc_0x58(JGeometry::TVec3f* pos) {
+    bool result = false;
+    for (s32 i = 0; i < 4; i++) {
+        f32 y = pos->y + lbl_8046F188[i];
+        f32 x = pos->x + lbl_8046F148[i];
+        JGeometry::TVec3f p(x, y, pos->z);
+        s32 tile = getRawTile_80226850(&p, mLayer_0x4);
+        if (fn_801EE3C0(tile) == true) {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}

@@ -1,0 +1,157 @@
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/GameView.h"
+#include "game/ActorId.h"
+#include "game/ActorManager.h"
+#include "game/act/act_shadow_link_bow.h"
+#include "game/act/act_octorok_rock.h"
+
+// Auto-inlining is off for the whole file (docs/INLINING.md, pragma rule 2): the
+// original inlines no same-unit plain function. Checked: built with inlining off,
+// every written function's calls to this unit's functions equal the original's
+// `bl`s. The callers that need it: updateState_0x90 calls fn_80222668 (six times) and fn_80222668 calls
+// fn_80222730 out of line.
+#pragma auto_inline off
+
+// A random offset in -range..range.
+static inline f32 spread(f32 range) {
+    return range * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
+}
+
+ShadowLinkBowMinor_804A6B70::ShadowLinkBowMinor_804A6B70() {
+    mRounds = 0;
+    mShots = 0;
+}
+
+void ShadowLinkBowMinor_804A6B70::init() {
+    ShadowLinkBase_804A6A00::init();
+    mDir_0x98 = 2;
+    mState = 4;
+    mStateTimer = 0;
+    field_0x250 = -1;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.startAnim_801D22DC(2, 0, false);
+}
+
+// FIXME: 98.7%. The original draws the y jitter (15) before the x jitter (7)
+// and keeps reach / x / bottom in f24 / f25 / f26 (ours f25 / f24 / f26 with
+// x and y swapped in the pairs), so two gGameRoot_8053AAF8 loads use r4/r5 the
+// other way round; it also loads box.f.y before box.i.y. The .sdata2 pool
+// order differs too (32.0f before 64.0f here).
+void ShadowLinkBowMinor_804A6B70::fn_80222730() {
+    s32 layer = mLayer_0x4;
+    GameView_804A9950* view = getGameView_802D6A9C();
+    const JGeometry::TBox2f& box = layer < 8 ? view->mVisibleBox : view->field_0xdc;
+    f32 half = 0.5f * (box.f.x - box.i.x);
+    f32 bottom = box.i.y - 32.0f;
+    f32 reach = 64.0f + (32.0f + (box.f.y - box.i.y));
+    f32 x = mPos.x - 0.5f * half;
+    for (s32 i = 0; i < (s32)(0.0625f * half) + 1; i++) {
+        JGeometry::TVec3f pos(x + spread(7.0f), bottom + spread(15.0f), 0.0f);
+        s32 serial = getActorManager_801F856C()->spawnActor_801F9484(ACTOR_OKTM, mLayer_0x4, &pos, 5, -1, -1);
+        if (serial >= 0) {
+            OctorokRock_8049F5D8* rock =
+                static_cast<OctorokRock_8049F5D8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+            if (rock != NULL) {
+                rock->mDir_0x98 = 2;
+                JGeometry::TVec3f vel;
+                vel.x = 0.0f;
+                vel.y = 3.2f + 0.6f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
+                vel.z = 0.0f;
+                rock->mVel_0x3c = vel;
+                rock->field_0x194 = 1;
+                rock->field_0x23c = (s32)(reach * (1.0f / rock->mVel_0x3c.y));
+            }
+        }
+        x += 16.0f;
+    }
+}
+
+void ShadowLinkBowMinor_804A6B70::fn_80222668(s32 state) {
+    switch (state) {
+    case 3:
+        field_0x250 = 120;
+        mAnim.startAnim_801D22DC(mDir_0x98, 0, false);
+        break;
+    case 5:
+        mAnim.startAnim_801D22DC(0x1b, 0, false);
+        break;
+    case 6:
+        fn_80222730();
+        mShots++;
+        break;
+    case 7:
+        mAnim.startAnim_801D22DC(mDir_0x98, 0, false);
+        break;
+    }
+    mStateTimer = 0;
+    mState = state;
+}
+
+// FIXME: 99.85%. Only the jump table relocation (jumptable_804A6C14 vs @NNN)
+// and the .data order differ, as in act_shadow_link_hammer_minor_80221B44's updateState_0x90.
+void ShadowLinkBowMinor_804A6B70::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        fn_80221408();
+        break;
+    case 1:
+        fn_80221334();
+        break;
+    case 2:
+        fn_802212AC();
+        break;
+    case 3:
+        if (mStateTimer >= field_0x250) {
+            fn_80222668(5);
+        }
+        break;
+    case 4:
+        fn_802216E8(120);
+        if (mPos.z <= 0.0f) {
+            if (mFlags & CLS_804A6A00_FLAG_0x2000) {
+                fn_80222668(5);
+            } else {
+                mVel_0x3c.z = lbl_8053FE70;
+            }
+        }
+        break;
+    case 5:
+        if (mStateTimer > 1 && mAnim.isStopped_801D21F0()) {
+            fn_80222668(6);
+        } else if (mStateTimer == 25) {
+            startSound_801F0E34(0x400c6, 0);
+        }
+        break;
+    case 6:
+        if (mStateTimer >= 10) {
+            if (mShots % 10 == 0) {
+                mRounds++;
+                if (mRounds >= 3) {
+                    fn_80222668(7);
+                } else {
+                    fn_80222668(3);
+                }
+            } else {
+                fn_80222668(6);
+            }
+        }
+        break;
+    case 7:
+        if (mStateTimer >= 120) {
+            fn_8022149C(1);
+        }
+        break;
+    }
+}
+
+void ShadowLinkBowMinor_804A6B70::calcVelocity_0x88() {
+    if (mState == 2) {
+        fn_80221250();
+    } else {
+        EnemyBase_804A4808::calcVelocity_0x88();
+    }
+}
+
+ShadowLinkBowMinor_804A6B70::~ShadowLinkBowMinor_804A6B70() {}

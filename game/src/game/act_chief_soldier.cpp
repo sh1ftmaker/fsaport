@@ -1,0 +1,1108 @@
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/ActorId.h"
+#include "game/ActorManager.h"
+#include "game/Map.h"
+#include "game/act/act_chief_soldier.h"
+#include "game/Effect.h"
+#include "game/GameState.h"
+#include "game/GameView.h"
+#include "game/Player.h"
+#include "game/act/act_keese.h"
+#include "game/act/tu_801F9484.h"
+#include "JSystem/JMath/JMath.h"
+
+// Tables of the SLR4 actor (.data 0x804A08C0.., not written as source here): per heading
+// (mDir_0x98) hit-box offsets and animation timings / frames (.data 0x804A08C0 pairs, 0x20 frames,
+// 0x70 / 0x80 / 0x180 timings, 0x120 frames), boxes and life values.
+extern const f32 lbl_804A08C0[][2];
+extern const s32 lbl_804A08E0[][4];
+extern const s32 lbl_804A0930[];
+extern const s32 lbl_804A0940[];
+extern const s32 lbl_804A09E0[][6];
+extern const s32 lbl_804A0A40[];
+extern const f32 lbl_804A0A58[][4];
+extern const f32 lbl_804A0AD8[][2];
+extern const s32 lbl_804A0AF8[];
+extern const f32 lbl_804A0B10[][4];
+extern const u8 lbl_80539F78[];
+
+// Starts with the per-heading (mDir_0x98) frame shown when the chief bumps into a wall.
+s32 lbl_804A0920[78] = {
+    6, 9, 3, 0, 8, 12, 8, 12,
+    12, 13, 14, 13, 12, 15, 16, 15,
+    17, 18, 19, 18, 17, 20, 21, 20,
+    22, 23, 24, 23, 22, 25, 26, 25,
+    27, 28, 29, 28, 27, 30, 31, 30,
+    15, 5, 5, 3, 15, 5, 5, 3,
+    33, 32, 33, 34, 35, 36, 38, 37,
+    38, 39, 40, 41, 43, 42, 43, 44,
+    45, 46, 49, 47, 48, 49, 50, 51,
+    3, 30, 2, 2, 2, 5,
+};
+
+
+
+// Sets the 3x3 part of m to a uniform scale; the translation column is the caller's.
+static inline void setScaleMtx(Mtx m, f32 s) {
+    m[0][0] = s;
+    m[0][1] = 0.0f;
+    m[0][2] = 0.0f;
+    m[1][0] = 0.0f;
+    m[1][1] = s;
+    m[1][2] = 0.0f;
+    m[2][0] = 0.0f;
+    m[2][1] = 0.0f;
+    m[2][2] = s;
+}
+
+// FIXME(shotgun): 99.49 %, regalloc-only; behaviour clean.
+void ChiefSoldier_804A0B90::fn_801752D8() {
+    s32 i;
+    s32 gone;
+    s32 serial;
+    s32 spawned;
+    if (mLayer_0x4 >= 8 && field_0x23c == 1 && lbl_80529DEC.mStage_0x118 == 6) {
+        for (i = 0, gone = 0; i < 4; i++) {
+            serial = field_0x2c0[i];
+            if (serial < 0) {
+                gone++;
+                continue;
+            }
+            Keese_804A02B8* keese = static_cast<Keese_804A02B8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+            if (keese == NULL) {
+                gone++;
+                field_0x2c0[i] = -1;
+                continue;
+            }
+            JGeometry::TVec3f pos = mPos;
+            keese->field_0x280.x = pos.x;
+            keese->field_0x280.y = pos.y;
+            keese->field_0x280.z = pos.z;
+            field_0x260 = 900;
+        }
+        if (field_0x260 == 0 && gone == 4) {
+            s32 layer = mLayer_0x4;
+            if (layer == getPlayerLayer_8023DE58(0)) {
+                for (i = 0, spawned = 0; i < 4; i++) {
+                    field_0x2c0[i] = getActorManager_801F856C()->spawnActor_801F9484('KETH', mLayer_0x4, &mPos, 4, -1, -1);
+                    serial = field_0x2c0[i];
+                    if (serial >= 0) {
+                        Keese_804A02B8* keese = static_cast<Keese_804A02B8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+                        if (keese != NULL) {
+                            spawned++;
+                            keese->field_0x268 = i * 0x4000;
+                            keese->field_0x270 = 48.0f;
+                            if (spawned >= 4) {
+                                field_0x260 = 900;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// FIXME(shotgun): 97.23 %, missing/extra; behaviour drift.
+void ChiefSoldier_804A0B90::fn_80175024() {
+    if (getType() == 6) {
+        return;
+    }
+    s32 serial = field_0x238;
+    if (serial < 0) {
+        return;
+    }
+    BowSoldier_804A00C8* partner = static_cast<BowSoldier_804A00C8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+    if (partner == NULL) {
+        s32 type = 7;
+        s32 layer = mLayer_0x4;
+        if (layer >= 8) {
+            type = 8;
+            layer = 0;
+        }
+        field_0x238 = getActorManager_801F856C()->spawnActor_801F9484('SLR4', layer, &mPos, type, -1, -1);
+        serial = field_0x238;
+        if (serial >= 0) {
+            partner = static_cast<BowSoldier_804A00C8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+            if (partner != NULL) {
+                partner->mParamAtcp_0x114 = mParamAtcp_0x114;
+                partner->field_0x238 = mSerial;
+                partner->field_0x23c = field_0x23c;
+            }
+        }
+        return;
+    }
+    switch (field_0x29c) {
+    case 2:
+        if (field_0x264 >= 4) {
+            if (mVel_0x3c.x < 0.1f && mVel_0x3c.y < 0.1f) {
+                partner->field_0x94 = 0;
+                if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                    const f32* box = lbl_804A0A58[mDir_0x98];
+                    mBox.set(JGeometry::TVec2f(box[0], box[1]), JGeometry::TVec2f(box[2], box[3]));
+                }
+                damagePlayersInBox_801F2B7C(-100, -1, 1);
+            } else {
+                damagePlayersInBox_801F2B7C(4, -1, 3);
+                partner->field_0x94 = 2;
+            }
+        } else {
+            partner->field_0x94 = 1;
+        }
+        // fall through
+    case 0:
+    case 1:
+    case 3:
+        if (field_0x29c != 2) {
+            partner->field_0x94 = 0;
+        }
+        if (field_0x29c == 3) {
+            partner->field_0x94 = 1;
+        }
+        JGeometry::TVec3f pos;
+        if (partner->mSpawnParam_0x90 == 7) {
+            pos.set(mPos);
+        } else {
+            s32 layer = partner->mLayer_0x4;
+            GameView_804A9950* view = getGameView_802D6A9C();
+            const JGeometry::TBox2f* boxp = layer < 8 ? &view->mVisibleBox : &view->field_0xdc;
+            JGeometry::TBox2f box;
+            box = *boxp;
+            pos.set(mPos);
+            pos.x += box.i.x;
+            pos.y += box.i.y;
+        }
+        partner->mPos = pos;
+        partner->mDir_0x98 = mDir_0x98;
+        break;
+    }
+    if (partner->mSpawnParam_0x90 == 8) {
+        partner->field_0x280 = field_0x280;
+    }
+}
+
+// FIXME(shotgun): 98.20 %, different + reloc-name; behaviour clean.
+void ChiefSoldier_804A0B90::init() {
+    mBox.i.x = -12.0f;
+    mBox.i.y = -20.0f;
+    mBox.f.x = 12.0f;
+    mBox.f.y = 4.0f;
+    mMapBox_0x80.i.x = -10.0f;
+    mMapBox_0x80.i.y = -10.0f;
+    mMapBox_0x80.f.x = 10.0f;
+    mMapBox_0x80.f.y = 10.0f;
+    field_0x264 = 0;
+    field_0x268 = 0;
+    field_0x26c = 0;
+    field_0x270 = 0;
+    field_0x274 = 0;
+    field_0x278 = 0;
+    field_0x27c = 0;
+    field_0x240 = 0;
+    field_0x244 = 0;
+    field_0x248 = 0;
+    field_0x24c = 0;
+    field_0x250 = 0;
+    field_0x254 = 0;
+    field_0x258 = 0;
+    field_0x25c = 0;
+    field_0x260 = 0;
+    for (s32 i = 0; i < 4; i++) {
+        field_0x2c0[i] = -1;
+    }
+    field_0x278 = 3;
+    field_0x298 = ((mSpawnParam_0x90 >> 8) & 0xF) * 20;
+    field_0x294 = ((mSpawnParam_0x90 >> 12) & 0xF) * 20;
+    field_0x2a5 = 0;
+    field_0x29c = 0;
+    field_0x2a0 = 0;
+    field_0x23c = (mSpawnParam_0x90 >> 16) & 0xFF;
+    if (field_0x23c != 0) {
+        field_0x196 = 1;
+        mParamVoic_0x190 = 0;
+    }
+    field_0x2a4 = 0;
+    mDir_0x98 = (s32)(3.99f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) & 3;
+    field_0x2b4.set(mPos);
+    field_0x284 = 10000;
+    field_0x238 = -1;
+    if (getType() != 7 && getType() != 8 && getType() != 6) {
+        if (getType() != 2 && getType() != 3 && field_0x23c == 0 && gGameRoot_8053AAF8->field_0x7f == 1) {
+            gAudioMgr_8053AF80->startBgm_80458FF0(0x1000021, false, 0);
+        }
+        mLife = lbl_804A0AF8[mSpawnParam_0x90 & 0xFF] * 2;
+        if (fn_802DE814() == 1) {
+            mLife = lbl_804A0AF8[mSpawnParam_0x90 & 0xFF];
+        }
+        s32 type = 7;
+        s32 layer = mLayer_0x4;
+        if (layer >= 8) {
+            type = 8;
+            layer = 0;
+        }
+        field_0x238 = getActorManager_801F856C()->spawnActor_801F9484('SLR4', layer, &mPos, type, -1, -1);
+        s32 serial = field_0x238;
+        if (serial >= 0) {
+            BowSoldier_804A00C8* partner = static_cast<BowSoldier_804A00C8*>(getActorManager_801F856C()->findActorBySerial_801F666C(serial));
+            if (partner != NULL) {
+                partner->mParamAtcp_0x114 = mParamAtcp_0x114;
+                partner->field_0x238 = mSerial;
+                partner->field_0x23c = field_0x23c;
+            }
+        }
+    }
+    if (getType() != 7 && getType() != 8 && getType() != 6) {
+        if (mLayer_0x4 >= 8) {
+            mLife = 50;
+            if (field_0x23c == 1) {
+                mBox.i.x = -14.0f;
+                mBox.i.y = -14.0f;
+                mBox.f.x = 14.0f;
+                mBox.f.y = 14.0f;
+            } else {
+                mLife = 25;
+                mBox.i.x = -7.0f;
+                mBox.i.y = -7.0f;
+                mBox.f.x = 7.0f;
+                mBox.f.y = 7.0f;
+                mMapBox_0x80.i.x = -7.0f;
+                mMapBox_0x80.i.y = -7.0f;
+                mMapBox_0x80.f.x = 7.0f;
+                mMapBox_0x80.f.y = 7.0f;
+            }
+        }
+    }
+    field_0x284 = mLife;
+    if (getType() != 6 && mLayer_0x4 >= 8 && field_0x23c == 1) {
+        mLife = 10000;
+    }
+    field_0x280 = 0;
+    field_0x288 = 0;
+    field_0x28c = mSpawnParam_0x90 >> 24;
+    if (field_0x28c == 0) {
+        field_0x28c = -1;
+    }
+    mSpawnParam_0x90 &= 0xFF;
+    field_0x234 = lbl_80539F78[mSpawnParam_0x90 >> 1];
+    field_0x2b0 = 0.0f;
+    field_0x2ac = 0.0f;
+    field_0x2a8 = 0.0f;
+    field_0x290 = 0;
+    field_0x244 = 10;
+    field_0x236 = 0;
+    field_0xb0 = 0xA042209;
+    field_0xb8 = 1;
+    if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
+        mDir_0x98 = 3;
+    }
+    field_0x230 = 0;
+    fn_801746DC();
+    mParamEfsz_0xc0 = 3;
+    field_0xbc = 3;
+    if (mSpawnParam_0x90 == 4 || mSpawnParam_0x90 == 5 || mSpawnParam_0x90 == 6) {
+        field_0x230 = 2;
+    }
+    if (getType() == 7 || getType() == 8) {
+        mParamDstr_0x1a8 = false;
+        field_0xb0 = 0xA040004;
+        mLife = 10000;
+        field_0xb8 = 0;
+        mBox.i.x = -8.0f;
+        mBox.i.y = -8.0f;
+        mBox.f.x = 8.0f;
+        mBox.f.y = 8.0f;
+        mMapBox_0x80.i.x = 1.0f;
+        mMapBox_0x80.i.y = 1.0f;
+        mMapBox_0x80.f.x = -1.0f;
+        mMapBox_0x80.f.y = -1.0f;
+        field_0x230 = 10;
+    }
+}
+
+// FIXME(shotgun): 86.70 %, missing/extra; behaviour drift.
+void ChiefSoldier_804A0B90::fn_801746DC() {
+    if (field_0x29c != field_0x2a0) {
+        field_0x2a0 = field_0x29c;
+        field_0x2a4 = 0;
+        field_0x240 = 0;
+        field_0x264 = 0;
+        field_0x274 = 0;
+        field_0x25c = 0;
+        if (field_0x29c == 3) {
+            field_0x264 = 5;
+        }
+    }
+    switch (field_0x29c) {
+    case 0:
+        if (field_0x240 == 0) {
+            field_0x240 = lbl_804A0930[field_0x264];
+            field_0x280 = lbl_804A08E0[mDir_0x98][field_0x264];
+            field_0x264++;
+            field_0x264 &= 3;
+        }
+        break;
+    case 1:
+        if (field_0x240 == 0) {
+            field_0x240 = lbl_804A0940[field_0x264];
+            field_0x280 = lbl_804A0940[mDir_0x98 * 8 + field_0x264];
+            field_0x264++;
+            field_0x264 &= 7;
+            if (field_0x264 == 0) {
+                field_0x2a4 = 1;
+            }
+        }
+        break;
+    case 2:
+        if (field_0x240 == 0) {
+            if (field_0x264 >= 6) {
+                field_0x2a4 = 1;
+                break;
+            }
+            field_0x240 = lbl_804A0A40[field_0x264];
+            if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                field_0x240 = (s32)(0.5f * field_0x240);
+            }
+            if (field_0x264 == 1) {
+                field_0x240 += 10;
+                JGeometry::TVec3f pos;
+                pos.set(mPos);
+                pos.x += lbl_804A08C0[mDir_0x98][0];
+                pos.y += lbl_804A08C0[mDir_0x98][1];
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0xCB, 0, 3, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &pos, 0xCC, 0, 3, NULL, NULL, true, 1.0f);
+            }
+            field_0x280 = lbl_804A09E0[mDir_0x98][field_0x264];
+            field_0x264++;
+            if (field_0x264 == 6) {
+                field_0x240 += 15;
+            }
+            if (field_0x264 == 4) {
+                startSound_801F0E34(0x4008B, 0);
+                f32 speed = 13.0f;
+                switch (mDir_0x98) {
+                case 0:
+                    mVel_0x3c.set(speed, 0.0f, 0.0f);
+                    break;
+                case 1:
+                    mVel_0x3c.set(-speed, 0.0f, 0.0f);
+                    break;
+                case 2:
+                    mVel_0x3c.set(0.0f, speed, 0.0f);
+                    break;
+                case 3:
+                    mVel_0x3c.set(0.0f, -speed, 0.0f);
+                    break;
+                }
+            }
+        }
+        if (field_0x25c == 0) {
+            field_0x25c = 4;
+            field_0x274++;
+            if (field_0x274 > 5) {
+                field_0x274 = 0;
+            }
+        }
+        break;
+    case 3:
+        if (field_0x240 == 0) {
+            if (field_0x264 <= 0) {
+                field_0x2a4 = 1;
+                break;
+            }
+            field_0x240 = lbl_804A0A40[field_0x264];
+            field_0x280 = lbl_804A09E0[mDir_0x98][field_0x264];
+            field_0x264--;
+        }
+        if (field_0x25c == 0) {
+            field_0x25c = (6 - field_0x264) * 2;
+            field_0x274++;
+            if (field_0x274 > 5) {
+                field_0x274 = 0;
+            }
+        }
+        break;
+    case 9:
+        break;
+    }
+}
+
+ChiefSoldier_804A0B90::~ChiefSoldier_804A0B90() {
+    if (getType() != 7 && getType() != 8) {
+        if (getType() != 6 && gGameRoot_8053AAF8->field_0x4c != 9 &&
+            gGameRoot_8053AAF8->field_0x4c != 0xB && mLife != 0) {
+            gGameRoot_8053AAF8->startStageMusic_80138B7C();
+        }
+        s32 serial = field_0x238;
+        if (serial >= 0) {
+            ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            if (actor != NULL) {
+                actor->mAlive = false;
+            }
+        }
+    }
+}
+
+void ChiefSoldier_804A0B90::vfunc_0x44() {
+    if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
+        mSpawnParam_0x90 += 2;
+        field_0x240 = 0;
+        field_0x264 = 0;
+        field_0x250 = 0x14;
+        if (field_0x23c == 0 && gGameRoot_8053AAF8->field_0x7f == 1) {
+            gAudioMgr_8053AF80->startBgm_80458FF0(0x1000021, false, false);
+        }
+        field_0x288 = 2;
+        if (field_0x2a5 == 1) {
+            startSound_801F0E34(0x5001F, 0);
+        }
+        field_0x230 = 2;
+    }
+    if (getType() != 7 && getType() != 8 && mLife <= 0) {
+        s32 serial = field_0x238;
+        if (serial >= 0) {
+            ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            if (actor != NULL) {
+                actor->mAlive = false;
+            }
+        }
+        field_0x238 = -1;
+    }
+}
+
+// FIXME(shotgun): 96.01 %, missing/extra; behaviour near.
+// The original reads mPos.x twice (once for the +=, once for the save) and loads all four box floats before storing them.
+void ChiefSoldier_804A0B90::fn_80174220() {
+    s32 dir = mDir_0x98;
+    s32 index = dir;
+    if (getType() == 8 && field_0x23c != 0) {
+        index = dir + 4;
+    }
+    f32 x;
+    f32 y;
+    f32 z;
+    if (index < 4) {
+        x = mPos.x;
+        y = mPos.y;
+        z = mPos.z;
+        mPos.x += lbl_804A0AD8[dir][0];
+        mPos.y += lbl_804A0AD8[mDir_0x98][1];
+    }
+    mBox.set(lbl_804A0B10[index][0], lbl_804A0B10[index][1], lbl_804A0B10[index][2], lbl_804A0B10[index][3]);
+    if (field_0x94 == 0 || field_0x94 == 2) {
+        s32 serial = field_0x238;
+        if (serial >= 0) {
+            ActorBase_804A5770* partner = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            if (partner != NULL && partner->mHitTimer_0xd8 == 0) {
+                if (field_0x94 == 0) {
+                    damagePlayersInBox_801F2B7C(mParamAtcp_0x114, -1, 1);
+                } else {
+                    damagePlayersInBox_801F2B7C(4, -1, 3);
+                }
+            }
+        }
+        mLife = 10000;
+        fn_801EF510();
+        for (s32 i = 0; i < 4; i++) {
+            s32 player = findOverlappingPlayer_801F285C(NULL, NULL, true, i);
+            if (player < 0) {
+                continue;
+            }
+            if (fn_80235448(player)) {
+                continue;
+            }
+            f32 x0 = mBox.i.x + mPos.x;
+            f32 y0 = mBox.i.y + mPos.y;
+            f32 x1 = mBox.f.x + mPos.x;
+            f32 y1 = mBox.f.y + mPos.y;
+            JGeometry::TVec2f center(0.5f * (x0 - x1) + x1, 0.5f * (y0 - y1) + y1);
+            if (fn_80237948(player, &center)) {
+                fn_80230FD0(player, 0x20002);
+                serial = field_0x238;
+                if (serial >= 0) {
+                    ActorBase_804A5770* partner = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                    if (partner != NULL) {
+                        partner->field_0x94 = player + 1;
+                        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x473, 0, 1, NULL, NULL, true, 1.0f);
+                        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x474, 0, 1, NULL, NULL, true, 1.0f);
+                    }
+                }
+            }
+        }
+    }
+    mPos.x = x;
+    mPos.y = y;
+    mPos.z = z;
+}
+
+// FIXME: 99.59 %, missing/extra + reloc-name; behaviour near.
+void ChiefSoldier_804A0B90::update() {
+    u16 angle = 0;
+    s32 dir = 0;
+    f32 dist = 0.0f;
+    JGeometry::TVec3f pos;
+    if (lbl_8053AB60 == 1) {
+        mPos.set(field_0x2b4);
+        return;
+    }
+    gGameRoot2_8053AB10->field_0x24->addFocusPoint_8030C210(&mPos);
+    JGeometry::TVec3f focus = mPos;
+    lbl_8053AED0->fn_8043E7CC(focus);
+    if (getType() == 7 || getType() == 8) {
+        fn_80174220();
+        return;
+    }
+    if (field_0x230 != 8 && field_0x230 != 9) {
+        fn_801752D8();
+    }
+    fn_80175024();
+    if (updateHitReaction_801F3D94(1) != 0) {
+        sweepMapBox_801F2618(NULL, false);
+        if (field_0x23c == 0) {
+            field_0x250 = 20;
+            return;
+        }
+        field_0x254 = 1;
+        field_0x250 = 60;
+    }
+    if (field_0x230 != 8 && field_0x230 != 9 && mHitTimer_0xd8 == 0) {
+        for (s32 i = 0; i < 4; i++) {
+            s32 player = findOverlappingPlayer_801F285C(NULL, NULL, true, i);
+            if (field_0x94 != 0) {
+                player = field_0x94 - 1;
+            }
+            if (player < 0) {
+                continue;
+            }
+            if (!fn_80235448(player)) {
+                f32 dx = mPos.x - getPlayerPos_8023E724(player)->x;
+                f32 dy = mPos.y - getPlayerPos_8023E724(player)->y;
+                s16 heading = (s16)(JMath::atanTable_.atan2_(-dx, -dy) * (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
+                if (mDir_0x98 == angleToDir_801F681C((u16)heading)) {
+                    field_0x254 = 1;
+                    f32 y0 = mBox.i.y + mPos.y;
+                    f32 y1 = mBox.f.y + mPos.y;
+                    f32 x0 = mBox.i.x + mPos.x;
+                    f32 x1 = mBox.f.x + mPos.x;
+                    JGeometry::TVec2f center(0.5f * (x0 - x1) + x1, 0.5f * (y0 - y1) + y1);
+                    if (field_0x94 != 0 || (field_0x94 == 0 && fn_80237948(player, &center))) {
+                        startSound_801F0E34(0x400D1, 0);
+                        if (field_0x94 == 0) {
+                            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x117, 0, 1, NULL, NULL, true, 1.0f);
+                            spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x118, 0, 1, NULL, NULL, true, 1.0f);
+                        }
+                        field_0x2b0 = 0.0f;
+                        field_0x2ac = 0.0f;
+                        field_0x2a8 = 0.0f;
+                        field_0x258 = 40;
+                        field_0x24c = 0;
+                        if (mSpawnParam_0x90 != 4 && mSpawnParam_0x90 != 5 && mSpawnParam_0x90 != 6 && field_0x230 == 0) {
+                            field_0x230 = 1;
+                        }
+                        if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
+                            if (field_0x23c == 0 && gGameRoot_8053AAF8->field_0x7f == 1) {
+                                gAudioMgr_8053AF80->startBgm_80458FF0(0x1000021, false, 0);
+                            }
+                            mSpawnParam_0x90 += 2;
+                            field_0x240 = 0;
+                            field_0x264 = 0;
+                            field_0x250 = 20;
+                            field_0x288 = 2;
+                            if (field_0x2a5 == 1) {
+                                startSound_801F0E34(0x5001F, 0);
+                            }
+                            field_0x230 = 2;
+                        }
+                        field_0x2b0 = 0.0f;
+                        field_0x2ac = 0.0f;
+                        field_0x2a8 = 0.0f;
+                        switch (mDir_0x98 ^ 1) {
+                        case 0:
+                            mVel_0x3c.set(10.0f, 0.0f, 0.0f);
+                            break;
+                        case 1:
+                            mVel_0x3c.set(-10.0f, 0.0f, 0.0f);
+                            break;
+                        case 2:
+                            mVel_0x3c.set(0.0f, 10.0f, 0.0f);
+                            break;
+                        case 3:
+                            mVel_0x3c.set(0.0f, -10.0f, 0.0f);
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        field_0x94 = 0;
+        s32 life = mLife;
+        if (mHitTimer_0xd8 == 0) {
+            if ((field_0x254 == 0 && checkPlayerAttacks_801F2FAC()) || checkActorHit_801F2DB4('NULL', 'NULL', NULL)) {
+                if (life != mLife) {
+                    if (getType() != 6 && mLayer_0x4 >= 8 && field_0x23c == 1) {
+                        field_0x284 -= 10000 - mLife;
+                        if (field_0x284 < 0) {
+                            field_0x284 = 0;
+                        }
+                        field_0x250 = 0;
+                        mLife = 10000;
+                        field_0x29c = 0;
+                        if (dir >= 0) {
+                            mDir_0x98 = dir;
+                            field_0x240 = 0;
+                            field_0x264 = 0;
+                        }
+                        if (mSpawnParam_0x90 == 4 || mSpawnParam_0x90 == 5 || mSpawnParam_0x90 == 6) {
+                            field_0x230 = 2;
+                        } else {
+                            field_0x248 = 0;
+                            field_0x230 = 0;
+                        }
+                        field_0x250 = 20;
+                    }
+                    if (mLife > 0 && field_0x284 > 0) {
+                        if (field_0x23c == 1) {
+                            startSound_801F0E34(0x4008C, 0);
+                        }
+                    } else {
+                        s32 serial = field_0x238;
+                        if (serial >= 0) {
+                            ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                            if (actor != NULL) {
+                                actor->mAlive = false;
+                            }
+                        }
+                        field_0x238 = -1;
+                        if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                            for (s32 i = 0; i < 4; i++) {
+                                s32 keese = field_0x2c0[i];
+                                if (keese >= 0) {
+                                    ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(keese);
+                                    startSound_801F0E34(0x4008D, 0);
+                                    if (actor != NULL) {
+                                        actor->die_0x24();
+                                    }
+                                    field_0x2c0[i] = -1;
+                                }
+                            }
+                            field_0x230 = 8;
+                        }
+                    }
+                }
+                field_0x24c = 0;
+                if (mSpawnParam_0x90 != 4 && mSpawnParam_0x90 != 5 && mSpawnParam_0x90 != 6 && field_0x230 == 0) {
+                    field_0x230 = 1;
+                }
+                if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
+                    if (field_0x23c == 0 && gGameRoot_8053AAF8->field_0x7f == 1) {
+                        gAudioMgr_8053AF80->startBgm_80458FF0(0x1000021, false, 0);
+                    }
+                    mSpawnParam_0x90 += 2;
+                    field_0x240 = 0;
+                    field_0x264 = 0;
+                    field_0x250 = 20;
+                    field_0x288 = 2;
+                    if (field_0x2a5 == 1) {
+                        startSound_801F0E34(0x5001F, 0);
+                    }
+                    field_0x230 = 2;
+                }
+                field_0x26c = 150;
+                sweepMapBox_801F2618(NULL, false);
+                if (field_0x23c == 0) {
+                    return;
+                }
+            }
+            addCalc2_801F71A4(&mVel_0x3c.x, field_0x2a8, 0.3f, 1.0f);
+            addCalc2_801F71A4(&mVel_0x3c.y, field_0x2ac, 0.3f, 1.0f);
+            mPos += mVel_0x3c;
+            findTargetPlayer_801EEC98(mSerial, &angle, &dir, &dist, NULL, 0, 0);
+            if (field_0x29c != 2 || field_0x264 < 4) {
+                damagePlayersInBox_801F2B7C(-100, -1, 1);
+            } else if (getType() == 6) {
+                damagePlayersInBox_801F2B7C(4, -1, 3);
+            }
+        }
+    }
+    u8 hit = sweepMapBox_801F2618(NULL, false);
+    switch (field_0x230) {
+    case 0:
+        if (field_0x278 > 0) {
+            field_0x278--;
+        }
+        if (field_0x278 == 0 && field_0x290 <= 0) {
+            field_0x240 = 0;
+            field_0x264 = 0;
+            field_0x250 = 20;
+            if ((mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) && field_0x290 == -1 && field_0x2a5 == 1) {
+                field_0x288 = 2;
+                startSound_801F0E34(0x5001F, 0);
+            }
+            if (field_0x23c == 0 && gGameRoot_8053AAF8->field_0x7f == 1) {
+                gAudioMgr_8053AF80->startBgm_80458FF0(0x1000021, false, 0);
+            }
+            mSpawnParam_0x90 = 4;
+            field_0x230 = 2;
+            break;
+        }
+        if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
+            field_0x230 = 0;
+            if (field_0x294 == 0 && field_0x298 == 0) {
+                field_0x288 = 3;
+                break;
+            }
+        }
+        if (dir >= 0) {
+            if ((mSpawnParam_0x90 != 2 && mSpawnParam_0x90 != 3) || field_0x2a5 == 0) {
+                mDir_0x98 = dir;
+            }
+            field_0x29c = 0;
+        } else {
+            field_0x29c = 1;
+        }
+        if (field_0x248 == 0) {
+            if (field_0x288 != 2) {
+                field_0x288 ^= 1;
+                field_0x288 &= 1;
+            }
+            field_0x248 = (s32)(200.0f * (gGameRoot_8053AAF8->mRandom.get_ufloat_1())) + 200;
+            if (field_0x288 == 0) {
+                if (field_0x294 != 0) {
+                    field_0x248 = field_0x294;
+                }
+                if (field_0x278 == 0 && field_0x290 != 0) {
+                    startSound_801F0E34(0x4008E, 0);
+                }
+            } else {
+                if (field_0x298 != 0) {
+                    field_0x248 = field_0x298;
+                }
+                if (field_0x278 == 0 && field_0x290 != 0) {
+                    startSound_801F0E34(0x4008F, 0);
+                }
+            }
+            if (mSpawnParam_0x90 != 2 && mSpawnParam_0x90 != 3) {
+                field_0x230 = 1;
+            }
+        }
+        break;
+    case 1:
+        if (field_0x248 == 0) {
+            field_0x230 = 0;
+            break;
+        }
+        if (field_0x24c == 0) {
+            field_0x24c = 10;
+            if (dir < 0) {
+                field_0x2b0 = 0.0f;
+                field_0x2ac = 0.0f;
+                field_0x2a8 = 0.0f;
+                mVel_0x3c.zero();
+                field_0x29c = 1;
+                break;
+            }
+            mDir_0x98 = dir;
+            if (field_0x288 == 1) {
+                angle += 0x8000;
+            }
+            if (field_0x258 == 0) {
+                field_0x2a8 = 0.9f * JMASinShort(angle);
+                field_0x2ac = 0.9f * JMACosShort(angle);
+                if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                    field_0x2a8 = 1.17f * JMASinShort(angle);
+                    field_0x2ac = 1.17f * JMACosShort(angle);
+                }
+            }
+            field_0x29c = 0;
+        }
+        if (field_0x250 == 0 && dir >= 0 && dist < 80.0f) {
+            field_0x230 = 5;
+        }
+        if (field_0x29c == 1 && field_0x2a4 == 1) {
+            field_0x230 = 4;
+        }
+        break;
+    case 2:
+        field_0x270++;
+        if (field_0x270 > 3) {
+            field_0x288 = 1;
+            field_0x270 = 3;
+        }
+        if (field_0x244 == 0) {
+            field_0x244 = 40;
+            findTargetPlayer_801EEC98(mSerial, &angle, &dir, &dist, NULL, 1, 0);
+            if (dir >= 0) {
+                mDir_0x98 = dir;
+                if (field_0x258 == 0) {
+                    field_0x2a8 = 1.1f * JMASinShort(angle);
+                    field_0x2ac = 1.1f * JMACosShort(angle);
+                    if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                        field_0x2a8 = 1.43f * JMASinShort(angle);
+                        field_0x2ac = 1.43f * JMACosShort(angle);
+                    }
+                }
+                field_0x29c = 0;
+            } else {
+                field_0x2b0 = 0.0f;
+                field_0x2ac = 0.0f;
+                field_0x2a8 = 0.0f;
+                field_0x29c = 1;
+            }
+        }
+        if (field_0x250 == 0 && dir >= 0 && dist < 80.0f) {
+            field_0x230 = 5;
+        }
+        if (field_0x29c == 1 && field_0x2a4 == 1) {
+            field_0x230 = 4;
+        }
+        break;
+    case 3:
+        field_0x29c = 0;
+        field_0x244 = (s32)(50.0f * (gGameRoot_8053AAF8->mRandom.get_ufloat_1())) + 50;
+        field_0x230 = 4;
+        // fall through
+    case 4:
+        if (hit) {
+            mVel_0x3c.zero();
+            field_0x2b0 = 0.0f;
+            field_0x2ac = 0.0f;
+            field_0x2a8 = 0.0f;
+            field_0x240 = 8;
+            mDir_0x98 ^= 1;
+            field_0x280 = lbl_804A0920[mDir_0x98];
+            field_0x29c = 0;
+            break;
+        }
+        if (field_0x244 == 0) {
+            field_0x29c = 1;
+            mVel_0x3c.zero();
+            field_0x2b0 = 0.0f;
+            field_0x2ac = 0.0f;
+            field_0x2a8 = 0.0f;
+            if (field_0x2a4 == 1) {
+                field_0x244 = (s32)(50.0f * (gGameRoot_8053AAF8->mRandom.get_ufloat_1())) + 50;
+                field_0x29c = 0;
+                if ((mDir_0x98 & 2) == 0) {
+                    if (gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f) {
+                        mDir_0x98 = 2;
+                    } else {
+                        mDir_0x98 = 3;
+                    }
+                } else {
+                    if (gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f) {
+                        mDir_0x98 = 0;
+                    } else {
+                        mDir_0x98 = 1;
+                    }
+                }
+            }
+            break;
+        }
+        if (field_0x258 == 0) {
+            switch (mDir_0x98) {
+            case 0:
+                field_0x2a8 = 0.7f;
+                field_0x2ac = 0.0f;
+                field_0x2b0 = 0.0f;
+                break;
+            case 1:
+                field_0x2a8 = -0.7f;
+                field_0x2ac = 0.0f;
+                field_0x2b0 = 0.0f;
+                break;
+            case 2:
+                field_0x2a8 = 0.0f;
+                field_0x2ac = 0.7f;
+                field_0x2b0 = 0.0f;
+                break;
+            case 3:
+                field_0x2a8 = 0.0f;
+                field_0x2ac = -0.7f;
+                field_0x2b0 = 0.0f;
+                break;
+            }
+        }
+        if (dir >= 0) {
+            mVel_0x3c.zero();
+            field_0x2b0 = 0.0f;
+            field_0x2ac = 0.0f;
+            field_0x2a8 = 0.0f;
+            pos.set(mPos);
+            pos.y += 24.0f;
+            startSound_801F0E34(0x40088, 0);
+            spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x33B, 0, 1, NULL, NULL, true, 1.0f);
+            field_0x29c = 0;
+            if (mSpawnParam_0x90 == 4 || mSpawnParam_0x90 == 5 || mSpawnParam_0x90 == 6) {
+                field_0x230 = 2;
+            } else {
+                field_0x248 = 0;
+                field_0x230 = 0;
+            }
+        }
+        break;
+    case 5:
+        mVel_0x3c.zero();
+        field_0x2b0 = 0.0f;
+        field_0x2ac = 0.0f;
+        field_0x2a8 = 0.0f;
+        field_0x26c = 0;
+        field_0x29c = 2;
+        field_0x230 = 6;
+        // fall through
+    case 6:
+        field_0x236 = angle;
+        if (field_0x264 >= 3) {
+            pos.set(mPos);
+            mPos.set(pos);
+            if (field_0x2a4 == 1) {
+                field_0x26c++;
+                s32 limit = 70;
+                if ((s32)mSpawnParam_0x90 > 1) {
+                    limit = 42;
+                }
+                mVel_0x3c.zero();
+                field_0x2b0 = 0.0f;
+                field_0x2ac = 0.0f;
+                field_0x2a8 = 0.0f;
+                if (field_0x26c > limit) {
+                    field_0x250 = 120;
+                    if (mLayer_0x4 >= 8 && field_0x23c == 1) {
+                        mBox.i.x = -14.0f;
+                        mBox.i.y = -14.0f;
+                        mBox.f.x = 14.0f;
+                        mBox.f.y = 14.0f;
+                    }
+                    field_0x29c = 3;
+                    field_0x230 = 7;
+                }
+            }
+        }
+        break;
+    case 7:
+        if (field_0x2a4 == 1) {
+            field_0x29c = 0;
+            if (mSpawnParam_0x90 == 4 || mSpawnParam_0x90 == 5 || mSpawnParam_0x90 == 6) {
+                field_0x230 = 2;
+            } else {
+                field_0x248 = 0;
+                field_0x230 = 0;
+            }
+        }
+        break;
+    case 8:
+        field_0x248 = 150;
+        field_0x230 = 9;
+        // fall through
+    case 9:
+        if (field_0x248 != 0) {
+            if ((field_0x248 & 7) == 0) {
+                pos.set(mPos);
+                pos.x += 32.0f - 64.0f * (gGameRoot_8053AAF8->mRandom.get_ufloat_1());
+                pos.y += 32.0f - 64.0f * (gGameRoot_8053AAF8->mRandom.get_ufloat_1());
+                getActorManager_801F856C()->spawnActor_801F9484(ACTOR_HBMB, mLayer_0x4, &pos, 7, -1, -1);
+            }
+        } else {
+            ActorBase_804A5770::die_0x24();
+        }
+        break;
+    }
+    if (field_0x240 > 0) {
+        field_0x240--;
+    }
+    if (field_0x244 > 0) {
+        field_0x244--;
+    }
+    if (field_0x248 > 0) {
+        field_0x248--;
+    }
+    if (field_0x24c > 0) {
+        field_0x24c--;
+    }
+    if (field_0x250 > 0) {
+        field_0x250--;
+    }
+    if (field_0x254 > 0) {
+        field_0x254--;
+    }
+    if (field_0x258 > 0) {
+        field_0x258--;
+    }
+    if (field_0x25c > 0) {
+        field_0x25c--;
+    }
+    if (field_0x260 > 0) {
+        field_0x260--;
+    }
+    if (field_0x230 != 8 && field_0x230 != 9) {
+        fn_801746DC();
+    }
+}
+
+void ChiefSoldier_804A0B90::fn_80172BC8() {
+    SpriteParams_801F5AE0 params;
+    Mtx mtx;
+    mtx[0][3] = 0.0f;
+    mtx[1][3] = 0.0f;
+    mtx[2][3] = 0.0f;
+    if (mSpawnParam_0x90 != 7) {
+        setScaleMtx(mtx, 2.0f);
+        if (field_0x23c == 0) {
+            setScaleMtx(mtx, 1.0f);
+        }
+        params.mMtx = mtx;
+        s32 frame = field_0x280 + 0x3FD;
+        if (mLayer_0x4 < 8) {
+            void* res = gGameRoot_8053AAF8->field_0xa4->getResource('SOB ', "enemy_gc_sob.bin");
+            gGameRoot2_8053AB10->field_0x20->drawSobSprite_802F86CC(&mPos, res, frame, &params, 1.0f, 1.0f);
+        }
+    }
+}
+
+void ChiefSoldier_804A0B90::draw() {
+    SpriteParams_801F5AE0 params;
+    Mtx mtx;
+    mtx[0][3] = 0.0f;
+    mtx[1][3] = 0.0f;
+    mtx[2][3] = 0.0f;
+    if (lbl_8053AB60 != 1) {
+        if (getType() == 7 || getType() == 8) {
+            fn_80172BC8();
+        } else {
+            s32 hasMtx = 0;
+            params.field_0x0[1] = field_0x234;
+            if (field_0x230 == 6 && field_0x264 >= 3) {
+                params.field_0x30 = 0x11;
+            }
+            if (mLayer_0x4 >= 8) {
+                if (field_0x23c == 1) {
+                    setScaleMtx(mtx, 2.0f);
+                    hasMtx = 1;
+                    params.mMtx = mtx;
+                }
+                JGeometry::TBox2f box;
+                box = getGameView_802D6A9C()->mVisibleBox;
+                JGeometry::TVec3f pos;
+                pos.set(mPos);
+                pos.x += box.i.x;
+                pos.y += box.i.y;
+                if (getType() != 6) {
+                    drawSobSprite_801EF574("enemy_gc_sob.bin", field_0x280 + 0x226, &pos, &params);
+                }
+                showGbaSprite_803075AC(mSerial, mLayer_0x4, &mPos, field_0x280 + 0x318, hasMtx != 0, 2, -1, 0, 0, 0);
+            } else {
+                drawSpriteScaled_801F02BC("enemy_gc_sob.bin", field_0x280 + 0x226, &params, 7, 0, false, 1.0f,
+                            1.0f);
+            }
+        }
+    }
+}
+
+void ChiefSoldier_804A0B90::die_0x24() {
+    if (getType() == 6) {
+        mParamDasu_0x18c = 0;
+        getActorManager_801F856C()->spawnActor_801F9484(ACTOR_HART, mLayer_0x4, &mPos, 0, -1, -1);
+    }
+    ActorBase_804A5770::die_0x24();
+}
+

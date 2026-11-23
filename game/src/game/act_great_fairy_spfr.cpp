@@ -1,0 +1,578 @@
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/Effect.h"
+#include "game/Camera.h"
+#include "game/ActorManager.h"
+#include "game/Player.h"
+#include "game/Message.h"
+#include "game/GameView.h"
+#include "game/cls_804AE9B0.h"
+#include "game/act/act_great_fairy_spfr.h"
+
+static const s16 lbl_80465150[] = {
+    2, 10,
+    4, 10,
+    5, 10,
+    6, 10,
+    -1, -1,
+};
+
+static const s16 lbl_80465164[] = {
+    2, 1,
+    0, 8,
+    3, 8,
+    1, 8,
+    2, 6,
+    0, 6,
+    3, 6,
+    1, 6,
+    2, 4,
+    0, 4,
+    3, 4,
+    1, 4,
+    2, 4,
+    0, 4,
+    3, 4,
+    1, 4,
+    2, 4,
+    0, 4,
+    3, 4,
+    1, 4,
+    2, 4,
+    0, 4,
+    3, 4,
+    1, 4,
+    7, 30,
+    -1, -1,
+};
+
+static const s16 lbl_804651CC[] = {
+    2, 1,
+    0, 8,
+    3, 8,
+    1, 8,
+    2, 6,
+    0, 6,
+    3, 6,
+    1, 6,
+    2, 4,
+    0, 4,
+    3, 4,
+    1, 4,
+    7, 30,
+    -1, -1,
+};
+
+// lbl_80465204 (.rodata): values fn_8011921C()->field_0x8 is matched against, by index.
+static const s32 lbl_80465204[27] = {
+    0, 0, 0, 0, 0, 0x28, 0x64, 0xC8, 0x104, 0x208, 0x26C, 0x32A, 0x366, 0x55A,
+    0x578, 0x5BE, 0x5F0, 0x663, 0x6C7, 0x703, 0x767, 0x7CB, 0xC8, 0x12C, 0x190, 0x1F4, 0,
+};
+
+static const s16* lbl_8049EB80[3] = {
+    lbl_80465150,
+    lbl_80465164,
+    lbl_804651CC,
+};
+
+GreatFairy_8049EB8C::GreatFairy_8049EB8C()
+    : field_0x230(0), field_0x234(0), field_0x238(0), field_0x23c(-1), field_0x240(0),
+      field_0x244(0), field_0x248(0), field_0x24c(0), field_0x288(0) {}
+
+GreatFairy_8049EB8C::~GreatFairy_8049EB8C() {
+    releaseEmitter_801EE434(field_0x288);
+    field_0x288 = 0;
+}
+
+void GreatFairy_8049EB8C::init() {
+    DemoActorBase_8049D140::init();
+    field_0x238 = mSpawnParam_0x90 & 1;
+    field_0x248 = (mSpawnParam_0x90 >> 22) & 0x1f;
+    mBox.set(-8.0f, -8.0f, 8.0f, 8.0f);
+    mBox2.set(mBox);
+    mMapBox_0x80.set(mBox);
+    mAnim.setKeyTables_801D2608(lbl_8049EB80, 3);
+    mAnim.startAnim_801D22DC(0, 2, false);
+    mAnim.setFrame_801D1F14(0.0f);
+    mPos.z = 8.0f;
+    mDrawEnabled = false;
+    if (field_0x238 == 1 && isScreenFlagSet_0x34()) {
+        mDrawEnabled = true;
+        JGeometry::TVec3f pos = mPos;
+        field_0x288 = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x184, 0, -1, NULL, NULL, true, 1.0f);
+        setState_80132454(2);
+    }
+}
+
+// FIXME: 98.52 %, scheduling+regalloc; behaviour drift.
+// missing/extra + reloc-name: ours has 1 fewer instr (346 vs 347); the TBox2f offset adds are scheduled differently (stfs order).
+void GreatFairy_8049EB8C::update() {
+    DemoActorBase_8049D140::update();
+    JGeometry::TBox2f box = mBox;
+    box.i.x += mPos.x;
+    box.i.y += mPos.y;
+    box.f.x += mPos.x;
+    box.f.y += mPos.y;
+    fn_801321E4();
+    switch (field_0x234) {
+    case 0:
+        switch (field_0x238) {
+        case 0:
+            fn_8011921C()->fn_801183BC();
+            setState_80132454(4);
+            break;
+        case 1:
+            if (isScreenFlagSet_0x34()) {
+                fn_8011921C()->fn_801186B0(14);
+            }
+            break;
+        }
+        break;
+    case 1:
+        field_0x244++;
+        if (field_0x244 >= 40) {
+            JGeometry::TVec3f pos = mPos;
+            field_0x288 = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x184, 0, -1, NULL, NULL, true, 1.0f);
+            mDrawEnabled = true;
+            startSound_801F0E34(0x40090, 0);
+            setState_80132454(2);
+        }
+        break;
+    case 2:
+        switch (field_0x238) {
+        case 0:
+            break;
+        case 1: {
+            s32 player = talkTo();
+            if (player >= 0) {
+                field_0x23c = player;
+                setState_80132454(3);
+            }
+            break;
+        }
+        }
+        break;
+    case 3:
+        fn_8022FF8C(field_0x23c, &box, mLayer_0x4, mSerial, true, false);
+        if (fn_80388CAC(field_0x23c, mSerial)) {
+            setState_80132454(2);
+        }
+        break;
+    case 6:
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        if (stepMessageWindow_803865B8(0)) {
+            fn_80388EEC(0);
+            fn_8011921C()->fn_801183BC();
+        }
+        break;
+    case 8:
+        field_0x24c++;
+        if (field_0x24c >= 15) {
+            field_0x24c = 0;
+            spawnSoldier();
+        }
+        break;
+    case 9:
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        if (stepMessageWindow_803865B8(0)) {
+            fn_80388EEC(0);
+            fn_8011921C()->fn_801183BC();
+        }
+        break;
+    case 12:
+        lbl_8053AD70->fn_8037AE00();
+        break;
+    case 15:
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        if (stepMessageWindow_803865B8(0)) {
+            fn_80388EEC(0);
+            fn_8011921C()->fn_801183BC();
+        }
+        break;
+    case 19:
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        if (stepMessageWindow_803865B8(0)) {
+            fn_80388EEC(0);
+            fn_8011921C()->fn_801183BC();
+        }
+        break;
+    case 26:
+        break;
+    }
+    setEmitterPos_8013CB44(field_0x288, &mPos, 0, -1, true);
+    if (field_0x230 != 0) {
+        fn_80239914(&box, mLayer_0x4, mSerial);
+    }
+    mAnim.update_801D1C18();
+    if (mDrawEnabled) {
+        gGameRoot2_8053AB10->field_0x24->addFocusPoint_8030C210(&mPos);
+    }
+}
+
+void GreatFairy_8049EB8C::draw() {
+    DemoActorBase_8049D140::draw();
+    SpriteParams_801F5AE0 params;
+    drawSpriteScaled_801F02BC("enemy_gc_sob.bin", mAnim.mCel + 0x2fb, &params, 0x407, 0, false, 1.0f, 1.0f);
+}
+
+void GreatFairy_8049EB8C::vfunc_0x54() {
+    if (fn_8011921C()->field_0x4 != 0xE) {
+        return;
+    }
+    s32 value = fn_8011921C()->field_0x8;
+    switch (field_0x238) {
+    case 0:
+        if (value == lbl_80465204[5]) {
+            setState_80132454(5);
+        } else if (value == lbl_80465204[6]) {
+            setState_80132454(6);
+        } else if (value == lbl_80465204[7]) {
+            setState_80132454(7);
+        } else if (value == lbl_80465204[8]) {
+            setState_80132454(8);
+        } else if (value == lbl_80465204[9]) {
+            setState_80132454(9);
+        } else if (value == lbl_80465204[10]) {
+            setState_80132454(0xA);
+        } else if (value == lbl_80465204[11]) {
+            setState_80132454(0xB);
+        } else if (value == lbl_80465204[12]) {
+            setState_80132454(0xC);
+        } else if (value == lbl_80465204[13]) {
+            setState_80132454(0xD);
+        } else if (value == lbl_80465204[14]) {
+            setState_80132454(0xE);
+        } else if (value == lbl_80465204[15]) {
+            setState_80132454(0xF);
+        } else if (value == lbl_80465204[16]) {
+            setState_80132454(0x10);
+        } else if (value == lbl_80465204[17]) {
+            setState_80132454(0x11);
+        } else if (value == lbl_80465204[18]) {
+            setState_80132454(0x12);
+        } else if (value == lbl_80465204[19]) {
+            setState_80132454(0x13);
+        } else if (value == lbl_80465204[20]) {
+            setState_80132454(0x14);
+        } else if (value == lbl_80465204[21]) {
+            setState_80132454(0x15);
+        }
+        break;
+    case 1:
+        if (value == lbl_80465204[4]) {
+            setState_80132454(4);
+        } else if (value == lbl_80465204[5]) {
+            setState_80132454(5);
+        } else if (value == lbl_80465204[6]) {
+            setState_80132454(6);
+        } else if (value == lbl_80465204[22]) {
+            setState_80132454(0x16);
+        } else if (value == lbl_80465204[23]) {
+            setState_80132454(0x13);
+        } else if (value == lbl_80465204[24]) {
+            setState_80132454(0x14);
+        } else if (value == lbl_80465204[25]) {
+            setState_80132454(0x19);
+        }
+        break;
+    }
+}
+
+s32 GreatFairy_8049EB8C::vfunc_0x5C() {
+    switch (field_0x234) {
+    case 21:
+    case 25:
+    case 26:
+        return 1;
+    }
+    return 0;
+}
+
+// operands: case 5 pos stack slot order and fn_802303FC's 0xFF bool argument.
+// FIXME: 99.94 %, operands; behaviour drift.
+void GreatFairy_8049EB8C::setState_80132454(s32 index) {
+    switch (field_0x234 = index) {
+    case 1:
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x31, 0, 0, NULL, NULL, true, 1.0f);
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x32, 0, 0, NULL, NULL, true, 1.0f);
+        startSound_801F0E34(0x400D9, 0);
+        break;
+    case 2:
+        field_0x23c = -1;
+        break;
+    case 4:
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x31, 0, 0, NULL, NULL, true, 1.0f);
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x32, 0, 0, NULL, NULL, true, 1.0f);
+        startSound_801F0E34(0x400D9, 0);
+        break;
+    case 5: {
+        JGeometry::TVec3f pos = mPos;
+        field_0x288 = spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x184, 0, -1, NULL, NULL, true, 1.0f);
+        mDrawEnabled = true;
+        startSound_801F0E34(0x40090, 0);
+        break;
+    }
+    case 6: {
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        fn_8022FD8C(mSerial);
+        u16 msg = 0x2B5;
+        if (field_0x238 == 1) {
+            msg = 0x2B6;
+        }
+        fn_8038BD08(0, msg, mLayer_0x4, JGeometry::TVec3f(0.0f, -10.0f, 0.0f), 0x4022);
+        fn_8011921C()->fn_80118454();
+        break;
+    }
+    case 7:
+        playSe_801F0D20(0x3B);
+        break;
+    case 8:
+        gAudioMgr_8053AF80->startBgm_80458FF0(0x01000021, 0, 0);
+        break;
+    case 9: {
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        fn_8022FD8C(mSerial);
+        fn_8038BD08(0, 0x2B0, mLayer_0x4, JGeometry::TVec3f(0.0f, -10.0f, 0.0f), 0x4022);
+        fn_8011921C()->fn_80118454();
+        break;
+    }
+    case 10:
+        mAnim.startAnim_801D22DC(1, 0, false);
+        mAnim.setFrame_801D1F14(0.0f);
+        startSound_801F0E34(0x400EF, 0);
+        break;
+    case 12: {
+        JGeometry::TVec3f pos = mPos;
+        pos.y -= 20.0f;
+        getActorManager_801F856C()->spawnActor_801F9484('ALCE', mLayer_0x4, &pos, 3, -1, -1);
+        break;
+    }
+    case 13:
+        mAnim.startAnim_801D22DC(0, 2, false);
+        mAnim.setFrame_801D1F14(0.0f);
+        fn_80119DD0()->startFade_80119998(60, 0, 2, 0, 0, 0, 0);
+        gGameRoot_8053AAF8->startStageMusic_80138B7C();
+        lbl_8053AD70->fn_8037AE00();
+        break;
+    case 14: {
+        placeAtBarrier();
+        break;
+    }
+    case 15: {
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        fn_8022FD8C(mSerial);
+        fn_8038BD08(0, 0x2B8, mLayer_0x4, JGeometry::TVec3f(0.0f, -10.0f, 0.0f), 0x4022);
+        fn_8011921C()->fn_80118454();
+        break;
+    }
+    case 16:
+        mAnim.startAnim_801D22DC(1, 0, false);
+        mAnim.setFrame_801D1F14(0.0f);
+        startSound_801F0E34(0x400EF, 0);
+        break;
+    case 17: {
+        s32 bit = getScreenFlagBit_0x3C();
+        getGameView_802D6A9C()->setSwitchBit_802D8050(bit, true, 0xFF);
+        break;
+    }
+    case 18:
+        mAnim.startAnim_801D22DC(0, 2, false);
+        mAnim.setFrame_801D1F14(0.0f);
+        break;
+    case 19: {
+        mAnim.startAnim_801D22DC(0, 2, false);
+        mAnim.setFrame_801D1F14(0.0f);
+        fn_8022FE80(0, mLayer_0x4, mSerial, true, false);
+        fn_8022FD8C(mSerial);
+        fn_8038BD08(0, 0x2B9, mLayer_0x4, JGeometry::TVec3f(0.0f, -10.0f, 0.0f), 0x4022);
+        fn_8011921C()->fn_80118454();
+        break;
+    }
+    case 20:
+        if (field_0x288 != NULL) {
+            field_0x288->becomeInvalidEmitter();
+        }
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x31, 0, 0, NULL, NULL, true, 1.0f);
+        spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x32, 0, 0, NULL, NULL, true, 1.0f);
+        startSound_801F0E34(0x400D9, 0);
+        mDrawEnabled = false;
+        startSound_801F0E34(0x40090, 0);
+        break;
+    case 21:
+        lbl_8053AD70->fn_8037AE30();
+        fn_8011921C()->fn_80118384();
+        mAlive = false;
+        break;
+    case 22:
+        getGameView_802D6A9C()->setSwitchBit_802D8050(field_0x248, true, 0xFF);
+        break;
+    case 25:
+        fn_8011921C()->fn_80118384();
+        markDead_801F3668();
+        break;
+    case 26:
+        break;
+    }
+}
+
+static inline void camRange(f32 x0, f32 y0, f32 x1, f32 y1) {
+    Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+    if (cam->mBlendBoxOn_0x840 == 0) {
+        cam->mBlendBoxOn_0x840 = 1;
+        cam->mBlendBox_0x844.set(x0, y0, x1, y1);
+        cam->mBlendWeight_0x854 = 1.0f;
+        cam->mMargin_0x1d4 = -1.0f;
+        cam->mMinHalfWidth_0x1d8 = -1.0f;
+    }
+}
+
+static inline void camBox(f32 x0, f32 y0, f32 x1, f32 y1) {
+    Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+    if (cam->mShowWholeArea_0x7f5 == 0) {
+        cam->mFocusOverride_0x7f4 = 1;
+        cam->mFocusMode_0x7f8 = 5;
+        cam->mFocusBox_0x808.set(x0, y0, x1, y1);
+        cam->mOverrideBlend_0x7f6 = 0;
+    }
+}
+
+void GreatFairy_8049EB8C::fn_801321E4() {
+    switch (field_0x234) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 21:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+        break;
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 22:
+        if (field_0x238 == 0) {
+            gGameRoot2_8053AB10->field_0x24->mSkipUpdate_0x17d = 1;
+        } else {
+            gGameRoot2_8053AB10->field_0x24->field_0x179 = 1;
+            camBox(mPos.x, mPos.y - 96.0f, mPos.x, mPos.y + 96.0f);
+        }
+        break;
+    case 8: {
+        gGameRoot2_8053AB10->field_0x24->field_0x179 = 1;
+        JGeometry::TVec3f pos;
+        s32 serial = getActorManager_801F856C()->findSerialByActorId_801F7A08('BARI');
+        if (serial >= 0) {
+            ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            if (actor != NULL) {
+                pos = actor->mPos;
+            }
+        }
+        pos.y += 96.0f;
+        camRange(pos.x, pos.y - 108.0f, pos.x, pos.y + 108.0f);
+        break;
+    }
+    case 9:
+    case 10:
+        gGameRoot2_8053AB10->field_0x24->field_0x179 = 1;
+        camRange(mPos.x, mPos.y - 96.0f, mPos.x, mPos.y + 96.0f);
+        break;
+    case 11: {
+        Camera_804AA9E4* camera = gGameRoot2_8053AB10->field_0x24;
+        if (camera->mFocusOverride_0x7f4 == 0) {
+            camera->mShowWholeArea_0x7f5 = 1;
+        }
+        break;
+    }
+    case 12:
+    case 13:
+        gGameRoot2_8053AB10->field_0x24->mSkipUpdate_0x17d = 1;
+        break;
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+        gGameRoot2_8053AB10->field_0x24->field_0x179 = 1;
+        camRange(mPos.x, mPos.y - 96.0f, mPos.x, mPos.y + 96.0f);
+        break;
+    }
+}
+
+// From here to vfunc_0x58: plain functions that update and setState_80132454 inline and whose own
+// copies the linker dropped. The original's .sdata2 has their literals ahead of fn_801321E4's, in
+// the order of these functions from the bottom of the file up, so they were generated before it
+// (tools/pool.py).
+// Checks for a talking player and opens message 0x2B6 for `player`, 64 units above the fairy.
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 21-line definition): split out only where the .sdata2 order needs it.
+s32 GreatFairy_8049EB8C::talkTo() {
+    JGeometry::TBox2f box = mBox;
+    box.i.x += mPos.x;
+    box.i.y += mPos.y;
+    box.f.x += mPos.x;
+    box.f.y += mPos.y;
+    fn_8022FEB8(&box, mLayer_0x4, mSerial, true, false);
+    s32 player = fn_8022FD8C(mSerial);
+    if (player < 0) {
+        return -1;
+    }
+    if (!fn_802300EC(player)) {
+        return -1;
+    }
+    JGeometry::TVec3f pos = mPos;
+    pos.y -= 64.0f;
+    if (openMessage_8038AD24(player, 0x2B6, mSerial, mLayer_0x4, pos, 0x28)) {
+        return player;
+    }
+    return -1;
+}
+
+// State 14: puts the fairy at the barrier ('BARI', or the origin) with y + 32 and the four players
+// in a row 20 units apart at y + 64.
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 20-line definition): split out only where the .sdata2 order needs it.
+void GreatFairy_8049EB8C::placeAtBarrier() {
+    JGeometry::TVec3f pos(0.0f, 0.0f, 0.0f);
+    s32 bari = getActorManager_801F856C()->findSerialByActorId_801F7A08('BARI');
+    if (bari >= 0) {
+        ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(bari);
+        if (actor != NULL) {
+            pos = actor->mPos;
+        }
+    }
+    pos.y += 32.0f;
+    mPos.set(pos.x, pos.y, 8.0f);
+    pos.y += 32.0f;
+    pos.x -= 50.0f;
+    for (s32 i = 0; i < 4; i++) {
+        pos.x += 20.0f;
+        setPlayerFacing_80230BF4(i, 3);
+        fn_80230498(i, &pos, 0x3F, 0xFF, -0x80, -0x80, true);
+        fn_802303FC(i, &pos, true);
+    }
+}
+
+// Spawns a soldier ('SLR1') at a random place in an 80 x 32 box, y + 180 from the barrier.
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 15-line definition): split out only where the .sdata2 order needs it.
+void GreatFairy_8049EB8C::spawnSoldier() {
+    JGeometry::TVec3f pos(0.0f, 0.0f, 0.0f);
+    s32 bari = getActorManager_801F856C()->findSerialByActorId_801F7A08('BARI');
+    if (bari >= 0) {
+        ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(bari);
+        if (actor != NULL) {
+            pos = actor->mPos;
+        }
+    }
+    pos.x -= 40.0f;
+    pos.y += 180.0f;
+    pos.x += 80.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1();
+    pos.y += 32.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1();
+    getActorManager_801F856C()->spawnActor_801F9484('SLR1', mLayer_0x4, &pos, 0x102, -1, -1);
+}
+
+s32 GreatFairy_8049EB8C::vfunc_0x58() {
+    return field_0x234;
+}

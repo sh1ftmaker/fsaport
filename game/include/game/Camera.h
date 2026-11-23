@@ -1,0 +1,206 @@
+#ifndef GAME_CAMERA_H
+#define GAME_CAMERA_H
+
+// The 2D camera of game/camera_8030C058.cpp: one instance, allocated with
+// __nw__(0x85C, heap, 0) and built by its constructor fn_8030E718 in
+// game/tu_8013AAD4.cpp (0x8013C264-0x8013C280), stored at
+// gGameRoot2_8053AB10->0x24. 94 game units use the unit, 77 of them through
+// addFocusPoint_8030C210.
+//
+// "Camera_804AA9E4" is a provisional name carrying its vtable address
+// (docs/PLAN.md, "Placeholder names"; it was cls_8030C058, after its first
+// function, before the vtable was found: the constructor stores 0x804AA9E4
+// at 0). Why a camera: field_0x4 is a view matrix whose translation is
+// minus the centre of the box it is built from (0x8030CB0C-0x8030CC14: an
+// identity with m[0][3] = -(x0 + x1) / 2), followed by an orthographic
+// projection (C_MTXOrtho into mProjMtx_0x34) that the unit loads with
+// GXSetProjection / GXLoadPosMtxImm; worldToScreen_8030C5F0 projects world positions
+// to the screen; mVisibleBox_0x154 is the visible area and addFocusPoint_8030C210 collects
+// the points the camera has to keep in view.
+//
+// Conventions follow GameView.h: members for the exports other units call
+// with the camera in r3 (all pass gGameRoot2_8053AB10->0x24), with their mangled
+// names in symbols.txt, so a changed parameter type is a symbols.txt rename
+// too. "N units" counts the other game units calling the function or
+// touching the field. Vectors are JGeometry::TVec3f (which derives from
+// Vec) unless a mangled name says Vec.
+//
+// Owner: the shared-header owner (docs/COORDINATOR.md). Propose new fields
+// as SHARED-EDITS, with the offset, access width and the function showing it.
+
+#include "types.h"
+#include "dolphin/mtx.h"
+#include "JSystem/JGeometry.h"
+#include "JSystem/JParticle/JPADrawInfo.h"
+
+struct CameraEntry_804AA8E8 {
+    /* 0x00 */ f32 field_0x0;
+    /* 0x04 */ f32 field_0x4;
+    /* 0x08 */ f32 field_0x8;
+    /* 0x0C */ f32 field_0xc;
+    /* 0x10 */ f32 field_0x10;
+    /* 0x14 */ f32 field_0x14;
+    /* 0x18 */ s32 field_0x18;
+    /* 0x1C */ f32 field_0x1c;
+    /* 0x20 */ u8 field_0x20;
+}; // Size: 0x24
+
+class Camera_804AA9E4 {
+public:
+    // fn_8030E718 (tu_8013AAD4 only): stores the vtable, sets mDrawInfo_0xe4 and
+    // field_0x114 to identity and constructs mFocusPoints_0x1f0 (__construct_array
+    // with TVec3<f>'s constructor, 0x80 x 0xC).
+    Camera_804AA9E4();
+    // fn_8030E6D0; the only slot of the vtable at 0x804AA9E4.
+    /* 0x08 */ virtual ~Camera_804AA9E4();
+
+    // 77 units / 122 calls. If fewer than 0x80 points are queued and pos
+    // (x, y) lies in mVisibleBox_0x154, appends pos to mFocusPoints_0x1f0 (count
+    // mFocusPointNum_0x7f0); returns 0 or 1. Actors pass &mPos, mostly for layers
+    // below 8 (act_arrow 0x80165FD8).
+    u8 addFocusPoint_8030C210(const JGeometry::TVec3f* pos);
+    // 3 units. The same for both corners of box (reads 0x0-0xC); it queues
+    // them only when both lie in mVisibleBox_0x154. TBox2f is a guess: two
+    // TVec2f would read the same.
+    u8 fn_8030C058(const JGeometry::TBox2f* box);
+    // 9 units / 24 calls. Projects pos with worldToScreen_8030C5F0(pos, true, false,
+    // &tmp) and tests tmp (x, y) against the screen rectangle mScreenRect_0x144
+    // shrunk by 0xE on each side; returns 0 or 1. pos goes straight on to
+    // worldToScreen_8030C5F0, so const Vec* would compile too: TVec3f (callers pass
+    // &mPos, act_door 0x802C73AC) is a guess.
+    bool isOnScreen_8030C2A8(const JGeometry::TVec3f* pos);
+    // 1 unit (act_tingle_time_up_manager 0x80352934). Writes two world
+    // positions derived from mViewBox_0x164 and JUTVideo's frame size to out[0]
+    // and out[1].
+    void fn_8030C380(JGeometry::TVec3f* out);
+    // Multiplies pos by the Mtx at +0x74 (PSMTXMultVec) and writes x, y and a
+    // constant z to out: a world-to-screen projection. With the 2nd argument
+    // false it scales by JUTVideo's frame size (progress/game__tu_8045BA84.md).
+    // Screen point (the screen rect when flag is set, else the whole screen) to the camera box.
+    void fn_8030C4A0(const JGeometry::TVec2f* in, bool flag, JGeometry::TVec3f* out);
+    // Sets the orthographic projection and view for the box (depth: the view's distance).
+    void fn_8030CB10(const JGeometry::TBox2f* box, f32 depth);
+    void worldToScreen_8030C5F0(const Vec* pos, bool, bool, Vec* out);
+    // 2 units / 10 calls (this unused: the body reads the camera through
+    // gGameRoot2_8053AB10 again). Sets mRequestedBox_0x180 to the box of half-size
+    // size * k around center, with y scaled by the video frame's aspect
+    // (JUTVideo's height / width), and mUseRequestedBox_0x17e to 1. Reads center 0x0
+    // and 0x4 only (act_after_goal_opening_8011CEC8 passes a stack pair, 0x8011D008).
+    void requestBox_8030C7C4(const JGeometry::TVec2f* center, f32 size);
+    // 1 unit (GameView fn_802D9CB0). Clears mInTransition_0x1e8, zeroes each of the
+    // map's bytes 0x2360-0x2363 whose byte 0x235C-0x235F is set, clears the
+    // view (fn_802DCDF4) and copies mNextVisibleBox_0x190 to mVisibleBox_0x154.
+    void fn_8030C85C();
+    // 1 unit (GameView stepScreen_802DCD1C passes &mVisibleBox). Stores box in
+    // mNextVisibleBox_0x190 and updates the map object's scroll state (its 0x2360 and
+    // 0x2368 / 0x2374, see Map.h).
+    void setNextVisibleBox_8030C928(const JGeometry::TBox2f* box);
+    // 1 unit (GameView fn_802DD3D4 passes &mVisibleBox). Starts a screen
+    // change towards box: mInTransition_0x1e8 = 1, 0x1EC = 30, mShowWholeArea_0x7f5 = 0
+    // (0x8030CA14-0x8030CA2C).
+    void fn_8030C9E4(const JGeometry::TBox2f* box);
+    void fn_8030CD18(const JGeometry::TBox2f* bounds, const CameraEntry_804AA8E8* entry,
+                     JGeometry::TBox2f* prevBox, JGeometry::TBox2f* outBox, f32* outDepth);
+    // Called once per frame from game/tu_8013AAD4.cpp only (no arguments
+    // read; the caller ignores r3).
+    void fn_8030DD68();
+    // 2 units: tu_8013AAD4 at 0x8013AE74 with a stack matrix, and
+    // fn_8013B3CC, which passes its own r4 on. Concatenates mLoadedViewMtx_0x74 with m into a temporary
+    // (PSMTXConcat), makes GX_PNMTX9 the current matrix and loads the result
+    // as its position and normal matrix.
+    void fn_8030DD20(const Mtx m);
+    // 0x8030DD8C (game/camera_8030C058.cpp, not written yet). Sets the screen
+    // box (reads 0x0-0xC of box) as the ortho projection; when `light`
+    // is set also builds the light matrices. Called by
+    // GameRoot2_8049F108::fn_8013B414, which passes its arguments on.
+    void fn_8030DD8C(const JGeometry::TBox2f* box, bool light);
+    // 0x8030DFE8 (game/camera_8030C058.cpp, not written yet). Loads the
+    // projection, position matrix 0x74 and viewport / scissor from mScreenRect_0x144;
+    // `copy` first copies the matrices from 0x4 / 0x34 into 0x74 / 0xA4.
+    void loadGXState_8030DFE8(bool copy);
+    // Not in the binary: a plain function that loadGXState_8030DFE8 inlines.
+    void setScreenRectViewport();
+    void fn_8030E150(); // empty
+    void fn_8030E154();
+    void fn_8030E5BC();
+
+    /* 0x000 vtable */
+    // The view matrix: identity with the translation (-centre x, -centre y,
+    // z); 12 units read -m[0][3] / -m[1][3] as the camera position
+    // (act_all_enemies_defeated 0x8019D2D4 / 0x8019D2E0).
+    /* 0x004 */ Mtx mViewMtx_0x4;
+    /* 0x034 */ Mtx44 mProjMtx_0x34; // C_MTXOrtho (0x8030CC18)
+    /* 0x074 */ Mtx mLoadedViewMtx_0x74;   // worldToScreen_8030C5F0's PSMTXMultVec; GXLoadPosMtxImm
+    /* 0x0A4 */ Mtx44 mLoadedProjMtx_0xa4; // GXSetProjection (0x8030DEFC)
+    // The particle draw info: a copy of the view (PSMTXCopy at 0x8030CC24)
+    // and a C_MTXLightOrtho (0x8030CC4C); identity after the constructor
+    // (JPADrawInfo's default constructor). effect_system_8013C5C8 copies it whole
+    // (0x8013D718-0x8013D7CC) and passes it to JPAEmitterManager::draw.
+    /* 0x0E4 */ JPADrawInfo mDrawInfo_0xe4;
+    // The screen rectangle (x0, y0, x1, y1) as unsigned ints: written by tile_map_802F5040
+    // (0x802FF438), read by isOnScreen_8030C2A8.
+    /* 0x144 */ JGeometry::TBox2<u32> mScreenRect_0x144;
+    // The visible area: addFocusPoint_8030C210 / fn_8030C058 test against it,
+    // game_view_802D39B8 writes it (0x802D9F64), fn_8030C85C resets it from
+    // mNextVisibleBox_0x190.
+    /* 0x154 */ JGeometry::TBox2f mVisibleBox_0x154;
+    // 3 units copy it word by word to the stack (act_unknown_form_8029C584 0x8029C5CC);
+    // player_8023FBF0 reads its floats.
+    /* 0x164 */ JGeometry::TBox2f mViewBox_0x164;
+    /* 0x174 */ s32 mEntryIndex_0x174; // index of the 0x24-byte table entry at lbl_804AA8E8 (fn_8030C9E4)
+    // Request flags, each set to 1 by actors (stb) and polled by the unit:
+    // 0x178 6 units, 0x179 9 units (also read: act_vaati_boss sets 0x178
+    // only while 0x179 is 0, 0x801D4A58), 0x17A 3, 0x17B 1, 0x17C 2,
+    // 0x17D 5 (act_great_fairy_spfr 0x80132230).
+    /* 0x178 */ u8 field_0x178;
+    /* 0x179 */ u8 field_0x179;
+    /* 0x17A */ u8 field_0x17a;
+    /* 0x17B */ u8 field_0x17b;
+    /* 0x17C */ u8 mWidenBounds_0x17c;
+    /* 0x17D */ u8 mSkipUpdate_0x17d;
+    /* 0x17E */ u8 mUseRequestedBox_0x17e; // set by requestBox_8030C7C4
+    /* 0x180 */ JGeometry::TBox2f mRequestedBox_0x180; // requestBox_8030C7C4
+    /* 0x190 */ JGeometry::TBox2f mNextVisibleBox_0x190; // setNextVisibleBox_8030C928; fn_8030C85C
+    /* 0x1A0 */ JGeometry::TBox2f mTransitionEndBox_0x1a0; // the box the transition leaves (fn_8030E154 blends from it)
+    /* 0x1B0 */ f32 mTransitionEndDepth_0x1b0;     // and its depth
+    // fn_8030C85C sets all four floats to one constant.
+    /* 0x1B4 */ JGeometry::TBox2f mPrevFocusBox_0x1b4;
+    /* 0x1C4 */ s32 mShrinkDelay_0x1c4[4]; // cleared by fn_8030E5BC
+    // 19 units store both (act_escort_woman 0x80125048), next to
+    // mBlendBoxOn_0x840.
+    /* 0x1D4 */ f32 mMargin_0x1d4;
+    /* 0x1D8 */ f32 mMinHalfWidth_0x1d8;
+    // GameView_804A9950::vfunc_0x10 stores x, y and a constant z
+    // (0x802DD594-0x802DD59C).
+    /* 0x1DC */ JGeometry::TVec3f mOffset_0x1dc;
+    // Read by GameView isInTransition_802DCD0C / fn_802DA000; cleared by fn_8030C85C.
+    /* 0x1E8 */ u8 mInTransition_0x1e8;
+    /* 0x1E9 */ u8 field_0x1e9[0x1EC - 0x1E9];
+    /* 0x1EC */ s32 mTransitionTimer_0x1ec; // 30 when fn_8030C9E4 arms the transition
+    /* 0x1F0 */ JGeometry::TVec3f mFocusPoints_0x1f0[0x80]; // addFocusPoint_8030C210's points
+    /* 0x7F0 */ s32 mFocusPointNum_0x7f0;                     // their count
+    // A scripted camera move, set by 37 units when mShowWholeArea_0x7f5 is 0: 0x7F4 = 1,
+    // a mode in 0x7F8 (4 with a target position in 0x7FC, 24 units,
+    // act_crystal_demo_2 0x80369128; 5 with a box in 0x808, 12 units,
+    // act_all_enemies_defeated 0x8019D19C), 0x7F6 = 0.
+    /* 0x7F4 */ u8 mFocusOverride_0x7f4;
+    /* 0x7F5 */ u8 mShowWholeArea_0x7f5;
+    /* 0x7F6 */ u8 mOverrideBlend_0x7f6;
+    /* 0x7F8 */ s32 mFocusMode_0x7f8;
+    /* 0x7FC */ JGeometry::TVec3f mFocusPos_0x7fc;
+    /* 0x808 */ JGeometry::TBox2f mFocusBox_0x808;
+    /* 0x818 */ JGeometry::TBox2f mWholeAreaFromBox_0x818;
+    /* 0x828 */ JGeometry::TBox2f mOverrideFromBox_0x828;
+    /* 0x838 */ s32 mWholeAreaTimer_0x838; // -1 after fn_8030E5BC
+    /* 0x83C */ s32 mOverrideTimer_0x83c; // -1 after fn_8030E5BC
+    // Set by 19 units when 0 (act_escort_woman 0x80125010-0x80125044),
+    // with a position in both corners of mBlendBox_0x844 (TBox2f is a guess:
+    // the stores are four stfs), a float in mBlendWeight_0x854 and mMargin_0x1d4 /
+    // mMinHalfWidth_0x1d8.
+    /* 0x840 */ u8 mBlendBoxOn_0x840;
+    /* 0x844 */ JGeometry::TBox2f mBlendBox_0x844;
+    /* 0x854 */ f32 mBlendWeight_0x854;
+    /* 0x858 */ f32 mZoom_0x858; // 4 units divide by it (game_root_sub_24_8016A2B4 0x8016AE94)
+}; // Size: 0x85C
+
+#endif

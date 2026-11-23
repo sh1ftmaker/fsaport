@@ -1,0 +1,42 @@
+#ifndef GAME_ACT_ACT_BIG_MOLDORM_TAIL_8018EB94_H
+#define GAME_ACT_ACT_BIG_MOLDORM_TAIL_8018EB94_H
+
+// Code: game/act_big_moldorm_tail_8018EB94.cpp.
+
+#include "game/ActorBase.h"
+
+// Spawned for 'DGT2'; moved here from game/act/tu_801F9484.h.
+class BigMoldormTail_804A1FA0 : public ActorBase_804A5770 {
+public:
+    BigMoldormTail_804A1FA0() {}
+    /* 0x08 */ virtual ~BigMoldormTail_804A1FA0();
+    /* 0x0C */ virtual void init();
+    /* 0x14 */ virtual void update();
+    /* 0x20 */ virtual void draw();
+    // Not in the binary: a plain function that update inlines.
+    void setHeading();
+    // Slot 0x44: stops the three emitters and forgets them.
+    /* 0x44 */ virtual void vfunc_0x44();
+    // SHARED-EDIT: carved from u8 field_0x230[0x58] (game/act_big_moldorm_tail_8018EB94.cpp init).
+    /* 0x230 */ s32 field_0x230;
+    /* 0x234 */ s32 field_0x234[5]; // countdowns; [0] a frame ticker, [1] and [2] reload to 8 on a bounce
+    /* 0x248 */ s32 field_0x248;
+    /* 0x24C */ s32 field_0x24c;
+    /* 0x250 */ s32 field_0x250;
+    /* 0x254 */ s32 field_0x254;
+    /* 0x258 */ u8 field_0x258[4];
+    /* 0x25C */ s32 field_0x25c;
+    /* 0x260 */ s32 field_0x260;
+    /* 0x264 */ s32 field_0x264;
+    /* 0x268 */ f32 field_0x268;
+    /* 0x26C */ f32 field_0x26c;
+    /* 0x270 */ f32 field_0x270;
+    /* 0x274 */ f32 field_0x274;
+    /* 0x278 */ f32 field_0x278;
+    /* 0x27C */ JGeometry::TVec3f field_0x27c;
+    /* 0x288 */ JGeometry::TVec3f field_0x288[6];
+    /* 0x2D0 */ JGeometry::TVec3f field_0x2d0[20];
+    /* 0x3C0 */ JPABaseEmitter* mEmitters[3]; // released by the destructor
+}; // Size: 0x3CC
+
+#endif

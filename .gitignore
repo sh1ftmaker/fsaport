@@ -1,0 +1,4 @@
+# Build output, including the asset headers extracted from your own main.dol.
+# Those are game data: never commit them.
+/build/
+*.o

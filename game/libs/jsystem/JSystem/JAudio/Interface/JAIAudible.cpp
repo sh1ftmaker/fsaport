@@ -1,0 +1,12 @@
+#include "JSystem/JAudio/Interface/JAIAudible.h"
+#include "JSystem/JAudio/System/JASTrack.h"  // FSA's __sinit constructs the JASTrack/JASChannel pools
+
+#ifdef DEBUG
+#pragma sym on
+#endif
+
+JAIAudible::~JAIAudible() {}
+
+#ifdef DEBUG
+#pragma sym off
+#endif

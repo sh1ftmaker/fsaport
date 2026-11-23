@@ -1,0 +1,17 @@
+#include "game/GameAudio.h"
+#include "game/act/act_global_switch.h"
+#include "game/GameView.h"
+
+void GlobalSwitch_804AA060::init() {
+    update();
+}
+
+void GlobalSwitch_804AA060::update() {
+    if (getGameView_802D6A9C()->isScreenFlagSet_802D800C((mSpawnParam_0x90 >> 22) & 0x1F)) {
+        getGameView_802D6A9C()->fn_802D7F84(getScreenFlagBit_0x3C(), true);
+    }
+}
+
+void GlobalSwitch_804AA060::draw() {}
+
+GlobalSwitch_804AA060::~GlobalSwitch_804AA060() {}

@@ -1,0 +1,771 @@
+#include <stdlib.h>
+#include "JSystem/JMath/JMath.h"
+#include "game/ActorBase.h"
+#include "game/ActorManager.h"
+#include "game/Camera.h"
+#include "game/EnemyBase.h"
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/GameMath.h"
+#include "game/GameView.h"
+#include "game/Player.h"
+#include "game/act/act_force_gem.h"
+#include "game/act/act_thief.h"
+#include "game/tu_801D2918.h"
+
+struct GemDrop {
+    s32 type;
+    s32 amount;
+};
+
+// Sprite sequences ({cel, frames} pairs ending in -1, -1), indexed through
+// lbl_804A59B0 (eight per mType). The one-cel ones are small enough for .sdata2.
+static const s16 lbl_8053F840[] = { 0, 20, -1, -1 };
+static const s16 lbl_8053F848[] = { 8, 20, -1, -1 };
+static const s16 lbl_8053F850[] = { 16, 20, -1, -1 };
+static const s16 lbl_8053F858[] = { 24, 20, -1, -1 };
+static const s16 lbl_8046A058[] = { 0, 1, 1, 2, 2, 2, 3, 1, 4, 1, 5, 2, 6, 2, 7, 1, -1, -1 };
+static const s16 lbl_8046A07C[] = { 8, 1, 9, 2, 10, 2, 11, 1, 12, 1, 13, 2, 14, 2, 15, 1, -1, -1 };
+static const s16 lbl_8046A0A0[] = { 16, 2, 17, 2, 18, 2, 19, 2, 20, 2, 21, 2, 22, 2, 23, 2, -1, -1 };
+static const s16 lbl_8046A0C4[] = { 24, 2, 25, 2, 26, 2, 27, 2, 28, 2, 29, 2, 30, 2, 31, 2, -1, -1 };
+static const s16 lbl_8046A0E8[] = { 0, 15, 1, 15, -1, -1 };
+static const s16 lbl_8046A0F4[] = { 4, 15, 5, 15, -1, -1 };
+static const s16 lbl_8046A100[] = { 8, 15, 9, 15, -1, -1 };
+static const s16 lbl_8046A10C[] = { 12, 15, 13, 15, -1, -1 };
+static const s16 lbl_8046A118[] = { 2, 10, 1, 7, 3, 10, 1, 7, -1, -1 };
+static const s16 lbl_8046A12C[] = { 6, 10, 5, 7, 7, 10, 5, 7, -1, -1 };
+static const s16 lbl_8046A140[] = { 10, 10, 9, 7, 11, 10, 9, 7, -1, -1 };
+static const s16 lbl_8046A154[] = { 14, 10, 13, 7, 15, 10, 13, 7, -1, -1 };
+static const s16 lbl_8046A168[] = { 0, 10, 1, 8, 0, 10, 2, 8, -1, -1 };
+static const s16 lbl_8046A17C[] = { 3, 10, 4, 8, 3, 10, 5, 8, -1, -1 };
+static const s16 lbl_8046A190[] = { 6, 10, 7, 8, 6, 10, 8, 8, -1, -1 };
+static const s16 lbl_8046A1A4[] = { 9, 10, 10, 8, 9, 10, 11, 8, -1, -1 };
+static const s16 lbl_8046A1B8[] = { 0, 20, 1, 20, -1, -1 };
+static const s16 lbl_8046A1C4[] = { 4, 20, 5, 20, -1, -1 };
+static const s16 lbl_8046A1D0[] = { 8, 20, 9, 20, -1, -1 };
+static const s16 lbl_8046A1DC[] = { 12, 20, 13, 20, -1, -1 };
+static const s16 lbl_8046A1E8[] = { 2, 10, 1, 7, 3, 10, 1, 7, -1, -1 };
+static const s16 lbl_8046A1FC[] = { 6, 10, 5, 7, 7, 10, 5, 7, -1, -1 };
+static const s16 lbl_8046A210[] = { 10, 10, 9, 7, 11, 10, 9, 7, -1, -1 };
+static const s16 lbl_8046A224[] = { 14, 10, 13, 7, 15, 10, 13, 7, -1, -1 };
+
+// Per-type parameters (mType 0..3).
+const Thief_804A5A30::TypeParams lbl_8046A238[4] = {
+    { 1.0f, 1.5f, 5, 0xC3, -9.0f },
+    { 0.6f, 1.2f, 6, 0x7F, -11.0f },
+    { 1.2f, 1.2f, 4, 0x4D, -6.0f },
+    { 0.8f, 0.8f, 6, 0x6F, -11.0f },
+};
+
+// Gem drops: {gem type, amount}, tested from the largest amount down.
+static const GemDrop lbl_8046A288[12] = {
+    { 0, 1 }, { 1, 5 }, { 2, 20 }, { 3, 50 }, { 4, 100 }, { 5, 150 },
+    { 6, 200 }, { 7, 300 }, { 8, 1000 }, { 9, 1500 }, { 10, 2000 }, { 11, 3000 },
+};
+
+static const s16* lbl_804A59B0[32] = {
+    lbl_8053F840, lbl_8053F848, lbl_8053F850, lbl_8053F858,
+    lbl_8046A058, lbl_8046A07C, lbl_8046A0A0, lbl_8046A0C4,
+    lbl_8046A0E8, lbl_8046A0F4, lbl_8046A100, lbl_8046A10C,
+    lbl_8046A118, lbl_8046A12C, lbl_8046A140, lbl_8046A154,
+    lbl_8046A168, lbl_8046A17C, lbl_8046A190, lbl_8046A1A4,
+    lbl_8046A168, lbl_8046A17C, lbl_8046A190, lbl_8046A1A4,
+    lbl_8046A1B8, lbl_8046A1C4, lbl_8046A1D0, lbl_8046A1DC,
+    lbl_8046A1E8, lbl_8046A1FC, lbl_8046A210, lbl_8046A224,
+};
+
+static JGeometry::TVec2f lbl_8053AC60; // the sort origin, set by fn_802063FC
+static int fn_802068A0(const void* a, const void* b);
+
+static inline bool contains(const JGeometry::TBox2f& b, const JGeometry::TVec3f& p) {
+    return p.x >= b.i.x && p.y >= b.i.y && p.x < b.f.x && p.y < b.f.y;
+}
+
+// qsort comparator (0x802068A0): orders actors by squared distance from lbl_8053AC60.
+static int fn_802068A0(const void* a, const void* b) {
+    const ActorBase_804A5770* actorA = *(ActorBase_804A5770* const*)a;
+    const ActorBase_804A5770* actorB = *(ActorBase_804A5770* const*)b;
+    f32 distA = square(actorA->mPos.x - lbl_8053AC60.x) + square(actorA->mPos.y - lbl_8053AC60.y);
+    f32 distB = square(actorB->mPos.x - lbl_8053AC60.x) + square(actorB->mPos.y - lbl_8053AC60.y);
+    int result = 0;
+    if (distA < distB) {
+        return -1;
+    }
+    if (distA > distB) {
+        result = 1;
+    }
+    return result;
+}
+
+Thief_804A5A30::Thief_804A5A30() {
+    field_0x340 = -1;
+    field_0x344 = 0;
+    field_0x348 = 0;
+    field_0x349 = 0;
+    field_0x34a = 0;
+    field_0x34b = 0;
+    field_0x34c = 0;
+    mType = 0;
+    field_0x354 = 0;
+    mEmitter358 = NULL;
+    field_0x35c.frames = 0;
+    field_0x35c.vel.x = 0.0f;
+    field_0x35c.vel.y = 0.0f;
+    field_0x368.fn_80217484();
+    field_0x374.fn_8021BA30(0);
+}
+
+Thief_804A5A30::~Thief_804A5A30() {
+    releaseEmitter_801EE434(mEmitter358);
+    fn_80204638()->fn_802049E0(this);
+}
+
+// Its 1.0f is updateState_0x90's (see there).
+// FIXME: 99.96 %, reloc-name; behaviour clean.
+void Thief_804A5A30::init() {
+    EnemyBase_804A4808::init();
+
+    u32 valA = mSpawnParam_0x90 & 0xF;
+    field_0x34a = valA > 9 ? 9 : valA;
+
+    u32 valB = (mSpawnParam_0x90 >> 8) & 0xFF;
+    field_0x34b = valB <= 3 ? 3 : valB;
+
+    u32 valC = (mSpawnParam_0x90 >> 16) & 0xFF;
+    field_0x34c = valC <= 3 ? 3 : valC;
+
+    if (field_0x34c <= field_0x34b) {
+        field_0x34c = field_0x34b + 1;
+    }
+
+    s32 valD = (mSpawnParam_0x90 >> 24) & 3;
+    mType = valD >= 3 ? 3 : valD;
+
+    field_0x354 = mSpawnParam_0x90 >> 27;
+    fn_802072E4();
+
+    mMapBox_0x80.i.x = -8.0f;
+    mMapBox_0x80.i.y = -8.0f;
+    mMapBox_0x80.f.x = 8.0f;
+    mMapBox_0x80.f.y = 8.0f;
+    field_0xb0 = 0x51303;
+    mFlags |= ENEMY_FLAG_KEEP_LIFE;
+    mLife = 1000;
+    mLifeBackup = mLife;
+    field_0x32c.x = mPos.x;
+    field_0x32c.y = mPos.y;
+    field_0x32c.z = mPos.z;
+    field_0x33c = dirToAngle_801F6874(mDir_0x98);
+    mState = 0;
+    mStateTimer = 0;
+    field_0x250 = -1;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.setKeyTables_801D2608(lbl_804A59B0 + mType * 8, 8);
+    mAnim.startAnim_801D22DC(mDir_0x98, 2, false);
+    mAnim.setRandomFrame_801D1D60();
+    fn_80204638()->fn_80204A20(this);
+    if (fn_802064E0()) {
+        mBox.i.x = 1.0f;
+        mBox.i.y = 1.0f;
+        mBox.f.x = -1.0f;
+        mBox.f.y = -1.0f;
+        mBox2.i.x = mBox.i.x;
+        mBox2.i.y = mBox.i.y;
+        mBox2.f.x = mBox.f.x;
+        mBox2.f.y = mBox.f.y;
+        field_0xb0 = 0;
+        mAlive = false;
+        fn_80204638()->fn_80204834();
+    }
+}
+
+bool Thief_804A5A30::fn_802064E0() {
+    s32 bit = field_0x354;
+    return bit != 0 && getGameView_802D6A9C()->fn_802D7F40(bit);
+}
+
+s32 Thief_804A5A30::fn_802063FC() {
+    ActorBase_804A5770* actors[0x400];
+    JGeometry::TVec2f from;
+    from.x = mPos.x;
+    from.y = mPos.y;
+    s32 count = getActorManager_801F856C()->fn_801F7274(mLayer_0x4, actors, -1);
+    if (count >= 2) {
+        lbl_8053AC60 = from;
+        qsort(actors, count, 4, fn_802068A0);
+    }
+    s32 result = -1;
+    ActorBase_804A5770** p = actors;
+    s32 end = count > 0x14 ? 0x14 : count;
+    for (s32 i = 0; i < end; i++, p++) {
+        if (!isWayBlocked_801CF888(&from, &(*p)->mPos, mLayer_0x4)) {
+            result = (*p)->mSerial;
+            break;
+        }
+    }
+    return result;
+}
+
+// FIXME: 98.85 %, regalloc-only + reloc-name; behaviour clean.
+// (regalloc-only + reloc-name). Register allocation swap between r29 and r30; 1.0f pool slot (see updateState_0x90).
+void Thief_804A5A30::fn_80206168() {
+    if (field_0x344 == 0) {
+        return;
+    }
+    bool inDark = isUpperLayer_801CD2F8(mLayer_0x4);
+    u32 max = randInt_801CD664(31) + 20;
+    u32 count = field_0x344;
+    if (count >= max) {
+        count = max;
+    }
+    u32 toDrop = count;
+    if (inDark && count >= 20) {
+        toDrop = count - count % 20;
+    }
+    field_0x344 -= toDrop;
+    while (toDrop > 0) {
+        u32 gemType;
+        if (toDrop >= 50) {
+            gemType = 3;
+            toDrop -= 50;
+        } else if (toDrop >= 20 && (inDark || gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f)) {
+            gemType = 2;
+            toDrop -= 20;
+        } else if (toDrop >= 5 && (inDark || gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.5f)) {
+            gemType = 1;
+            toDrop -= 5;
+        } else {
+            gemType = 0;
+            toDrop -= 1;
+        }
+        s32 serial = getActorManager_801F856C()->spawnActorSimple_801F8544('RUPY', mLayer_0x4, &mPos, gemType);
+        if (serial >= 0) {
+            ActorBase_804A5770* gem = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            if (gem != NULL) {
+                gem->mVel_0x3c = JGeometry::TVec3f(
+                    1.5f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f),
+                    1.5f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f),
+                    -0.5f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()
+                );
+            }
+        }
+    }
+}
+
+// True in state 1 when no isUpperLayer_801CD2F8 hit is set for the layer and mPos lies
+// outside the view box of that layer.
+bool Thief_804A5A30::fn_8020609C() const {
+    s32 layer;
+    bool result = false;
+    if (field_0x94 == 1) {
+        if (!isUpperLayer_801CD2F8(mLayer_0x4)) {
+            layer = mLayer_0x4;
+            GameView_804A9950* view = getGameView_802D6A9C();
+            const JGeometry::TBox2f& box = layer < 8 ? view->mVisibleBox : view->field_0xdc;
+            if (!contains(box, mPos)) {
+                result = true;
+            }
+        }
+    }
+    return result;
+}
+
+void Thief_804A5A30::setState_80205E0C(s32 newState) {
+    if (newState == 7) {
+        switch (mState) {
+        case 3:
+        case 4:
+            return;
+        }
+    }
+    switch (mState) {
+    case 1:
+    case 2:
+    case 3:
+        mFlags &= ~ENEMY_FLAG_NO_MAP_HIT;
+        break;
+    }
+    switch (newState) {
+    case 0:
+        field_0x340 = -1;
+        field_0x338 = -1;
+        mTargetSpeed = 0.0f;
+        mPathCount = 0;
+        field_0x368.fn_80217484();
+        break;
+    case 2:
+        field_0x340 = -1;
+        field_0x348 = 30;
+        mTargetSpeed = lbl_8046A238[mType].field_0x0;
+        mPathCount = 0;
+        mFlags |= ENEMY_FLAG_NO_MAP_HIT;
+        break;
+    case 1:
+        field_0x349 = 30;
+        mTargetSpeed = lbl_8046A238[mType].field_0x4;
+        mFlags |= ENEMY_FLAG_NO_MAP_HIT;
+        break;
+    case 3:
+        field_0x340 = -1;
+        field_0x338 = -1;
+        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
+        mVel_0x3c.x = 0.0f;
+        mVel_0x3c.y = 0.0f;
+        mVel_0x3c.z = 0.0f;
+        mPathCount = 0;
+        mFlags |= ENEMY_FLAG_NO_MAP_HIT;
+        break;
+    case 4:
+        field_0x110 = -1;
+        break;
+    case 5:
+        field_0x340 = -1;
+        field_0x338 = -1;
+        mPathCount = 0;
+        break;
+    case 6:
+        field_0x340 = -1;
+        field_0x348 = 30;
+        mTargetSpeed = lbl_8046A238[mType].field_0x0;
+        mPathCount = 0;
+        field_0x33c = getAngleToPlayer_801D0280(field_0x338) - 0x8000;
+        break;
+    case 7:
+        field_0x340 = -1;
+        field_0x338 = -1;
+        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
+        mPathCount = 0;
+        break;
+    case 8:
+        field_0x340 = -1;
+        field_0x338 = -1;
+        mTargetSpeed = lbl_8046A238[mType].field_0x0;
+        mPathCount = 0;
+        field_0x374.fn_8021BA30(field_0x33c);
+        break;
+    case 9:
+        if (mState != 8) {
+            field_0x340 = -1;
+            field_0x338 = -1;
+            mTargetSpeed = lbl_8046A238[mType].field_0x0;
+            mPathCount = 0;
+            field_0x374.fn_8021BA30(field_0x33c);
+        }
+        break;
+    }
+    mStateTimer = 0;
+    mState = newState;
+}
+
+// FIXME: 95.75 %, different + reloc-name; behaviour drift.
+// Ours has one more instruction (539 vs 538), the rest is register allocation (this in r29 vs
+// r31, the layer argument of isWayBlocked_801CF888 in states 0 and 6 is loaded into a saved register before
+// getPlayerPos_8023E724 in the original) and literal relocations (the original pools 1.0f before
+// 1.2f / 2.0f; ours pools it last).
+void Thief_804A5A30::updateState_0x90(u8 mapHit) {
+    if (mapHit) {
+        fn_801F11B4();
+    } else {
+        switch (mState) {
+        case 1:
+        case 2:
+            if (isBlocked_0x4C(mLayer_0x4, &mPos)) {
+                mPos.x = mPrevPos.x;
+                mPos.y = mPrevPos.y;
+                setState_80205E0C(0);
+            }
+            break;
+        }
+    }
+
+    if (field_0x348 != 0) {
+        field_0x340 = -1;
+    } else {
+        switch (mState) {
+        case 3:
+        case 4:
+        case 5:
+        case 7:
+        case 9:
+            field_0x340 = -1;
+            break;
+        default: {
+            s32 serial = field_0x340;
+            bool findNew = true;
+            if (serial >= 0) {
+                ActorBase_804A5770* target = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                if (target != NULL && fn_801CC9B0(target) &&
+                    !isWayBlocked_801CF888((const JGeometry::TVec2f*)&mPos, &target->mPos, mLayer_0x4)) {
+                    findNew = false;
+                }
+            }
+            if (findNew) {
+                field_0x340 = fn_802063FC();
+            }
+            break;
+        }
+        }
+    }
+
+    if (field_0x349 != 0) {
+        field_0x338 = -1;
+    } else {
+        switch (mState) {
+        case 3:
+        case 4:
+        case 5:
+        case 7:
+        case 9:
+            field_0x338 = -1;
+            break;
+        case 2:
+        case 6:
+            break;
+        default:
+            field_0x338 = findNearestPlayer_801D05F8(&mPos, (f32)field_0x34b * 16.0f);
+            break;
+        }
+    }
+
+    switch (mState) {
+    case 0:
+        if (field_0x340 >= 0) {
+            setState_80205E0C(1);
+        } else if (field_0x338 >= 0) {
+            if (fn_801CCF34(field_0x338) <= 0 && !isWayBlocked_801CF888((const JGeometry::TVec2f*)&mPos, getPlayerPos_8023E724(field_0x338), mLayer_0x4)) {
+                setState_80205E0C(6);
+            } else if (fn_801D183C(0.0f)) {
+                setState_80205E0C(2);
+            }
+        }
+        if (mState == 0) {
+            if (field_0x94 == 1) {
+                setState_80205E0C(8);
+            } else {
+                field_0x33c = field_0x368.fn_80217374(field_0x33c);
+            }
+        } else if (mState == 8) {
+            if (mapHit) {
+                fn_801D11FC();
+            }
+            field_0x33c = field_0x374.fn_8021B904(field_0x33c, mapHit);
+        }
+        break;
+    case 1: {
+        s32 serial = field_0x340;
+        if (serial < 0) {
+            setState_80205E0C(0);
+        } else {
+            ActorBase_804A5770* target = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+            field_0x32c.x = target->mPos.x;
+            field_0x32c.y = target->mPos.y;
+            field_0x32c.z = target->mPos.z;
+            f32 dx = field_0x32c.x - mPos.x;
+            f32 dy = field_0x32c.y - mPos.y;
+            if (square(dx) + square(dy) <= 100.0f) {
+                startSound_801F0E34(0x4009F, 0);
+                s32 value = target->fn_8032D564(target->mSpawnParam_0x90 & 0xFF);
+                s32 amount = (value > 3000) ? 3000 : ((value < 1) ? 1 : value);
+                field_0x344 += amount;
+                ForceGem_804AB6D8* gem = static_cast<ForceGem_804AB6D8*>(target);
+                gem->field_0x94 = 1;
+                gem->field_0x264 = mSerial;
+                gem->field_0x282 = 1;
+                gem->field_0x230 = 3;
+                field_0x340 = fn_802063FC();
+            }
+        }
+        break;
+    }
+    case 2:
+        if (field_0x340 >= 0) {
+            setState_80205E0C(1);
+        } else if (field_0x338 < 0 || fn_801CCF34(field_0x338) <= 0 || !canTargetPlayer_801D0B44(field_0x338) ||
+                   fn_801D08B4(field_0x338, &mPos, (f32)field_0x34c * 16.0f) == 0) {
+            setState_80205E0C(0);
+        } else if (!fn_801D12CC()) {
+            setState_80205E0C(0);
+        } else {
+            field_0x33c = fn_801D02E0(&field_0x32c);
+        }
+        break;
+    case 3:
+        if (field_0xc4 == 0) {
+            setState_80205E0C(4);
+        }
+        break;
+    case 4:
+        if (mPos.z <= 0.0f) {
+            while (field_0x344 != 0) {
+                u32 gemType;
+                for (s32 i = 11; i >= 0; i--) {
+                    if (field_0x344 >= lbl_8046A288[i].amount) {
+                        gemType = lbl_8046A288[i].type;
+                        field_0x344 -= lbl_8046A288[i].amount;
+                        break;
+                    }
+                }
+                JGeometry::TVec3f spawnPos(mPos.x, mPos.y, mPos.z + 24.0f);
+                s32 serial = getActorManager_801F856C()->spawnActorSimple_801F8544('RUPY', mLayer_0x4, &spawnPos, gemType);
+                if (serial >= 0) {
+                    ActorBase_804A5770* gem = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                    if (gem != NULL) {
+                        gem->mVel_0x3c = JGeometry::TVec3f(
+                            1.2f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f),
+                            1.2f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f),
+                            6.0f + 3.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()
+                        );
+                    }
+                }
+            }
+            setState_80205E0C(0);
+        }
+        break;
+    case 5:
+        if (fn_801D2918(&field_0x35c)) {
+            setState_80205E0C(7);
+        }
+        break;
+    case 6:
+        if (field_0x340 >= 0) {
+            setState_80205E0C(1);
+        } else if (field_0x338 < 0 || fn_801CCF34(field_0x338) > 0 || !canTargetPlayer_801D0B44(field_0x338) ||
+                   !fn_801D08B4(field_0x338, &mPos, (f32)field_0x34c * 16.0f) ||
+                   isWayBlocked_801CF888((const JGeometry::TVec2f*)&mPos, getPlayerPos_8023E724(field_0x338), mLayer_0x4)) {
+            setState_80205E0C(0);
+        } else if (mapHit) {
+            fn_801D11FC();
+        } else {
+            stepAngle_801CD930(&field_0x33c, (s16)(getAngleToPlayer_801D0280(field_0x338) - 0x8000), 0x200);
+        }
+        break;
+    case 7:
+        if (mStateTimer >= 60) {
+            setState_80205E0C(0);
+        }
+        break;
+    case 8:
+        if (mapHit) {
+            fn_801D11FC();
+        }
+        field_0x33c = field_0x374.fn_8021B904(field_0x33c, mapHit);
+        break;
+    case 9:
+        break;
+    }
+
+    switch (mState) {
+    case 0:
+    case 6:
+    case 8:
+    case 9:
+        mDir_0x98 = angleToDir_801F681C((u16)field_0x33c);
+        break;
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        break;
+    default:
+        field_0x33c = fn_801D02E0(&field_0x32c);
+        mDir_0x98 = angleToDir_801F681C((u16)field_0x33c);
+        break;
+    }
+}
+
+void Thief_804A5A30::updateAnim_0x94() {
+    s32 state = mState;
+    switch (state) {
+    case 5:
+    case 7:
+        return;
+    }
+    if (mType == 2) {
+        mAnim.startAnimIfChanged_801D22A0(mDir_0x98, 2);
+    } else if (state == 0) {
+        switch (mAnim.mAnim) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            mAnim.fn_801D2264(mDir_0x98, 2);
+            break;
+        default:
+            mAnim.startAnim_801D22DC(mDir_0x98, 2, false);
+            break;
+        }
+    } else {
+        switch (mAnim.mAnim) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            mAnim.startAnim_801D22DC(mDir_0x98 + 4, 2, false);
+            break;
+        default:
+            if (mType == 0) {
+                mAnim.startAnimIfChanged_801D22A0(mDir_0x98 + 4, 2);
+            } else {
+                mAnim.fn_801D2264(mDir_0x98 + 4, 2);
+            }
+            break;
+        }
+    }
+    EnemyBase_804A4808::updateAnim_0x94();
+}
+
+// FIXME: 99.86 %, regalloc-only; behaviour clean.
+void Thief_804A5A30::updateBehavior_0x9C(u8 mapHit) {
+    if (field_0xc4 != 0 && field_0xc8 >= 0 && field_0xc8 < 4) {
+        if (fn_80204638()->field_0x0 != 0 || fn_802064E0()) {
+            fn_80230C6C(field_0xc8);
+        }
+    }
+    if (fn_802064E0()) {
+        switch (mState) {
+        case 3:
+        case 4:
+        case 5:
+        case 7:
+        case 9:
+            break;
+        default:
+            setState_80205E0C(9);
+            break;
+        }
+    }
+    if (field_0x348 != 0) {
+        field_0x348--;
+    }
+    if (field_0x349 != 0) {
+        field_0x349--;
+    }
+    if (fn_8020609C()) {
+        return;
+    }
+    switch (mState) {
+    case 3:
+    case 4:
+    case 9:
+        break;
+    default:
+        if (fn_80204638()->field_0x0 == 0 && !fn_802064E0()) {
+            JGeometry::TBox2f box;
+            getBoxAtPos_801F31C4(&box);
+            for (s32 i = 0; i < 4; i++) {
+                if (fn_801CCFE4(i)) {
+                    if (getPlayerLayer_8023DE58(i) == getField_0x4() &&
+                        fn_80239C00(i, &box, mLayer_0x4) &&
+                        fn_8022F9E4(i, mSerial, true, false)) {
+                        setState_80205E0C(3);
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    }
+    EnemyBase_804A4808::updateBehavior_0x9C(mapHit);
+    fn_8020FADC();
+}
+
+void Thief_804A5A30::calcVelocity_0x88() {
+    applyGravity_0x84();
+    if (fn_8020609C()) {
+        mVel_0x3c.x = 0.0f;
+        mVel_0x3c.y = 0.0f;
+    } else {
+        JGeometry::TVec2f dir;
+        switch (mState) {
+        case 3:
+        case 7:
+            mVel_0x3c.x = 0.0f;
+            mVel_0x3c.y = 0.0f;
+            break;
+        case 4:
+            break;
+        case 5:
+            dir = field_0x35c.vel;
+            mVel_0x3c.x = dir.x;
+            mVel_0x3c.y = dir.y;
+            break;
+        case 6:
+        case 8:
+        case 9:
+            dir.x = JMath::sincosTable_.sinShort(field_0x33c);
+            dir.y = JMath::sincosTable_.cosShort(field_0x33c);
+            mVel_0x3c.x = dir.x * mSpeed;
+            mVel_0x3c.y = dir.y * mSpeed;
+            break;
+        default:
+            calcVelocityToward_801D01A0(&field_0x32c, &dir, mSpeed);
+            mVel_0x3c.x = dir.x;
+            mVel_0x3c.y = dir.y;
+            break;
+        }
+    }
+}
+
+void Thief_804A5A30::onMoved_0x8C() {
+    if (!fn_8020609C()) {
+        switch (mState) {
+        case 1:
+        case 2:
+        case 6:
+        case 8:
+            if (fn_80204638()->fn_802046FC(&mVel_0x3c, &mPos)) {
+                if (mFlags & ENEMY_FLAG_NO_MAP_HIT) {
+                    sweepMapBox_801F2618(&mMapHitDir, lbl_8053EFC0);
+                }
+            }
+            break;
+        }
+    }
+}
+
+void Thief_804A5A30::move_0x98() {
+    if (mState == 3) {
+        if (field_0xc4 != 0) {
+            mDir_0x98 = getPlayerFacing_80230CFC(field_0xc8);
+            field_0x33c = dirToAngle_801F6874(mDir_0x98);
+            JGeometry::TVec3f* pos = fn_8023E7B0(field_0xc8);
+            mPos.x = pos->x;
+            mPos.y = pos->y;
+            mPos.z = pos->z;
+            mVel_0x3c.x = 0.0f;
+            mVel_0x3c.y = 0.0f;
+            mVel_0x3c.z = 0.0f;
+            if (mLayer_0x4 != getPlayerLayer_8023DE58(field_0xc8)) {
+                mLayer_0x4 = getPlayerLayer_8023DE58(field_0xc8);
+                mPathCount = 0;
+                s32 player = field_0xc8;
+                if (hasPlayerLeader_8022F514(player)) {
+                    player = getPlayerLeader_8022F3DC(player);
+                }
+                JGeometry::TVec3f* playerPos = getPlayerPos_8023E724(player);
+                field_0x32c.x = playerPos->x;
+                field_0x32c.y = playerPos->y;
+                field_0x32c.z = playerPos->z;
+            }
+        }
+    } else if ((mFlags & 7) == 0) {
+        fn_801CE32C();
+    }
+}
+
+void Thief_804A5A30::vfunc_0xA0() {
+    if (mState != 9 && mState != 8) {
+        gGameRoot2_8053AB10->field_0x24->addFocusPoint_8030C210(&mPos);
+    }
+}
+
+bool ActorBase_804A5770::fn_80204D44() {
+    bool result = false;
+    if (field_0x94 == 1 || field_0xc4 != 0) {
+        result = true;
+    }
+    return result;
+}

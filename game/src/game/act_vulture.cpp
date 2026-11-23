@@ -1,0 +1,474 @@
+#include <float.h>
+#include "game/GameAudio.h"
+#include "game/act/act_vulture.h"
+#include "game/GameGlobals.h"
+#include "game/GameMath.h"
+#include "game/Map.h"
+#include "game/Player.h"
+#include "game/ViewLayer.h"
+#include "JSystem/JMath/JMath.h"
+
+static inline void approach(f32& cur, f32 target, f32 remaining) {
+    if (remaining < FLT_EPSILON) {
+        cur = target;
+    } else {
+        cur += (1.0f / remaining) * (target - cur);
+    }
+}
+
+static const s16 lbl_8053ED28[] = {3, 20, -1, -1};
+static const s16 lbl_804693F0[] = {0, 8, 1, 8, 2, 8, -1, -1};
+static const s16* lbl_8053A128[] = {lbl_8053ED28, lbl_804693F0};
+
+Vulture_804A4230::Vulture_804A4230() {
+    field_0x2a8 = -1;
+    field_0x2ac = 0.0f;
+    field_0x2b0 = 0;
+    field_0x2b2 = 0;
+    field_0x2b4 = 0;
+    field_0x2b8.x = 0.0f;
+    field_0x2b8.y = 0.0f;
+    field_0x2c0.x = 0.0f;
+    field_0x2c0.y = 0.0f;
+    field_0x2c8.x = 0.0f;
+    field_0x2c8.y = 0.0f;
+}
+
+void Vulture_804A4230::init() {
+    EnemyBase_804A4808::init();
+    u8 param = (u8)mSpawnParam_0x90;
+    field_0x2b4 = param > 4 ? param : 4;
+    if (mSpawnParam_0x90 >> 31) {
+        mFlags |= 0x4000;
+    }
+    mMapBox_0x80.set(1.0f, 1.0f, -1.0f, -1.0f);
+    mBox.set(-10.0f, -8.0f, 10.0f, 8.0f);
+    if (mFlags & 0x4000) {
+        mBox2.set(1.0f, 1.0f, -1.0f, -1.0f);
+        field_0xb0 = 0;
+    } else {
+        mBox2.set(mBox);
+        field_0xb0 = 0x50202;
+    }
+    mDir_0x98 = 2;
+    mFlags |= ENEMY_FLAG_NO_FLOOR;
+    field_0x194 = 1;
+    mPos.z = 1.0f;
+    mState = 0;
+    mStateTimer = 0;
+    field_0x250 = randInt_801CD664(55) + 6;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.setKeyTables_801D2608(lbl_8053A128, 2);
+    mAnim.startAnim_801D22DC(0, 0, false);
+}
+
+// FIXME: 86.03 %, missing/extra + reloc-name; behaviour clean.
+// Compiler promotes the local TVec2fs to registers instead of keeping stack temporaries
+// at 0x8, 0x10, 0x18, 0x20 (frame 0x60 instead of 0x80); literal names differ (reloc-name).
+void Vulture_804A4230::fn_801C0634() {
+    JGeometry::TVec2f diff = field_0x2b8;
+    diff.y -= field_0x2c0.y;
+    diff.x -= field_0x2c0.x;
+    diff.normalize();
+    diff.x *= field_0x2ac;
+    diff.y *= field_0x2ac;
+
+    f32 targetX;
+    f32 targetY;
+    if (field_0x2a8 >= 0) {
+        JGeometry::TVec3f* pPos = getPlayerPos_8023E724(field_0x2a8);
+        targetX = pPos->x;
+        targetY = pPos->y;
+    } else {
+        targetX = mSpawnPos.x;
+        targetY = mSpawnPos.y;
+    }
+
+    approachValue_801CD8E4(&field_0x2c0.x, targetX, 1.0f, 0.0f);
+    approachValue_801CD8E4(&field_0x2c0.y, targetY, 1.0f, 0.0f);
+
+    JGeometry::TVec2f target = field_0x2c0;
+    target.x += diff.x;
+    target.y += diff.y;
+    approachValue_801CD8E4(&field_0x2b8.x, target.x, 0.05f, 0.0f);
+    approachValue_801CD8E4(&field_0x2b8.y, target.y, 0.05f, 0.0f);
+
+    JGeometry::TVec2f diff2 = field_0x2b8;
+    diff2.x -= field_0x2c0.x;
+    diff2.y -= field_0x2c0.y;
+
+    f32 dist;
+    if (field_0x2a8 >= 0) {
+        dist = JMAFastSqrt(getPlayerDistSq_801D0DA0(field_0x2a8, &mPos));
+    } else {
+        dist = JMAFastSqrt(square(mSpawnPos.x - mPos.x) + square(mSpawnPos.y - mPos.y));
+    }
+
+    s16 angle = field_0x2b0;
+    if (dist > 0.001f) {
+        s32 a = (s32)((1.0f / dist) * (field_0x2ac * (f32)field_0x2b0));
+        if ((s16)a > field_0x2b0) {
+            angle = field_0x2b0;
+        } else if ((s16)a < 0x100) {
+            angle = 0x100;
+        } else {
+            angle = a;
+        }
+    }
+
+    if (mState == 5) {
+        angle = ((1.0f - 0.05f * (20 - mStateTimer)) * (f32)(s16)angle);
+    }
+
+    if (mFlags & 0x2000) {
+        angle = -angle;
+    }
+
+    s16 rot = -angle;
+    f32 s = JMath::sincosTable_.sinShort(rot);
+    f32 c = JMath::sincosTable_.cosShort(rot);
+
+    JGeometry::TVec2f res = field_0x2c0;
+    res.x += diff2.x * c - diff2.y * s;
+    res.y += diff2.x * s + diff2.y * c;
+    field_0x2b8 = res;
+}
+
+void Vulture_804A4230::setState_801C0438(s32 state) {
+    switch (state) {
+    case 0:
+        field_0x250 = randInt_801CD664(55) + 6;
+        field_0x2a8 = -1;
+        mAnim.startAnim_801D22DC(0, 0, false);
+        break;
+    case 1:
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        if (mState != 6) {
+            startSound_801F0E34(0x400AA, 0);
+        }
+        break;
+    case 2:
+        if (mFlags & 0x4000) {
+            field_0x250 = randInt_801CD664(421) + 180;
+        } else {
+            field_0x250 = randInt_801CD664(181) + 120;
+        }
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        field_0x2b8.x = mPos.x;
+        field_0x2b8.y = mPos.y;
+        if (field_0x2a8 >= 0) {
+            const JGeometry::TVec3f* pPos = getPlayerPos_8023E724(field_0x2a8);
+            field_0x2c0.x = pPos->x;
+            field_0x2c0.y = pPos->y;
+        } else {
+            field_0x2c0.x = mSpawnPos.x;
+            field_0x2c0.y = mSpawnPos.y;
+        }
+        break;
+    case 3:
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        mTargetSpeed = 0.0f;
+        mSpeed = 0.0f;
+        break;
+    case 4:
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        mTargetSpeed = 4.5f;
+        field_0x2b2 = getAngleToPlayer_801D0280(field_0x2a8);
+        break;
+    case 5:
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        field_0x2b8.x = mPos.x;
+        field_0x2b8.y = mPos.y;
+        {
+            const JGeometry::TVec3f* pPos = getPlayerPos_8023E724(field_0x2a8);
+            field_0x2c0.x = pPos->x;
+            field_0x2c0.y = pPos->y;
+        }
+        field_0x2c8.x = mVel_0x3c.x;
+        field_0x2c8.y = mVel_0x3c.y;
+        break;
+    case 6:
+        field_0x2a8 = -1;
+        mAnim.startAnimIfChanged_801D22A0(1, 2);
+        break;
+    }
+    mStateTimer = 0;
+    mState = state;
+}
+
+// FIXME: 97.68 %, scheduling+regalloc; behaviour drift.
+// Same instructions; registers (r29/r30) and the order of a few loads/stores differ.
+void Vulture_804A4230::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        if (mStateTimer >= field_0x250) {
+            field_0x2a8 = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+            if (field_0x2a8 >= 0) {
+                setState_801C0438(1);
+            }
+        }
+        break;
+
+    case 1:
+        if (mPos.z >= 18.0f) {
+            mPos.z = 18.0f;
+            field_0x2ac = randInt_801CD664(33) + 48;
+            field_0x2b0 = randInt_801CD664(257) + 512;
+            if (randInt_801CD664(2) == 0) {
+                mFlags &= ~0x2000;
+            } else {
+                mFlags |= 0x2000;
+            }
+            setState_801C0438(2);
+        }
+        break;
+
+    case 2:
+        if (field_0x2a8 >= 0) {
+            if (!fn_80230188(field_0x2a8) && !canTargetPlayer_801D0B44(field_0x2a8)) {
+                s32 player = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+                if (player >= 0 && player != field_0x2a8 && arePlayersInSameGroup_8022E438(player, field_0x2a8)) {
+                    field_0x2a8 = player;
+                    setState_801C0438(2);
+                } else {
+                    setState_801C0438(6);
+                }
+                break;
+            }
+
+            if (mStateTimer >= field_0x250) {
+                if (!fn_80230188(field_0x2a8)) {
+                    f32 dist = getPlayerDistSq_801D0DA0(field_0x2a8, &mPos);
+                    if (dist <= square(16.0f + field_0x2ac)) {
+                        setState_801C0438(3);
+                        break;
+                    }
+                }
+            }
+            fn_801C0634();
+        } else {
+            field_0x2a8 = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+            if (field_0x2a8 >= 0) {
+                setState_801C0438(2);
+            } else {
+                fn_801C0634();
+            }
+        }
+        break;
+
+    case 3:
+        if (mStateTimer >= 15) {
+            if (!canTargetPlayer_801D0B44(field_0x2a8)) {
+                s32 player = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+                if (player >= 0 && player != field_0x2a8 && arePlayersInSameGroup_8022E438(player, field_0x2a8)) {
+                    field_0x2a8 = player;
+                    setState_801C0438(2);
+                } else {
+                    setState_801C0438(6);
+                }
+            } else {
+                setState_801C0438(4);
+            }
+        }
+        break;
+
+    case 4:
+        if (mStateTimer >= 50) {
+            if (!canTargetPlayer_801D0B44(field_0x2a8)) {
+                s32 player = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+                if (player >= 0 && player != field_0x2a8 && arePlayersInSameGroup_8022E438(player, field_0x2a8)) {
+                    field_0x2a8 = player;
+                    setState_801C0438(2);
+                } else {
+                    setState_801C0438(6);
+                }
+            } else {
+                setState_801C0438(5);
+            }
+        }
+        break;
+
+    case 5:
+        if (!canTargetPlayer_801D0B44(field_0x2a8)) {
+            s32 player = findNearestPlayer_801D05F8(&mPos, 16.0f * (f32)field_0x2b4);
+            if (player >= 0 && player != field_0x2a8 && arePlayersInSameGroup_8022E438(player, field_0x2a8)) {
+                field_0x2a8 = player;
+                setState_801C0438(2);
+            } else {
+                setState_801C0438(6);
+            }
+        } else {
+            fn_801C0634();
+            if (mStateTimer >= 20) {
+                setState_801C0438(2);
+            }
+        }
+        break;
+
+    case 6:
+        if (mPos.z <= 1.0f) {
+            mPos.z = 1.0f;
+            bool hit = false;
+            if (viewLayerFlag(mLayer_0x4)) {
+                JGeometry::TVec2f point;
+                point.x = mPos.x;
+                point.y = 8.0f + (mPos.y - mPos.z);
+                // getTileCollisionCodeAlt_802265FC reads only (x, y); the original passes this 8-byte TVec2f slot (EnemyBase.h, isPathBlocked_801CFA70).
+                if (getTileCollisionCodeAlt_802265FC((const JGeometry::TVec3f*)&point, mLayer_0x4) == 2) {
+                    hit = true;
+                }
+            }
+            if (hit) {
+                field_0x2a8 = -1;
+                setState_801C0438(1);
+            } else {
+                setState_801C0438(0);
+            }
+        }
+        break;
+    }
+}
+
+void Vulture_804A4230::calcVelocity_0x88() {
+    mVel_0x3c.set(0.0f, 0.0f, 0.0f);
+    JGeometry::TVec2f vel(0.0f, 0.0f);
+
+    switch (mState) {
+    case 2:
+    case 5:
+        // calcVelocityToward_801D01A0 reads only (x, y) of its target; the original passes this 8-byte TVec2f slot (EnemyBase.h, isPathBlocked_801CFA70).
+        calcVelocityToward_801D01A0((const JGeometry::TVec3f*)&field_0x2b8, &vel, FLT_MAX);
+        mVel_0x3c.x = vel.x;
+        mVel_0x3c.y = vel.y;
+        if (mState == 5) {
+            f32 remaining = 20 - mStateTimer;
+            approach(field_0x2c8.x, 0.0f, remaining);
+            approach(field_0x2c8.y, 0.0f, remaining);
+            mVel_0x3c.x += field_0x2c8.x;
+            mVel_0x3c.y += field_0x2c8.y;
+        }
+        break;
+
+    case 4:
+        vel.x = JMath::sincosTable_.sinShort(field_0x2b2);
+        vel.y = JMath::sincosTable_.cosShort(field_0x2b2);
+        mVel_0x3c.x = mSpeed * vel.x;
+        mVel_0x3c.y = mSpeed * vel.y;
+        break;
+    }
+
+    switch (mState) {
+    case 1:
+        mPos.z += 0.4f;
+        if (mPos.z > 18.0f) {
+            mPos.z = 18.0f;
+        }
+        break;
+    case 6:
+        mPos.z -= 0.2f;
+        if (mPos.z < 1.0f) {
+            mPos.z = 1.0f;
+        }
+        break;
+    }
+}
+
+void Vulture_804A4230::updateAnim_0x94() {
+    f32 rate = 1.0f;
+    switch (mState) {
+    case 1:
+    case 3:
+    case 4:
+        rate = 1.5f;
+        break;
+    }
+    mAnim.mFrameCtrl.setRate(rate);
+    EnemyBase_804A4808::updateAnim_0x94();
+}
+
+void Vulture_804A4230::onHitReactionEnd_0x74() {
+    field_0x2b8.x = mPos.x;
+    field_0x2b8.y = mPos.y;
+    if (field_0x2a8 >= 0) {
+        const JGeometry::TVec3f* pPos = getPlayerPos_8023E724(field_0x2a8);
+        field_0x2c0.x = pPos->x;
+        field_0x2c0.y = pPos->y;
+    } else {
+        field_0x2c0.x = mSpawnPos.x;
+        field_0x2c0.y = mSpawnPos.y;
+    }
+}
+
+bool Vulture_804A4230::vfunc_0x58() {
+    s32 player;
+    if ((mFlags & 0x4000) || mBox2.getWidth() <= 0.0f || mBox2.getHeight() <= 0.0f) {
+        return false;
+    }
+
+    // Declaration order only fixes the stack slots (vel54/vel48 sit at sp+0x54/0x48);
+    // declaring box/probe first lays the slots out differently.
+    JGeometry::TVec3f vel54;
+    JGeometry::TVec3f vel48;
+    JGeometry::TBox2f box;
+    JGeometry::TVec3f from;
+    JGeometry::TVec2f probe;
+    s32 other = -1;
+    bool actorC = false;
+    vel48.set(0.0f, 0.0f, 0.0f);
+    fn_801F317C(&box);
+    player = fn_8023AC74(&box, mLayer_0x4, &probe);
+    if (player >= 0) {
+        actorC = fn_801CC538(player, &probe, &vel54, &other);
+    } else {
+        player = fn_8023AD54(&box, mLayer_0x4, &probe);
+        if (player >= 0) {
+            fn_801CC640(player, &other, &vel48);
+        }
+    }
+
+    bool hit = false;
+    if (player >= 0) {
+        from = mPos - vel48;
+        if (actorC) {
+            from.set(vel54.x, vel54.y, vel54.z);
+        }
+        hit = takeHit_801F37AC(4, &from, 0, 0, player);
+    }
+    return hit;
+}
+
+// FIXME: 96.88 %, missing/extra; behaviour near.
+// One extra clrlwi r3, r3, 24 before the return: our bool fn_801CEA60() result is
+// widened to the u8 return, the original returns r3 untouched.
+u8 Vulture_804A4230::checkHitByActor_0x60() {
+    u8 hit = 0;
+    if (!(mFlags & 0x4000)) {
+        if (!viewLayerFlag(mLayer_0x4) && mPos.z > 16.0f) {
+            hit = fn_801CEA60();
+        } else {
+            hit = EnemyBase_804A4808::checkHitByActor_0x60();
+        }
+    }
+    return hit;
+}
+
+u8 Vulture_804A4230::checkHitByPlayer_0x5C() {
+    u8 hit = 0;
+    if (!(mFlags & 0x4000)) {
+        if (mBox.getWidth() > 0.0f && mBox.getHeight() > 0.0f) {
+            hit = checkPlayerAttacks_801F2FAC();
+        }
+    }
+    return hit;
+}
+
+void Vulture_804A4230::draw() {
+    SpriteParams_801F5AE0 params;
+    if (mFlags & 0x4000) {
+        params.field_0x10.set(0, 0, 0, 0x9F);
+    }
+    drawSprite_801F06F0("enemy_gc_sob.bin", mAnim.mCel + 0x16E, &params, 7, 1.0f, 1.0f);
+}
+
+Vulture_804A4230::~Vulture_804A4230() {}

@@ -1,0 +1,335 @@
+#include "game/GameAudio.h"
+#include "game/Effect.h"
+#include "game/GameGlobals.h"
+#include "JSystem/JMath/JMath.h"
+#include "game/Player.h"
+#include "game/act/act_frostare_child_frosteye_801DB18C.h"
+#include "game/act/singleton_801DAC6C.h"
+
+static const s16 lbl_80469A98[] = { 7, 5, 8, 5, -1, -1 };
+static const s16* lbl_8053A148[] = { lbl_80469A98, NULL };
+extern const char lbl_80469AA4[]; // "enemy_both_sob.bin"
+
+FrostareChildFrosteye_804A4EE8::FrostareChildFrosteye_804A4EE8() {
+    mTargetPlayer = -1;
+    field_0x2ac = 0;
+    mSearchRange = 0.0f;
+    field_0x2b4 = 0.0f;
+    field_0x2b8 = 0.0f;
+    mSearchPos.x = 0.0f;
+    mSearchPos.y = 0.0f;
+    mSearchPos.z = 0.0f;
+    field_0x2c8 = 0.0f;
+    field_0x2cc = 0.0f;
+    field_0x2d0 = 0.0f;
+    mRadius = 10.0f;
+    mTargetRadius = 10.0f;
+    mAngle = 0;
+    mAngleSpeed = 0;
+    field_0x2e0 = 0.0f;
+    field_0x2e4 = NULL;
+}
+
+FrostareChildFrosteye_804A4EE8::~FrostareChildFrosteye_804A4EE8() {
+    releaseEmitter_801EE434(field_0x2e4);
+    field_0x2e4 = NULL;
+    if (field_0x16c == -1) {
+        fn_801DAC6C()->fn_801DAEAC(mSerial);
+    }
+}
+
+void FrostareChildFrosteye_804A4EE8::init() {
+    EnemyBase_804A4808::init();
+    mBox.set(-8.0f, -16.0f, 8.0f, 8.0f);
+    mMapBox_0x80.set(1.0f, 1.0f, -1.0f, -1.0f);
+    field_0xb0 = 0x10101;
+    mDir_0x98 = 2;
+    mFlags |= 0x20;
+    mParamAtcp_0x114 = 2;
+    field_0x194 = 1;
+    if (field_0x16c == -1) {
+        s16 a = randInt_801CD664(0x3800);
+        if (randInt_801CD664(2) == 0) {
+            a = -a;
+        }
+        s32 n = randInt_801CD664(0x3C) + 1;
+        field_0x2b4 = 0.0f;
+        field_0x2b8 = 0.1f * n;
+        f32 x = field_0x2b4;
+        field_0x2b4 = x * JMath::sincosTable_.cosShort(-a) - field_0x2b8 * JMath::sincosTable_.sinShort(-a);
+        field_0x2b8 = x * JMath::sincosTable_.sinShort(-a) + field_0x2b8 * JMath::sincosTable_.cosShort(-a);
+    }
+    mState = 0;
+    mStateTimer = 0;
+    if (field_0x16c == -1) {
+        field_0x250 = randInt_801CD664(1) + 1;
+    } else {
+        field_0x250 = randInt_801CD664(0x3D) + 0x1E;
+    }
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.setKeyTables_801D2608(lbl_8053A148, 1);
+    mAnim.startAnim_801D22DC(0, 2, false);
+    mAnim.mFrameCtrl.setRate(0.25f);
+    mAnim.setRandomFrame_801D1D60();
+    field_0x2e4 = spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x258, 1, 0, NULL, NULL, true, 1.0f);
+    if (field_0x16c == -1) {
+        fn_801DAC6C()->fn_801DAF14(mSerial);
+    }
+}
+
+// FIXME(shotgun): 82.70 %, missing/extra; behaviour drift.
+void FrostareChildFrosteye_804A4EE8::fn_801DB9CC() {
+    if (randInt_801CD664(2) == 0) {
+        mFlags &= ~0x2000;
+    } else {
+        mFlags |= 0x2000;
+    }
+    mTargetRadius = (f32)(randInt_801CD664(0x1F) + 0x1E);
+    mAngleSpeed = 0;
+    mAngle = randInt_801CD664(0x10000);
+    if (field_0x16c == -1) {
+        JGeometry::TVec2f v(field_0x2b4, field_0x2b8);
+        if (!v.isZero()) {
+            f32 rx;
+            f32 ry;
+            if (v.x < 0.0f) {
+                mFlags |= 0x2000;
+                f32 c = JMath::sincosTable_.cosShort((s16)0xC000);
+                f32 s = JMath::sincosTable_.sinShort((s16)0xC000);
+                ry = v.x * s + v.y * c;
+                rx = v.x * c - v.y * s;
+            } else {
+                mFlags &= ~0x2000;
+                f32 c = JMath::sincosTable_.cosShort(0x4000);
+                f32 s = JMath::sincosTable_.sinShort(0x4000);
+                ry = v.x * s + v.y * c;
+                rx = v.x * c - v.y * s;
+            }
+            if (randInt_801CD664(2) == 0) {
+                rx = -rx;
+                ry = -ry;
+                mFlags ^= 0x2000;
+            }
+            mAngle = (s32)(JMath::atanTable_.atan2_(rx, ry) * 10430.378f);
+            JGeometry::TVec2f v2(field_0x2b4, field_0x2b8);
+            mAngleSpeed = (s32)(0.015915494f * (65536.0f * v2.length()));
+        }
+    }
+    mSearchPos.x = mPos.x;
+    mSearchPos.y = mPos.y;
+    JGeometry::TVec2f dir(-JMath::sincosTable_.sinShort(mAngle), -JMath::sincosTable_.cosShort(mAngle));
+    dir.scale(mRadius);
+    mSearchPos.x += dir.x;
+    mSearchPos.y += dir.y;
+    mSearchPos.z = mSearchPos.x;
+    field_0x2c8 = mSearchPos.y;
+    if (field_0x16c == -1) {
+        JGeometry::TVec3f p;
+        if (fn_801DAC6C()->fn_801DACAC(&p)) {
+            field_0x2cc = mSearchPos.z;
+            field_0x2d0 = field_0x2c8;
+            field_0x2cc -= p.x;
+            field_0x2d0 -= p.y;
+        }
+        switch (randInt_801CD664(3)) {
+        case 0:
+            mSearchRange = 96.0f;
+            break;
+        case 1:
+            mSearchRange = 192.0f;
+            break;
+        default:
+            mSearchRange = 288.0f;
+            break;
+        }
+    } else {
+        mSearchRange = 0.0f;
+    }
+}
+
+// Not auto-inlined: updateState_0x90 calls fn_801DB950 out of line in the original (docs/INLINING.md, pragma rule 1).
+#pragma auto_inline off
+void FrostareChildFrosteye_804A4EE8::fn_801DB950(s32 state) {
+    // A one-case switch: MWCC's cmpwi/beq/b shape for state 1 is what matches.
+    switch (state) {
+    case 1:
+        field_0x250 = -1;
+        mAnim.mFrameCtrl.setRate(1.0f);
+        field_0x2ac = 0;
+        fn_801DB9CC();
+        mTargetPlayer = findNearestPlayer_801D05F8(&mSearchPos, mSearchRange);
+        break;
+    }
+    mStateTimer = 0;
+    mState = state;
+}
+#pragma auto_inline reset
+
+// FIXME(shotgun): 99.63 %, regalloc-only; behaviour clean.
+void FrostareChildFrosteye_804A4EE8::fn_801DB6C8() {
+    if (field_0x16c == -1) {
+        JGeometry::TVec3f p;
+        if (fn_801DAC6C()->fn_801DACAC(&p)) {
+            mSearchPos.z = p.x;
+            field_0x2c8 = p.y;
+            mSearchPos.z += field_0x2cc;
+            field_0x2c8 += field_0x2d0;
+        }
+    }
+    JGeometry::TVec2f target;
+    if (mTargetPlayer == -1) {
+        target.set(mSearchPos.z, field_0x2c8);
+        target.x += field_0x2b4;
+        target.y += field_0x2b8;
+    } else {
+        JGeometry::TVec3f* p = &mPlayerPos_0x1ac[mTargetPlayer];
+        JGeometry::TVec2f player(p->x, p->y);
+        JGeometry::TVec2f away(mSearchPos.x - player.x, mSearchPos.y - player.y);
+        if (away.isZero()) {
+            away.set(0.0f, -1.0f);
+        } else {
+            away.normalize();
+        }
+        away.scale(mRadius);
+        target.set(player);
+        target.add(away);
+        target.x += field_0x2b4;
+        target.y += field_0x2b8;
+    }
+    JGeometry::TVec2f d(target.x - mSearchPos.x, target.y - mSearchPos.y);
+    if (!d.isZero()) {
+        f32 step = field_0x2e0;
+        f32 len = d.length();
+        if (len < step) {
+            step = len;
+        }
+        d.normalize();
+        d.x *= step;
+        d.y *= step;
+        mSearchPos.x += d.x;
+        mSearchPos.y += d.y;
+    }
+    if (mFlags & 0x2000) {
+        mAngle -= mAngleSpeed;
+    } else {
+        mAngle += mAngleSpeed;
+    }
+}
+
+void FrostareChildFrosteye_804A4EE8::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        if (mStateTimer >= field_0x250) {
+            fn_801DB950(1);
+        }
+        break;
+    case 1: {
+        moveToward_801CD950(&mRadius, mTargetRadius, 1.0f);
+        moveToward_801CD950(&field_0x2e0, 0.4f, 0.01f);
+        if (mAngleSpeed != 0x200) {
+            s32 step = 0x20;
+            if (mAngleSpeed > 0x200) {
+                step = 0x800;
+            }
+            stepAngle_801CD930(&mAngleSpeed, 0x200, step);
+        }
+        s32 target = findNearestPlayer_801D05F8(&mSearchPos, mSearchRange);
+        if (target == -1) {
+            mTargetPlayer = -1;
+            field_0x2ac = 0;
+        } else {
+            field_0x2ac++;
+            if (mTargetPlayer != target && field_0x2ac >= 0x5A) {
+                mTargetPlayer = target;
+                field_0x2ac = 0;
+            }
+        }
+        fn_801DB6C8();
+        break;
+    }
+    }
+}
+
+void FrostareChildFrosteye_804A4EE8::updateAnim_0x94() {
+    s32 cel = mAnim.mCel;
+    EnemyBase_804A4808::updateAnim_0x94();
+    if (cel == 8 && mAnim.mCel == 7) {
+        startSound_801F0E34(0x4005B, 0);
+    }
+}
+
+void FrostareChildFrosteye_804A4EE8::updateBehavior_0x9C(u8 mapHit) {
+    EnemyBase_804A4808::updateBehavior_0x9C(mapHit);
+    setEmitterPos_8013CB44(field_0x2e4, &mPos, 1, 0, true);
+}
+
+// FIXME: 99.07 %, regalloc-only; behaviour clean.
+// FIXME(shotgun): remaining diff is instruction scheduling and registers only.
+void FrostareChildFrosteye_804A4EE8::calcVelocity_0x88() {
+    if (field_0x2b4 != 0.0f) {
+        if (mState == 0) {
+            field_0x2b4 *= 0.95f;
+        } else {
+            field_0x2b4 *= 0.5f;
+        }
+        if (__fabsf(field_0x2b4) < 0.001f) {
+            field_0x2b4 = 0.0f;
+        }
+    }
+    if (field_0x2b8 != 0.0f) {
+        if (mState == 0) {
+            field_0x2b8 *= 0.95f;
+        } else {
+            field_0x2b8 *= 0.5f;
+        }
+        if (__fabsf(field_0x2b8) < 0.001f) {
+            field_0x2b8 = 0.0f;
+        }
+    }
+    if (mState == 0) {
+        mVel_0x3c.set(field_0x2b4, field_0x2b8, 0.0f);
+        return;
+    }
+    f32 sinv = JMath::sincosTable_.sinShort(mAngle) * mRadius;
+    f32 cosv = JMath::sincosTable_.cosShort(mAngle) * mRadius;
+    mVel_0x3c.set(mSearchPos.x + sinv - mPos.x, mSearchPos.y + cosv - mPos.y, 0.0f);
+}
+
+u8 FrostareChildFrosteye_804A4EE8::attackPlayers_0x68() {
+    u8 hitPlayers = 0;
+    if (mBox.getWidth() > 0.0f && mBox.getHeight() > 0.0f) {
+        hitPlayers = getPlayersInBox_801F2740(-1);
+        if (hitPlayers != 0) {
+            JGeometry::TVec3f conv;
+            JGeometry::TVec3f center3;
+            JGeometry::TVec2f center;
+            JGeometry::TVec2f pos;
+            getBoxCenter_801F3128(&center);
+            for (s32 player = 0; player < 4; player++) {
+                if (hitPlayers & (1 << player)) {
+                    if (isPlayerOnLowerLayer_801F329C(player)) {
+                        center3.x = center.x;
+                        center3.y = center.y;
+                        center3.z = 0.0f;
+                        fn_801CD0D0(&center3, &conv);
+                        pos.x = conv.x;
+                        pos.y = conv.y;
+                    } else {
+                        pos = center;
+                    }
+                    hitPlayerGroup_80238548(player, mParamAtcp_0x114, &pos, 1);
+                }
+            }
+        }
+    }
+    return hitPlayers;
+}
+
+void FrostareChildFrosteye_804A4EE8::draw() {
+    SpriteParams_801F5AE0 params;
+    params.field_0x1c = 1;
+    params.field_0x1d = 0;
+    drawSpriteScaled_801F02BC(lbl_80469AA4, mAnim.mCel + 0xE3, &params, -1, 0, false, 1.0f, 1.0f);
+}
+

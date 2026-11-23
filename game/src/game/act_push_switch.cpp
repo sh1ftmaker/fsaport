@@ -1,0 +1,62 @@
+#include "game/GameAudio.h"
+#include "game/Player.h"
+#include "game/act/act_push_switch.h"
+
+void PushSwitch_804A7B38::init() {
+    switch ((mSpawnParam_0x90 >> 17) & 3) {
+    case 0:
+        mBox.set(-15.0f, 0.0f, 0.0f, 16.0f * getLength());
+        break;
+    case 1:
+        mBox.set(16.0f, 0.0f, 31.0f, 16.0f * getLength());
+        break;
+    case 2:
+        mBox.set(0.0f, -15.0f, 16.0f * getLength(), 0.0f);
+        break;
+    case 3:
+        mBox.set(0.0f, 16.0f, 16.0f * getLength(), 31.0f);
+        break;
+    }
+    mMapBox_0x80.set(mBox);
+}
+
+// FIXME: 99.37%. regalloc-only: the player-position x / y loads take f1 / f0 in the
+// original (ours f0 / f1). The layer is read through getField_0x4() (before the call).
+void PushSwitch_804A7B38::update() {
+    JGeometry::TBox2f area(mBox);
+    area.i.x += mPos.x;
+    area.f.x += mPos.x;
+    area.i.y += mPos.y;
+    area.f.y += mPos.y;
+    s32 count = 0;
+    for (s32 i = 0; i < 4; i++) {
+        if (getPlayerLayer_8023DE58(i) == getField_0x4() && fn_8022DB04(i)) {
+            s32 direction = (mSpawnParam_0x90 >> 17) & 3;
+            if (direction != getPlayerFacing_80230CFC(i)) {
+                continue;
+            }
+            JGeometry::TVec3f* pos = getPlayerPos_8023E724(i);
+            bool inside = false;
+            if (pos->x >= area.i.x && pos->y >= area.i.y && pos->x < area.f.x &&
+                pos->y < area.f.y) {
+                inside = true;
+            }
+            if (inside) {
+                count++;
+            }
+        }
+    }
+    s32 needed = 1;
+    if ((mSpawnParam_0x90 >> 22) & 0x1F) {
+        needed = (mSpawnParam_0x90 >> 22) & 0x1F;
+    }
+    if (count >= needed) {
+        setScreenFlag_0x30(0xFF, true);
+    } else {
+        setScreenFlag_0x30(0xFF, false);
+    }
+}
+
+void PushSwitch_804A7B38::draw() {}
+
+PushSwitch_804A7B38::~PushSwitch_804A7B38() {}

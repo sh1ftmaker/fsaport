@@ -1,0 +1,137 @@
+#include "game/GameAudio.h"
+#include "game/Effect.h"
+#include "game/GameView.h"
+#include "game/Player.h"
+#include "JSystem/JMath/JMath.h"
+#include "game/act/act_rainbow_bridge.h"
+
+static const u16 lbl_80465098[5] = {0x0396, 0x0397, 0x0398, 0x0399, 0x039A};
+static const u16 lbl_804650A4[5] = {0x0127, 0x0128, 0x0129, 0x012A, 0x012B};
+
+static inline bool contains(const JGeometry::TBox2f& b, const JGeometry::TVec3f& p) {
+    return p.x >= b.i.x && p.y >= b.i.y && p.x < b.f.x && p.y < b.f.y;
+}
+
+RainbowBridge_8049E610::RainbowBridge_8049E610()
+    : field_0x230(0), field_0x234(-1), field_0x238(0) {
+    for (int i = 0; i < 5; i++) {
+        field_0x23c[i] = NULL;
+    }
+}
+
+// FIXME: 87.42% (try.py class different, but instruction count and order are identical: only the register assignment differs. The original keeps the loop index in r30, the field pointer in r29 and the NULL in r31; ours has index r29, pointer r30).
+RainbowBridge_8049E610::~RainbowBridge_8049E610() {
+    for (int i = 0; i < 5; i++) {
+        releaseEmitter_801EE434(field_0x23c[i]);
+        field_0x23c[i] = NULL;
+    }
+}
+
+void RainbowBridge_8049E610::init() {
+    ActorBase_804A5770::init();
+    field_0x230 = (mSpawnParam_0x90 >> 22) & 0x1F;
+    pool_8053CB48();
+    mBox.i.x = -40.0f;
+    mBox.i.y = -64.0f;
+    mBox.f.x = 40.0f;
+    mBox.f.y = 64.0f;
+    mBox2.set(mBox);
+    mMapBox_0x80.set(mBox);
+}
+
+// FIXME: 97.88% (missing/extra: one extra instruction, a copy of the player index (mr r27,r26) from the inlined isPlayerOn parameter, which also costs one more saved register (stmw r26 vs r27); the rest is the same register renaming as __dt__ in the emitter loops).
+void RainbowBridge_8049E610::update() {
+    ActorBase_804A5770::update();
+    switch (field_0x238) {
+    case 0:
+        pool_8053CB48();
+        break;
+    case 1:
+        for (int i = 0; i < 4; i++) {
+            if (isPlayerOn(i)) {
+                fn_8023DF68(i, &(mPos - mPrevPos));
+            }
+        }
+        if (field_0x234 >= 0) {
+            field_0x234++;
+            if (field_0x234 >= 420) {
+                startSound_801F0E34(0x5004e, 0);
+                field_0x234 = -1;
+            }
+        }
+        if (field_0x230 >= 0) {
+            getGameView_802D6A9C()->setSwitchBit_802D8050(field_0x230, true, 0xFF);
+        }
+        break;
+    }
+}
+
+// isPlayerOn and checkActivate: plain functions whose out-of-line copies the
+// linker dropped (update inlines both, init inlines checkActivate). Compiled
+// first (the bottom of the file), isPlayerOn then checkActivate, they give the
+// .sdata2 pool its original order: 0, 32768/pi, 0.5, 3 (isPlayerOn), 1.0
+// (checkActivate), then init's box literals.
+// R2 pool helper (inlined at 2 call sites); was checkActivate.
+void RainbowBridge_8049E610::pool_8053CB48() {
+    if (isScreenFlagSet_0x34()) {
+        field_0x238 = 1;
+        // The original stores the state and then switches on it (a state setter inlined here, asm 0x8012A058).
+        switch (field_0x238) {
+        case 0:
+            break;
+        case 1:
+            if (!getGameView_802D6A9C()->isScreenFlagSet_802D800C(field_0x230)) {
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x39f, 0, -1, NULL, NULL, true, 1.0f);
+                for (int i = 0; i < 5; i++) {
+                    if (field_0x23c[i] == NULL) {
+                        field_0x23c[i] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_80465098[i], 0, -1, NULL, NULL, true, 1.0f);
+                    }
+                }
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x3a0, 0, -1, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x39b, 0, -1, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x39c, 0, -1, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x39d, 0, -1, NULL, NULL, true, 1.0f);
+                spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x39e, 0, -1, NULL, NULL, true, 1.0f);
+            } else {
+                for (int i = 0; i < 5; i++) {
+                    if (field_0x23c[i] == NULL) {
+                        field_0x23c[i] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_804650A4[i], 0, -1, NULL, NULL, true, 1.0f);
+                    }
+                }
+            }
+            if (!getGameView_802D6A9C()->isScreenFlagSet_802D800C(field_0x230)) {
+                startSound_801F0E34(0x5004d, 0);
+                field_0x234 = 0;
+            }
+            break;
+        }
+    }
+}
+
+// FAKEMATCH(crack-pass): pool helper failing R2 (1 call site, 26-line definition): split out only where the .sdata2 order needs it.
+bool RainbowBridge_8049E610::isPlayerOn(s32 player) {
+    if (player < 0) {
+        return false;
+    }
+    if (mLayer_0x4 != getPlayerLayer_8023DE58(player)) {
+        return false;
+    }
+    JGeometry::TBox2f box(mBox);
+    for (s32 i = 0; i < 8; i++) {
+        JGeometry::TVec3f v;
+        fn_8022E088(player, i, &v);
+        v -= mPos;
+        v.z = 0.0f;
+        s32 angle = (s32)(JMath::atanTable_.atan2_(v.y, v.x) *
+                          (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
+        f32 len = JGeometry::TUtil<f32>::sqrt(v.x * v.x + v.y * v.y);
+        v.z = 0.0f;
+        v.x = len * JMACosShort(angle);
+        v.y = len * JMASinShort(angle);
+        if (contains(box, v)) {
+            fn_8022DF48(player);
+            return true;
+        }
+    }
+    return false;
+}

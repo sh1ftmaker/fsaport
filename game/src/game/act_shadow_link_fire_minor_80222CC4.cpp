@@ -1,0 +1,125 @@
+#include "game/GameAudio.h"
+#include "game/GameGlobals.h"
+#include "game/ActorManager.h"
+#include "game/act/act_shadow_link_fire_minor_80222CC4.h"
+
+// Zeroes the life of the 'DDGO' actor spawned in state 5 and forgets it.
+static inline void releaseShot(ShadowLinkFireMinor_804A6C38* self) {
+    s32 serial = self->mDDGOSerial;
+    if (serial >= 0) {
+        ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+        if (actor != NULL) {
+            actor->mLife = 0;
+        }
+        self->mDDGOSerial = -1;
+    }
+}
+
+ShadowLinkFireMinor_804A6C38::ShadowLinkFireMinor_804A6C38() {
+    mDDGOSerial = -1;
+}
+
+ShadowLinkFireMinor_804A6C38::~ShadowLinkFireMinor_804A6C38() {
+    releaseShot(this);
+}
+
+void ShadowLinkFireMinor_804A6C38::init() {
+    ShadowLinkBase_804A6A00::init();
+    mDir_0x98 = mSpawnParam_0x90 & 3;
+    mState = 4;
+    mStateTimer = 0;
+    field_0x250 = -1;
+    mSpeed = 0.0f;
+    mTargetSpeed = 0.0f;
+    mAnim.startAnim_801D22DC(2, 0, false);
+}
+
+void ShadowLinkFireMinor_804A6C38::updateState_0x90(u8 mapHit) {
+    switch (mState) {
+    case 0:
+        fn_80221408();
+        break;
+    case 1:
+        fn_80221334();
+        break;
+    case 2:
+        fn_802212AC();
+        break;
+    case 3:
+        if (mStateTimer >= 120) {
+            mAnim.startAnim_801D22DC(mDir_0x98 + 16, 0, false);
+            mStateTimer = 0;
+            mState = 5;
+        }
+        break;
+    case 4:
+        fn_802216E8(120);
+        if (mPos.z <= 0.0f) {
+            if (mFlags & CLS_804A6A00_FLAG_0x2000) {
+                mAnim.startAnim_801D22DC(mDir_0x98 + 16, 0, false);
+                mStateTimer = 0;
+                mState = 5;
+            } else {
+                mVel_0x3c.z = lbl_8053FE70;
+            }
+        }
+        break;
+    case 5:
+        if (mStateTimer > 1 && mAnim.isStopped_801D21F0()) {
+            JGeometry::TVec3f pos(mPos.x, mPos.y, 0.0f);
+            switch (mDir_0x98) {
+            case 0:
+                pos.x += 24.0f;
+                break;
+            case 1:
+                pos.x -= 24.0f;
+                break;
+            case 2:
+                pos.x += 4.0f;
+                pos.y += 22.0f;
+                break;
+            case 3:
+                pos.x -= 4.0f;
+                pos.y -= 26.0f;
+                break;
+            }
+            mDDGOSerial = getActorManager_801F856C()->spawnActor_801F9484('DDGO', mLayer_0x4, &pos, 1, -1, -1);
+            s32 serial = mDDGOSerial;
+            if (serial >= 0) {
+                ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
+                if (actor != NULL) {
+                    actor->mDir_0x98 = mDir_0x98;
+                }
+            }
+            mStateTimer = 0;
+            mState = 6;
+        }
+        break;
+    case 6:
+        if (mStateTimer >= 180) {
+            releaseShot(this);
+            mAnim.startAnim_801D22DC(mDir_0x98, 0, false);
+            mStateTimer = 0;
+            mState = 7;
+        }
+        break;
+    case 7:
+        if (mStateTimer >= 120) {
+            fn_8022149C(1);
+        }
+        break;
+    }
+}
+
+void ShadowLinkFireMinor_804A6C38::calcVelocity_0x88() {
+    if (mState == 2) {
+        fn_80221250();
+    } else {
+        EnemyBase_804A4808::calcVelocity_0x88();
+    }
+}
+
+void ShadowLinkFireMinor_804A6C38::onHitByPlayer_0x6C() {
+    ShadowLinkBase_804A6A00::onHitByPlayer_0x6C();
+    releaseShot(this);
+}
