@@ -329,11 +329,11 @@ const char* TProcessor::on_message_limited(u16 messageIndex) const
 void TProcessor::do_systemTagCode_(u16 p1, const void* p2, u32 p3)
 {
 	switch (p1) {
-	case 4:
-		pushCurrent(mReference->do_word(*(u32*)p2));
+	case 4: // port: tag arguments are big-endian in the message text
+		pushCurrent(mReference->do_word(be32(p2)));
 		break;
 	case 5:
-		pushCurrent(on_message(*(u32*)p2));
+		pushCurrent(on_message(be32(p2)));
 		break;
 	}
 }
@@ -758,14 +758,14 @@ bool TSequenceProcessor::do_tag_(u32 tag, const void* data, u32 size)
 	case 0xF8:
 		mProc.mBranchProc.mBranchFunc = &process_onBranch_limited_;
 		mProc.mBranchProc.mTargetAddr = (const void*)((u32)data + 2);
-		mProc.mBranchProc.mTarget     = *(u16*)(data);
+		mProc.mBranchProc.mTarget     = be16(data); // port: big-endian
 		mStatus                       = STATUS_Branch;
 		do_branch_query(code);
 		break;
 	case 0xF7:
 		mProc.mBranchProc.mBranchFunc = &process_onBranch_;
 		mProc.mBranchProc.mTargetAddr = (const void*)((u32)data + 2);
-		mProc.mBranchProc.mTarget     = *(u16*)(data);
+		mProc.mBranchProc.mTarget     = be16(data); // port: big-endian
 		mStatus                       = STATUS_Branch;
 		do_branch_query(code);
 		break;
@@ -785,7 +785,7 @@ void TSequenceProcessor::do_systemTagCode_(u16 p1, const void* p2, u32 p3)
 	switch (p1) {
 	case 6:
 		u32 ptr;
-		ptr = *(u32*)p2;
+		ptr = be32(p2); // port: big-endian
 		mStatus                   = STATUS_Jump;
 		mProc.mJumpProc.mJumpFunc = &process_onJump_;
 		mProc.mJumpProc.mTarget   = ptr;
@@ -862,7 +862,7 @@ void* TSequenceProcessor::process_onJump_(const TSequenceProcessor* processor)
  */
 void* TSequenceProcessor::process_onBranch_limited_(const TSequenceProcessor* processor, u32 p2)
 {
-	u16 v1      = ((u16*)processor->mProc.mBranchProc.mTargetAddr)[p2];
+	u16 v1      = be16((const u8*)processor->mProc.mBranchProc.mTargetAddr + 2 * p2); // port: big-endian table
 	u16 groupID = processor->mResourceCache->getGroupID();
 
 	if (v1 >= 0xFF00) {
@@ -879,15 +879,16 @@ void* TSequenceProcessor::process_onBranch_limited_(const TSequenceProcessor* pr
  */
 void* TSequenceProcessor::process_onBranch_(const TSequenceProcessor* processor, u32 p2)
 {
-	u16 v1 = ((u32*)processor->mProc.mJumpProc.mTarget)[p2];
+	// Port: the branch table is big-endian words in the message text.
+	u32 entry = be32((const u8*)processor->mProc.mJumpProc.mTarget + 4 * p2);
+	u16 v1 = entry;
 
 	if (v1 >= 0xFF00) {
 		return nullptr;
 	}
 
 	TControl* control = processor->mControl;
-	return (!control->setMessageCode_inSequence_(processor, ((u32*)processor->mProc.mJumpProc.mTarget)[p2] >> 0x10, v1)) ? nullptr
-	                                                                                                                     : control->mEntry;
+	return (!control->setMessageCode_inSequence_(processor, entry >> 0x10, v1)) ? nullptr : control->mEntry;
 }
 
 /**
