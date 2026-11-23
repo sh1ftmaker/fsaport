@@ -103,6 +103,10 @@ void JKRHeap::destroy(JKRHeap *heap)
 
 void JKRHeap::destroy() { do_destroy(); }
 
+#ifdef FSA_PORT_TRACE
+extern "C" int fsa_host_alloc_depth;
+extern "C" void fsa_debug_stack(const char *);
+#endif
 void *JKRHeap::alloc(u32 byteCount, int alignment, JKRHeap *heap)
 {
     void *memory;
@@ -121,7 +125,39 @@ void *JKRHeap::alloc(u32 byteCount, int alignment)
 {
 #line 317
     JUT_WARNING_F(!mInitFlag, "alloc %x byte in heap %x", byteCount, this);
+#ifdef FSA_PORT
+    // Port: the game sizes some heaps for the GameCube's structures; report when
+    // a host-sized structure no longer fits instead of failing silently.
+#ifdef FSA_PORT_TRACE
+    u32 freeBefore = (u32)getFreeSize();
+#endif
+    void *p = do_alloc(byteCount, alignment);
+#ifdef FSA_PORT_TRACE
+    static u32 sCount = 0;
+    if (this == (JKRHeap *)0x8d40e0 && sCount == 3000 && byteCount == 0x100) {
+        fsa_debug_stack("main heap 0x100 alloc #3000");
+    }
+    if (this == (JKRHeap *)0x8d40e0 && (++sCount % 500) == 0)
+        OSReport("[heap] main: %u allocs, free 0x%x, last alloc 0x%x\n", sCount, (u32)getFreeSize(), byteCount);
+    if (freeBefore > (u32)getFreeSize() + 0x100000)
+        OSReport("[heap] DROP in %p: alloc 0x%x align %d -> %p, free 0x%x -> 0x%x\n", this, byteCount, alignment, p,
+                 freeBefore, (u32)getFreeSize());
+    if (byteCount >= 0x8000)
+        OSReport("[heap] alloc 0x%x in heap %p -> %p (free now 0x%x)\n", byteCount, this, p, (u32)getFreeSize());
+    static int sFlood = 0;
+    if (p && byteCount < 0x40000 && (u32)getFreeSize() < 0x3000000 && (u32)getFreeSize() > 0x100000 && sFlood < 30) {
+        sFlood++;
+        OSReport("[heap] small alloc 0x%x align %d in %p (free 0x%x) host=%d\n", byteCount, alignment, this,
+                 (u32)getFreeSize(), fsa_host_alloc_depth);
+    }
+#endif
+    if (!p && byteCount)
+        OSReport("[heap] alloc of 0x%x (align %d) failed in heap %p (free 0x%x, total 0x%x)\n", byteCount, alignment,
+                 this, (u32)getFreeSize(), (u32)((u8 *)mEndAddress - (u8 *)mStartAddress));
+    return p;
+#else
     return do_alloc(byteCount, alignment);
+#endif
 }
 
 void JKRHeap::free(void *memory, JKRHeap *heap)
@@ -384,6 +420,7 @@ bool JKRHeap::isSubHeap(JKRHeap *heap) const
 }
 
 #ifdef FSA_PORT
+extern "C" int fsa_host_alloc_depth;
 // Port: JSystem's global operator new/delete replace C++'s for the whole wasm
 // module, but only the game's own allocations belong in JKR heaps. Host code
 // (libc++, Aurora, the platform layer) marks itself with fsa_host_alloc_depth,

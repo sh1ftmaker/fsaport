@@ -4,6 +4,7 @@
 #include "platform.h"
 
 #include <aurora/aurora.h>
+#include <aurora/gfx.h>
 #include <emscripten.h>
 
 namespace {
@@ -21,8 +22,12 @@ u32 g_framesBegun = 0, g_framesDrawn = 0;
 void platform_retrace() {
   platform_interrupt_enter();
   g_retraceCount++;
-  if (g_retraceCount % 60 == 0)
-    platform_log("[vi] retrace %u, frames begun %u drawn %u\n", g_retraceCount, g_framesBegun, g_framesDrawn);
+  if (g_retraceCount % 60 == 0) {
+    const AuroraStats* st = aurora_get_stats();
+    platform_log("[vi] retrace %u, frames begun %u drawn %u; draws %u (merged %u) pipelines %u/%u verts %u tex %u\n",
+                 g_retraceCount, g_framesBegun, g_framesDrawn, st->drawCallCount, st->mergedDrawCallCount,
+                 st->createdPipelines, st->queuedPipelines, st->lastVertSize, st->lastTextureUploadSize);
+  }
   if (g_preRetrace)
     g_preRetrace(g_retraceCount);
   g_currentFb = g_nextFb;

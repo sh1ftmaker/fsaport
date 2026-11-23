@@ -45,7 +45,8 @@ void AudioResLoader_804B1A38::fn_80442810() {
                                                 lbl_8053AEE8->field_0x14, lbl_8053AEEC->field_0x14);
 #endif
 #ifdef FSA_PORT_TRACE
-            OSReport("[trace] free %p (heap %p)\n", lbl_8053AEE8->field_0x14, JKRHeap::findFromRoot(lbl_8053AEE8->field_0x14));
+            OSReport("[trace] A cmd %p\n", lbl_8053AEE8);
+            OSReport("[trace] B data %p root %p..%p\n", lbl_8053AEE8->field_0x14, JKRHeap::getRootHeap()->getStartAddr(), JKRHeap::getRootHeap()->getEndAddr());
 #endif
             JKRHeap::free(lbl_8053AEE8->field_0x14, NULL);
 #ifdef FSA_PORT_TRACE

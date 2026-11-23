@@ -738,8 +738,17 @@ void JKRExpHeap::recycleFreeBlock(JKRExpHeap::CMemBlock *block)
         joinTwoBlocks(newBlock->mPrev);
         return;
     }
+#ifdef FSA_PORT_TRACE
+    int guard = 0;
+#endif
     for (CMemBlock *freeBlock = mHead; freeBlock; freeBlock = freeBlock->mNext)
     {
+#ifdef FSA_PORT_TRACE
+        if (++guard == 100000) {
+            OSReport("[trace] recycleFreeBlock %p in heap %p: free list loops at %p (next %p) head %p tail %p\n", block, this, freeBlock, freeBlock->mNext, mHead, mTail);
+            for (;;) OSSuspendThread(OSGetCurrentThread());
+        }
+#endif
         if (freeBlock >= newBlock || newBlock >= freeBlock->mNext)
         {
             continue;

@@ -91,7 +91,13 @@ inline void* DvdCommand_804B0FD0::operator new(size_t size) {
 // The deleting destructors inline this. The compiler also emits an unreferenced
 // weak copy, which the link dead-strips (map: UNUSED).
 inline void DvdCommand_804B0FD0::operator delete(void* p) {
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] DvdCommand delete %p heap %p\n", p, JKRHeap::findFromRoot(p));
+#endif
     JKRHeap::free(p, NULL);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] DvdCommand deleted %p\n", p);
+#endif
 }
 
 inline DvdCommand_804B0FD0::DvdCommand_804B0FD0() {

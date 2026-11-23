@@ -30,6 +30,9 @@ add_subdirectory(extern/aurora EXCLUDE_FROM_ALL)
 add_library(fsa_game_flags INTERFACE)
 target_compile_options(fsa_game_flags INTERFACE
   -nostdinc -fno-rtti -fno-exceptions -fsigned-char -ffp-contract=off -gline-tables-only
+  # MWCC let functions fall off the end without a return; clang would treat
+  # those paths as unreachable (that miscompiled into hangs).
+  -fno-strict-return
   -Wno-everything "SHELL:-include ${FSA_GAME}/port/port_prefix.h"
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
@@ -72,7 +75,7 @@ target_link_options(fsa PRIVATE
   -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=268435456 -sMAXIMUM_MEMORY=2147483648
   -sSTACK_SIZE=4194304
   -sEXIT_RUNTIME=0 -sFORCE_FILESYSTEM=1 -sINVOKE_RUN=0 -sENVIRONMENT=web
-  "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8']"
+  "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8','UTF8ToString']"
   "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"

@@ -259,6 +259,13 @@ void DspBoot(DSPCallback callback)
 
 int DSPSendCommands2(u32 *p1, u32 mailCount, void (*callBack)(u16))
 {
+#ifdef FSA_PORT
+    // Port: there is no DSP to mail; a command is done as soon as it is sent.
+    // (The host mixer that replaces the DSP's work is separate.)
+    if (callBack != nullptr)
+        callBack(0);
+    return 0;
+#endif
     s32 i;
     BOOL interruptFlag;
     s32 startWorkStatus;

@@ -140,6 +140,16 @@ inline u32 J2DScreen::makeHierarchyPanes(J2DPane* parent, JSURandomInputStream* 
     while (true) {
         J2DScrnBlockHeader header;
         input->peek(&header, 8);
+#ifdef FSA_PORT_TRACE
+        {
+            static int sBlocks = 0;
+            if (sBlocks++ < 400) {
+                u32 t = header.mBloBlockType;
+                OSReport("[blo] pos 0x%x block %c%c%c%c len 0x%x\n", input->getPosition(), (char)(t >> 24), (char)(t >> 16),
+                         (char)(t >> 8), (char)t, (u32)(int)header.mBlockLength);
+            }
+        }
+#endif
         switch (header.mBloBlockType) {
         case 'EXT1':
             input->seek(header.mBlockLength, SEEK_CUR);
