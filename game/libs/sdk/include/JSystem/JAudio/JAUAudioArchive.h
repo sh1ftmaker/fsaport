@@ -2,6 +2,7 @@
 #define JAUDIO_JAUAUDIOARCHIVE_H
 
 #include "types.h"
+#include "port/be.h"
 
 struct JAUSection;
 
@@ -31,7 +32,7 @@ public:
 
     u32 readU32_()
     {
-        u32 val = *(u32 *)mReadPtr;
+        u32 val = be32(mReadPtr); // port: .baa is big-endian
         mReadPtr += 4;
         return val;
     }

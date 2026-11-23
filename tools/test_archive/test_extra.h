@@ -4,4 +4,5 @@
 #include "types.h"
 extern int gFormatFail;
 void testExtra(const char* name, const u8* file, u32 size);
+void testAudio(const u8* baa, u32 size);
 #endif

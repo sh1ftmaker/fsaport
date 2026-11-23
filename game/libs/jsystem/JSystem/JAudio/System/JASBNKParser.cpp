@@ -47,8 +47,8 @@ inline JASBNKParser::Ver1::TChunk *JASBNKParser::Ver1::findChunk(const void *str
 
 inline JASInstEffect *JASBNKParser::Ver1::createEffector(const void *stream, JKRHeap *heap)
 {
-    const u32 *data = (const u32 *)stream;
-    switch (*data++)
+    const BE<u32> *data = (const BE<u32> *)stream; // port: big-endian bank
+    switch ((u32)*data++)
     {
     case 'Rand':
     {
@@ -90,8 +90,14 @@ JASBasicBank *JASBNKParser::Ver1::createBasicBank(const void *stream, JKRHeap *h
 
     u8 *envt = new (heap, 2) u8[envtChunk->mSize];
     JASCalc::bcopy(envtChunk->mData, envt, envtChunk->mSize);
+#ifdef FSA_PORT
+    // Port: the envelopes (JASOscillator::Point, three s16 each) are read at run
+    // time from this copy, so it is swapped to host order once.
+    for (u32 o = 0; o + 2 <= (u32)envtChunk->mSize; o += 2)
+        *(u16 *)(envt + o) = __builtin_bswap16(*(u16 *)(envt + o));
+#endif
 
-    u32 *ptr = &oscChunk->mCount;
+    BE<u32> *ptr = &oscChunk->mCount;
     u32 count = *ptr++;
     JASOscillator::Data *oscData = new (heap, 0) JASOscillator::Data[count];
     for (int i = 0; i < count; i++, ptr += sizeof(TOsc) >> 2)
@@ -112,8 +118,8 @@ JASBasicBank *JASBNKParser::Ver1::createBasicBank(const void *stream, JKRHeap *h
         if (list->mOffsets[i] == 0)
             continue;
 
-        u32 *data = (u32 *)((u32)stream + list->mOffsets[i]);
-        switch (*data++)
+        const BE<u32> *data = (const BE<u32> *)((u32)stream + list->mOffsets[i]);
+        switch ((u32)*data++)
         {
         case 'Inst':
         {
@@ -170,7 +176,7 @@ JASBasicBank *JASBNKParser::Ver1::createBasicBank(const void *stream, JKRHeap *h
                     continue;
 
                 JASDrumSet::TPerc *percp = new (heap, 0) JASDrumSet::TPerc();
-                u32 *ptr = (u32 *)((u32)stream + offset);
+                const BE<u32> *ptr = (const BE<u32> *)((u32)stream + offset);
                 TPercData *percData = (TPercData *)(ptr + 1);
                 percp->setVolume(percData->mVolume);
                 percp->setPitch(percData->mPitch);
@@ -253,6 +259,10 @@ JASBasicBank *JASBNKParser::Ver0::createBasicBank(const void *stream, JKRHeap *h
                     int size = end - points;
                     JASOscillator::Point *table = new (heap, 0) JASOscillator::Point[size];
                     JASCalc::bcopy(points, table, size * sizeof(JASOscillator::Point));
+#ifdef FSA_PORT
+                    for (u32 o = 0; o + 2 <= size * sizeof(JASOscillator::Point); o += 2)
+                        *(u16 *)((u8 *)table + o) = __builtin_bswap16(*(u16 *)((u8 *)table + o));
+#endif
                     osc->mTable = table;
                 }
                 else
@@ -267,6 +277,10 @@ JASBasicBank *JASBNKParser::Ver0::createBasicBank(const void *stream, JKRHeap *h
                     int size = end - points;
                     JASOscillator::Point *table = new (heap, 0) JASOscillator::Point[size];
                     JASCalc::bcopy(points, table, size * sizeof(JASOscillator::Point));
+#ifdef FSA_PORT
+                    for (u32 o = 0; o + 2 <= size * sizeof(JASOscillator::Point); o += 2)
+                        *(u16 *)((u8 *)table + o) = __builtin_bswap16(*(u16 *)((u8 *)table + o));
+#endif
                     osc->rel_table = table;
                 }
                 else
@@ -414,7 +428,7 @@ const JASOscillator::Point *JASBNKParser::Ver0::getOscTableEndPtr(const JASOscil
     const JASOscillator::Point *ptr = points;
     while (true)
     {
-        s16 mode = ptr->_0;
+        s16 mode = be16s(&ptr->_0); // port: still the big-endian file table
         ptr++;
         if (mode > 10)
             break;

@@ -22,7 +22,7 @@ bool JAUSeqCollection::getSeqData(int groupID, int shortID, JAISeqData *data) {
     if (groupID >= groupId_) {
         return false;
     }
-    u32* puVar2 = (u32*)((u8*)collection_ + _4[groupID]);
+    const BE<u32>* puVar2 = (const BE<u32>*)((u8*)collection_ + _4[groupID]);
     if (shortID >= puVar2[0]) {
         return false;
     }

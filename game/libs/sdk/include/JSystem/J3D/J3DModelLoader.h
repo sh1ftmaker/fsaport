@@ -8,6 +8,11 @@ struct J3DMaterialTable;
 struct J3DModelData;
 struct J3DModelHierarchy;
 
+#ifdef FSA_PORT
+// Port: swaps a J3D file's CPU-read tables to host order, once (J3DModelLoader.cpp).
+void J3DPortSwapModelFile(const void* stream);
+#endif
+
 struct J3DModelLoaderDataBase {
 	static J3DModelData* load(const void*, u32);
 	static J3DModelData* loadBinaryDisplayList(const void*, u32);

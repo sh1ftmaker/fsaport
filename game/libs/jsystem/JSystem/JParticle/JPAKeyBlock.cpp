@@ -3,7 +3,7 @@
 #include "JSystem/JParticle/JPAMath.h"
 
 JPAKeyBlock::JPAKeyBlock(const u8 *data)
-    : mDataStart(reinterpret_cast<const JPAKeyBlockData *>(data)), mKeyFrameData(reinterpret_cast<const f32 *>(&data[0xC]))
+    : mDataStart(reinterpret_cast<const JPAKeyBlockData *>(data)), mKeyFrameData(reinterpret_cast<const BE<f32> *>(&data[0xC]))
 {
 }
 

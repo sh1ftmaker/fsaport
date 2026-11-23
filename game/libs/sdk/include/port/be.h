@@ -80,6 +80,16 @@ struct BEPtr {
 };
 static_assert(sizeof(void*) == 4, "BEPtr relocates in place: 32-bit pointers only");
 
+/* A big-endian file offset declared as void* in the original struct (J3D blocks):
+ * it reads as the host offset value in pointer form, which is what
+ * JSUConvertOffsetToPtr(base, const void* offset) expects. */
+struct BEOffset {
+    unsigned int raw;
+    operator void*() const { return (void*)(unsigned long)__builtin_bswap32(raw); }
+    explicit operator unsigned int() const { return __builtin_bswap32(raw); }
+    explicit operator unsigned long() const { return __builtin_bswap32(raw); }
+};
+
 /* Reads from unaligned byte pointers. */
 inline unsigned short be16(const void* p)
 {

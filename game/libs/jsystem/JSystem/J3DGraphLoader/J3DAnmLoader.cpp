@@ -15,12 +15,180 @@
 #include "JSystem/JUtility/JUTNameTab.h"
 #include "types.h"
 
+#ifdef FSA_PORT
+#define offsetof(t, m) __builtin_offsetof(t, m)
+// ---------------------------------------------------------------------------
+// Port: J3D animation files (BCK, BCA, BPK, BPA, BRK, BTK, BTP, BVA, BLK, BLA,
+// vertex colour) are big-endian. The loaders keep pointers into their tables and
+// value arrays, which the runtime reads every frame, so each block's header
+// fields and arrays are swapped to host order once, in place, before the first
+// loader reads them (as J3DPortSwapModelFile does for models). Name tables
+// (ResNTAB) stay big-endian by type, byte arrays need nothing. A marker in the
+// file header padding keeps a file from being swapped twice.
+#include "J3DPortSwapTables.h"
+
+namespace {
+
+enum { PW_BYTES = 0, PW_NAMES = -1, PW_VTXIDX = -2 };
+struct PortAnmTable {
+	u16 mField; // offset of the s32 offset in the block header
+	s8 mWidth;  // element width to swap: 2, 4, PW_BYTES, PW_NAMES, PW_VTXIDX
+};
+
+#define T(type, field, width) { (u16)offsetof(type, field), width }
+const PortAnmTable kTransformFull[] = { T(J3DAnmTransformFullData, mTableOffset, 2), T(J3DAnmTransformFullData, mScaleValOffset, 4),
+	                                     T(J3DAnmTransformFullData, mRotValOffset, 2), T(J3DAnmTransformFullData, mTransValOffset, 4) };
+const PortAnmTable kTransformKey[] = { T(J3DAnmTransformKeyData, mTableOffset, 2), T(J3DAnmTransformKeyData, mScaleOffset, 4),
+	                                    T(J3DAnmTransformKeyData, mRotationOffset, 2), T(J3DAnmTransformKeyData, mTranslateOffset, 4) };
+const PortAnmTable kColorFull[] = { T(J3DAnmColorFullData, mTableOffset, 2), T(J3DAnmColorFullData, mUpdateMaterialIDOffset, 2),
+	                                 T(J3DAnmColorFullData, mNameTabOffset, PW_NAMES), T(J3DAnmColorFullData, mRValuesOffset, PW_BYTES),
+	                                 T(J3DAnmColorFullData, mGValuesOffset, PW_BYTES), T(J3DAnmColorFullData, mBValuesOffset, PW_BYTES),
+	                                 T(J3DAnmColorFullData, mAValuesOffset, PW_BYTES) };
+const PortAnmTable kColorKey[] = { T(J3DAnmColorKeyData, mTableOffset, 2), T(J3DAnmColorKeyData, mUpdateMaterialIDOffset, 2),
+	                                T(J3DAnmColorKeyData, mNameTabOffset, PW_NAMES), T(J3DAnmColorKeyData, mRValOffset, 2),
+	                                T(J3DAnmColorKeyData, mGValOffset, 2), T(J3DAnmColorKeyData, mBValOffset, 2),
+	                                T(J3DAnmColorKeyData, mAValOffset, 2) };
+const PortAnmTable kTevRegKey[] = { T(J3DAnmTevRegKeyData, mCRegTableOffset, 2), T(J3DAnmTevRegKeyData, mKRegTableOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mCRegUpdateMaterialIDOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mKRegUpdateMaterialIDOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mCRegNameTabOffset, PW_NAMES),
+	                                 T(J3DAnmTevRegKeyData, mKRegNameTabOffset, PW_NAMES), T(J3DAnmTevRegKeyData, mCRValuesOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mCGValuesOffset, 2), T(J3DAnmTevRegKeyData, mCBValuesOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mCAValuesOffset, 2), T(J3DAnmTevRegKeyData, mKRValuesOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mKGValuesOffset, 2), T(J3DAnmTevRegKeyData, mKBValuesOffset, 2),
+	                                 T(J3DAnmTevRegKeyData, mKAValuesOffset, 2) };
+const PortAnmTable kTexPatternFull[] = { T(J3DAnmTexPatternFullData, mTableOffset, 2), T(J3DAnmTexPatternFullData, mValuesOffset, 2),
+	                                      T(J3DAnmTexPatternFullData, mUpdateMaterialIDOffset, 2),
+	                                      T(J3DAnmTexPatternFullData, mNameTabOffset, PW_NAMES) };
+const PortAnmTable kVisibilityFull[] = { T(J3DAnmVisibilityFullData, mTableOffset, 2),
+	                                      T(J3DAnmVisibilityFullData, mValuesOffset, PW_BYTES) };
+const PortAnmTable kClusterFull[] = { T(J3DAnmClusterFullData, mTablesOffset, 2), T(J3DAnmClusterFullData, mWeightsOffset, 4) };
+const PortAnmTable kClusterKey[] = { T(J3DAnmClusterKeyData, mTableOffset, 2), T(J3DAnmClusterKeyData, mWeightsOffset, 4) };
+const PortAnmTable kVtxColorFull[] = { T(J3DAnmVtxColorFullData, mTableOffsets[0], 2), T(J3DAnmVtxColorFullData, mTableOffsets[1], 2),
+	                                    T(J3DAnmVtxColorFullData, mVtxColorIndexDataOffsets[0], PW_VTXIDX),
+	                                    T(J3DAnmVtxColorFullData, mVtxColorIndexDataOffsets[1], PW_VTXIDX),
+	                                    T(J3DAnmVtxColorFullData, mVtxColorIndexPointerOffsets[0], 2),
+	                                    T(J3DAnmVtxColorFullData, mVtxColorIndexPointerOffsets[1], 2),
+	                                    T(J3DAnmVtxColorFullData, mRValuesOffset, PW_BYTES), T(J3DAnmVtxColorFullData, mGValuesOffset, PW_BYTES),
+	                                    T(J3DAnmVtxColorFullData, mBValuesOffset, PW_BYTES), T(J3DAnmVtxColorFullData, mAValuesOffset, PW_BYTES) };
+const PortAnmTable kVtxColorKey[] = { T(J3DAnmVtxColorKeyData, mTableOffsets[0], 2), T(J3DAnmVtxColorKeyData, mTableOffsets[1], 2),
+	                                   T(J3DAnmVtxColorKeyData, mVtxColoIndexDataOffset[0], PW_VTXIDX),
+	                                   T(J3DAnmVtxColorKeyData, mVtxColoIndexDataOffset[1], PW_VTXIDX),
+	                                   T(J3DAnmVtxColorKeyData, mVtxColorIndexPointerOffset[0], 2),
+	                                   T(J3DAnmVtxColorKeyData, mVtxColorIndexPointerOffset[1], 2),
+	                                   T(J3DAnmVtxColorKeyData, mRValOffset, 2), T(J3DAnmVtxColorKeyData, mGValOffset, 2),
+	                                   T(J3DAnmVtxColorKeyData, mBValOffset, 2), T(J3DAnmVtxColorKeyData, mAValOffset, 2) };
+// The post-transform set (_50.._58 are its scale, rotation and translation values, as in tp).
+const PortAnmTable kTextureSRTKey[] = { T(J3DAnmTextureSRTKeyData, mTableOffset, 2), T(J3DAnmTextureSRTKeyData, mUpdateMatIDOffset, 2),
+	                                     T(J3DAnmTextureSRTKeyData, mNameTab1Offset, PW_NAMES),
+	                                     T(J3DAnmTextureSRTKeyData, mUpdateTexMtxIDOffset, PW_BYTES),
+	                                     T(J3DAnmTextureSRTKeyData, mSrtCenterOffset, 4), T(J3DAnmTextureSRTKeyData, mScaleValOffset, 4),
+	                                     T(J3DAnmTextureSRTKeyData, mRotValOffset, 2), T(J3DAnmTextureSRTKeyData, mTransValOffset, 4),
+	                                     T(J3DAnmTextureSRTKeyData, mTransformKeyTableOffset, 2),
+	                                     T(J3DAnmTextureSRTKeyData, mPostUpdateMaterialIDOffset, 2),
+	                                     T(J3DAnmTextureSRTKeyData, mNameTab2Offset, PW_NAMES),
+	                                     T(J3DAnmTextureSRTKeyData, mPostUpdateTexMtxIDOffset, PW_BYTES),
+	                                     T(J3DAnmTextureSRTKeyData, mPostSRTCenterOffset, 4), T(J3DAnmTextureSRTKeyData, _50, 4),
+	                                     T(J3DAnmTextureSRTKeyData, _54, 2), T(J3DAnmTextureSRTKeyData, _58, 4) };
+#undef T
+
+void portSwap(u8* p, u32 size)
+{
+	for (u32 i = 0; i < size / 2; i++) {
+		u8 t = p[i];
+		p[i] = p[size - 1 - i];
+		p[size - 1 - i] = t;
+	}
+}
+
+void portSwapStruct(u8* p, const unsigned short* table, u32 count)
+{
+	for (u32 i = 0; i < count; i++)
+		portSwap(p + table[2 * i], table[2 * i + 1]);
+}
+
+void portSwapAnmBlock(u8* blk, const unsigned short* header, u32 headerCount, const PortAnmTable* tables, u32 tableCount)
+{
+	u32 size = (u32)((J3DFileBlockBase*)blk)->mSize;
+	portSwapStruct(blk, header, headerCount); // now the offsets are host order
+	for (u32 t = 0; t < tableCount; t++) {
+		u32 off = *(u32*)(blk + tables[t].mField);
+		if (off == 0 || off >= size)
+			continue;
+		u32 end = size; // up to the next table in the block
+		for (u32 k = 0; k < tableCount; k++) {
+			u32 o = *(u32*)(blk + tables[k].mField);
+			if (o > off && o < end)
+				end = o;
+		}
+		u8* p = blk + off;
+		switch (tables[t].mWidth) {
+		case 2:
+		case 4:
+			for (u32 o = 0; o + tables[t].mWidth <= end - off; o += tables[t].mWidth)
+				portSwap(p + o, tables[t].mWidth);
+			break;
+		case PW_VTXIDX:
+			for (u32 o = 0; o + kPortSwapSize_J3DAnmVtxColorIndexData <= end - off; o += kPortSwapSize_J3DAnmVtxColorIndexData)
+				portSwapStruct(p + o, kPortSwap_J3DAnmVtxColorIndexData, kPortSwapCount_J3DAnmVtxColorIndexData);
+			break;
+		default: // bytes, or a name table (big-endian by type)
+			break;
+		}
+	}
+}
+
+} // namespace
+
+#define PORT_ANM(T, tables) \
+	portSwapAnmBlock(blk, kPortSwap_##T, kPortSwapCount_##T, tables, sizeof(tables) / sizeof(tables[0]))
+
+void J3DPortSwapAnmFile(const void* stream)
+{
+	if (stream == nullptr)
+		return;
+	J3DFileHeader* header = (J3DFileHeader*)stream;
+	if (header->mJ3dVersion != 'J3D1' && header->mJ3dVersion != 'J3D2')
+		return;
+	u8* mark = header->_10;
+	if (mark[0] == 'P' && mark[1] == 'O' && mark[2] == 'R' && mark[3] == 'T')
+		return; // already in host order
+	const J3DFileBlockBase* next = header->getFirstBlock();
+	for (u32 i = 0; i < header->mBlockCount; i++) {
+		u8* blk = (u8*)next;
+		next = next->getNext(); // read before the block changes
+		switch ((u32)((J3DFileBlockBase*)blk)->mBlockType) {
+		case J3DFBT_AnmTransformFull:  PORT_ANM(J3DAnmTransformFullData, kTransformFull); break;
+		case J3DFBT_AnmTransformKey:   PORT_ANM(J3DAnmTransformKeyData, kTransformKey); break;
+		case J3DFBT_AnmColorFull:      PORT_ANM(J3DAnmColorFullData, kColorFull); break;
+		case J3DFBT_AnmColorKey:       PORT_ANM(J3DAnmColorKeyData, kColorKey); break;
+		case J3DFBT_AnmTevRegKey:      PORT_ANM(J3DAnmTevRegKeyData, kTevRegKey); break;
+		case J3DFBT_AnmTexPattern:     PORT_ANM(J3DAnmTexPatternFullData, kTexPatternFull); break;
+		case J3DFBT_AnmVisibilityFull: PORT_ANM(J3DAnmVisibilityFullData, kVisibilityFull); break;
+		case J3DFBT_AnmClusterFull:    PORT_ANM(J3DAnmClusterFullData, kClusterFull); break;
+		case J3DFBT_AnmClusterKey:     PORT_ANM(J3DAnmClusterKeyData, kClusterKey); break;
+		case J3DFBT_AnmVtxColorFull:   PORT_ANM(J3DAnmVtxColorFullData, kVtxColorFull); break;
+		case J3DFBT_AnmVtxColorKey:    PORT_ANM(J3DAnmVtxColorKeyData, kVtxColorKey); break;
+		case J3DFBT_AnmTextureSRTKey:  PORT_ANM(J3DAnmTextureSRTKeyData, kTextureSRTKey); break;
+		default: break;
+		}
+	}
+	mark[0] = 'P';
+	mark[1] = 'O';
+	mark[2] = 'R';
+	mark[3] = 'T';
+}
+#endif
+
 /**
  * @note Address: 0x800725A0
  * @note Size: 0x8C4
  */
 J3DAnmBase* J3DAnmLoaderDataBase::load(const void* stream, J3DAnmLoaderDataBaseFlag flag)
 {
+#ifdef FSA_PORT
+	J3DPortSwapAnmFile(stream); // port: host-order tables, once per file
+#endif
 	if (stream == nullptr) {
 		return nullptr;
 	}
@@ -150,6 +318,9 @@ J3DAnmKeyLoader_v15::~J3DAnmKeyLoader_v15()
  */
 J3DAnmBase* J3DAnmFullLoader_v15::load(const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapAnmFile(stream); // port: host-order tables, once per file
+#endif
 	const J3DFileHeader* header = reinterpret_cast<const J3DFileHeader*>(stream);
 	const J3DFileBlockBase* nextBlock = header->getFirstBlock();
 	for (u32 i = 0; i < header->mBlockCount; i++) {
@@ -185,6 +356,9 @@ J3DAnmBase* J3DAnmFullLoader_v15::load(const void* stream)
  */
 void J3DAnmFullLoader_v15::setResource(J3DAnmBase* resource, const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapAnmFile(stream); // port: host-order tables, once per file
+#endif
 	const J3DFileHeader* header       = reinterpret_cast<const J3DFileHeader*>(stream);
 	const J3DFileBlockBase* nextBlock = header->getFirstBlock();
 	for (u32 i = 0; i < header->mBlockCount; i++) {
@@ -391,6 +565,9 @@ void J3DAnmFullLoader_v15::setAnmVtxColor(J3DAnmVtxColorFull* animation, const J
  */
 J3DAnmBase* J3DAnmKeyLoader_v15::load(const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapAnmFile(stream); // port: host-order tables, once per file
+#endif
 	const J3DFileHeader* header = reinterpret_cast<const J3DFileHeader*>(stream);
 	const J3DFileBlockBase* nextBlock = header->getFirstBlock();
 	for (u32 i = 0; i < header->mBlockCount; i++) {
@@ -426,6 +603,9 @@ J3DAnmBase* J3DAnmKeyLoader_v15::load(const void* stream)
  */
 void J3DAnmKeyLoader_v15::setResource(J3DAnmBase* resource, const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapAnmFile(stream); // port: host-order tables, once per file
+#endif
 	const J3DFileHeader* header       = reinterpret_cast<const J3DFileHeader*>(stream);
 	const J3DFileBlockBase* nextBlock = header->getFirstBlock();
 	for (u32 i = 0; i < header->mBlockCount; i++) {

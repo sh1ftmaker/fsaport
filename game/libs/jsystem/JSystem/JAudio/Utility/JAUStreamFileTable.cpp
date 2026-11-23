@@ -29,7 +29,7 @@ const char *JAUStreamFileTable::getFilePath(int index) const
     JUT_ASSERT(index < getNumFiles());
 
     //u32 fileOffset = mBuf->filenameOffsets[index];
-    u32 fileOffset = *(u32*)(mBuf->filenameOffsets + index); // why
+    u32 fileOffset = mBuf->filenameOffsets[index]; // port: BE field
     return (const char *)mBuf + fileOffset;
 }
 

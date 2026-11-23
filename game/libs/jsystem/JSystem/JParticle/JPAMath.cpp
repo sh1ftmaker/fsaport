@@ -132,7 +132,7 @@ void JPASetRMtxSTVecfromMtx(const Mtx m, Mtx RMtx, JGeometry::TVec3f* lengths, J
     translation->set(m[0][3], m[1][3], m[2][3]);
 }
 
-f32 JPACalcKeyAnmValue(f32 currentFrame, u16 keyFrameCount, const f32* keyFrameData) {
+f32 JPACalcKeyAnmValue(f32 currentFrame, u16 keyFrameCount, const BE<f32>* keyFrameData) {
     if (currentFrame < keyFrameData[0]) {
         return keyFrameData[1];
     }

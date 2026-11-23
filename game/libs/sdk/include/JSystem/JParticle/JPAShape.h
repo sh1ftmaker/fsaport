@@ -6,13 +6,14 @@
 
 #include "JSystem/JKernel/JKRHeap.h"
 #include "types.h"
+#include "port/be.h"
 
 struct JPAEmitterWorkData;
 struct JPABaseParticle;
 
 struct JPAClrAnmKeyData
 {
-    s16 index;     // _00
+    BE<s16> index;     // _00
     GXColor color; // _02
 };
 
@@ -23,13 +24,13 @@ struct JPABaseShapeData
 {
     // Representation of contents of .jpc file
     u8 mMagic[4];         // _00
-    u32 mSize;            // _04
-    u32 mFlags;           // _08
-    s16 mClrPrmAnmOffset; // _0C
-    s16 mClrEnvAnmOffset; // _0E
-    f32 mBaseSizeX;       // _10
-    f32 mBaseSizeY;       // _14
-    u16 mBlendModeCfg;    // _18
+    BE<u32> mSize;            // _04
+    BE<u32> mFlags;           // _08
+    BE<s16> mClrPrmAnmOffset; // _0C
+    BE<s16> mClrEnvAnmOffset; // _0E
+    BE<f32> mBaseSizeX;       // _10
+    BE<f32> mBaseSizeY;       // _14
+    BE<u16> mBlendModeCfg;    // _18
     u8 mAlphaCompareCfg;  // _1A
     u8 mAlphaRef0;        // _1B
     u8 mAlphaRef1;        // _1C
@@ -40,7 +41,7 @@ struct JPABaseShapeData
     u8 mClrFlg;           // _21
     u8 prmAnmKeyNum;      // _22
     u8 envAnmKeyNum;      // _23
-    s16 mClrAnmFrmMax;    // _24
+    BE<s16> mClrAnmFrmMax;    // _24
     GXColor mClrPrm;      // _26
     GXColor mClrEnv;      // _2A
     u8 mAnmRndm;          // _2E
@@ -149,26 +150,26 @@ struct JPABaseShape
 struct JPAChildShapeData
 {
     u8 mMagic[4];      // _00
-    u32 mSize;         // _04
-    u32 mFlags;        // _08
-    f32 mPosRndm;      // _0C
-    f32 mBaseVel;      // _10
-    f32 mBaseVelRndm;  // _14
-    f32 mVelInfRate;   // _18
-    f32 mGravity;      // _1C
-    f32 mScaleX;       // _20
-    f32 mScaleY;       // _24
-    f32 mInheritScale; // _28
-    f32 mInheritAlpha; // _2C
-    f32 mInheritRGB;   // _30
+    BE<u32> mSize;         // _04
+    BE<u32> mFlags;        // _08
+    BE<f32> mPosRndm;      // _0C
+    BE<f32> mBaseVel;      // _10
+    BE<f32> mBaseVelRndm;  // _14
+    BE<f32> mVelInfRate;   // _18
+    BE<f32> mGravity;      // _1C
+    BE<f32> mScaleX;       // _20
+    BE<f32> mScaleY;       // _24
+    BE<f32> mInheritScale; // _28
+    BE<f32> mInheritAlpha; // _2C
+    BE<f32> mInheritRGB;   // _30
     GXColor mPrmClr;   // _34
     GXColor mEnvClr;   // _38
-    f32 mTiming;       // _3C
-    s16 mLife;         // _40
-    s16 mRate;         // _44
+    BE<f32> mTiming;       // _3C
+    BE<s16> mLife;         // _40
+    BE<s16> mRate;         // _44
     u8 mStep;          // _48
     u8 mTexIdx;        // _4C
-    s16 mRotSpeed;     // _50
+    BE<s16> mRotSpeed;     // _50
 };
 
 /**
@@ -215,10 +216,10 @@ struct JPAChildShape
 struct JPAExTexShapeData
 {
     u8 mMagic[4]; // _00
-    u32 mSize;    // _04
+    BE<u32> mSize;    // _04
 
-    u32 mFlags;           // _08
-    Mtx23 mIndTexMtx; // _0C
+    BE<u32> mFlags;           // _08
+    BE<f32> mIndTexMtx[2][3]; // _0C
     s8 mExpScale;         // _24
     s8 mIndTexIdx;        // _25
     s8 mSecTexIdx;        // _26
@@ -234,7 +235,13 @@ struct JPAExTexShape
     // Unused/inlined:
     void init_jpa(const u8 *, JKRHeap *);
 
-    const Mtx23 &getIndTexMtx() const { return mData->mIndTexMtx; }
+    // Port: the file matrix is big-endian; this copies it out in host order.
+    void getIndTexMtx(Mtx23 out) const
+    {
+        for (int r = 0; r < 2; r++)
+            for (int c = 0; c < 3; c++)
+                out[r][c] = mData->mIndTexMtx[r][c];
+    }
     const s8 getExpScale() const { return mData->mExpScale; }
     u8 getIndTexIdx() const { return mData->mIndTexIdx; }
     u8 getSecTexIdx() const { return mData->mSecTexIdx; }
@@ -247,31 +254,31 @@ struct JPAExTexShape
 struct JPAExtraShapeData
 {
     u8 mMagic[4]; // _00
-    u32 mSize;    // _04
+    BE<u32> mSize;    // _04
 
-    u32 mFlags;              // _08
-    f32 mScaleInTiming;      // _0C
-    f32 mScaleOutTiming;     // _10
-    f32 mScaleInValueX;      // _14
-    f32 mScaleOutValueX;     // _18
-    f32 mScaleInValueY;      // _1C
-    f32 mScaleOutValueY;     // _20
-    f32 mScaleOutRandom;     // _24
-    s16 mScaleAnmCycleX;     // _28
-    s16 mScaleAnmCycleY;     // _2A
-    f32 mAlphaInTiming;      // _2C
-    f32 mAlphaOutTiming;     // _30
-    f32 mAlphaInValue;       // _34
-    f32 mAlphaBaseValue;     // _38
-    f32 mAlphaOutValue;      // _3C
-    f32 mAlphaWaveFrequency; // _40
-    f32 mAlphaWaveRandom;    // _44
-    f32 mAlphaWaveAmplitude; // _48
-    f32 mRotateAngle;        // _4C
-    f32 mRotateAngleRandom;  // _50
-    f32 mRotateSpeed;        // _54
-    f32 mRotateSpeedRandom;  // _58
-    f32 mRotateDirection;    // _5C
+    BE<u32> mFlags;              // _08
+    BE<f32> mScaleInTiming;      // _0C
+    BE<f32> mScaleOutTiming;     // _10
+    BE<f32> mScaleInValueX;      // _14
+    BE<f32> mScaleOutValueX;     // _18
+    BE<f32> mScaleInValueY;      // _1C
+    BE<f32> mScaleOutValueY;     // _20
+    BE<f32> mScaleOutRandom;     // _24
+    BE<s16> mScaleAnmCycleX;     // _28
+    BE<s16> mScaleAnmCycleY;     // _2A
+    BE<f32> mAlphaInTiming;      // _2C
+    BE<f32> mAlphaOutTiming;     // _30
+    BE<f32> mAlphaInValue;       // _34
+    BE<f32> mAlphaBaseValue;     // _38
+    BE<f32> mAlphaOutValue;      // _3C
+    BE<f32> mAlphaWaveFrequency; // _40
+    BE<f32> mAlphaWaveRandom;    // _44
+    BE<f32> mAlphaWaveAmplitude; // _48
+    BE<f32> mRotateAngle;        // _4C
+    BE<f32> mRotateAngleRandom;  // _50
+    BE<f32> mRotateSpeed;        // _54
+    BE<f32> mRotateSpeedRandom;  // _58
+    BE<f32> mRotateDirection;    // _5C
 };
 
 /**

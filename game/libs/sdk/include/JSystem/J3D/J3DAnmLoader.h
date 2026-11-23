@@ -18,6 +18,11 @@ enum J3DAnmLoaderDataBaseFlag {
 	J3DLOADER_UNK_FLAG1,
 };
 
+#ifdef FSA_PORT
+// Port: swaps a J3D animation file's tables to host order, once (J3DAnmLoader.cpp).
+void J3DPortSwapAnmFile(const void* stream);
+#endif
+
 struct J3DAnmLoaderDataBase {
 	static J3DAnmBase* load(const void*, J3DAnmLoaderDataBaseFlag);
 

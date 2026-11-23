@@ -2,12 +2,13 @@
 #define JAUDIO_JAUSTREAMFILETABLE_H
 
 #include "JSystem/JAudio/Interface/JAIStreamDataMgr.h"
+#include "port/be.h"
 
 struct BSFT
 {
     u8 magic[4];            // 0
-    u32 fileCount;          // 4
-    u32 filenameOffsets[1]; // 8, dynamic length
+    BE<u32> fileCount;          // 4 (port: big-endian)
+    BE<u32> filenameOffsets[1]; // 8, dynamic length
 };
 
 class JAUStreamFileTable

@@ -2,6 +2,7 @@
 #define _JSYSTEM_JPA_JPARESOURCE_H
 
 #include "types.h"
+#include "port/be.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JParticle/JPATexture.h"
 
@@ -60,7 +61,7 @@ struct JPAResource
     JPADynamicsBlock *pDyn;                      // _2C
     JPAFieldBlock **ppFld;                       // _30
     JPAKeyBlock **ppKey;                         // _34
-    u16 *texIdxTbl     ;                         // _38
+    const BE<u16> *texIdxTbl;                    // _38 (port: big-endian TDB1 table in the jpc)
     u16 mUsrIdx;                                 // _3C
     u8 fldNum;                                   // _3E
     u8 keyNum;                                   // _3F
