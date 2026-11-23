@@ -12,6 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FSA_GAME ${CMAKE_SOURCE_DIR}/game)
 set(FSA_ASSETS ${CMAKE_SOURCE_DIR}/build/assets CACHE PATH "assets extracted by tools/extract_assets.py")
 
+# The emscripten toolchain can leave CMAKE_AR empty in subdirectory scopes
+# ("" qc ... -> exit 127); Aurora's CMakeLists reads it back from the cache.
+set(CMAKE_AR "$ENV{EMSDK}/upstream/bin/llvm-ar" CACHE FILEPATH "" FORCE)
+
 # --- Aurora (GX -> WebGPU, VI, PAD, CARD, OS memory) -------------------------
 set(AURORA_DAWN_PROVIDER emscripten CACHE STRING "" FORCE)
 set(AURORA_SDL3_PROVIDER vendor CACHE STRING "" FORCE)
