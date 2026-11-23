@@ -93,7 +93,8 @@ u8 fn_80154698() {
 
 // inline: its 10430.378f is pooled right after update()'s literals (first
 // use), while its out-of-line copy sits at the end of the unit.
-inline s32 atan2Short_8015465C(f32 y, f32 x) {
+// Not inline: act_phantom_ganon_2 calls it out of line (MWCC emitted it here).
+s32 atan2Short_8015465C(f32 y, f32 x) {
     return JMath::atanTable_.atan2_(y, x) * (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180());
 }
 

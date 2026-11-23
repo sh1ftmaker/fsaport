@@ -21,7 +21,7 @@
 
 // game/actor_base_801A3C50.cpp (not written yet): nonzero while the actor is held (it then only
 // runs checkPlayerContact_0x18 when its 0xA4 is set). Name and return type from the call in fn_801F871C.
-s32 fn_801A6160(ActorBase_804A5770* actor);
+// fn_801A6160 is ActorBase_804A5770::fn_801A6160 (actor_base_801A3C50.cpp).
 
 // The position every per-slot sound object starts at (the constructor zeroes it).
 static JGeometry::TVec3f lbl_804CABD8;
@@ -209,7 +209,7 @@ void ActorManager_804A5800::fn_801F871C() {
                     {
                         mActors[i]->fn_801F32F4();
                         mActors[i]->field_0x1dc.fn_801EAB0C();
-                        if (fn_801A6160(mActors[i]) == 0) {
+                        if (mActors[i]->fn_801A6160() == 0) {
                             mActors[i]->savePrevPos();
                             mActors[i]->fn_801F33C4();
                             mActors[i]->update();

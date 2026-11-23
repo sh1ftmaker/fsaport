@@ -91,8 +91,8 @@ Every change keeps the original under `#ifdef __MWERKS__` where it was code
 | Group | Count | What to do |
 |---|--:|---|
 | Dolphin SDK | 290 | The platform layer: GX (106) through Aurora's GX API; OS (61: threads, heaps, time, interrupts); CARD, DVD, VI, PAD, DSP/AI/AR (audio), GD, GBA (6), and the PSMTX/PSVEC math (C versions). |
-| Game data with no definition | ~140 | `.sbss`/`.sdata` globals (`gGameRoot_8053AAF8`, `lbl_8053AED0`, ...) that the matching build takes from dtk's auto-split objects. Need C definitions with their types, generated from the headers and `symbols.txt`. |
-| JSystem | 17 | Template statics (`JASGlobalInstance<T>::sInstance`) that need one definition, plus a few functions with no source. |
+| Game data with no definition | done | 139 globals the matching build takes from dtk's split of the DOL. `tools/gen_globals.py emit main.dol build/generated` writes `build/generated/globals.c` (never committed: it is game data) from the committed `tools/globals_layout.json` (names, addresses, sizes, element widths, pointer targets; no bytes). Each object is a byte image of the DOL's bytes made little-endian per element; pointer tables are typed so they relocate. `units.txt` names it `@GENERATED@/globals.c`. Regenerate the layout with `gen_globals.py layout` when units stop defining or start defining such symbols. |
+| JSystem / game functions | done | `game/src/port/jsystem_statics.cpp` (the `JASGlobalInstance<T>::sInstance` definitions MWCC inferred from declarations, JMessage signatures, `J3DPSMtxArrayConcat`, `JKRFileCache::getDvdPathName`, `JKRThreadSwitch`, `JSUOutputStream::_0C`) and `game/src/port/missing_functions.cpp` (`fn_80093280`, EscortBase's vtable slots 0xA0/0xA4); `JASWaveBank.cpp` added to `units.txt`. |
 | C library / C++ runtime | 26 + 3 | Link against emscripten's libc (see "Open questions") and libc++abi. |
 | Cache maintenance | ~30 | `DCStoreRange`, `DCInvalidateRange`, ...: no-ops on the host. |
 
