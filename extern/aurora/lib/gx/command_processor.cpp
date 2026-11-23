@@ -415,14 +415,18 @@ void process(const u8* data, u32 size, bool bigEndian) {
       ZoneScopedN("LOAD_INDX");
       // Indexed XF load: 4 bytes of data
       CHECK(pos + 4 <= size, "indexed XF read overrun");
-      u32 arrayType = GX_POS_MTX_ARRAY + (opcode - (CP_CMD_LOAD_INDX_A / 0x08));
-      u8 srcArrayIdx = data[pos++];
+      // fsaport: the payload is a 16-bit array index and a 16-bit (len-1)<<12 |
+      // XF address (4 bytes). LOAD_INDX_A..D (0x20/0x28/0x30/0x38) select the
+      // position, normal, texture and light matrix arrays. The matrices are read
+      // with the array's own endianness, not the command stream's.
+      u32 arrayType = GX_POS_MTX_ARRAY + ((opcode - CP_CMD_LOAD_INDX_A) >> 3);
+      u16 srcArrayIdx = read_u16(data + pos, bigEndian);
       auto const& array = g_gxState.arrays[arrayType];
       u8* srcData = ((u8*)array.data) + srcArrayIdx * array.stride;
-      u16 addrLen = read_u16(data + pos, bigEndian);
+      u16 addrLen = read_u16(data + pos + 2, bigEndian);
       u16 len = (addrLen >> 12) + 1;
       u16 dstAddr = addrLen & 0x0FFF;
-      if (!copy_xf_data(dstAddr, srcData, len, bigEndian)) {
+      if (!copy_xf_data(dstAddr, srcData, len, !array.le)) {
 #ifndef NDEBUG
         Log.debug("Unimplemented indexed XF load (opcode 0x{:02X}, dstAddr=%04x)", opcode, dstAddr);
 #endif

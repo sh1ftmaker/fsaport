@@ -154,6 +154,22 @@ void J2DPictureEx::drawSelf(f32 x, f32 y, Mtx* texMtx)
         return;
     }
     mMaterial->setGX();
+#ifdef FSA_PORT_TRACE
+    extern int fsa_debug_white_panes;
+    if (fsa_debug_white_panes) {
+        GXSetNumTevStages(1);
+        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+        GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+        GXSetNumChans(1);
+        GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_VTX, GX_SRC_VTX, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
+        GXSetBlendMode(GX_BM_NONE, GX_BL_ONE, GX_BL_ZERO, GX_LO_CLEAR);
+        GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+        GXSetZMode(GX_FALSE, GX_ALWAYS, GX_FALSE);
+        GXSetColorUpdate(GX_TRUE);
+        for (int i = 0; i < 4; i++)
+            mCornerColors[i] = JUTColor(0xFFFFFFFF);
+    }
+#endif
     GXClearVtxDesc();
     GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
     GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);

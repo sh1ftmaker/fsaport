@@ -10,7 +10,7 @@ project(fsaport C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FSA_GAME ${CMAKE_SOURCE_DIR}/game)
-option(FSA_DEBUG_LINES "keep DWARF line tables in fsa.wasm (llvm-symbolizer)" ON)
+option(FSA_DEBUG_LINES "keep DWARF line tables in fsa.wasm (llvm-symbolizer; links with -O1)" OFF)
 set(FSA_ASSETS ${CMAKE_SOURCE_DIR}/build/assets CACHE PATH "assets extracted by tools/extract_assets.py")
 
 # The emscripten toolchain can leave CMAKE_AR empty in subdirectory scopes
@@ -37,8 +37,8 @@ target_compile_options(fsa_game_flags INTERFACE
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
 target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1 $<$<BOOL:${FSA_TRACE}>:FSA_PORT_TRACE=1> $<$<BOOL:${FSA_NO_AUDIO}>:FSA_PORT_NO_AUDIO=1>)
-option(FSA_NO_AUDIO "skip JAudio initialisation (boot without sound)" ON)
-option(FSA_TRACE "temporary [trace] OSReports in the game code" ON)
+option(FSA_NO_AUDIO "skip JAudio initialisation (boot without sound)" OFF)
+option(FSA_TRACE "[trace] reports and checks in the game code" OFF)
 
 execute_process(COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/gen_units_cmake.py
                 ${FSA_GAME}/units.txt ${CMAKE_BINARY_DIR}/fsa_units.cmake)

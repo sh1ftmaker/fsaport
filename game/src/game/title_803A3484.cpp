@@ -443,6 +443,14 @@ void Title_804AF820::fn_803A44D8() {
 // names (the original pool starts 0.5f, 120.0f, then 0.0f, 1.0f, the int
 // conversion double, 8.5f) and the jump table's name.
 void Title_804AF820::fn_803A34A0() {
+#ifdef FSA_PORT_TRACE
+    {
+        static int sN = 0;
+        if (sN++ % 60 == 0)
+            OSReport("[title] update %d movieState %d alpha4c %.1f field_0x6e %d field_0x154 %d\n", sN, (int)mMovieState,
+                     (double)field_0x4c, (int)field_0x6e, (int)field_0x154);
+    }
+#endif
     if (mMovieState != 0) {
         BOOL playing = mMovie->update_80427D60();
         bool done = false;

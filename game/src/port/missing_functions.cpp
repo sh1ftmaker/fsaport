@@ -28,3 +28,9 @@ void EscortBase_8049E0C8::vfunc_0xA4(f32* x, f32* y, s32* player) {
 // The save region that survives a reset (0x80700000 on the GameCube). A reload
 // of the page is a power cycle, so it starts zeroed like a cold boot.
 u8 fsa_save_region[0x20];
+
+#ifdef FSA_PORT_TRACE
+// Debug: draw J2DPictureEx panes as plain white quads (set from the page:
+// Module._fsa_set_debug_white_panes(1)).
+int fsa_debug_white_panes = 0;
+#endif

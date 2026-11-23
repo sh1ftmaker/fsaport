@@ -496,7 +496,15 @@ void JFWDisplay::clearEfb(int param_0, int param_1, int param_2, int param_3,
         GXSetAlphaUpdate(GX_ENABLE);
         GXSetDstAlpha(GX_ENABLE, color.a);
     }
+#ifdef FSA_PORT
+    // Port: the original resets depth to far with a Z texture (GXSetZTexture
+    // REPLACE), which Aurora does not emulate; writing depth here would store
+    // the quad's own (near) depth and fail every later depth-tested draw.
+    // Aurora clears depth to far at the start of each frame instead.
+    GXSetZMode(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
+#else
     GXSetZMode(GX_ENABLE, GX_ALWAYS, GX_ENABLE);
+#endif
     GXSetCullMode(GX_CULL_BACK);
 
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);

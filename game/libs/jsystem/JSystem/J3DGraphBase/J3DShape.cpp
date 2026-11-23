@@ -150,13 +150,55 @@ void J3DShape::makeVtxArrayCmd()
 		}
 	}
 
+#ifdef FSA_PORT
+	// Each array runs up to the next one in the VTX1 block; the last is bounded
+	// by the largest element count.
+	u32 maxCount = mVtxData->getVtxNum();
+	if (mVtxData->getNrmNum() > maxCount)
+		maxCount = mVtxData->getNrmNum();
+	if (mVtxData->getColNum() > maxCount)
+		maxCount = mVtxData->getColNum();
+	for (u32 i = 0; i < 0x0C; i++) {
+		mPortArray[i]       = array[i];
+		mPortArrayStride[i] = stride[i];
+		mPortArraySize[i]   = 0;
+		if (!array[i])
+			continue;
+		u32 next = 0;
+		for (u32 j = 0; j < 0x0C; j++)
+			if ((u32)array[j] > (u32)array[i] && (!next || (u32)array[j] < next))
+				next = (u32)array[j];
+		mPortArraySize[i] = next ? next - (u32)array[i] : stride[i] * (maxCount ? maxCount * 2 : 0x10000);
+	}
+#else
 	for (u32 i = 0; i < 0x0C; i++) {
 		if (array[i] != 0)
 			GDSetArray((GXAttr)(i + GX_VA_POS), array[i], stride[i]);
 		else
 			GDSetArrayRaw((GXAttr)(i + GX_VA_POS), nullptr, stride[i]);
 	}
+#endif
 }
+
+#ifdef FSA_PORT
+void J3DShape::portLoadArrays() const
+{
+	for (u32 i = 0; i < 0x0C; i++)
+		if (mPortArray[i])
+			GXSetArray((GXAttr)(i + GX_VA_POS), mPortArray[i], mPortArraySize[i], mPortArrayStride[i], false);
+}
+
+// Per-draw array base (J3DLoadArrayBasePtr): the file's array is big-endian;
+// any other buffer (CPU-skinned positions/normals) holds host floats.
+void J3DShape::portSetArray(GXAttr attr, void* data) const
+{
+	u32 i = (attr == GX_VA_NBT) ? 1 : (attr - GX_VA_POS);
+	if (!data)
+		return;
+	bool fromFile = data == mPortArray[i];
+	GXSetArray((GXAttr)(i + GX_VA_POS), data, mPortArraySize[i], mPortArrayStride[i], !fromFile);
+}
+#endif
 
 /**
  * @note Address: 0x80060DA0
@@ -196,6 +238,9 @@ void J3DShape::loadPreDrawSetting() const
 {
 	if (sOldVcdVatCmd != mVcdVatCmd) {
 		GXCallDisplayList(mVcdVatCmd, kVcdVatDLSize);
+#ifdef FSA_PORT
+		portLoadArrays();
+#endif
 		sOldVcdVatCmd = mVcdVatCmd;
 	}
 	mCurrentMtx.load();
@@ -210,6 +255,11 @@ void J3DLoadCPCmd(u8 cmd, u32 param)
 	GXWGFifo.u32 = param;
 }
 
+#ifdef FSA_PORT
+#define J3D_PORT_LOAD_ARRAY(attr, data) portSetArray(attr, data)
+#else
+#define J3D_PORT_LOAD_ARRAY(attr, data) J3DLoadArrayBasePtr(attr, data)
+#endif
 static void J3DLoadArrayBasePtr(_GXAttr attr, void* data)
 {
 	u32 idx = (attr == GX_VA_NBT) ? 1 : (attr - GX_VA_POS);
@@ -224,6 +274,9 @@ void J3DShape::drawFast() const
 {
 	if (sOldVcdVatCmd != mVcdVatCmd) {
 		GXCallDisplayList(mVcdVatCmd, kVcdVatDLSize);
+#ifdef FSA_PORT
+		portLoadArrays();
+#endif
 		sOldVcdVatCmd = mVcdVatCmd;
 	}
 
@@ -234,11 +287,11 @@ void J3DShape::drawFast() const
 	J3DShapeMtx::setCurrentPipeline(getPipeline());
 
 	// start of loadVtxArray
-	J3DLoadArrayBasePtr(GX_VA_POS, j3dSys.getVtxPos());
+	J3D_PORT_LOAD_ARRAY(GX_VA_POS, j3dSys.getVtxPos());
 	if (!mHasNBT) {
-		J3DLoadArrayBasePtr(GX_VA_NRM, j3dSys.getVtxNrm());
+		J3D_PORT_LOAD_ARRAY(GX_VA_NRM, j3dSys.getVtxNrm());
 	}
-	J3DLoadArrayBasePtr(GX_VA_CLR0, j3dSys.getVtxCol());
+	J3D_PORT_LOAD_ARRAY(GX_VA_CLR0, j3dSys.getVtxCol());
 	// end of loadVtxArray
 
 	j3dSys.setModelDrawMtx(mDrawMtx[*mCurrentViewNumber]);
@@ -293,11 +346,11 @@ void J3DShape::simpleDraw() const
 	J3DShapeMtx::setCurrentPipeline(getPipeline());
 
 	// start of loadVtxArray
-	J3DLoadArrayBasePtr(GX_VA_POS, j3dSys.getVtxPos());
+	J3D_PORT_LOAD_ARRAY(GX_VA_POS, j3dSys.getVtxPos());
 	if (!mHasNBT) {
-		J3DLoadArrayBasePtr(GX_VA_NRM, j3dSys.getVtxNrm());
+		J3D_PORT_LOAD_ARRAY(GX_VA_NRM, j3dSys.getVtxNrm());
 	}
-	J3DLoadArrayBasePtr(GX_VA_CLR0, j3dSys.getVtxCol());
+	J3D_PORT_LOAD_ARRAY(GX_VA_CLR0, j3dSys.getVtxCol());
 	// end of loadVtxArray
 
 	u16 i = 0;
@@ -317,6 +370,9 @@ void J3DShape::simpleDrawCache() const
 {
 	if (sOldVcdVatCmd != mVcdVatCmd) {
 		GXCallDisplayList(mVcdVatCmd, kVcdVatDLSize);
+#ifdef FSA_PORT
+		portLoadArrays();
+#endif
 		sOldVcdVatCmd = mVcdVatCmd;
 	}
 
@@ -325,11 +381,11 @@ void J3DShape::simpleDrawCache() const
 	}
 
 	// start of loadVtxArray
-	J3DLoadArrayBasePtr(GX_VA_POS, j3dSys.getVtxPos());
+	J3D_PORT_LOAD_ARRAY(GX_VA_POS, j3dSys.getVtxPos());
 	if (!mHasNBT) {
-		J3DLoadArrayBasePtr(GX_VA_NRM, j3dSys.getVtxNrm());
+		J3D_PORT_LOAD_ARRAY(GX_VA_NRM, j3dSys.getVtxNrm());
 	}
-	J3DLoadArrayBasePtr(GX_VA_CLR0, j3dSys.getVtxCol());
+	J3D_PORT_LOAD_ARRAY(GX_VA_CLR0, j3dSys.getVtxCol());
 	// end of loadVtxArray
 	u16 i = 0;
 	u32 n = getMtxGroupNum();

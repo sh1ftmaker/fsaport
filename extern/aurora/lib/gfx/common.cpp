@@ -111,6 +111,13 @@ wgpu::Buffer g_indexBuffer;
 wgpu::Buffer g_storageBuffer;
 static std::array<wgpu::Buffer, 3> g_stagingBuffers;
 static size_t currentStagingBuffer = 0;
+#ifdef __EMSCRIPTEN__
+// fsaport: in the browser a mapped staging buffer only maps after all
+// previously submitted work (the last frame's present) completes, which made
+// begin_frame wait about a vsync every frame. Stage in host memory instead and
+// upload with Queue::WriteBuffer / WriteTexture.
+static std::vector<u8> s_hostStaging;
+#endif
 enum class BufferMapState {
   Unmapped,
   Mapping,
@@ -723,6 +730,7 @@ void map_staging_buffer() {
 
 bool begin_frame() {
   ZoneScoped;
+#ifndef __EMSCRIPTEN__
   {
     ZoneScopedN("Wait for buffer map");
     map_staging_buffer();
@@ -744,7 +752,19 @@ bool begin_frame() {
 #endif
     }
   }
+#endif
   size_t bufferOffset = 0;
+#ifdef __EMSCRIPTEN__
+  if (s_hostStaging.size() < StagingBufferSize)
+    s_hostStaging.resize(StagingBufferSize);
+  const auto mapBuffer = [&](ByteBuffer& buf, uint64_t size) {
+    if (size <= 0) {
+      return;
+    }
+    buf = ByteBuffer{s_hostStaging.data() + bufferOffset, static_cast<size_t>(size)};
+    bufferOffset += size;
+  };
+#else
   const auto& stagingBuf = g_stagingBuffers[currentStagingBuffer];
   const auto mapBuffer = [&](ByteBuffer& buf, uint64_t size) {
     if (size <= 0) {
@@ -753,6 +773,7 @@ bool begin_frame() {
     buf = ByteBuffer{static_cast<u8*>(stagingBuf.GetMappedRange(bufferOffset, size)), static_cast<size_t>(size)};
     bufferOffset += size;
   };
+#endif
   mapBuffer(g_verts, VertexBufferSize);
   mapBuffer(g_uniforms, UniformBufferSize);
   mapBuffer(g_indices, IndexBufferSize);
@@ -787,14 +808,20 @@ void end_frame(const wgpu::CommandEncoder& cmd) {
   const auto writeBuffer = [&](ByteBuffer& buf, wgpu::Buffer& out, uint64_t size, std::string_view label) {
     const auto writeSize = buf.size(); // Only need to copy this many bytes
     if (writeSize > 0) {
+#ifdef __EMSCRIPTEN__
+      g_queue.WriteBuffer(out, 0, s_hostStaging.data() + bufferOffset, AURORA_ALIGN(writeSize, 4));
+#else
       cmd.CopyBufferToBuffer(g_stagingBuffers[currentStagingBuffer], bufferOffset, out, 0, AURORA_ALIGN(writeSize, 4));
+#endif
       buf.release();
     }
     bufferOffset += size;
     return writeSize;
   };
+#ifndef __EMSCRIPTEN__
   g_stagingBuffers[currentStagingBuffer].Unmap();
   s_mappingState.store(BufferMapState::Unmapped, std::memory_order_release);
+#endif
   g_stats.lastVertSize = writeBuffer(g_verts, g_vertexBuffer, VertexBufferSize, "Vertex");
   g_stats.lastUniformSize = writeBuffer(g_uniforms, g_uniformBuffer, UniformBufferSize, "Uniform");
   g_stats.lastIndexSize = writeBuffer(g_indices, g_indexBuffer, IndexBufferSize, "Index");
@@ -804,6 +831,16 @@ void end_frame(const wgpu::CommandEncoder& cmd) {
     {
       // Perform texture copies
       for (const auto& item : g_textureUploads) {
+#ifdef __EMSCRIPTEN__
+        const wgpu::TexelCopyBufferLayout layout{
+            .offset = 0,
+            .bytesPerRow = AURORA_ALIGN(item.layout.bytesPerRow, 256),
+            .rowsPerImage = item.layout.rowsPerImage,
+        };
+        const size_t start = item.layout.offset + bufferOffset;
+        g_queue.WriteTexture(&item.tex, s_hostStaging.data() + start, s_hostStaging.size() - start, &layout, &item.size);
+        continue;
+#endif
         const wgpu::TexelCopyBufferInfo buf{
             .layout =
                 wgpu::TexelCopyBufferLayout{
@@ -819,8 +856,10 @@ void end_frame(const wgpu::CommandEncoder& cmd) {
       g_textureUpload.release();
     }
   }
+#ifndef __EMSCRIPTEN__
   currentStagingBuffer = (currentStagingBuffer + 1) % g_stagingBuffers.size();
   map_staging_buffer();
+#endif
   g_currentRenderPass = UINT32_MAX;
   for (auto& array : gx::g_gxState.arrays) {
     array.cachedRange = {};

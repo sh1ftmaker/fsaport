@@ -165,14 +165,31 @@ Worth checking for in any code that misbehaves:
   of bounds on wasm.
 - **Busy-waits on hardware** (DSP mail, `Dsp_Running_Check`): spin forever in a
   cooperative scheduler; replace the hardware wait, don't just stub it.
+- **Hardware tricks Aurora does not emulate**: `JFWDisplay::clearEfb` reset depth
+  with a Z texture, so every later depth-tested 2D draw failed (black title).
+  The port clears without writing depth; Aurora clears depth each frame.
+- **Game structs over file data**: the game's own BMG structs (`Message.h`) were
+  host-endian; other game formats will be the same.
+
+## Changes to Aurora
+
+- Indexed XF loads (`GX_LOAD_INDX_A..D`) read a 1-byte index, consumed 5 bytes
+  instead of 4, picked the wrong array and used the stream's endianness for the
+  matrix data (`lib/gx/command_processor.cpp`).
+- Browser staging: a mapped staging buffer only maps after the previous frame's
+  present, so `begin_frame` waited ~27 ms every frame (30 fps). The web build
+  stages in host memory and uploads with `Queue::WriteBuffer`/`WriteTexture`
+  (`lib/gfx/common.cpp`).
 
 ## Current state
 
-- Boots in Chrome: JFW, heaps, threads, the loader thread, archive mounts,
-  audio init, and the Nintendo logo drawn by the game's J2D code through Aurora.
-- Then builds GameRoot and stops in `J2DScreen::setAnimation` (J2D animation
-  formats are still host-endian; being converted).
-- Speed: once loading finishes the game keeps up with the 59.94 Hz retrace.
+- Boots in Chrome to the title screen: JFW, heaps, threads, the loader thread,
+  archive mounts, audio init, the Nintendo logo, GameRoot with its 3D models,
+  particles and messages, and the title drawn by the game's own code.
+- Speed: 60 frames per 60 retraces at the title; ~0.3 ms of CPU per frame
+  (release build, FSA_TRACE and FSA_DEBUG_LINES off).
+- Next: keyboard/gamepad input does not advance the title yet; audio output;
+  saves (Aurora's card in MEMFS is lost on reload); GBA views; THP movies.
 - Debugging: `FSA_TRACE=ON` enables `[trace]`/`[heap]`/`[blo]` reports;
   `tools/web_cycle.sh` rebuilds and runs once in a private Chromium over CDP;
   `tools/wasm_where.sh` symbolises offsets; `fsa_debug_stack()` prints a stack.

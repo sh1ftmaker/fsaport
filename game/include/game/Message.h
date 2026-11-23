@@ -35,6 +35,7 @@
 // Owner: the shared-header owner (docs/COORDINATOR.md). Propose new fields
 // as SHARED-EDITS, with the offset, access width and the function showing it.
 
+#include "port/be.h"
 #include "types.h"
 #include "JSystem/JGeometry.h"
 
@@ -291,15 +292,15 @@ public:
 // INF1 block (one 8-byte entry per message) and then the DAT1 text block. Only
 // what the game code reads is declared.
 struct MessageEntry_804AF070 {
-    /* 0x0 */ u32 textOffset; // into the DAT1 text
-    /* 0x4 */ u16 id;         // the message id findMessageIndex_803846BC looks up
+    /* 0x0 */ BE<u32> textOffset; // into the DAT1 text (port: big-endian file data)
+    /* 0x4 */ BE<u16> id;         // the message id findMessageIndex_803846BC looks up
     /* 0x6 */ u8 field_0x6[2];
 }; // Size: 0x8
 struct MessageInf1_804AF070 {
     /* 0x00 */ u8 magic[4]; // 'INF1'
-    /* 0x04 */ u32 size;    // of the INF1 block; the DAT1 block follows it
-    /* 0x08 */ u16 count;   // entries
-    /* 0x0A */ u16 entrySize;
+    /* 0x04 */ BE<u32> size;    // of the INF1 block; the DAT1 block follows it
+    /* 0x08 */ BE<u16> count;   // entries
+    /* 0x0A */ BE<u16> entrySize;
     /* 0x0C */ u8 field_0xc[0x10 - 0xC];
     /* 0x10 */ MessageEntry_804AF070 entries[1]; // `count` of them
 };

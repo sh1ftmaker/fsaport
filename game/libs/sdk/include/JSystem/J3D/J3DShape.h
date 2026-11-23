@@ -104,6 +104,16 @@ struct J3DShape {
 	Vec mMin;                     // _14
 	Vec mMax;                     // _20
 	u8* mVcdVatCmd;               // _2C
+#ifdef FSA_PORT
+public:
+	// Port: Aurora takes vertex arrays through GXSetArray (with byte size and
+	// endianness), not as CP registers in a display list.
+	void* mPortArray[0x0C];
+	u32 mPortArraySize[0x0C];
+	u8 mPortArrayStride[0x0C];
+	void portLoadArrays() const;
+	void portSetArray(GXAttr attr, void* data) const;
+#endif
 	GXVtxDescList* mVtxDesc;      // _30
 	bool mHasNBT;                 // _34
 	J3DShapeMtx** mShapeMtx;      // _38

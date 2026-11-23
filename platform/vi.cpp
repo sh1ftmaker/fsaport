@@ -18,15 +18,19 @@ OSThreadQueue g_retraceQueue;
 }  // namespace
 
 u32 g_framesBegun = 0, g_framesDrawn = 0;
+double g_frameStart = 0, g_frameMsSum = 0, g_endMsSum = 0, g_beginMsSum = 0;
 
 void platform_retrace() {
   platform_interrupt_enter();
   g_retraceCount++;
   if (g_retraceCount % 60 == 0) {
     const AuroraStats* st = aurora_get_stats();
-    platform_log("[vi] retrace %u, frames begun %u drawn %u; draws %u (merged %u) pipelines %u/%u verts %u tex %u\n",
-                 g_retraceCount, g_framesBegun, g_framesDrawn, st->drawCallCount, st->mergedDrawCallCount,
-                 st->createdPipelines, st->queuedPipelines, st->lastVertSize, st->lastTextureUploadSize);
+    static u32 lastDrawn = 0;
+    u32 n = g_framesDrawn - lastDrawn;
+    platform_log("[vi] retrace %u, frames %u; game %.2f ms/frame, aurora_begin %.2f ms, aurora_end %.2f ms; draws %u\n", g_retraceCount,
+                 n, n ? g_frameMsSum / n : 0.0, n ? g_beginMsSum / n : 0.0, n ? g_endMsSum / n : 0.0, st->drawCallCount);
+    lastDrawn = g_framesDrawn;
+    g_frameMsSum = g_endMsSum = g_beginMsSum = 0;
   }
   if (g_preRetrace)
     g_preRetrace(g_retraceCount);
@@ -44,8 +48,11 @@ void platform_frame_begin() {
   HostAllocScope host;
   if (g_framesBegun++ < 3)
     platform_log("[vi] frame %u begin\n", g_framesBegun);
+  double tb = emscripten_get_now();
   aurora_update();
   g_inFrame = aurora_begin_frame();
+  g_frameStart = emscripten_get_now();
+  g_beginMsSum += g_frameStart - tb;
   if (g_framesBegun <= 3)
     platform_log("[vi] frame %u begun=%d\n", g_framesBegun, (int)g_inFrame);
 }
@@ -56,7 +63,10 @@ void platform_frame_end() {
   HostAllocScope host;
   if (g_framesDrawn < 3)
     platform_log("[vi] frame %u: game drawing done, aurora_end_frame\n", g_framesDrawn + 1);
+  double t0 = emscripten_get_now();
+  g_frameMsSum += t0 - g_frameStart;
   aurora_end_frame();
+  g_endMsSum += emscripten_get_now() - t0;
   g_inFrame = false;
   if (g_framesDrawn++ < 3)
     platform_log("[vi] frame %u ended\n", g_framesDrawn);
