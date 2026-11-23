@@ -7,11 +7,12 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JKernel/JKRCompression.h"
 #include "types.h"
+#include "port/be.h"
 
 struct SYaz0Header
 {
-    u32 signature;
-    u32 length;
+    BE<u32> signature;
+    BE<u32> length;
 };
 
 class JKRDMCommand {

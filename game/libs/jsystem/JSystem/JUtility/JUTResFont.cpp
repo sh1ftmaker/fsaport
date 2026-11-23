@@ -433,7 +433,7 @@ int JUTResFont::getFontCode(int chr) const
             else if (mMapBlocks[i]->mMappingMethod == 3)
             {
                 
-                u16 *table = &mMapBlocks[i]->mLeading;
+                BE<u16> *table = &mMapBlocks[i]->mLeading;
                 int low = 0;
                 int high = mMapBlocks[i]->mNumEntries - 1;
 
@@ -459,7 +459,7 @@ int JUTResFont::getFontCode(int chr) const
             }
             else if (mMapBlocks[i]->mMappingMethod == 1)
             {
-                u16 *leading = nullptr;
+                BE<u16> *leading = nullptr;
                 if (mMapBlocks[i]->mNumEntries == 1)
                 {
                     leading = &mMapBlocks[i]->mLeading;
@@ -500,7 +500,7 @@ void JUTResFont::loadImage(int code, GXTexMapID id)
     if (pageIdx != _44 || i != _66)
     {
         GXInitTexObj(&_24, &mGlyphBlocks[i]->mData[pageIdx * mGlyphBlocks[i]->mTextureSize], mGlyphBlocks[i]->mTextureWidth,
-                     mGlyphBlocks[i]->mTextureHeight, (GXTexFmt)mGlyphBlocks[i]->mTextureFormat, GX_CLAMP, GX_CLAMP, 0);
+                     mGlyphBlocks[i]->mTextureHeight, (GXTexFmt)(u16)mGlyphBlocks[i]->mTextureFormat, GX_CLAMP, GX_CLAMP, 0);
 
         GXInitTexObjLOD(&_24, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
         _44 = pageIdx;
@@ -510,7 +510,7 @@ void JUTResFont::loadImage(int code, GXTexMapID id)
     GXLoadTexObj(&_24, id);
 }
 
-int JUTResFont::convertSjis(int inChr, u16 *inLead) const
+int JUTResFont::convertSjis(int inChr, BE<u16> *inLead) const
 {
     u8 hi = JSUHiByte(inChr);
     u16 lead = JSULoByte(inChr);

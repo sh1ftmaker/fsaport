@@ -195,7 +195,7 @@ void JUTTexture::initTexObj()
     GXBool hasMipMap = mTexInfo->mIsMIPmapEnabled ? GX_TRUE : GX_FALSE;
     u8 *image = (u8 *)mTexInfo;
 
-    image += ((mTexInfo->mImageDataOffset) ? mTexInfo->mImageDataOffset : 0x20);
+    image += ((mTexInfo->mImageDataOffset) ? (u32)mTexInfo->mImageDataOffset : 0x20);
 
     GXInitTexObj(this, image, /*(u16) */ mTexInfo->mSizeX,
                  /*(u16) */ mTexInfo->mSizeY, (GXTexFmt)mTexInfo->mTextureFormat, (GXTexWrapMode)mWrapS, (GXTexWrapMode)mWrapT,
@@ -211,7 +211,7 @@ void JUTTexture::initTexObj(GXTlut tlut)
     mTlut = tlut;
     u8 *image = (u8 *)mTexInfo;
 
-    image += ((mTexInfo->mImageDataOffset) ? mTexInfo->mImageDataOffset : 0x20);
+    image += ((mTexInfo->mImageDataOffset) ? (u32)mTexInfo->mImageDataOffset : 0x20);
     
     GXInitTexObjCI(this, image, /*(u16) */ mTexInfo->mSizeX,
                    /*(u16) */ mTexInfo->mSizeY, (GXCITexFmt)mTexInfo->mTextureFormat, (GXTexWrapMode)mWrapS, (GXTexWrapMode)mWrapT,

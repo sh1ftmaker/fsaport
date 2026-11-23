@@ -5,6 +5,7 @@
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #include "JSystem/JUtility/TColor.h"
+#include "port/be.h"
 
 #define ASCII_PRINTABLE_MIN (0x20) // space
 #define ASCII_PRINTABLE_MAX (0x80) // one more than last printable symbol (0x7F = delete)
@@ -141,6 +142,7 @@ struct JUTRomFont : public JUTFont
     // _00-_1C = JUTFont
 };
 
+// Port: BFN file images; multi-byte fields are big-endian (port/be.h).
 struct BlockHeader
 {
     const BlockHeader *getNext() const { return reinterpret_cast<const BlockHeader *>(reinterpret_cast<const u8 *>(this) + this->mSize); }
@@ -149,8 +151,8 @@ struct BlockHeader
         *iterator = reinterpret_cast<const BlockHeader *>(reinterpret_cast<const u8 *>(*iterator) + (*iterator)->mSize);
     }
 
-    u32 mMagic; // _00
-    u32 mSize;  // _04
+    BE<u32> mMagic; // _00
+    BE<u32> mSize;  // _04
 };
 
 struct ResFONT
@@ -159,20 +161,20 @@ struct ResFONT
     struct InfoBlock : public BlockHeader
     {
         // _00 = BlockHeader
-        u16 mFontType;    // _08
-        u16 mAscent;      // _0A
-        u16 mDescent;     // _0C
-        u16 mWidth;       // _0E
-        u16 mLeading;     // _10
-        u16 mDefaultCode; // _12
+        BE<u16> mFontType;    // _08
+        BE<u16> mAscent;      // _0A
+        BE<u16> mDescent;     // _0C
+        BE<u16> mWidth;       // _0E
+        BE<u16> mLeading;     // _10
+        BE<u16> mDefaultCode; // _12
     };
 
     // WID1, size: 0x10
     struct WidthBlock : public BlockHeader
     {
         // _00 = BlockHeader
-        u16 mStartCode;               // _08
-        u16 mEndCode;                 // _0A
+        BE<u16> mStartCode;               // _08
+        BE<u16> mEndCode;                 // _0A
         JUTFont::TWidth mChunkNum[2]; // _0C
     };
 
@@ -180,34 +182,34 @@ struct ResFONT
     struct MapBlock : public BlockHeader
     {
         // _00 = BlockHeader
-        u16 mMappingMethod; // _08
-        u16 mStartCode;     // _0A
-        u16 mEndCode;       // _0C
-        u16 mNumEntries;    // _0E
-        u16 mLeading;       // _10
+        BE<u16> mMappingMethod; // _08
+        BE<u16> mStartCode;     // _0A
+        BE<u16> mEndCode;       // _0C
+        BE<u16> mNumEntries;    // _0E
+        BE<u16> mLeading;       // _10
     };
 
     // GLY1, size: 0x20
     struct GlyphBlock : public BlockHeader
     {
         // _00 = BlockHeader
-        u16 mStartCode;     // _08
-        u16 mEndCode;       // _0A
-        u16 mCellWidth;     // _0C
-        u16 mCellHeight;    // _0E
-        u32 mTextureSize;   // _10
-        u16 mTextureFormat; // _14
-        u16 mNumRows;       // _16
-        u16 mNumColumns;    // _18
-        u16 mTextureWidth;  // _1A
-        u16 mTextureHeight; // _1C
-        u16 mPadding;       // _1E
+        BE<u16> mStartCode;     // _08
+        BE<u16> mEndCode;       // _0A
+        BE<u16> mCellWidth;     // _0C
+        BE<u16> mCellHeight;    // _0E
+        BE<u32> mTextureSize;   // _10
+        BE<u16> mTextureFormat; // _14
+        BE<u16> mNumRows;       // _16
+        BE<u16> mNumColumns;    // _18
+        BE<u16> mTextureWidth;  // _1A
+        BE<u16> mTextureHeight; // _1C
+        BE<u16> mPadding;       // _1E
         u8 mData[];         // _20
     };
 
-    u64 mMagic;        // _00
-    u32 mFileSize;     // _08
-    u32 mNumBlocks;    // _0C
+    BE<u64> mMagic;        // _00
+    BE<u32> mFileSize;     // _08
+    BE<u32> mNumBlocks;    // _0C
     u8 mPadding[0x10]; // _10
     u8 mData[];        // _20
 };
@@ -238,7 +240,7 @@ struct JUTResFont : public JUTFont
     virtual void loadImage(int, GXTexMapID);                              // _44
     virtual void setBlock();                                              // _48
 
-    int convertSjis(int, u16 *) const;
+    int convertSjis(int, BE<u16> *) const; // port: points into a big-endian MAP1 block
     void countBlock();
     void deleteMemBlocks_ResFont();
     int getFontCode(int) const;

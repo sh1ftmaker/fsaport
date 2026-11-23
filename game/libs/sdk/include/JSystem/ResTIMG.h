@@ -3,11 +3,13 @@
 
 #include <dolphin/gx.h>
 #include "types.h"
+#include "port/be.h"
 
 #ifndef _JUTTransparency
 typedef u8 _JUTTransparency;
 #endif
 
+// Port: a file image (BTI); multi-byte fields are big-endian (port/be.h).
 struct ResTIMG
 {
     inline BOOL isMIPmapEnabled() const { return (mIsMIPmapEnabled > 0); }
@@ -17,14 +19,14 @@ struct ResTIMG
 
     u8 mTextureFormat;              // _00
     _JUTTransparency mTransparency; // _01
-    u16 mSizeX;                     // _02
-    u16 mSizeY;                     // _04
+    BE<u16> mSizeX;                     // _02
+    BE<u16> mSizeY;                     // _04
     u8 mWrapS;                      // _06
     u8 mWrapT;                      // _07
     u8 mPaletteFormat;              // _08
     u8 mLutFormat;                  // _09
-    u16 mPaletteEntryCount;         // _0A
-    u32 mPaletteOffset;             // _0C
+    BE<u16> mPaletteEntryCount;         // _0A
+    BE<u32> mPaletteOffset;             // _0C
     GXBool mIsMIPmapEnabled;        // _10
     GXBool mDoEdgeLOD;              // _11
     GXBool mIsBiasClamp;            // _12
@@ -35,8 +37,8 @@ struct ResTIMG
     s8 mMaxLOD;                     // _17
     u8 mTotalImageCount;            // _18
     u8 _19;                         // _19, unknown
-    s16 mLODBias;                   // _1A
-    u32 mImageDataOffset;           // _1C
+    BE<s16> mLODBias;                   // _1A
+    BE<u32> mImageDataOffset;           // _1C
 };
 
 struct ResTIMGPair
