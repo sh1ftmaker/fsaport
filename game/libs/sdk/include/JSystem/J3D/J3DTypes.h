@@ -9,6 +9,7 @@
 #include "JSystem/JGeometry.h"
 #include "JSystem/JMath/JMath.h"
 #include "types.h"
+#include "port/be.h"
 
 typedef u32 J3DModelLoaderFlags;
 enum J3DModelLoaderFlagTypes {
@@ -685,8 +686,9 @@ struct J3DTevStage {
 
 	void load(u32) const
 	{
-		J3DGDWriteBPCmd(*(u32*)&mBPCommand1);
-		J3DGDWriteBPCmd(*(u32*)&mBPCommand2);
+		// Port: each command is 4 bytes in display-list (big-endian) order.
+		J3DGDWriteBPCmd(be32(&mBPCommand1));
+		J3DGDWriteBPCmd(be32(&mBPCommand2));
 	}
 
 	u8 mBPCommand1;      // _00

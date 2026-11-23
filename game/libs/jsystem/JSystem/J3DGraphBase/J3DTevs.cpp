@@ -402,7 +402,7 @@ bool isTexNoReg(void* ptr)
  */
 u16 getTexNoReg(void* p1)
 {
-	return *(u32*)(static_cast<u8*>(p1) + 1);
+	return be32(static_cast<u8*>(p1) + 1); // port: a word in a big-endian display list
 }
 
 /**

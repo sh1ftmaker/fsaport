@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_J3D_J3DFILEBLOCK_H
 #define _JSYSTEM_J3D_J3DFILEBLOCK_H
 
+#include "port/be.h"
 #include "types.h"
 
 struct J3DFileBlockBase;
@@ -9,10 +10,10 @@ struct J3DFileBlockBase;
  * @size{0x20}
  */
 struct J3DFileHeader {
-	u32 mJ3dVersion;  // _00
-	u32 mFileVersion; // _04
+	BE<u32> mJ3dVersion;  // _00
+	BE<u32> mFileVersion; // _04
 	u8 _08[4];        // _08
-	u32 mBlockCount;  // _0C
+	BE<u32> mBlockCount;  // _0C
 	u8 _10[0x10];     // _10
 
 	const J3DFileBlockBase* getFirstBlock() const { return reinterpret_cast<const J3DFileBlockBase*>(this + 1); }
@@ -22,8 +23,8 @@ struct J3DFileHeader {
  * @size{0x8}
  */
 struct J3DFileBlockBase {
-	u32 mBlockType; // _00
-	int mSize;      // _04
+	BE<u32> mBlockType; // _00
+	BE<int> mSize;      // _04
 
 	const J3DFileBlockBase* getNext() const
 	{

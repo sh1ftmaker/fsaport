@@ -36,7 +36,9 @@ namespace JUtility
         }
 
         operator u32() const { return toUInt32(); }
-        u32 toUInt32() const { return *(u32 *)&r; }
+        // Port: a u32 colour is the value 0xRRGGBBAA on every host (the original
+        // stored the word over r..a, which only means that on a big-endian CPU).
+        u32 toUInt32() const { return ((u32)r << 24) | ((u32)g << 16) | ((u32)b << 8) | (u32)a; }
 
         void set(u8 cR, u8 cG, u8 cB, u8 cA)
         {
@@ -46,7 +48,13 @@ namespace JUtility
             a = cA;
         }
 
-        void set(u32 u32Color) { *(u32 *)&r = u32Color; }
+        void set(u32 u32Color)
+        {
+            r = (u8)(u32Color >> 24);
+            g = (u8)(u32Color >> 16);
+            b = (u8)(u32Color >> 8);
+            a = (u8)u32Color;
+        }
 
         void set(GXColor gxColor) { *(GXColor *)&r = gxColor; }
         //void set(TColor color) { *this = color; }

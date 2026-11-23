@@ -126,7 +126,7 @@ bool J2DScreen::getScreenInformation(JSURandomInputStream* input)
     box.f.x = info.mWidth;
     box.f.y = info.mHeight;
     place(box);
-    mColor = info.mColor;
+    mColor = (u32)info.mColor;
     if (sizeof(info) < info.mBlockLength) {
         input->skip(info.mBlockLength - sizeof(info));
     }
@@ -345,6 +345,8 @@ bool J2DScreen::createMaterial(JSURandomInputStream* input, u32 flags, JKRArchiv
     int initialPosition = input->getPosition();
     u32 blank[2];
     input->read(blank, 8);
+    blank[0] = __builtin_bswap32(blank[0]); // port: big-endian block header
+    blank[1] = __builtin_bswap32(blank[1]);
     mMaterialCount = input->readU16();
     input->skip(2);
 
