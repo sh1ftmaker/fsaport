@@ -2615,3 +2615,21 @@ cls_804AF32C::cls_804AF32C() {
     field_0x304[8] = 0;
     field_0x304[9] = 0;
 }
+
+#ifdef FSA_PORT
+// Debugging (fsa_debug_state): the message windows' states.
+extern "C" void fsa_debug_messages() {
+    if (lbl_8053AD78 == NULL) {
+        OSReport("[state] no message manager\n");
+        return;
+    }
+    OSReport("[state] messages done %02x countdown %d %d %d %d\n", lbl_8053AD78->field_0xe7, lbl_8053AD78->field_0xf0[0],
+             lbl_8053AD78->field_0xf0[1], lbl_8053AD78->field_0xf0[2], lbl_8053AD78->field_0xf0[3]);
+    for (int i = 0; i < 4; i++) {
+        MessageWindow_804AF490* w = lbl_8053AD78->mWindows[i];
+        if (w != NULL)
+            OSReport("[state]   window %d state %d opt %04x more %d msg %d ready %d\n", i, (int)w->field_0x24,
+                     (int)w->field_0x28, (int)w->field_0x40, (int)w->field_0x20, (int)w->fn_803908D0());
+    }
+}
+#endif

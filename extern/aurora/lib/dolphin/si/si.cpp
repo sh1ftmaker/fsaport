@@ -1,4 +1,5 @@
 #include <dolphin/si.h>
+#include <dolphin/pad.h>
 #include "../../input.hpp"
 
 #include <SDL3/SDL_power.h>
@@ -6,6 +7,13 @@
 uint32_t SIProbe(int32_t chan) {
   auto* const controller = aurora::input::get_controller_for_player(chan);
   if (controller == nullptr) {
+    // A port with keyboard bindings is a controller to PADRead, so it must be
+    // one to SIProbe too: games that probe before reading (FSA's GBA client
+    // does) otherwise drop the keyboard's input. (fsaport change)
+    u32 count = 0;
+    if (chan >= 0 && PADGetKeyButtonBindings(static_cast<u32>(chan), &count) != nullptr) {
+      return SI_GC_CONTROLLER;
+    }
     return SI_ERROR_NO_RESPONSE;
   }
 

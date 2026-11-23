@@ -121,6 +121,17 @@ bool JKRArchive::getDirEntry(JKRArchive::SDirEntry *dirEntry, u32 p2) const
     return true;
 }
 
+#ifdef FSA_PORT
+extern "C" int fsa_dvd_log;
+#include <dolphin/os.h>
+static void *portLogLookup(void *res, const char *what, const char *name)
+{
+    if (fsa_dvd_log >= 2 || (fsa_dvd_log && res == nullptr))
+        OSReport("[arc] %s %s -> %p\n", what, name, res);
+    return res;
+}
+#endif
+
 void *JKRArchive::getGlbResource(u32 type, const char *name, JKRArchive *archive)
 {
     void *resource = nullptr;
@@ -151,6 +162,9 @@ void *JKRArchive::getResource(const char *path)
     {
         fileEntry = findFsResource(path, sCurrentDirID);
     }
+#ifdef FSA_PORT
+    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "path", path);
+#endif
     return (fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr;
 }
 
@@ -167,6 +181,9 @@ void *JKRArchive::getResource(u32 type, const char *name)
     {
         fileEntry = findTypeResource(type, name);
     }
+#ifdef FSA_PORT
+    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "name", name);
+#endif
     return (fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr;
 }
 

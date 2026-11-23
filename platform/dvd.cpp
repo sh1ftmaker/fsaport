@@ -174,7 +174,14 @@ void platform_dvd_init() {
   OSResumeThread(&g_worker);
 }
 
+// Module._fsa_set_dvd_log(1) from the console logs every path the game resolves
+// and every archive lookup that fails; 2 also logs the ones that succeed.
+extern "C" int fsa_dvd_log;
+int fsa_dvd_log = 0;
+
 extern "C" {
+
+EMSCRIPTEN_KEEPALIVE void fsa_set_dvd_log(int on) { fsa_dvd_log = on; }
 
 void DVDInit() {}
 BOOL DVDSetAutoFatalMessaging(BOOL) { return FALSE; }
@@ -190,8 +197,11 @@ s32 DVDGetDriveStatus() {
 }
 DVDDiskID* DVDGetCurrentDiskID() { return &g_diskId; }
 
+
 s32 DVDConvertPathToEntrynum(const char* path) {
   s32 e = resolve(path);
+  if (fsa_dvd_log)
+    platform_log("[dvd] %s -> %d\n", path, e);
   return e;
 }
 
@@ -207,6 +217,8 @@ BOOL DVDFastOpen(s32 entrynum, DVDFileInfo* fileInfo) {
 
 BOOL DVDOpen(const char* fileName, DVDFileInfo* fileInfo) {
   s32 e = resolve(fileName);
+  if (fsa_dvd_log)
+    platform_log("[dvd] open %s -> %d\n", fileName, e);
   if (e < 0) {
     platform_log("[dvd] not found: %s\n", fileName);
     return FALSE;

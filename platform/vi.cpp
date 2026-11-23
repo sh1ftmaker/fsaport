@@ -5,6 +5,7 @@
 
 #include <aurora/aurora.h>
 #include <aurora/gfx.h>
+#include <dolphin/pad.h>
 #include <emscripten.h>
 
 namespace {
@@ -132,3 +133,18 @@ u32 VIGetDTVStatus() { return 0; }
 void __VIGetCurrentPosition(s16* x, s16* y) { *x = *y = 0; }
 
 }  // extern "C"
+
+// Called by JUTGamePad::read once per read: logs port 0's buttons when they
+// change, so input problems show up in the console.
+extern "C" void fsa_pad_observe(const PADStatus* status) {
+  static u16 last = 0;
+  static s8 lastErr = 99;
+  static u32 reads = 0;
+  reads++;
+  if (status[0].button != last || status[0].err != lastErr) {
+    platform_log("[pad] read %u: port0 err %d buttons %04x stick %d,%d\n", reads, status[0].err, status[0].button,
+                 status[0].stickX, status[0].stickY);
+    last = status[0].button;
+    lastErr = status[0].err;
+  }
+}

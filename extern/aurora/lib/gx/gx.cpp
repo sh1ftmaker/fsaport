@@ -63,7 +63,10 @@ struct CachedTextureEntry {
   u32 texDataVersion = 0;
   u32 tlutObjId = 0;
   u32 tlutDataVersion = 0;
+  u32 lastUsedFrame = 0; // see sweep_texture_cache (fsaport change)
 };
+
+u32 s_cacheFrame = 0;
 
 struct CachedTlutTextureEntry {
   gfx::TextureHandle handle;
@@ -112,6 +115,7 @@ void store_cached_texture(const GXTexObj_& obj, gfx::TextureHandle handle, u32 t
   }
 
   entry.handle = std::move(handle);
+  entry.lastUsedFrame = s_cacheFrame;
   entry.texDataVersion = obj.texDataVersion;
   entry.tlutObjId = tlutObjId;
   entry.tlutDataVersion = tlutDataVersion;
@@ -150,8 +154,9 @@ gfx::TextureHandle resolve_static_texture(const GXTexObj_& obj) {
 
   if (obj.texObjId != 0) {
     if (const auto it = s_textureObjectCaches.find(obj.texObjId); it != s_textureObjectCaches.end()) {
-      const auto& entry = it->second;
+      auto& entry = it->second;
       if (entry.handle && entry.texDataVersion == obj.texDataVersion && entry.tlutObjId == 0) {
+        entry.lastUsedFrame = s_cacheFrame;
         return entry.handle;
       }
     }
@@ -176,9 +181,10 @@ gfx::TextureHandle resolve_static_palette_texture(const GXTexObj_& obj, const GX
 
   if (obj.texObjId != 0) {
     if (const auto it = s_textureObjectCaches.find(obj.texObjId); it != s_textureObjectCaches.end()) {
-      const auto& entry = it->second;
+      auto& entry = it->second;
       if (entry.handle && entry.texDataVersion == obj.texDataVersion && entry.tlutObjId == tlut.tlutObjId &&
           entry.tlutDataVersion == tlut.tlutDataVersion) {
+        entry.lastUsedFrame = s_cacheFrame;
         return entry.handle;
       }
     }
@@ -324,6 +330,26 @@ void set_render_scissor(const gfx::ClipRect& scissor) noexcept {
 }
 
 const gfx::TextureBind& get_texture(GXTexMapID id) noexcept { return g_gxState.textures[static_cast<size_t>(id)]; }
+
+// Drops cached textures not used for a while. Every GXInitTexObj is a new
+// texture identity, so a game that re-inits its texture objects (as GameCube
+// games freely do) would otherwise grow the cache, and GPU memory, without
+// bound. Called once per frame. (fsaport change)
+void sweep_texture_cache() noexcept {
+  constexpr u32 kMaxIdleFrames = 300;
+  ++s_cacheFrame;
+  if (s_cacheFrame % 60 != 0) {
+    return;
+  }
+  for (auto it = s_textureObjectCaches.begin(); it != s_textureObjectCaches.end();) {
+    if (s_cacheFrame - it->second.lastUsedFrame > kMaxIdleFrames) {
+      clear_texture_dependency(it->first, it->second.tlutObjId);
+      s_textureObjectCaches.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+}
 
 void evict_texture_object(u32 texObjId) noexcept {
   if (const auto it = s_textureObjectCaches.find(texObjId); it != s_textureObjectCaches.end()) {

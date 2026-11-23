@@ -42,18 +42,13 @@ template <> JAISoundStarter* JASGlobalInstance<JAISoundStarter>::sInstance = nul
 #include <dolphin/mtx.h>
 #include <string.h>
 
-// JMessage's file signatures, compared with memcmp against the first 4 bytes of a
-// BMG file ("MESGbmg1") and its colour block ("MGCL"): the bytes in memory must
-// read "MESG" / "MGCL", so the int's value depends on the host's byte order.
+// JMessage's file signatures ("MESGbmg1" and the colour block's "MGCL"). The
+// parser compares them with the file's first word read big-endian
+// (JMessage/resource.cpp), so they are plain values on every host.
 namespace JMessage {
 namespace data {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-const int ga4cSignature = 'GSEM';
-const int ga4cSignature_color = 'LCGM';
-#else
 const int ga4cSignature = 'MESG';
 const int ga4cSignature_color = 'MGCL';
-#endif
 } // namespace data
 } // namespace JMessage
 

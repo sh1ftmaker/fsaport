@@ -170,6 +170,21 @@ Worth checking for in any code that misbehaves:
   The port clears without writing depth; Aurora clears depth each frame.
 - **Game structs over file data**: the game's own BMG structs (`Message.h`) were
   host-endian; other game formats will be the same.
+- **Byte-wise writes read back as words**: `JKRUnitHeap`'s allocation bitmap is
+  written a byte at a time (MSB first) and searched as `u32` from bit 31, a
+  big-endian load. On wasm every allocation got the same block, so the actor
+  manager overwrote each actor with the next (black stage, no actors).
+- **Reads past a table that rely on the original layout**: `ConnectScreen`'s
+  4 x 6 loop over a 3 x 6 table read the next table on the GameCube and garbage
+  here (null pane, trap). Bounded under `FSA_PORT`.
+- **Port changes that contradict each other**: `jsystem_statics.cpp` defined the
+  BMG signature byte-swapped for a `memcmp`, while the JMessage port compares the
+  big-endian word with the plain value, so no BMG ever parsed into JMessage
+  (message windows opened with garbage state).
+- **Per-draw texture re-inits**: free on the GameCube, but every `GXInitTexObj` is
+  a new texture to Aurora. `JUTResFont` re-inited its glyph page per character
+  (1,750 draws, 31 ms/frame and a GPU out-of-memory in the prologue); the port
+  keeps one texture object per page.
 
 ## Changes to Aurora
 
@@ -180,19 +195,36 @@ Worth checking for in any code that misbehaves:
   present, so `begin_frame` waited ~27 ms every frame (30 fps). The web build
   stages in host memory and uploads with `Queue::WriteBuffer`/`WriteTexture`
   (`lib/gfx/common.cpp`).
+- `SIProbe` reports a keyboard-bound port as a controller, as `PADRead` already
+  treats it (`lib/dolphin/si/si.cpp`); FSA's GBA client probes before reading
+  and dropped keyboard input otherwise.
+- The texture-object cache drops entries unused for 300 frames
+  (`sweep_texture_cache`, `lib/gx/gx.cpp`): every `GXInitTexObj` is a new
+  identity, so games that re-init per frame grew it without bound.
 
 ## Current state
 
-- Boots in Chrome to the title screen: JFW, heaps, threads, the loader thread,
-  archive mounts, audio init, the Nintendo logo, GameRoot with its 3D models,
-  particles and messages, and the title drawn by the game's own code.
-- Speed: 60 frames per 60 retraces at the title; ~0.3 ms of CPU per frame
-  (release build, FSA_TRACE and FSA_DEBUG_LINES off).
-- Next: keyboard/gamepad input does not advance the title yet; audio output;
-  saves (Aurora's card in MEMFS is lost on reload); GBA views; THP movies.
+- Plays in Chrome from boot through the title, mode select, file select, player
+  count and the new-quest opening (the prologue narration), all drawn by the
+  game's own code. Keyboard input works (Enter = Start, Space = A, Shift = B,
+  WASD = stick).
+- Speed (release build): 60 frames per 60 retraces throughout; game logic
+  <= 1.4 ms and Aurora <= 2.4 ms per frame, including the 1,750-draw prologue.
+- Blocker: after the prologue the narration opens message 0x231 (window 0
+  reaches state 8) but `stepMessageWindow_803865B8` never finishes it, so the
+  demo holds at tick 281 on a dark screen (the shadow-circle mask at 0 is
+  expected there; the window itself is not visible).
+- Next: that message window; audio output; saves (Aurora's card in MEMFS is
+  lost on reload; the game offers "continue without saving"); GBA views; THP
+  movies (title attract and menu previews are black).
 - Debugging: `FSA_TRACE=ON` enables `[trace]`/`[heap]`/`[blo]` reports;
-  `tools/web_cycle.sh` rebuilds and runs once in a private Chromium over CDP;
-  `tools/wasm_where.sh` symbolises offsets; `fsa_debug_stack()` prints a stack.
+  `tools/web_cycle.sh NAME SECONDS EVERY KEYS EVALS` rebuilds and runs once in
+  a private Chromium over CDP, pressing keys and evaluating JS at given times;
+  from the page console, `Module._fsa_debug_state()` prints the game mode,
+  stage, fade, message windows and live actors, `Module._fsa_dump_threads()`
+  the threads, and `Module._fsa_set_dvd_log(1)` every file opened and every
+  failed archive lookup; `[pad]` lines show port 0's buttons as they change;
+  `tools/wasm_where.sh` symbolises offsets (`-DFSA_DEBUG_LINES=ON`).
 
 ## Open questions
 

@@ -802,6 +802,7 @@ bool begin_frame() {
 
 void end_frame(const wgpu::CommandEncoder& cmd) {
   ZoneScoped;
+  gx::sweep_texture_cache();
   ASSERT(!g_inOffscreen, "end_frame called while offscreen rendering is active");
   g_uniforms.append_zeroes(gx::MaxUniformSize); // Pad the end of the buffer
   uint64_t bufferOffset = 0;

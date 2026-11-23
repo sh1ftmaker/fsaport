@@ -622,3 +622,20 @@ void platform_sleep_ticks(OSTime ticks) {
   g_current->waiting = true;
   block_current();
 }
+
+// Debugging: list every thread and what it waits on (call _fsa_dump_threads()
+// from the console).
+extern "C" EMSCRIPTEN_KEEPALIVE void fsa_dump_threads() {
+  for (Coroutine* c : g_coroutines) {
+    if (!c)
+      continue;
+    const void* queue = nullptr;
+    for (auto& [key, waiters] : g_waitQueues)
+      if (std::find(waiters.begin(), waiters.end(), c) != waiters.end())
+        queue = key;
+    platform_log("[thread] %d%s prio %d func %u started %d waiting %d suspend %d done %d wakeAt %lld queue %p\n", c->id,
+                 c == g_current ? "*" : "", c->thread ? (int)c->thread->priority : -1,
+                 (unsigned)(uintptr_t)c->func, c->started, c->waiting, c->suspend, c->done, (long long)c->wakeAt,
+                 queue);
+  }
+}

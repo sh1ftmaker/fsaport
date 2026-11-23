@@ -490,7 +490,14 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
     }
     // Four rows over the three-row table (the twin's 4 x 6 loop): the
     // original reads row 3 from the next table and field_0x285.
+#ifdef FSA_PORT
+    // Row 3 is lbl_80478C48[0..5] / field_0x285[0..5] in the original's
+    // layout, which the next loop fades anyway; the port's data layout is not
+    // the original's, so stop at the table's end.
+    for (int i = 0; i < 3; i++) {
+#else
     for (int i = 0; i < 4; i++) {
+#endif
         for (int j = 0; j < 6; j++) {
             mScreen->search(lbl_80478BB8[i][j])->setAlpha(fadeAlpha(field_0x273[i][j], 0.0f));
         }

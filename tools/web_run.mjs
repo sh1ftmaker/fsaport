@@ -5,6 +5,7 @@
 //
 //   node tools/web_run.mjs --cdp 9334 --url 'http://127.0.0.1:8790/?iso=local.iso' \
 //        --seconds 60 --every 10 --out build/web-run [--keys 'Enter@30,KeyX@40']
+//        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -60,6 +61,10 @@ const keyOf = (code) => {
   const vk = { Enter: 13, ArrowUp: 38, ArrowDown: 40, ArrowLeft: 37, ArrowRight: 39, Space: 32 }[code] ?? key.toUpperCase().charCodeAt(0);
   return { key, code, windowsVirtualKeyCode: vk };
 };
+const evals = (args.evals && args.evals !== 'true' ? args.evals.split(';') : []).map((s) => {
+  const at = s.lastIndexOf('@');
+  return { expr: s.slice(0, at), t: Number(s.slice(at + 1)) };
+});
 while (Date.now() - t0 < seconds * 1000) {
   await sleep(250);
   const t = (Date.now() - t0) / 1000;
@@ -71,6 +76,12 @@ while (Date.now() - t0 < seconds * 1000) {
       await sleep(150);
       await send('Input.dispatchKeyEvent', { type: 'keyUp', ...keyOf(k.code) });
       log(`[key] ${k.code} at ${t.toFixed(1)} s`);
+    }
+  }
+  for (const e of evals) {
+    if (!e.done && t >= e.t) {
+      e.done = true;
+      log(`[eval @${t.toFixed(1)}s] ${e.expr} -> ${JSON.stringify(await evalJs(e.expr))}`);
     }
   }
   if (t >= (shot + 1) * every) {

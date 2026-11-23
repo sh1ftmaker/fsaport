@@ -273,3 +273,40 @@ void GameRootSub04_801F856C::fn_80139BE8() {
     gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[2] = 0;
     gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[3] = 0;
 }
+
+#ifdef FSA_PORT
+// Debugging: Module._fsa_debug_state() from the console prints where the game
+// is (mode, stage, fade, demo timer) and the live actors. Not game code.
+extern "C" void fsa_debug_messages();
+extern "C" void fsa_debug_state() {
+    GameRoot_8049EF20* root = gGameRoot_8053AAF8;
+    fsa_debug_messages();
+    OSReport("[state] root mode %d req %d sub %d f60 %d loading %d f7f %d players %02x\n", (int)root->field_0x4c,
+             (int)root->field_0x50, (int)root->field_0x58, (int)root->field_0x60, (int)root->field_0xfd,
+             (int)root->field_0x7f, (int)root->mPlayerMask);
+    OSReport("[state] save stage %d level %d\n", lbl_80529DEC.mStage_0x118, lbl_80529DEC.mLevel_0x11c);
+    GameRootSub04_801F856C* sub = root->field_0x4;
+    if (sub == NULL) {
+        OSReport("[state] no stage\n");
+        return;
+    }
+    GameView_804A9950* view = getGameView_802D6A9C();
+    cls_80119E5C* fade = fn_80119DD0();
+    cls_801192AC* demo = fn_8011921C();
+    OSReport("[state] view stage %d level %d screen %d,%d transition %d\n", view->mStage_0x4, view->mLevel_0x8,
+             view->mScreenX_0x14, view->mScreenY_0x18, (int)view->isInTransition_802DCD0C());
+    OSReport("[state] fade active %d hold %d t %d alpha %.1f mode %d; demo %d/%d/%d t=%d\n", fade->field_0x0,
+             fade->field_0x1, fade->field_0x4, (double)fade->field_0x14, fade->field_0x1c, demo->field_0x0,
+             demo->field_0x1, demo->field_0x4, demo->field_0x8);
+    ActorManager_804A5800* am = sub->mActorManager;
+    for (s32 i = 0; i < am->getActorEnd(); i++) {
+        ActorBase_804A5770* actor = am->getActor(i);
+        if (actor == NULL)
+            continue;
+        u32 id = actor->mActorId;
+        OSReport("[state]   actor %d %c%c%c%c alive %d layer %d pos %.0f,%.0f\n", i, (char)(id >> 24), (char)(id >> 16),
+                 (char)(id >> 8), (char)id, (int)actor->mAlive, actor->mLayer_0x4, (double)actor->mPos.x,
+                 (double)actor->mPos.y);
+    }
+}
+#endif

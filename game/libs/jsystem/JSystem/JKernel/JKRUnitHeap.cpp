@@ -4,6 +4,16 @@
 
 static const u8 bitTable[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
+// The block allocation table is written a byte at a time, most significant bit
+// first (bitTable), and searched a word at a time from bit 31: a big-endian
+// load. On a little-endian host the word must be swapped, or the search sees
+// unit 0 as free forever and hands out the same block every time.
+#ifdef FSA_PORT
+#define BAT_WORD(p) __builtin_bswap32(*(p))
+#else
+#define BAT_WORD(p) (*(p))
+#endif
+
 // FIXME: 92.77 %. The original computes ALIGN_NEXT(unitSize, alignment) as
 // (alignment + unitSize) - 1 and keeps the mask in r31; ours reuses alignment - 1
 // (add r0, r3, r0), which also shifts the callee-saved registers by one.
@@ -128,7 +138,7 @@ int JKRUnitHeap::find1FreeBlock(int direction)
         u32 *words = (u32 *)mBat;
         for (u32 index = 0; index < wordCount; index++, words++)
         {
-            word = *words;
+            word = BAT_WORD(words);
             if (word != 0xffff)
             {
                 for (int bit = 0; bit < 32; bit++)
@@ -146,7 +156,7 @@ int JKRUnitHeap::find1FreeBlock(int direction)
         u32 *words = (u32 *)(mBat + ALIGN_NEXT(mUnitCount, 32) / 8) - 1;
         for (int index = wordCount - 1; index >= 0; index--, words--)
         {
-            word = *words;
+            word = BAT_WORD(words);
             if (word != 0xffff)
             {
                 for (int bit = 31; bit >= 0; bit--)
@@ -181,7 +191,7 @@ int JKRUnitHeap::findFreeBlock_fromHead(u32 count)
 
     for (u32 *words = begin; words <= end; words++)
     {
-        u32 word = words != end ? *words : 0xffffffff;
+        u32 word = words != end ? BAT_WORD(words) : 0xffffffff;
         if (word == 0)
         {
             if (!inFreeRun)
@@ -251,7 +261,7 @@ int JKRUnitHeap::findFreeBlock_fromTail(u32 count)
 
     for (u32 *words = begin + (mUnitCount + 31) / 32 - 1; words >= end; words--)
     {
-        u32 word = words != end ? *words : 0xffffffff;
+        u32 word = words != end ? BAT_WORD(words) : 0xffffffff;
         if (word == 0)
         {
             if (!inFreeRun)

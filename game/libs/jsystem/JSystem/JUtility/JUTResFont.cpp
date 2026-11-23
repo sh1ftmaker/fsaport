@@ -22,8 +22,52 @@ JUTResFont::JUTResFont(const ResFONT *resource, JKRHeap *heap)
     JUTResFont::initiate(resource, heap);
 }
 
+#ifdef FSA_PORT
+// One initialised GXTexObj per glyph page. The original re-inits its single
+// texture object whenever the page changes, which is nearly every character
+// with FSA's many small pages; on the GameCube that was free, but every init is
+// a new texture identity to Aurora (a new GPU texture and cache entry per
+// glyph). Keeping one object per page keeps the identity. Cleared whenever a
+// font is made or destroyed, so a page address can never outlive its data.
+namespace {
+struct PortFontPage
+{
+    const void *data;
+    u16 width;
+    u16 height;
+    u16 format;
+    GXTexObj obj;
+};
+PortFontPage sPortFontPages[256];
+int sPortFontPageCount = 0;
+
+const GXTexObj *portFontPage(const void *data, u16 width, u16 height, u16 format)
+{
+    for (int i = 0; i < sPortFontPageCount; i++)
+    {
+        PortFontPage &page = sPortFontPages[i];
+        if (page.data == data && page.width == width && page.height == height && page.format == format)
+            return &page.obj;
+    }
+    if (sPortFontPageCount == 256)
+        sPortFontPageCount = 0;
+    PortFontPage &page = sPortFontPages[sPortFontPageCount++];
+    page.data = data;
+    page.width = width;
+    page.height = height;
+    page.format = format;
+    GXInitTexObj(&page.obj, const_cast<void *>(data), width, height, (GXTexFmt)format, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&page.obj, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+    return &page.obj;
+}
+} // namespace
+#endif
+
 JUTResFont::~JUTResFont()
 {
+#ifdef FSA_PORT
+    sPortFontPageCount = 0;
+#endif
     if (mValid)
     {
         deleteMemBlocks_ResFont();
@@ -48,6 +92,9 @@ void JUTResFont::initialize_state()
 
 bool JUTResFont::initiate(const ResFONT *resource, JKRHeap *heap)
 {
+#ifdef FSA_PORT
+    sPortFontPageCount = 0;
+#endif
     if (!protected_initiate(resource, heap))
     {
         deleteMemBlocks_ResFont();
@@ -499,6 +546,14 @@ void JUTResFont::loadImage(int code, GXTexMapID id)
 
     if (pageIdx != _44 || i != _66)
     {
+#ifdef FSA_PORT
+        _24 = *portFontPage(&mGlyphBlocks[i]->mData[pageIdx * mGlyphBlocks[i]->mTextureSize], mGlyphBlocks[i]->mTextureWidth,
+                            mGlyphBlocks[i]->mTextureHeight, (u16)mGlyphBlocks[i]->mTextureFormat);
+        _44 = pageIdx;
+        _66 = i;
+        GXLoadTexObj(&_24, id);
+        return;
+#endif
         GXInitTexObj(&_24, &mGlyphBlocks[i]->mData[pageIdx * mGlyphBlocks[i]->mTextureSize], mGlyphBlocks[i]->mTextureWidth,
                      mGlyphBlocks[i]->mTextureHeight, (GXTexFmt)(u16)mGlyphBlocks[i]->mTextureFormat, GX_CLAMP, GX_CLAMP, 0);
 
