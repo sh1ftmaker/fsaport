@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <string.h>
 
 #include <utility>
 #include <dolphin/mtx.h>
@@ -16,6 +17,7 @@ namespace JMath
 {
     inline f32 fastReciprocal(f32 value) { return JMAFastReciprocal(value); }
 
+#ifdef __MWERKS__
     inline void gekko_ps_copy12(register void *pDest, register const void *pSrc)
     {
         register f32 rxxyx;
@@ -106,6 +108,14 @@ namespace JMath
             // clang-format on
         };
     }
+
+#else
+    // Port: the paired-single copies are plain copies of 3, 6, 12 and 16 floats.
+    inline void gekko_ps_copy12(void* d, const void* s) { memcpy(d, s, 12 * sizeof(f32)); }
+    inline void gekko_ps_copy3(void* d, const void* s) { memcpy(d, s, 3 * sizeof(f32)); }
+    inline void gekko_ps_copy6(void* d, const void* s) { memcpy(d, s, 6 * sizeof(f32)); }
+    inline void gekko_ps_copy16(void* d, const void* s) { memcpy(d, s, 16 * sizeof(f32)); }
+#endif
 
     template <typename T>
     struct TAngleConstant_
@@ -366,6 +376,7 @@ inline f32 JMASinShort(s16 v) { return JMath::sincosTable_.sinShort(v); }
 inline f32 JMASCos(s16 v) { return JMACosShort(v); }
 inline f32 JMASSin(s16 v) { return JMASinShort(v); }
 
+#ifdef __MWERKS__
 inline f32 JMAHermiteInterpolation(register f32 p1, register f32 p2, register f32 p3, register f32 p4, register f32 p5, register f32 p6,
                                    register f32 p7)
 {
@@ -408,6 +419,33 @@ inline f32 JMAFastSqrt(register f32 x)
     }
     return x;
 }
+
+#else
+// Port: JMAHermiteInterpolation transcribed instruction by instruction from the asm above.
+inline f32 JMAHermiteInterpolation(f32 p1, f32 p2, f32 p3, f32 p4, f32 p5, f32 p6, f32 p7)
+{
+    f32 ff31 = p1 - p2;
+    f32 ff30 = p5 - p2;
+    f32 ff29 = ff31 / ff30;
+    f32 ff28 = ff29 * ff29;
+    f32 ff25 = ff29 + ff29;
+    f32 ff27 = ff28 - ff29;
+    ff30 = p3 - p6;
+    f32 ff26 = ff25 * ff27 - ff28;
+    ff25 = p4 * ff27 + p4;
+    ff26 = ff26 * ff30 + p3;
+    ff25 = p7 * ff27 + ff25;
+    ff25 = ff29 * p4 - ff25;
+    return -(ff31 * ff25 - ff26);
+}
+
+inline f32 JMAFastSqrt(f32 x)
+{
+    if (x > 0.0f)
+        return (1.0f / sqrtf(x)) * x;
+    return x;
+}
+#endif
 
 void JMAEulerToQuat(s16, s16, s16, Quaternion *);
 void JMAQuatLerp(const Quaternion *, const Quaternion *, f32, Quaternion *);

@@ -1524,7 +1524,8 @@ void Ganon_804A25F0::update() {
         break;
     case 35:
         field_0x264 = mSpawnParam_0x90 - 20;
-        u32 kind = mSpawnParam_0x90 - 20;
+        u32 kind;
+        kind = mSpawnParam_0x90 - 20;
         for (s32 i = 0; i < 4; i++) {
             if (mEmitters[i] == NULL) {
                 mEmitters[i] = spawnEmitter_8013CC50(mLayer_0x4, &mPos, lbl_804A2318[kind * 4 + i], 1, 7, NULL, NULL, true, 1.0f);

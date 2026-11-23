@@ -24,10 +24,10 @@ namespace JGeometry {
         
         template <typename A>
         void set(A _x, A _y, A _z, A _w) {
-            x = _x;
-            y = _y;
-            z = _z;
-            w = _w;
+            this->x = _x;
+            this->y = _y;
+            this->z = _z;
+            this->w = _w;
         }
         /* General operations */
         void scale(f32 s) {
@@ -119,13 +119,13 @@ namespace JGeometry {
             T x = this->x;
 
             // clang-format off
-            JGeometry::TQuat4f q;
+            TQuat4<f32> q;
             q.x =  w *  0 + y * vz - z * vy + w * vx;
             q.y = -x * vz + y *  0 + z * vx + w * vy;
             q.z =  x * vy - y * vx + z *  0 + w * vz;
             q.w = -x * vx - y * vy - z * vz + w *  0;
 
-            JGeometry::TQuat4f q2;
+            TQuat4<f32> q2;
             q2.x =  q.x *  w + q.y * -z - q.z * -y + q.w * -x;
             q2.y = -q.x * -z + q.y *  w + q.z * -x + q.w * -y;
             q2.z =  q.x * -y - q.y * -x + q.z *  w + q.w * -z;
@@ -148,10 +148,10 @@ namespace JGeometry {
         
         void slerp(const TQuat4 &other, f32 t) {
             // Normalize both quaternions
-            TQuat4f q1;
+            TQuat4<f32> q1;
             q1.normalize(*this);
 
-            TQuat4f q2;
+            TQuat4<f32> q2;
             q2.normalize(other);
 
             // Compute the cosine of the angle between them
@@ -211,7 +211,7 @@ namespace JGeometry {
 
         bool equals(const TQuat4 &other) 
         {
-            return (x == other.x && y == other.y && z == other.z && w == other.w);
+            return (this->x == other.x && this->y == other.y && this->z == other.z && this->w == other.w);
         }
     };
 

@@ -104,7 +104,8 @@ void Bombchu_804AB464::init() {
         field_0x230 = 2;
         field_0xb0 = 0x73308;
         // The draw is read before field_0x277 is cleared (the original stores it after the load).
-        f32 coin = gGameRoot_8053AAF8->mRandom.get_ufloat_1();
+        f32 coin;
+        coin = gGameRoot_8053AAF8->mRandom.get_ufloat_1();
         field_0x277 = 0;
         if ((s32)(2.0f * coin) != 0) {
             mVel_0x3c.x = speed;

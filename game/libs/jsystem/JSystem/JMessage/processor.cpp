@@ -514,7 +514,8 @@ const char* TSequenceProcessor::process(const char* p1)
 			}
 
 			mStatus          = STATUS_Normal;
-			const void* data = mProc.mJumpProc.mJumpFunc(this);
+			void*data;
+			data = mProc.mJumpProc.mJumpFunc(this);
 			if (data != nullptr) {
 				on_jump(data, mControl->getMessageText_begin());
 			}
@@ -783,7 +784,8 @@ void TSequenceProcessor::do_systemTagCode_(u16 p1, const void* p2, u32 p3)
 {
 	switch (p1) {
 	case 6:
-		u32 ptr                   = *(u32*)p2;
+		u32 ptr;
+		ptr = *(u32*)p2;
 		mStatus                   = STATUS_Jump;
 		mProc.mJumpProc.mJumpFunc = &process_onJump_;
 		mProc.mJumpProc.mTarget   = ptr;

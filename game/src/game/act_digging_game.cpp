@@ -138,7 +138,8 @@ void DiggingGameKeeper_8049C970::update() {
                 }
             }
             // As above: same message either way, the original still tests field_0x236 == 1.
-            u32 msg = (field_0x236 == 1) ? 0x32f : 0x32f;
+            u32 msg;
+            msg = (field_0x236 == 1) ? 0x32f : 0x32f;
             fn_8038470C(field_0x23c, msg);
             field_0x230 = 3;
             field_0x244 = 0;

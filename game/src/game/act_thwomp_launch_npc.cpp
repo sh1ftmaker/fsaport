@@ -401,7 +401,7 @@ void NPCLaunchedByThwomp_804AC010::fn_80337A08() {
     switch (field_0x230) {
     case 0:
     case 1:
-    case 4:
+    case 4: {
         if (field_0x244 != 0) {
             field_0x244--;
             return;
@@ -426,6 +426,7 @@ void NPCLaunchedByThwomp_804AC010::fn_80337A08() {
             field_0x248 = 3;
         }
         break;
+    }
     case 3:
     case 5: {
         s32 dx = field_0x258;

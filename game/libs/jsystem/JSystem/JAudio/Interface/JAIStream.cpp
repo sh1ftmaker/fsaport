@@ -10,7 +10,7 @@
 #include "JSystem/JAudio/System/JASAudioThread.h"
 
 // Move this shit to correct header + sym on shit
-DECL_WEAK JASAudioThread* JASGlobalInstance<JASAudioThread>::sInstance;
+template <> DECL_WEAK JASAudioThread* JASGlobalInstance<JASAudioThread>::sInstance;
 
 static void JAIStream_JASAramStreamCallback_(u32 type, JASAramStream *aramStream, void *stream)
 {

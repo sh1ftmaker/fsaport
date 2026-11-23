@@ -6,7 +6,7 @@
 
 class JASTrack;
 
-class JAISoundChild : JASPoolAllocObject<JAISoundChild>
+class JAISoundChild : public JASPoolAllocObject<JAISoundChild>
 {
 public:
     void init();

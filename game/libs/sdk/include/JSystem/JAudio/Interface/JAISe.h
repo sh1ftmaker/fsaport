@@ -9,7 +9,7 @@
 
 class JAISeMgr;
 
-class JAISe : JASPoolAllocObject<JAISe>, public JSULink<JAISe>, public JAISound
+class JAISe : public JASPoolAllocObject<JAISe>, public JSULink<JAISe>, public JAISound
 {
 public:
     class TInner

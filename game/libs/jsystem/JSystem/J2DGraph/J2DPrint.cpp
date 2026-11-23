@@ -1,9 +1,9 @@
 #include "JSystem/J2D/J2DPrint.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTAssert.h"
-#include "PowerPC_EABI_Support\MSL_C\MSL_Common\strtold.h"
-#include "PowerPC_EABI_Support\MSL_C\MSL_Common\strtoul.h"
-#include "PowerPC_EABI_Support\MSL_C\MSL_Common\printf.h"
+#include "PowerPC_EABI_Support/MSL_C/MSL_Common/strtold.h"
+#include "PowerPC_EABI_Support/MSL_C/MSL_Common/strtoul.h"
+#include "PowerPC_EABI_Support/MSL_C/MSL_Common/printf.h"
 
 const u8* J2DPrint::mStrBuff;
 bool J2DPrint::mHeapFlag;

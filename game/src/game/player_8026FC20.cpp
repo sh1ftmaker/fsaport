@@ -2602,7 +2602,8 @@ void Player_804A6F38::fn_802756E4() {
     case 0:
     case 1:
         setFacingBoxes_80276E5C();
-        s16 dir = angle; // the angle is compared as an s16 (extsh at the compare only)
+        s16 dir;
+        dir = angle; // the angle is compared as an s16 (extsh at the compare only)
         if (dir <= -0x7000) {
             mFrontPos_0x30c.set(-16.0f, 0.0f, 0.0f);
             mFrontPos_0x30c.add(mPos);

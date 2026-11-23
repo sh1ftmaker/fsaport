@@ -218,7 +218,8 @@ void Manhandla_804A2FB0::fn_801A9CF4() {
         field_0x230 = 6;
         // fallthrough
     case 6:
-        s32 parentSerial = field_0x268;
+        s32 parentSerial;
+        parentSerial = field_0x268;
         if (parentSerial >= 0) {
             Manhandla_804A2FB0* parent = static_cast<Manhandla_804A2FB0*>(getActorManager_801F856C()->findActorBySerial_801F666C(parentSerial));
             if (parent != 0 && parent->field_0x250 <= 0) {

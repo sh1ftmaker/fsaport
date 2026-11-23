@@ -101,7 +101,8 @@ void GreatFairy_804AF338::init() {
             field_0x260 = 0x26A;
             break;
         case 9:
-            u32 mode = (gGameRoot_8053AAF8->field_0x83 >> (fn_8022F340(field_0x234) * 2)) & 3;
+            u32 mode;
+            mode = (gGameRoot_8053AAF8->field_0x83 >> (fn_8022F340(field_0x234) * 2)) & 3;
             if (mode == 2) {
                 field_0x260 = 0x27F;
             } else {

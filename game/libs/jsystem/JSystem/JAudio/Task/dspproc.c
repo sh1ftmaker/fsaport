@@ -1,5 +1,5 @@
 #include "types.h"
-#include "JSystem/JAudio/DSP.h"
+#include "JSystem/JAudio/dsp.h"
 
 static volatile int flag;
 static u16 DSP_MIXERLEVEL = 0x4000;

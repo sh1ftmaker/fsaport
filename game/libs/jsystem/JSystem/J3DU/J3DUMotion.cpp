@@ -113,25 +113,37 @@ void J3DMtxCalcBlend::calcBlend(Vec* scale, Vec* position, J3DAnmTransform** ani
 		position->x = position->y = position->z = 0.0f;
 		break;
 
-	case 1: // only one animation with enough weight, just calculate matrix and assign scale/position based on that anim's info
+	case 1: { // only one animation with enough weight, just calculate matrix and assign scale/position based on that anim's info
 		J3DTransformInfo info;
 		anims[maxAnim]->getTransform(id, &info);
 		*scale    = info.mScale;
 		*position = info.mTranslation;
 
-		f32 sinX = JMASinShort(info.mRotation.x);
-		f32 cosX = JMASCos(info.mRotation.x);
-		f32 sinY = JMASinShort(info.mRotation.y);
-		f32 cosY = JMASCos(info.mRotation.y);
-		f32 sinZ = JMASinShort(info.mRotation.z);
-		f32 cosZ = JMASCos(info.mRotation.z);
+		f32 sinX;
+		sinX = JMASinShort(info.mRotation.x);
+		f32 cosX;
+		cosX = JMASCos(info.mRotation.x);
+		f32 sinY;
+		sinY = JMASinShort(info.mRotation.y);
+		f32 cosY;
+		cosY = JMASCos(info.mRotation.y);
+		f32 sinZ;
+		sinZ = JMASinShort(info.mRotation.z);
+		f32 cosZ;
+		cosZ = JMASCos(info.mRotation.z);
 
-		f32 cosYZ    = (cosY * cosZ);
-		f32 sinYZ    = (sinY * sinZ);
-		f32 cosXZ    = (cosX * cosZ);
-		f32 sinXZ    = (sinX * sinZ);
-		f32 sincosXZ = (sinX * cosZ);
-		f32 cossinXZ = (cosX * sinZ);
+		f32 cosYZ;
+		cosYZ = (cosY * cosZ);
+		f32 sinYZ;
+		sinYZ = (sinY * sinZ);
+		f32 cosXZ;
+		cosXZ = (cosX * cosZ);
+		f32 sinXZ;
+		sinXZ = (sinX * sinZ);
+		f32 sincosXZ;
+		sincosXZ = (sinX * cosZ);
+		f32 cossinXZ;
+		cossinXZ = (cosX * sinZ);
 
 		anmMtx[2][0] = -sinY;
 		anmMtx[0][0] = cosZ * cosY;
@@ -146,6 +158,7 @@ void J3DMtxCalcBlend::calcBlend(Vec* scale, Vec* position, J3DAnmTransform** ani
 		anmMtx[1][1] = sinXZ * sinY + cosXZ;
 		break;
 
+	}
 	default:
 		scale->x = scale->y = scale->z = 0.0f;
 		position->x = position->y = position->z = 0.0f;
@@ -213,7 +226,7 @@ void J3DMtxCalcBlendSharedMotionT::calcBlend(Vec* scale, Vec* position, J3DAnmTr
 		position->x = position->y = position->z = 0.0f;
 		break;
 
-	case 1: // only one animation with enough weight, just calculate matrix and assign scale/position based on that anim's info
+	case 1: { // only one animation with enough weight, just calculate matrix and assign scale/position based on that anim's info
 		J3DTransformInfo info;
 		anims[maxAnim]->getTransform(id, &info);
 		info.mTranslation.x *= jnt->getTransformInfo().mTranslation.x;
@@ -222,19 +235,31 @@ void J3DMtxCalcBlendSharedMotionT::calcBlend(Vec* scale, Vec* position, J3DAnmTr
 		*scale    = info.mScale;
 		*position = info.mTranslation;
 
-		f32 sinX = JMASinShort(info.mRotation.x);
-		f32 cosX = JMASCos(info.mRotation.x);
-		f32 sinY = JMASinShort(info.mRotation.y);
-		f32 cosY = JMASCos(info.mRotation.y);
-		f32 sinZ = JMASinShort(info.mRotation.z);
-		f32 cosZ = JMASCos(info.mRotation.z);
+		f32 sinX;
+		sinX = JMASinShort(info.mRotation.x);
+		f32 cosX;
+		cosX = JMASCos(info.mRotation.x);
+		f32 sinY;
+		sinY = JMASinShort(info.mRotation.y);
+		f32 cosY;
+		cosY = JMASCos(info.mRotation.y);
+		f32 sinZ;
+		sinZ = JMASinShort(info.mRotation.z);
+		f32 cosZ;
+		cosZ = JMASCos(info.mRotation.z);
 
-		f32 cosYZ    = (cosY * cosZ);
-		f32 sinYZ    = (sinY * sinZ);
-		f32 cosXZ    = (cosX * cosZ);
-		f32 sinXZ    = (sinX * sinZ);
-		f32 sincosXZ = (sinX * cosZ);
-		f32 cossinXZ = (cosX * sinZ);
+		f32 cosYZ;
+		cosYZ = (cosY * cosZ);
+		f32 sinYZ;
+		sinYZ = (sinY * sinZ);
+		f32 cosXZ;
+		cosXZ = (cosX * cosZ);
+		f32 sinXZ;
+		sinXZ = (sinX * sinZ);
+		f32 sincosXZ;
+		sincosXZ = (sinX * cosZ);
+		f32 cossinXZ;
+		cossinXZ = (cosX * sinZ);
 
 		anmMtx[2][0] = -sinY;
 		anmMtx[0][0] = cosZ * cosY;
@@ -250,6 +275,7 @@ void J3DMtxCalcBlendSharedMotionT::calcBlend(Vec* scale, Vec* position, J3DAnmTr
 
 		break;
 
+	}
 	default:
 		scale->x = scale->y = scale->z = 0.0f;
 		position->x = position->y = position->z = 0.0f;

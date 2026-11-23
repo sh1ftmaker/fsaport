@@ -144,8 +144,8 @@ namespace JASCalc
     {
         for (n; n != 0; n--)
         {
-            *dst++ = *((s16 *)s1)++;
-            *dst++ = *((s16 *)s2)++;
+            *dst++ = *s1++;
+            *dst++ = *s2++;
         }
     }
 
@@ -161,10 +161,10 @@ namespace JASCalc
 
         for (size = size / (4 * sizeof(u32)); size != 0; size--)
         {
-            copy1 = *((u32 *)usrc)++;
-            copy2 = *((u32 *)usrc)++;
-            copy3 = *((u32 *)usrc)++;
-            copy4 = *((u32 *)usrc)++;
+            copy1 = *usrc++;
+            copy2 = *usrc++;
+            copy3 = *usrc++;
+            copy4 = *usrc++;
 
             *udest++ = copy1;
             *udest++ = copy2;

@@ -20,6 +20,7 @@ void JMAEulerToQuat(s16 roll, s16 pitch, s16 yaw, Quaternion *q)
     q->z = sy * (cr * cp) - cy * (sr * sp);
 }
 
+#ifdef __MWERKS__
 void JMAQuatLerp(register const Quaternion *p, register const Quaternion *q, f32 t, Quaternion *dst) 
 {
     register f32 pxy, pzw, qxy, qzw;
@@ -53,7 +54,28 @@ void JMAQuatLerp(register const Quaternion *p, register const Quaternion *q, f32
         dst->w = -t * (p->w - q->w) + p->w;
     }
 }
+#else
+// Port: the dot product the asm computes, (x*x' + y*y') + (z*z' + w*w') as ps_sum0 adds it.
+void JMAQuatLerp(const Quaternion *p, const Quaternion *q, f32 t, Quaternion *dst)
+{
+    f32 dp = (p->x * q->x + p->z * q->z) + (p->y * q->y + p->w * q->w);
+    if (dp < 0.0)
+    {
+        dst->x = -t * (p->x + q->x) + p->x;
+        dst->y = -t * (p->y + q->y) + p->y;
+        dst->z = -t * (p->z + q->z) + p->z;
+        dst->w = -t * (p->w + q->w) + p->w;
+    }
+    else {
+        dst->x = -t * (p->x - q->x) + p->x;
+        dst->y = -t * (p->y - q->y) + p->y;
+        dst->z = -t * (p->z - q->z) + p->z;
+        dst->w = -t * (p->w - q->w) + p->w;
+    }
+}
+#endif
 
+#ifdef __MWERKS__
 void JMAFastVECNormalize(register const Vec *src, register Vec *dst)
 {
     register f32 vxy, rxy, vz, length;
@@ -72,6 +94,16 @@ void JMAFastVECNormalize(register const Vec *src, register Vec *dst)
         // clang-format on
     }
 }
+#else
+void JMAFastVECNormalize(const Vec *src, Vec *dst)
+{
+    f32 length = (src->z * src->z + src->x * src->x) + src->y * src->y;
+    f32 r = 1.0f / sqrtf(length);
+    dst->x = src->x * r;
+    dst->y = src->y * r;
+    dst->z = src->z * r;
+}
+#endif
 
 // FIXME: FSA has an unnamed function here, fn_80093280 (0x2C bytes, called
 // from game code): the fast vector magnitude
@@ -79,6 +111,7 @@ void JMAFastVECNormalize(register const Vec *src, register Vec *dst)
 //   fcmpu 0.0f,sq; frsqrte r,sq; beqlr; fmuls sq,sq,r; blr
 // i.e. sq == 0 ? sq : sq * frsqrte(sq). No donor has it and none names it, so
 // it is not written yet (its 0.0f constant is .sdata2 0x8053B944).
+#ifdef __MWERKS__
 void JMAVECScaleAdd(register const Vec *vec1, register const Vec *vec2, register Vec *dst, register f32 scale)
 {
     register f32 v1xy, v2xy, rxy, v1z, v2z, rz;
@@ -103,7 +136,16 @@ void JMAVECScaleAdd(register const Vec *vec1, register const Vec *vec2, register
     }
     // clang-format on
 }
+#else
+void JMAVECScaleAdd(const Vec *vec1, const Vec *vec2, Vec *dst, f32 scale)
+{
+    dst->x = vec1->x * scale + vec2->x;
+    dst->y = vec1->y * scale + vec2->y;
+    dst->z = vec1->z * scale + vec2->z;
+}
+#endif
 
+#ifdef __MWERKS__
 void JMAVECLerp(register const Vec *vec1, register const Vec *vec2, register Vec *dst, register f32 t)
 {
     register f32 v1xy, v2xy, v1z, v2z;
@@ -135,6 +177,14 @@ void JMAVECLerp(register const Vec *vec1, register const Vec *vec2, register Vec
     dst->y = (vec2->y - vec1->y) * t + vec1->y;
     dst->z = (vec2->z - vec1->z) * t + vec1->z;*/
 }
+#else
+void JMAVECLerp(const Vec *vec1, const Vec *vec2, Vec *dst, f32 t)
+{
+    dst->x = (vec2->x - vec1->x) * t + vec1->x;
+    dst->y = (vec2->y - vec1->y) * t + vec1->y;
+    dst->z = (vec2->z - vec1->z) * t + vec1->z;
+}
+#endif
 
 #if NO_PS // used in TP Debug
 void JMAMTXApplyScale(const Mtx src, Mtx dst, f32 xScale, f32 yScale, f32 zScale) {
@@ -144,6 +194,7 @@ void JMAMTXApplyScale(const Mtx src, Mtx dst, f32 xScale, f32 yScale, f32 zScale
 }
 #else
 
+#ifdef __MWERKS__
 void JMAMTXApplyScale(register const Mtx src, register Mtx dst, 
 register f32 xScale, register f32 yScale, register f32 zScale)
 {    
@@ -195,5 +246,19 @@ register f32 xScale, register f32 yScale, register f32 zScale)
     dst[3][2] = src[3][2] * normal;
     */
 }
+#else
+// Port: each row (x, y, z, w) of the 3x4 matrix times (xScale, yScale, zScale, 1), as the
+// asm does (the commented C above it is not what the asm does).
+void JMAMTXApplyScale(const Mtx src, Mtx dst, f32 xScale, f32 yScale, f32 zScale)
+{
+    for (int r = 0; r < 3; r++)
+    {
+        dst[r][0] = src[r][0] * xScale;
+        dst[r][1] = src[r][1] * yScale;
+        dst[r][2] = src[r][2] * zScale;
+        dst[r][3] = src[r][3];
+    }
+}
+#endif
 
 #endif

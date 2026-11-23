@@ -14,7 +14,7 @@ namespace JGeometry {
         {
         }
         TBox(const TBox &other)
-            : i(other.f), f(other.y)
+            : i(other.i), f(other.f)
         {
         }
 

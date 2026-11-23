@@ -220,7 +220,8 @@ bool JMessage::TParse::parseBlock_next(const void** dataPtr, u32* outSize, u32 f
 	case 'DAT1':
 		mResource->setData_block_messageData((char*)&header[2]);
 
-		u16 group = mResource->getGroupID();
+		u16 group;
+		group = mResource->getGroupID();
 		if (flag & 0x80) {
 			JGadget::TLinkList<TResource, 0>::iterator iResource(container.begin());
 			TResource* pResource;

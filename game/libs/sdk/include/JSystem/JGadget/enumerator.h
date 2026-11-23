@@ -59,9 +59,9 @@ struct TEnumerator2 {
 };
 
 template <typename T, int I>
-struct TContainerEnumerator : public TEnumerator2<TLinkList<T, I>::iterator, T> {
+struct TContainerEnumerator : public TEnumerator2<typename TLinkList<T, I>::iterator, T> {
 	TContainerEnumerator(TLinkList<T, I>* list)
-	    : TEnumerator2<TLinkList<T, I>::iterator, T>(list->begin(), list->end())
+	    : TEnumerator2<typename TLinkList<T, I>::iterator, T>(list->begin(), list->end())
 	{
 	}
 
@@ -69,9 +69,9 @@ struct TContainerEnumerator : public TEnumerator2<TLinkList<T, I>::iterator, T> 
 };
 
 template <typename T, int I>
-struct TContainerEnumerator_const : public TEnumerator2<TLinkList<T, I>::const_iterator, const T> {
+struct TContainerEnumerator_const : public TEnumerator2<typename TLinkList<T, I>::const_iterator, const T> {
 	inline TContainerEnumerator_const(const TLinkList<T, I>* list)
-	    : TEnumerator2<TLinkList<T, I>::const_iterator, const T>(list->begin(), list->end())
+	    : TEnumerator2<typename TLinkList<T, I>::const_iterator, const T>(list->begin(), list->end())
 	{
 	}
 
@@ -84,7 +84,7 @@ struct TContainerEnumerator_ {
 	    : enumerator(a.begin(), a.end())
 	{
 	}
-	JGadget::TEnumerator<T::iterator> enumerator;
+	JGadget::TEnumerator<typename T::iterator> enumerator;
 };
 } // namespace JGadget
 

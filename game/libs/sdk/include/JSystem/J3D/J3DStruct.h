@@ -6,6 +6,7 @@
 // From zeldaret/tp's J3DGraphBase/J3DStruct.h. FSA's J3DTexMtxInfo::operator=
 // (J3DStruct.cpp) copies the SRT info with this paired-single copy.
 struct J3DTextureSRTInfo {
+#ifdef __MWERKS__
 	inline void operator=(const J3DTextureSRTInfo& other)
 	{
 		register const f32* src = &other.mScaleX;
@@ -32,6 +33,17 @@ struct J3DTextureSRTInfo {
 			// clang-format on
 		};
 	}
+
+#else
+	inline void operator=(const J3DTextureSRTInfo& other)
+	{
+		mScaleX = other.mScaleX;
+		mScaleY = other.mScaleY;
+		mRotation = other.mRotation;
+		mTranslationX = other.mTranslationX;
+		mTranslationY = other.mTranslationY;
+	}
+#endif
 
 	f32 mScaleX;       // _00
 	f32 mScaleY;       // _04

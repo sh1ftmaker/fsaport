@@ -30,7 +30,10 @@ public:
 
     struct MoveParam_
     {
+#ifdef __MWERKS__
         MoveParam_() : mValue(0.0f), mTarget(0.0f), mCount(0) {}
+#endif
+        // Port: trivial so it can live in mMove's union; JASTrack's mMove() zeroes it.
         f32 mValue;  // 00
         f32 mTarget; // 04
         u32 mCount;  // 08
@@ -197,7 +200,7 @@ public:
     JASSeqCtrl mSeqCtrl;               // 000
     JASTrackPort mTrackPort;           // 05c
     JASRegisterParam mRegisterParam;   // 080
-#ifndef __clang__
+#if !defined(__clang__) || defined(FSA_PORT)
     union {
         struct {
 #endif
@@ -207,7 +210,7 @@ public:
             MoveParam_ pan;
             MoveParam_ dolby;
             MoveParam_ distFilter;
-#ifndef __clang__
+#if !defined(__clang__) || defined(FSA_PORT)
         } params;
         MoveParam_ array[6];
     } mMove;          // 09c, volume, pitch, fxmix, pan, dolby, distFilter

@@ -157,12 +157,12 @@ namespace JGeometry {
         void setEulerXYZ(const TVec3f &rSrc);
 
         void setEulerXYZ(f32 x, f32 y, f32 z) { // fabricated? might actually exist
-            f32 cr = std::cosf(x); // f26
-            f32 cp = std::cosf(y); // f31
-            f32 cy = std::cosf(z); // f30
-            f32 sr = std::sinf(x);   // f29
-            f32 sp = std::sinf(y); // f28
-            f32 sy = std::sinf(z); // f7
+            f32 cr = cosf(x); // f26
+            f32 cp = cosf(y); // f31
+            f32 cy = cosf(z); // f30
+            f32 sr = sinf(x);   // f29
+            f32 sp = sinf(y); // f28
+            f32 sy = sinf(z); // f7
 
             // ???
             f32 tmp = sy * sp;

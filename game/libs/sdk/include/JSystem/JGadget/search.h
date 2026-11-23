@@ -4,6 +4,7 @@
 #include "types.h"
 #include <functional>
 #include <iterator>
+#include <algorithm>
 
 namespace JGadget {
 

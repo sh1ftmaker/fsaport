@@ -45,6 +45,7 @@ static inline void OSInitFastCast(void) {
 // clang-format off
 
 
+#ifdef __MWERKS__
 static inline s16 __OSf32tos16(register f32 inF)
 {
 	register s16 out;
@@ -78,6 +79,25 @@ static inline u8 __OSf32tou8(register f32 inF)
 }
 
 static inline void OSf32tou8(f32 *f, u8 *out) { *out = __OSf32tou8(*f); }
+
+#else
+/* Port: psq_st with a GQR quantises with saturation, truncating toward zero. */
+static inline s16 __OSf32tos16(f32 inF)
+{
+    if (inF >= 32767.0f) return 32767;
+    if (inF <= -32768.0f) return -32768;
+    return (s16)inF;
+}
+static inline void OSf32tos16(f32 *f, s16 *out) { *out = __OSf32tos16(*f); }
+
+static inline u8 __OSf32tou8(f32 inF)
+{
+    if (inF >= 255.0f) return 255;
+    if (!(inF > 0.0f)) return 0;
+    return (u8)inF;
+}
+static inline void OSf32tou8(f32 *f, u8 *out) { *out = __OSf32tou8(*f); }
+#endif
 
 #ifdef __cplusplus
 }

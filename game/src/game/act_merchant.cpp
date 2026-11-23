@@ -50,7 +50,8 @@ void Merchant_8049CD48::update() {
     switch (mState) {
     case 0:
         fn_8022FEB8(&box, mLayer_0x4, mSerial, true, false);
-        s32 player = fn_8022FD8C(mSerial);
+        s32 player;
+        player = fn_8022FD8C(mSerial);
         if (player >= 0) {
             if (fn_802300EC(player)) {
                 u16 msg = 0x259;

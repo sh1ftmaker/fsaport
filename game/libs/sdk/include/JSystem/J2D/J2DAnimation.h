@@ -494,6 +494,7 @@ inline f32 J2DHermiteInterpolation<f32>(f32 f1, f32 *f2, f32 *f3, f32 *f4, f32 *
     return JMAHermiteInterpolation(f1, *f2, *f3, *f4, *f5, *f6, *f7);
 }
 
+#ifdef __MWERKS__
 template <>
 inline f32 J2DHermiteInterpolation<s16>(register f32 pp1, register s16 *pp2, register s16 *pp3, register s16 *pp4, register s16 *pp5,
                                         register s16 *pp6, register s16 *pp7)
@@ -540,5 +541,31 @@ inline f32 J2DHermiteInterpolation<s16>(register f32 pp1, register s16 *pp2, reg
     // clang-format on
     return fout;
 }
+#else
+// Port: the s16 Hermite transcribed from the asm above (psq_l with GQR5 = s16, scale 0).
+template <>
+inline f32 J2DHermiteInterpolation<s16>(f32 p1, s16 *p2, s16 *p3, s16 *p4, s16 *p5, s16 *p6, s16 *p7)
+{
+    f32 ff2 = *p2, ff0 = *p5, ff7 = *p3;
+    f32 ff5 = ff0 - ff2;
+    f32 ff6 = *p6;
+    f32 ff3 = p1 - ff2;
+    ff0 = *p7;
+    f32 ff4 = ff6 - ff7;
+    ff3 = ff3 / ff5;
+    f32 fout = *p4;
+    ff0 = ff0 * ff5 + ff7;
+    ff2 = ff3 * ff3;
+    ff4 = -(ff5 * fout - ff4);
+    ff0 = ff0 - ff6;
+    ff0 = ff0 - ff4;
+    ff0 = ff2 * ff0;
+    fout = ff5 * fout + ff0;
+    fout = fout * ff3 + ff7;
+    fout = ff4 * ff2 + fout;
+    fout = fout - ff0;
+    return fout;
+}
+#endif
 
 #endif

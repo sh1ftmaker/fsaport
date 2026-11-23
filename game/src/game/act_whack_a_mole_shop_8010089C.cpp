@@ -284,7 +284,8 @@ void WhackAMoleShop_8049C8EC::fn_80100D28() {
     case 6:
         gGameRoot2_8053AB10->field_0x24->addFocusPoint_8030C210(&mPos);
         field_0x234++;
-        s32 count = getActorManager_801F856C()->fn_801F68E0();
+        s32 count;
+        count = getActorManager_801F856C()->fn_801F68E0();
         if (field_0x234 > 50 && count == 1) {
             field_0x238 = getRepresentativePlayer_8022EA0C(field_0x238);
             fn_8022FE80(field_0x238, getPlayerLayer_8023DE58(field_0x238), mSerial, false, false);

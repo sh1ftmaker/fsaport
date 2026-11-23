@@ -26,7 +26,7 @@ public:
 
     JSUPtrLink *getFirstLink() const { return mHead; }
     JSUPtrLink *getLastLink() const { return mTail; }
-    u32 getNumLinks() const { return mLinkCount; }
+    u32 getNumLinks() const { return this->mLinkCount; }
 
     JSUPtrLink *mHead; // _0
     JSUPtrLink *mTail; // _4
@@ -75,7 +75,7 @@ public:
     JSULink<T> *getNth(u32 index) const { return (JSULink<T> *)getNthLink(index); }
     JSULink<T> *getEnd() const { return nullptr; }
 
-    u32 getNumLinks() const { return mLinkCount; }
+    u32 getNumLinks() const { return this->mLinkCount; }
 };
 
 template <typename T>
@@ -154,7 +154,7 @@ class JSULink : public JSUPtrLink
 public:
     JSULink(T *pData) : JSUPtrLink(pData) {}
 
-    T *getObject() const { return (T *)mData; }
+    T *getObject() const { return (T *)this->mData; }
     JSUList<T> *getSupervisor() const { return (JSUList<T> *)mPtrList; }
     JSULink<T> *getNext() const { return (JSULink<T> *)mNext; }
     JSULink<T> *getPrev() const { return (JSULink<T> *)mPrev; }
@@ -169,19 +169,19 @@ public:
     JSUTree(T *owner) : JSUList<T>(), JSULink<T>(owner) {}
 
 
-    bool appendChild(JSUTree<T> *child) { return append(child); }
-    bool prependChild(JSUTree<T> *child) { return prepend(child); }
-    bool removeChild(JSUTree<T> *child) { return remove(child); }
-    bool insertChild(JSUTree<T> *before, JSUTree<T> *child) { return insert(before, child); }
+    bool appendChild(JSUTree<T> *child) { return this->append(child); }
+    bool prependChild(JSUTree<T> *child) { return this->prepend(child); }
+    bool removeChild(JSUTree<T> *child) { return this->remove(child); }
+    bool insertChild(JSUTree<T> *before, JSUTree<T> *child) { return this->insert(before, child); }
 
     JSUTree<T> *getEndChild() const { return nullptr; }
-    JSUTree<T> *getFirstChild() const { return (JSUTree<T> *)getFirstLink(); }
-    JSUTree<T> *getLastChild() const { return (JSUTree<T> *)getLastLink(); }
-    JSUTree<T> *getNextChild() const { return (JSUTree<T> *)mNext; }
-    JSUTree<T> *getPrevChild() const { return (JSUTree<T> *)mPrev; }
-    u32 getNumChildren() const { return mLinkCount; } // In TP Debug getNumLinks() gets called here, however that kills something in JKRHeap::find(inline depth?)
-    T *getObject() const { return (T *)mData; }
-    JSUTree<T> *getParent() const { return (JSUTree<T> *)mPtrList; }
+    JSUTree<T> *getFirstChild() const { return (JSUTree<T> *)this->getFirstLink(); }
+    JSUTree<T> *getLastChild() const { return (JSUTree<T> *)this->getLastLink(); }
+    JSUTree<T> *getNextChild() const { return (JSUTree<T> *)this->mNext; }
+    JSUTree<T> *getPrevChild() const { return (JSUTree<T> *)this->mPrev; }
+    u32 getNumChildren() const { return this->mLinkCount; } // In TP Debug getNumLinks() gets called here, however that kills something in JKRHeap::find(inline depth?)
+    T *getObject() const { return (T *)this->mData; }
+    JSUTree<T> *getParent() const { return (JSUTree<T> *)this->mPtrList; }
 };
 
 template <typename T>

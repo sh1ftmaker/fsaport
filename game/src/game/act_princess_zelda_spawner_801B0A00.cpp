@@ -547,8 +547,10 @@ void PrincessZeldaSpawner_804A35AC::update() {
             }
         }
         field_0x244++;
-        f32 targetY = 500.0f + field_0x264.y;
-        f32 targetX = field_0x264.x - 500.0f;
+        f32 targetY;
+        targetY = 500.0f + field_0x264.y;
+        f32 targetX;
+        targetX = field_0x264.x - 500.0f;
         addCalc2_801F71A4(&field_0x27c.x, targetX, 0.1f, 0.7f);
         addCalc2_801F71A4(&field_0x27c.y, targetY, 0.1f, 0.7f);
         if (field_0x244 < 700) {

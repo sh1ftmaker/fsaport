@@ -133,14 +133,12 @@ void J3DDifferedTexMtx::loadExecute(const Mtx p1)
 				switch (tex_gen_src & 0x3f) {
 				case 9:
 				case 3:
-					Mtx& tmp5 = texMtxObj->getMtx(i);
-					mtx       = &tmp5;
+					mtx = &texMtxObj->getMtx(i);
 					break;
 				case 6:
 				case 7:
 				case 1:
-					Mtx& tmp6 = texMtxObj->getMtx(i);
-					mtx       = &tmp6;
+					mtx = &texMtxObj->getMtx(i);
 					break;
 				case 8:
 				case 2:

@@ -5,6 +5,7 @@
 #include "types.h"
 
 namespace JMathInlineVEC {
+#ifdef __MWERKS__
 inline void PSVECAdd(register const Vec* vec1, register const Vec* vec2, register Vec* dst)
 {
 	register f32 v1xy, v2xy, d1xy, v1z, v2z, d1z;
@@ -84,6 +85,14 @@ inline f32 PSVECSquareMag(register const Vec* src)
 	// clang-format on
 	return ret;
 }
+#else
+// Port: plain C for the paired-single versions above (same operation order).
+inline void PSVECAdd(const Vec* a, const Vec* b, Vec* d) { d->x = a->x + b->x; d->y = a->y + b->y; d->z = a->z + b->z; }
+inline void PSVECSubtract(const Vec* a, const Vec* b, Vec* d) { d->x = a->x - b->x; d->y = a->y - b->y; d->z = a->z - b->z; }
+inline void PSVECScale(const Vec* s, Vec* d, f32 k) { d->x = s->x * k; d->y = s->y * k; d->z = s->z * k; }
+inline f32 PSVECDotProduct(const Vec* a, const Vec* b) { return (a->x * b->x + a->y * b->y) + a->z * b->z; }
+inline f32 PSVECSquareMag(const Vec* s) { return (s->z * s->z + s->x * s->x) + s->y * s->y; }
+#endif
 } // namespace JMathInlineVEC
 
 #endif

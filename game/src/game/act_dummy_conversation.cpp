@@ -66,7 +66,8 @@ void DummyConversation_804B1A48::update() {
         break;
     case 1:
         fn_8022FE80(player, mLayer_0x4, mSerial, 0, 0);
-        s32 owner = fn_8022FD8C(mSerial);
+        s32 owner;
+        owner = fn_8022FD8C(mSerial);
         if (owner == player) {
             if (open(player, mLayer_0x4, mSerial, mPos, 0x10)) {
                 mState = 2;

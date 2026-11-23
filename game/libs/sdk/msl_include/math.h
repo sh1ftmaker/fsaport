@@ -9,7 +9,7 @@
 extern "C" {
 #endif // ifdef __cplusplus
 
-#ifndef __MWERKS__
+#if !defined(__MWERKS__) && !defined(FSA_PORT)
 // Get clangd to shut up about __fabs being undefined.
 #define __fabs(x)    (x)
 #define __fabsf(x)   (x)

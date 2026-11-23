@@ -9,6 +9,10 @@
 #include "dolphin/os/OSMutex.h"
 #include "types.h"
 
+// JASKernel.h includes this header, so declare the one function the pool uses.
+class JKRHeap;
+namespace JASKernel { JKRHeap *getSystemHeap(); }
+
 
 struct JASGenericMemPool
 {
@@ -44,30 +48,30 @@ struct JASMemPool : public JASGenericMemPool
     typedef JASMemPool<T> JASMemPoolT;
 
     int getTotalMemCount() const {
-        JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock(*this);
+        typename JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock lock(*this);
         return JASGenericMemPool::getTotalMemCount();
     }
 
     int getFreeMemCount() const {
-        JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock(*this);
+        typename JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock lock(*this);
         return JASGenericMemPool::getFreeMemCount();
     }
 
     void newMemPool(int count) {
-        JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock(*this);
+        typename JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock lock(*this);
         JASGenericMemPool::newMemPool(sizeof(T), count);
     }
 
     void free(void *p, u32 n) {
         JUT_ASSERT(n == sizeof(T));
-        JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock(*this);
+        typename JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock lock(*this);
         JASGenericMemPool::free(p, n);
     }
 
     T *alloc(u32 n)
     {
         JUT_ASSERT(n == sizeof(T));
-        JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock(*this);
+        typename JASThreadingModel::SingleThreaded<JASMemPoolT>::Lock lock(*this);
         return (T*)JASGenericMemPool::alloc(n); // evil cast fixes stuff
     }
 };

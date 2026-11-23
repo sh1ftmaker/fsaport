@@ -267,7 +267,8 @@ void TrickFloor_804A83A0::update() {
         break;
     }
     case 1:
-        s32 bit = field_0x238;
+        s32 bit;
+        bit = field_0x238;
         if (bit != 0) {
             if (getGameView_802D6A9C()->isScreenFlagSet_802D800C(bit)) {
                 field_0x230 = 2;
