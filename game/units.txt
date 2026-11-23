@@ -726,3 +726,7 @@ src/game/wander_steer_timer_8021B904.cpp	--language=c++ --std=c++98 -Ilibs/sdk/i
 src/game/wander_turn_timer_80217374.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
 src/game/warning_window_8042E964.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
 src/game/zora_escort_goal_list_80127E20.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
+@GENERATED@/globals.c	-Ilibs/sdk/include -DNDEBUG=1 --std=c99
+src/port/missing_functions.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
+src/port/jsystem_statics.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JAudio/System/JASWaveBank.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
