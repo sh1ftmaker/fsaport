@@ -7,6 +7,7 @@
 #include "JSystem/JSupport.h"
 
 #include "types.h"
+#include "port/be.h"
 
 class JASInstEffect;
 
@@ -19,30 +20,30 @@ namespace JASBNKParser
 {
     struct TFileHeader
     {
-        /* 0x0 */ u32 id; // 'IBNK'
-        /* 0x4 */ u32 mSize;
-        /* 0x8 */ u32 mGlobalId;
-        /* 0xC */ u32 mVersion;
+        /* 0x0 */ BE<u32> id; // 'IBNK'
+        /* 0x4 */ BE<u32> mSize;
+        /* 0x8 */ BE<u32> mGlobalId;
+        /* 0xC */ BE<u32> mVersion;
     };
 
     namespace Ver1
     {
         struct TOsc
         {
-            /* 0x00 */ u32 id; // 'Osci'
+            /* 0x00 */ BE<u32> id; // 'Osci'
             /* 0x04 */ u8 mTarget;
-            /* 0x08 */ f32 mRate;
-            /* 0x0C */ u32 mAttackEnvelopeOffset;
-            /* 0x10 */ u32 mReleaseEnvelopeOffset;
-            /* 0x14 */ f32 mScale;
-            /* 0x18 */ f32 mVertex;
+            /* 0x08 */ BE<f32> mRate;
+            /* 0x0C */ BE<u32> mAttackEnvelopeOffset;
+            /* 0x10 */ BE<u32> mReleaseEnvelopeOffset;
+            /* 0x14 */ BE<f32> mScale;
+            /* 0x18 */ BE<f32> mVertex;
         };
 
         struct TRandData
         {
             /* 0x00 */ u8 mType;
-            /* 0x04 */ f32 mFloor;
-            /* 0x08 */ f32 mCeiling;
+            /* 0x04 */ BE<f32> mFloor;
+            /* 0x08 */ BE<f32> mCeiling;
         };
 
         struct TSenseData
@@ -50,37 +51,37 @@ namespace JASBNKParser
             /* 0x00 */ u8 mType;
             /* 0x01 */ u8 mTrigger;
             /* 0x02 */ u8 mCenterKey;
-            /* 0x04 */ f32 mMin;
-            /* 0x08 */ f32 mMax;
+            /* 0x04 */ BE<f32> mMin;
+            /* 0x08 */ BE<f32> mMax;
         };
 
         struct TVeloData
         {
             /* 0x00 */ u8 _0;
-            /* 0x04 */ u32 _4;
-            /* 0x08 */ f32 mVolume;
-            /* 0x0C */ f32 mPitch;
+            /* 0x04 */ BE<u32> _4;
+            /* 0x08 */ BE<f32> mVolume;
+            /* 0x0C */ BE<f32> mPitch;
         };
 
         struct TInstData
         {
-            /* 0x00 */ f32 mVolume;
-            /* 0x04 */ f32 mPitch;
+            /* 0x00 */ BE<f32> mVolume;
+            /* 0x04 */ BE<f32> mPitch;
         };
 
         struct TPercData
         {
-            /* 0x00 */ f32 mVolume;
-            /* 0x04 */ f32 mPitch;
+            /* 0x00 */ BE<f32> mVolume;
+            /* 0x04 */ BE<f32> mPitch;
             /* 0x08 */ u8 mPan;
-            /* 0x0A */ u16 mRelease;
-            /* 0x0C */ u32 mEffectCount;
+            /* 0x0A */ BE<u16> mRelease;
+            /* 0x0C */ BE<u32> mEffectCount;
         };
 
         struct TChunk
         {
-            /* 0x0 */ u32 mID;
-            /* 0x4 */ u32 mSize;
+            /* 0x0 */ BE<u32> mID;
+            /* 0x4 */ BE<u32> mSize;
         };
 
         struct TEnvtChunk : TChunk
@@ -90,14 +91,14 @@ namespace JASBNKParser
 
         struct TOscChunk : TChunk
         {
-            /* 0x8 */ u32 mCount;
+            /* 0x8 */ BE<u32> mCount;
             /* 0xC */ TOsc mOsc[0];
         };
 
         struct TListChunk : TChunk
         {
-            /* 0x8 */ u32 count;
-            /* 0xC */ u32 mOffsets[0];
+            /* 0x8 */ BE<u32> count;
+            /* 0xC */ BE<u32> mOffsets[0];
         };
 
         TChunk *findChunk(const void *stream, u32 id);
@@ -112,32 +113,32 @@ namespace JASBNKParser
         {
             T *ptr(const void *stream) const { return JSUConvertOffsetToPtr<T>(stream, offset); }
 
-            /* 0x0 */ u32 offset;
+            /* 0x0 */ BE<u32> offset;
         };
 
         struct TOsc
         {
             /* 0x00 */ u8 mTarget;
-            /* 0x04 */ f32 mRate;
+            /* 0x04 */ BE<f32> mRate;
             /* 0x08 */ TOffset<JASOscillator::Point> mPointOffset;
             /* 0x0C */ TOffset<JASOscillator::Point> mRelPointOffset;
-            /* 0x10 */ f32 mScale;
-            /* 0x14 */ f32 mVertex;
+            /* 0x10 */ BE<f32> mScale;
+            /* 0x14 */ BE<f32> mVertex;
         };
 
         struct TVmap
         {
             /* 0x00 */ u8 _0;
-            /* 0x04 */ u32 _4;
-            /* 0x08 */ f32 mVolume;
-            /* 0x0C */ f32 mPitch;
+            /* 0x04 */ BE<u32> _4;
+            /* 0x08 */ BE<f32> mVolume;
+            /* 0x0C */ BE<f32> mPitch;
         };
 
         struct TRand
         {
             /* 0x00 */ u8 mType;
-            /* 0x04 */ f32 mFloor;
-            /* 0x08 */ f32 mCeiling;
+            /* 0x04 */ BE<f32> mFloor;
+            /* 0x08 */ BE<f32> mCeiling;
         };
 
         struct TSense
@@ -145,51 +146,51 @@ namespace JASBNKParser
             /* 0x00 */ u8 mType;
             /* 0x01 */ u8 mTrigger;
             /* 0x02 */ u8 mCenterKey;
-            /* 0x04 */ f32 mMin;
-            /* 0x08 */ f32 mMax;
+            /* 0x04 */ BE<f32> mMin;
+            /* 0x08 */ BE<f32> mMax;
         };
 
         struct TKeymap
         {
             /* 0x00 */ u8 mHighKey;
-            /* 0x04 */ u32 mVeloRegionCount;
+            /* 0x04 */ BE<u32> mVeloRegionCount;
             /* 0x08 */ TOffset<TVmap> mVmapOffset[0];
         };
 
         struct TInst
         {
-            /* 0x00 */ u32 id;
+            /* 0x00 */ BE<u32> id;
             /* 0x04 */ u8 _04[4];
-            /* 0x08 */ f32 mVolume;
-            /* 0x0C */ f32 mPitch;
+            /* 0x08 */ BE<f32> mVolume;
+            /* 0x0C */ BE<f32> mPitch;
             /* 0x10 */ TOffset<TOsc> mOscOffset[2];
             /* 0x18 */ TOffset<TRand> mRandOffset[2];
             /* 0x20 */ TOffset<TSense> mSenseOffset[2];
-            /* 0x28 */ u32 mKeyRegionCount;
+            /* 0x28 */ BE<u32> mKeyRegionCount;
             /* 0x2C */ TOffset<TKeymap> mKeymapOffset[0];
         };
 
         struct TPmap
         {
-            /* 0x00 */ f32 mVolume;
-            /* 0x04 */ f32 mPitch;
+            /* 0x00 */ BE<f32> mVolume;
+            /* 0x04 */ BE<f32> mPitch;
             /* 0x08 */ TOffset<TRand> mRandOffset[2];
-            /* 0x10 */ u32 mVeloRegionCount;
+            /* 0x10 */ BE<u32> mVeloRegionCount;
             /* 0x14 */ TOffset<TVmap> mVmapOffset[0];
         };
 
         struct TPerc
         {
-            /* 0x000 */ u32 mMagic; // 'PERC' or 'PER2'
+            /* 0x000 */ BE<u32> mMagic; // 'PERC' or 'PER2'
             /* 0x004 */ u8 _004[0x84];
             /* 0x088 */ TOffset<TPmap> mPmapOffset[0x80];
             /* 0x288 */ s8 mPan[0x80];
-            /* 0x308 */ u16 mRelease[0x80];
+            /* 0x308 */ BE<u16> mRelease[0x80];
         };
 
         struct TOffsetData
         {
-            /* 0x000 */ u32 mMagic; // 'BANK'
+            /* 0x000 */ BE<u32> mMagic; // 'BANK'
             /* 0x004 */ TOffset<TInst> mInstOffset[0x80];
             /* 0x204 */ u8 _204[0x190];
             /* 0x394 */ TOffset<TPerc> mPercOffset[12];

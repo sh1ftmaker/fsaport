@@ -1,6 +1,7 @@
 #ifndef JAUDIO_JAUSOUNDTABLE_H
 #define JAUDIO_JAUSOUNDTABLE_H
 
+#include "port/be.h"
 #include "JSystem/JAudio/Interface/JAISound.h"
 #include "JSystem/JAudio/System/JASGadget.h"
 
@@ -10,12 +11,12 @@ struct JAUSoundTableItem
     u8 _1; // (Other type of priority?) 01
     u8 mVolume; // 02 (FSA: lbz 2, divided by 127.0f in getSeInfo/getSeqInfo)
     u8 _3; // 03
-    u32 mSwBit; // 04
+    BE<u32> mSwBit; // 04
     u8 mPTrack; // 08
     u8 _9; // 09
-    u16 mSeqResourceID; // 0a
-    u32 _c; // 0c
-    u16 mAudibleSw; // 10
+    BE<u16> mSeqResourceID; // 0a
+    BE<u32> _c; // 0c
+    BE<u16> mAudibleSw; // 10
 };
 
 template <typename Root, typename Section, typename Group, typename Typename_0>
@@ -38,13 +39,13 @@ struct JAUSoundTable_
         mRes = res;
         // magic number is not in debug rom. I'm not sure what this comparison is (maybe some sort of '' number?)
         // I also do not know how it is different between JAUSoundTable and JAUSoundNameTable
-        if (*(u32 *)mRes + 0xbdad0000 != Root::magicNumber())
+        if (be32(mRes) + 0xbdad0000 != Root::magicNumber()) // port: big-endian table
         {
             mRes = NULL;
         }
         else
         {
-            _4 = (Root *)((u8 *)mRes + *((u32 *)mRes + 3));
+            _4 = (Root *)((u8 *)mRes + be32((const u8 *)mRes + 12));
         }
     }
 
@@ -95,8 +96,8 @@ struct JAUSoundTable_
 struct JAUSoundTableRoot
 {
     static inline u32 magicNumber() { return 0x5420; }
-    u32 mSectionNumber;
-    u32 mSectionOffsets[0];
+    BE<u32> mSectionNumber;
+    BE<u32> mSectionOffsets[0];
 };
 
 struct JAUSoundTableSection
@@ -114,8 +115,8 @@ struct JAUSoundTableSection
         return mGroupOffsets[index];
     }
 
-    u32 mNumGroups;
-    u32 mGroupOffsets[0];
+    BE<u32> mNumGroups;
+    BE<u32> mGroupOffsets[0];
 };
 
 struct JAUSoundTableGroup
@@ -143,11 +144,11 @@ struct JAUSoundTableGroup
         {
             return 0;
         }
-        return *(u32 *)(mTypeIds + index * 4) & 0xffffff;
+        return be32(mTypeIds + index * 4) & 0xffffff; // port: type id in the top byte, big-endian
     }
 
-    u32 mNumItems;
-    u32 _4;
+    BE<u32> mNumItems;
+    BE<u32> _4;
     u8 mTypeIds[0];
 };
 
@@ -182,8 +183,8 @@ struct JAUSoundTable : public JASGlobalInstance<JAUSoundTable>
 struct JAUSoundNameTableRoot
 {
     static inline u32 magicNumber() { return 0x544e; }
-    u32 mSectionNumber;
-    u32 mSectionOffsets[0];
+    BE<u32> mSectionNumber;
+    BE<u32> mSectionOffsets[0];
 };
 
 struct JAUSoundNameTableSection

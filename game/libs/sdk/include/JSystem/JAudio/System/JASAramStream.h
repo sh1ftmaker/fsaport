@@ -4,6 +4,7 @@
 #include "JSystem/JAudio/System/JASTaskThread.h"
 #include "JSystem/JUtility/JUTAssert.h"
 #include "dolphin/dvd.h"
+#include "port/be.h"
 
 class JASChannel;
 
@@ -34,17 +35,17 @@ public:
 
     struct Header
     {
-        u32 tag;        // 00
+        BE<u32> tag;        // 00
         u8 _4[5];       // 04
         u8 format;      // 09
-        u16 bits;       // 0A
-        u16 channels;   // 0C
-        u16 loop;       // 0E
-        int _10;        // 10
+        BE<u16> bits;       // 0A
+        BE<u16> channels;   // 0C
+        BE<u16> loop;       // 0E
+        BE<int> _10;        // 10
         u8 _14[4];      // 14
-        int loop_start; // 18
-        int loop_end;   // 1C
-        u32 block_size; // 20
+        BE<int> loop_start; // 18
+        BE<int> loop_end;   // 1C
+        BE<u32> block_size; // 20
         u8 _24[4];      // 24
         u8 _28;         // 28
         u8 _29[0x17];   // 29
@@ -53,12 +54,12 @@ public:
 
     struct BlockHeader
     {
-        u32 tag; // 00
-        u32 _4;  // 04
+        BE<u32> tag; // 00
+        BE<u32> _4;  // 04
         struct   // 08
         {
-            s16 _0;
-            s16 _2;
+            BE<s16> _0;
+            BE<s16> _2;
         } _8[6];
     }; // Size: 0x20
 

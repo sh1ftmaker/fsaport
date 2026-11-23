@@ -18,13 +18,16 @@ cxx() {
 cxx "$game/libs/jsystem/JSystem/JKernel/JKRDecomp.cpp" "$out/JKRDecomp.o"
 cxx "$game/libs/jsystem/JSystem/J3DGraphLoader/J3DModelLoader.cpp" "$out/J3DModelLoader.o"
 cxx "$game/libs/jsystem/JSystem/J3DGraphLoader/J3DAnmLoader.cpp" "$out/J3DAnmLoader.o"
-for f in test_formats test_extra test_archive; do
+cxx "$game/libs/jsystem/JSystem/JAudio/Utility/JAUAudioArcInterpreter.cpp" "$out/JAUAudioArcInterpreter.o"
+cxx "$game/libs/jsystem/JSystem/JAudio/Utility/JAUSeqCollection.cpp" "$out/JAUSeqCollection.o"
+for f in test_formats test_extra test_audio test_archive; do
   cxx "$here/$f.cpp" "$out/$f.o"
 done
 emcc -O1 -c "$here/io.c" -o "$out/io.o"
 # Only the functions above are called; their other references stay unresolved.
 em++ -O1 "$out/test_archive.o" "$out/test_formats.o" "$out/test_extra.o" "$out/JKRDecomp.o" \
-  "$out/J3DModelLoader.o" "$out/J3DAnmLoader.o" "$out/io.o" -o "$out/test_archive.js" \
+  "$out/J3DModelLoader.o" "$out/J3DAnmLoader.o" "$out/JAUAudioArcInterpreter.o" "$out/JAUSeqCollection.o" \
+  "$out/test_audio.o" "$out/io.o" -o "$out/test_archive.js" \
   -sNODERAWFS=1 -sALLOW_MEMORY_GROWTH=1 -sERROR_ON_UNDEFINED_SYMBOLS=0 -sENVIRONMENT=node -Wno-undefined \
   -Wl,--allow-multiple-definition # dolphin/os.h defines __OSTVMode/__OSBusClock/__OSCoreClock in every unit
 node "$out/test_archive.js" "$1"
