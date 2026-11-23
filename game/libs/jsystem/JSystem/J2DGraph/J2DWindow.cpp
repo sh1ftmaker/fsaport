@@ -45,12 +45,20 @@ J2DWindow::J2DWindow(J2DPane* parent, JSURandomInputStream* input, J2DMaterial* 
     u32 streamData[2];
     u32 startPos = input->getPosition();
     input->read(streamData, 8);
+#ifdef FSA_PORT
+    streamData[0] = __builtin_bswap32(streamData[0]); // port: big-endian block header
+    streamData[1] = __builtin_bswap32(streamData[1]);
+#endif
 
     mBloBlockType = 'WIN1';
 
     u32 newPos = input->getPosition();
     int newData[2];
     input->peek(newData, 8);
+#ifdef FSA_PORT
+    newData[0] = __builtin_bswap32(newData[0]); // port: big-endian block header
+    newData[1] = __builtin_bswap32(newData[1]);
+#endif
     makePaneExStream(parent, input);
     input->seek(newPos + newData[1], SEEK_SET);
 
@@ -143,6 +151,10 @@ void J2DWindow::private_readStream(J2DPane* parent, JSURandomInputStream* input,
     int startPos = input->getPosition();
     u32 startData[2];
     input->read(startData, 8);
+#ifdef FSA_PORT
+    startData[0] = __builtin_bswap32(startData[0]); // port: big-endian block header
+    startData[1] = __builtin_bswap32(startData[1]);
+#endif
     mBloBlockType = startData[0];
     makePaneStream(parent, input);
     JUTResReference resRef;

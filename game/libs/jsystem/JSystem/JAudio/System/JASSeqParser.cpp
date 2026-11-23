@@ -6,6 +6,7 @@
 #include "JSystem/JSupport.h"
 #include "JSystem/JUtility/JUTAssert.h"
 #include "dolphin/types.h"
+#include "port/be.h"
 
 u16 (*JASSeqParser::sCallBackFunc)(JASTrack*, u16);
 
@@ -528,8 +529,41 @@ s32 JASSeqParser::cmdSetLastNote(JASTrack *track, u32 *pData) {
     return 0;
 }
 
+#ifdef FSA_PORT
+// Port: an envelope in the sequence data is big-endian JASOscillator::Points (three
+// s16 each, ended by a mode > 10, as JASBNKParser::Ver0::getOscTableEndPtr finds
+// the end). The track keeps the pointer and reads it as host values, and a looping
+// sequence sets the same table again, so each table gets one host copy, cached by
+// its address in the sequence (the data is never changed in place).
+static const JASOscillator::Point *portHostOscTable(const void *src)
+{
+    enum { kTables = 64, kPoints = 64 };
+    static const void *sSrc[kTables];
+    static JASOscillator::Point sCopy[kTables][kPoints];
+    static int sUsed;
+    for (int i = 0; i < sUsed; i++)
+        if (sSrc[i] == src)
+            return sCopy[i];
+    int slot = sUsed < kTables ? sUsed++ : (kTables - 1);
+    const u8 *p = (const u8 *)src;
+    for (int i = 0; i < kPoints; i++, p += 6) {
+        sCopy[slot][i]._0 = be16s(p);
+        sCopy[slot][i]._2 = be16s(p + 2);
+        sCopy[slot][i]._4 = be16s(p + 4);
+        if (sCopy[slot][i]._0 > 10)
+            break;
+    }
+    sSrc[slot] = src;
+    return sCopy[slot];
+}
+#endif
+
 s32 JASSeqParser::cmdEnvSet(JASTrack *track, u32 *pData) {
+#ifdef FSA_PORT
+    track->setOscTable(pData[0], portHostOscTable(track->getSeqCtrl()->getAddr(pData[1])));
+#else
     track->setOscTable(pData[0], (JASOscillator::Point*)track->getSeqCtrl()->getAddr(pData[1]));
+#endif
     return 0;
 }
 
@@ -600,7 +634,16 @@ s32 JASSeqParser::cmdNop(JASTrack *track, u32 *pData) {
 }
 
 s32 JASSeqParser::cmdFIRSet(JASTrack *track, u32 *pData) {
+#ifdef FSA_PORT
+    // Port: the eight taps are big-endian in the sequence; setFIR copies them.
+    const u8 *src = (const u8 *)track->getSeqCtrl()->getAddr(pData[0]);
+    s16 fir[8];
+    for (int i = 0; i < 8; i++)
+        fir[i] = be16s(src + 2 * i);
+    track->setFIR(fir);
+#else
     track->setFIR((s16*)track->getSeqCtrl()->getAddr(pData[0]));
+#endif
     return 0;
 }
 

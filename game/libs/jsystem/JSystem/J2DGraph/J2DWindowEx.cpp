@@ -17,10 +17,18 @@ J2DWindowEx::J2DWindowEx(J2DPane* parent, JSURandomInputStream* input, u32 flags
     int position   = input->getPosition();
     int uStack_88[2];
     input->read(uStack_88, 8);
+#ifdef FSA_PORT
+    uStack_88[0] = __builtin_bswap32(uStack_88[0]); // port: big-endian block header
+    uStack_88[1] = __builtin_bswap32(uStack_88[1]);
+#endif
     mBloBlockType = uStack_88[0];
     int iVar2     = input->getPosition();
     int auStack_90[2];
     input->peek(auStack_90, 8);
+#ifdef FSA_PORT
+    auStack_90[0] = __builtin_bswap32(auStack_90[0]); // port: big-endian block header
+    auStack_90[1] = __builtin_bswap32(auStack_90[1]);
+#endif
     makePaneExStream(parent, input);
     input->seek(iVar2 + auStack_90[1], SEEK_SET);
     J2DWindowData windowData;

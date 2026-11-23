@@ -298,12 +298,61 @@ static void checkJpc(const char* name, const u8* file)
     }
 }
 
+// A screen animation (J2D BTK) against its screen (BLO), as J2DScreen::setAnimation
+// does: every animated material name must resolve to a material of the screen.
+void checkScreenAnm(const char* name, const u8* btk, const u8* blo)
+{
+    J3DPortSwapAnmFile(btk);
+    const J3DFileHeader* hdr = (const J3DFileHeader*)btk;
+    const J3DAnmTextureSRTKeyData* d = (const J3DAnmTextureSRTKeyData*)hdr->getFirstBlock();
+    CHECK(hdr->mFileVersion == 'btk1' && d->mBlockType == J3DFBT_AnmTextureSRTKey, "%s: btk1/TTK1", name);
+    const ResNTAB* names = (const ResNTAB*)((const u8*)d + d->mNameTab1Offset);
+    const u16* matIDs = (const u16*)((const u8*)d + d->mUpdateMatIDOffset);
+    const u8* texMtx = (const u8*)d + d->mUpdateTexMtxIDOffset;
+    // The screen's MAT1 name table (J2DScreen::createMaterial reads it at +0x14).
+    const ResNTAB* matNames = nullptr;
+    u16 matCount = 0;
+    const u8* p = blo + 0x20;
+    for (int i = 0; i < 2000; i++) {
+        u32 type = be32(p);
+        s32 len = be32s(p + 4);
+        if (type == 'MAT1') {
+            matCount = be16(p + 8);
+            matNames = (const ResNTAB*)(p + be32(p + 0x14));
+            break;
+        }
+        if (type == 'EXT1' || len < 8)
+            break;
+        p += len;
+    }
+    CHECK(matNames != nullptr, "%s: screen has no MAT1", name);
+    u32 n = names->mEntryNum;
+    printf("  %s: %d frames, %u animated materials, screen has %u materials\n", name, d->mTotalFrameCount,
+           (unsigned)n, matCount);
+    CHECK(n > 0 && n < 256, "%s: name count", name);
+    for (u32 i = 0; i < n && matNames; i++) {
+        const char* an = (const char*)names + names->mEntries[i].mOffs;
+        int found = -1;
+        for (u32 m = 0; m < matNames->mEntryNum; m++)
+            if (strcmp((const char*)matNames + matNames->mEntries[m].mOffs, an) == 0)
+                found = (int)m;
+        if (i < 4)
+            printf("    \"%s\" -> material %d (update id %u, tex mtx %u)\n", an, found, matIDs[i], texMtx[i]);
+        CHECK(found >= 0, "%s: animated material \"%s\" not in the screen", name, an);
+    }
+    const J3DAnmTransformKeyTable* tab = (const J3DAnmTransformKeyTable*)((const u8*)d + d->mTableOffset);
+    const f32* trans = (const f32*)((const u8*)d + d->mTransValOffset);
+    printf("    table 0: scale %u keys, rot %u keys, trans %u keys (first trans value %.3f)\n",
+           tab[0].mScaleInfo.mMaxFrame, tab[0].mRotationInfo.mMaxFrame, tab[0].mTranslationInfo.mMaxFrame, trans[0]);
+    CHECK(tab[0].mScaleInfo.mMaxFrame < 1000 && tab[0].mTranslationInfo.mMaxFrame < 1000, "%s: key counts", name);
+}
+
 void testExtra(const char* name, const u8* file, u32 size)
 {
     static int bmds = 0, btks = 0, brks = 0;
     if (endsWith(name, ".jpc"))
         checkJpc(name, file);
-    if (endsWith(name, ".btk") && btks++ < 1)
+    if (endsWith(name, ".btk") && strncmp(name, "w_kumo", 6) == 0 && btks++ < 1)
         checkAnm(name, file);
     if (endsWith(name, ".brk") && brks++ < 1)
         checkAnm(name, file);

@@ -249,6 +249,12 @@ int main(int argc, char** argv)
         testFormats(&data.data, data.strings, (void*)data.files, data.info->num_file_entries);
     }
 
+    Mounted main2d; // GbaWindow's screens and animations (mMain2DArchive)
+    if (mount("main2D.arc", &main2d)) {
+        listArchive(&main2d, 0);
+        testFormats(&main2d.data, main2d.strings, (void*)main2d.files, main2d.info->num_file_entries);
+    }
+
     u32 baaSize;
     u8* baa = discFile("JaiInit.baa", &baaSize);
     CHECK(baa != nullptr, "JaiInit.baa not on the disc");

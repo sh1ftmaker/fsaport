@@ -147,4 +147,17 @@ void testFormats(u8** data, const char* strings, void* filesv, u32 numFiles)
             checkBlo(n, file);
         testExtra(n, file, e->mSize);
     }
+    // Screen animations: each J2D .btk next to a .blo of the same name.
+    for (u32 i = 0; i < numFiles; i++) {
+        JKRArchive::SDIFileEntry* e = &files[i];
+        const char* n = strings + e->getNameOffset();
+        size_t l = strlen(n);
+        if (e->isDirectory() || l < 5 || strcmp(n + l - 4, ".btk") != 0)
+            continue;
+        for (u32 j = 0; j < numFiles; j++) {
+            const char* m = strings + files[j].getNameOffset();
+            if (!files[j].isDirectory() && strlen(m) == l && strncmp(m, n, l - 4) == 0 && strcmp(m + l - 4, ".blo") == 0)
+                checkScreenAnm(n, *data + e->mDataOffset, *data + files[j].mDataOffset);
+        }
+    }
 }
