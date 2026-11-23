@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_J2D_J2DMATERIALFACTORY_H
 #define _JSYSTEM_J2D_J2DMATERIALFACTORY_H
 
+#include "port/be.h"
 #include "JSystem/J2D/J2DMaterial.h"
 #include "JSystem/J2D/J2DTexMtx.h"
 #include "JSystem/J2D/J2DManage.h"
@@ -23,30 +24,30 @@ struct J2DIndInitData {
  */
 struct J2DMaterialBlock {
     u8 _00[8];                   // _00, unknown
-    u16 _08;                     // _08, connected to J2DMaterialFactory's _00
-    u32 mMatInitDataOffset;      // _0C
-    u32 mMatIndexTableOffset;    // _10
-    u32 _14;                     // _14
-    u32 mIndInitDataOffset;      // _18
-    u32 mCullModeOffset;         // _1C
-    u32 mMatColorOffset;         // _20
-    u32 mColorChanNumOffset;     // _24
-    u32 mColorChanInfoOffset;    // _28
-    u32 mTexGenNumOffset;        // _2C
-    u32 mTexCoordInfoOffset;     // _30
-    u32 mTexMtxInfoOffset;       // _34
-    u32 mTexNoOffset;            // _38
-    u32 mFontNoOffset;           // _3C
-    u32 mTevOrderInfoOffset;     // _40
-    u32 mTevColorOffset;         // _44
-    u32 mTevKColorOffset;        // _48
-    u32 mTevStageNumOffset;      // _4C
-    u32 mTevStageInfoOffset;     // _50
-    u32 mTevSwapInfoOffset;      // _54
-    u32 mTevSwapTableInfoOffset; // _58
-    u32 mAlphaCompInfoOffset;    // _5C
-    u32 mBlendInfoOffset;        // _60
-    u32 mDitherOffset;           // _64
+    BE<u16> _08;                     // _08, connected to J2DMaterialFactory's _00
+    BE<u32> mMatInitDataOffset;      // _0C
+    BE<u32> mMatIndexTableOffset;    // _10
+    BE<u32> _14;                     // _14
+    BE<u32> mIndInitDataOffset;      // _18
+    BE<u32> mCullModeOffset;         // _1C
+    BE<u32> mMatColorOffset;         // _20
+    BE<u32> mColorChanNumOffset;     // _24
+    BE<u32> mColorChanInfoOffset;    // _28
+    BE<u32> mTexGenNumOffset;        // _2C
+    BE<u32> mTexCoordInfoOffset;     // _30
+    BE<u32> mTexMtxInfoOffset;       // _34
+    BE<u32> mTexNoOffset;            // _38
+    BE<u32> mFontNoOffset;           // _3C
+    BE<u32> mTevOrderInfoOffset;     // _40
+    BE<u32> mTevColorOffset;         // _44
+    BE<u32> mTevKColorOffset;        // _48
+    BE<u32> mTevStageNumOffset;      // _4C
+    BE<u32> mTevStageInfoOffset;     // _50
+    BE<u32> mTevSwapInfoOffset;      // _54
+    BE<u32> mTevSwapTableInfoOffset; // _58
+    BE<u32> mAlphaCompInfoOffset;    // _5C
+    BE<u32> mBlendInfoOffset;        // _60
+    BE<u32> mDitherOffset;           // _64
 };
 
 /**
@@ -60,23 +61,23 @@ struct J2DMaterialInitData {
     u8 mTevStageIdx;                 // _04
     u8 mDitherIdx;                   // _05
     u8 mAlphaCalc;                   // _06
-    u16 mMatColorIdx[2];             // _08
-    u16 mColorChanInfoIdx[4];        // _0C
-    u16 mTexCoordIdx[8];             // _14
-    u16 mTexMtxIdx[10];              // _24
-    u16 mTexNoIdx[8];                // _38
-    u16 mFontNoIdx;                  // _48
-    u16 mTevKColorIdx[4];            // _4A
+    BE<u16> mMatColorIdx[2];             // _08
+    BE<u16> mColorChanInfoIdx[4];        // _0C
+    BE<u16> mTexCoordIdx[8];             // _14
+    BE<u16> mTexMtxIdx[10];              // _24
+    BE<u16> mTexNoIdx[8];                // _38
+    BE<u16> mFontNoIdx;                  // _48
+    BE<u16> mTevKColorIdx[4];            // _4A
     u8 mTevKColorSel[16];            // _52
     u8 mTevKAlphaSel[16];            // _62
-    u16 mTevOrderInfoIdx[16];        // _72
-    u16 mTevColorIdx[4];             // _92
-    u16 mTevStageInfoIdx[16];        // _9A
-    u16 mTevSwapInfoIdx[16];         // _BA
-    u16 mTevSwapModeTableInfoIdx[4]; // _DA
-    u16 mAlphaCompInfoIdx;           // _E2
-    u16 mBlendInfoIdx;               // _E4
-    u16 _E6;                         // _E6, padding?
+    BE<u16> mTevOrderInfoIdx[16];        // _72
+    BE<u16> mTevColorIdx[4];             // _92
+    BE<u16> mTevStageInfoIdx[16];        // _9A
+    BE<u16> mTevSwapInfoIdx[16];         // _BA
+    BE<u16> mTevSwapModeTableInfoIdx[4]; // _DA
+    BE<u16> mAlphaCompInfoIdx;           // _E2
+    BE<u16> mBlendInfoIdx;               // _E4
+    BE<u16> _E6;                         // _E6, padding?
 };
 
 /**
@@ -117,7 +118,7 @@ struct J2DMaterialFactory {
 
     u16 _00;                                    // _00
     J2DMaterialInitData* mMaterialInitData;     // _04
-    u16* mMatIndexTable;                        // _08
+    BE<u16>* mMatIndexTable;                    // _08 (port: big-endian table in the MAT1 block)
     J2DIndInitData* mIndInitData;               // _0C
     GXColor* mMatColor;                         // _10
     u8* mColorChanNum;                          // _14
@@ -125,9 +126,9 @@ struct J2DMaterialFactory {
     u8* mTexGenNum;                             // _1C
     J2DTexCoordInfo* mTexCoordInfo;             // _20
     J2DTexMtxInfo* mTexMtxInfo;                 // _24
-    u16* mTexNo;                                // _28
-    u16* mFontNo;                               // _2C
-    GXCullMode* mCullMode;                      // _30
+    BE<u16>* mTexNo;                            // _28
+    BE<u16>* mFontNo;                           // _2C
+    BE<u32>* mCullMode;                         // _30 (GXCullMode words)
     J2DTevOrderInfo* mTevOrderInfo;             // _34
     GXColorS10* mTevColor;                      // _38
     GXColor* mTevKColor;                        // _3C

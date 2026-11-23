@@ -192,7 +192,7 @@ void JKRDecomp::decodeSZP(u8 *src, u8 *dst, u32 srcLength, u32 dstLength)
 
 void JKRDecomp::decodeSZS(u8 *src_buffer, u8 *dst_buffer, u32 srcSize, u32 dstSize) {
 
-    u8 *decompEnd = dst_buffer + *(u32 *)(src_buffer + 4) - dstSize;
+    u8 *decompEnd = dst_buffer + READU32_BE(src_buffer, 4) - dstSize; // port: big-endian size
     u8 *copyStart;
     s32 copyByteCount;    
     s32 chunkBitsLeft = 0;
@@ -200,7 +200,7 @@ void JKRDecomp::decodeSZS(u8 *src_buffer, u8 *dst_buffer, u32 srcSize, u32 dstSi
 
     if (srcSize == 0)
         return;
-    if (dstSize > *(u32 *)src_buffer)
+    if (dstSize > READU32_BE(src_buffer, 0)) // port: big-endian (the original compares the magic word)
         return;
     
     u8 *curSrcPos = src_buffer + 0x10;

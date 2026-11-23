@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_J2D_J2DPANE_H
 #define _JSYSTEM_J2D_J2DPANE_H
 
+#include "port/be.h"
 #include <string.h>
 #include "JSystem/JGeometry/Box.h"
 #include "dolphin/gx/GXEnum.h"
@@ -75,8 +76,8 @@ enum J2DBasePosition
 
 struct J2DScrnBlockHeader
 {
-    u32 mBloBlockType; // _00
-    int mBlockLength;  // _04
+    BE<u32> mBloBlockType; // _00
+    BE<int> mBlockLength;  // _04
 };
 
 /**
@@ -84,55 +85,68 @@ struct J2DScrnBlockHeader
  * @size{0x20}
  */
 struct J2DTextBoxBlock {
-    u16 _00;             // _00
-    u16 mAnimPaneIndex;  // _02
-    u16 mMaterialNum;    // _04
-    s16 mCharSpacing;    // _06 - converted to f32
-    s16 mLineSpacing;    // _08 - converted to f32
-    u16 mFontSizeX;      // _0A - converted to f32
-    u16 mFontSizeY;      // _0C - converted to f32 for _120
+    BE<u16> _00;             // _00
+    BE<u16> mAnimPaneIndex;  // _02
+    BE<u16> mMaterialNum;    // _04
+    BE<s16> mCharSpacing;    // _06 - converted to f32
+    BE<s16> mLineSpacing;    // _08 - converted to f32
+    BE<u16> mFontSizeX;      // _0A - converted to f32
+    BE<u16> mFontSizeY;      // _0C - converted to f32 for _120
     u8 mHBind;           // _0E - J2DTextBoxHBinding for _130
     u8 mVBind;           // _0F - J2DTextBoxVBinding for _130
-    u32 mCharColor;      // _10
-    u32 mGradientColor;  // _14
+    BE<u32> mCharColor;      // _10
+    BE<u32> mGradientColor;  // _14
     u8 mDoConnectParent; // _18
     u8 _19[3];           // _19, padding?
-    u16 mTextBoxLength;  // _1C
-    u16 mMaxReadLength;  // _1E
+    BE<u16> mTextBoxLength;  // _1C
+    BE<u16> mMaxReadLength;  // _1E
 };
 
 // Representation of "PAN2" entry in a scrnblo2 file
 struct J2DPaneExBlock : J2DScrnBlockHeader {
-    u16 _08;          // _08, padding?
-    u16 mAnimIndex;   // _0A, "joint" index used for applying .bck animations
+    BE<u16> _08;          // _08, padding?
+    BE<u16> mAnimIndex;   // _0A, "joint" index used for applying .bck animations
     bool mIsVisible;  // _0C, whether the pane is visible by default, applies to all children as well
     u8 mBasePosition; // _0D, anchor point for position, see J2DBasePosition enum
-    u16 _0E;          // _0E, padding
-    u64 mTag;         // _10, name of the pane
-    u64 mMessageID;   // _18, secondary tag of pane, usually used for message id
-    f32 mWidth;       // _20, pixel dimensions X (unused in j2dpane)
-    f32 mHeight;      // _24, pixel dimensions Y (unused in j2dpane)
-    f32 mWidthScale;  // _28, horizontal scale modifier
-    f32 mHeightScale; // _2C, vertical scale modifier
-    f32 mAngleX;      // _30, X axis rotation, never touched normally
-    f32 mAngleY;      // _34, Y axis rotation, never touched normally
-    f32 mAngleZ;      // _38, Z axis rotation, the one you probably want
-    f32 mOffsetX;     // _3C, base X position, relative to parent
-    f32 mOffsetY;     // _40, base Y position, relative to parent
+    BE<u16> _0E;          // _0E, padding
+    BE<u64> mTag;         // _10, name of the pane
+    BE<u64> mMessageID;   // _18, secondary tag of pane, usually used for message id
+    BE<f32> mWidth;       // _20, pixel dimensions X (unused in j2dpane)
+    BE<f32> mHeight;      // _24, pixel dimensions Y (unused in j2dpane)
+    BE<f32> mWidthScale;  // _28, horizontal scale modifier
+    BE<f32> mHeightScale; // _2C, vertical scale modifier
+    BE<f32> mAngleX;      // _30, X axis rotation, never touched normally
+    BE<f32> mAngleY;      // _34, Y axis rotation, never touched normally
+    BE<f32> mAngleZ;      // _38, Z axis rotation, the one you probably want
+    BE<f32> mOffsetX;     // _3C, base X position, relative to parent
+    BE<f32> mOffsetY;     // _40, base Y position, relative to parent
 };
 
 /**
  * @size{0x30}
  * @fabricated
  */
+// Port: a big-endian s16 pair in a BLO block, read as JGeometry::TVec2<s16>.
+struct J2DBETexCoord {
+    BE<s16> x;
+    BE<s16> y;
+    operator JGeometry::TVec2<s16>() const
+    {
+        JGeometry::TVec2<s16> v;
+        v.x = x;
+        v.y = y;
+        return v;
+    }
+};
+
 struct J2DPictureBlockTrailer
 {
     u8 _00[2];                      // _00
-    s16 _02;                        // _02
-    u16 _04;                        // _04
+    BE<s16> _02;                        // _02
+    BE<u16> _04;                        // _04
     u8 _06[2];                      // _06 - padding?
-    s16 _08[2][2];                  // _08
-    JGeometry::TVec2<short> _10[4]; // _10
+    BE<s16> _08[2][2];                  // _08
+    J2DBETexCoord _10[4];           // _10
     _GXColor _20[4];                // _20
 };
 
@@ -142,21 +156,21 @@ struct J2DPictureBlockTrailer
  */
 struct J2DScrnBlockPictureParameter {
     u8 _00[2];                           // _00
-    u16 mMaterialNum;                    // _02
-    u16 mMaterialID;                     // _04
+    BE<u16> mMaterialNum;                    // _02
+    BE<u16> mMaterialID;                     // _04
     u8 _06[2];                           // _06 - padding?
-    u16 _08[4];                          // _08
-    JGeometry::TVec2<s16> mTexCoords[4]; // _10
-    u32 mCornerColor[4];                 // _20
+    BE<u16> _08[4];                          // _08
+    J2DBETexCoord mTexCoords[4];         // _10
+    BE<u32> mCornerColor[4];                 // _20
 };
 
 struct J2DScreenInfoBlock : public J2DScrnBlockHeader
 {
 
     // _00-_08 = J2DScrnBlockHeader
-    u16 mWidth;  // _08
-    u16 mHeight; // _0A
-    u32 mColor;  // _0C
+    BE<u16> mWidth;  // _08
+    BE<u16> mHeight; // _0A
+    BE<u32> mColor;  // _0C
 };
 
 // Size: 0x100
@@ -634,18 +648,18 @@ struct J2DTextBoxEx : public J2DTextBox
 // Size: 0x40
 struct J2DWindowData {
     u8 _00[0x10];          // _00, unknown
-    u16 mContentIds[4];    // _10
+    BE<u16> mContentIds[4];    // _10
     u8 _18;                // _18
     u8 _19;                // _19
-    u16 mMinX;             // _1A
-    u16 mMinY;             // _1C
-    u16 mOffsetX;          // _1E
-    u16 mOffsetY;          // _20
-    u16 _22;               // _22
-    u16 mParentId;         // _24
-    u16 _26;               // _26
-    u16 _28[4];            // _28
-    u32 mContentColors[4]; // _30
+    BE<u16> mMinX;             // _1A
+    BE<u16> mMinY;             // _1C
+    BE<u16> mOffsetX;          // _1E
+    BE<u16> mOffsetY;          // _20
+    BE<u16> _22;               // _22
+    BE<u16> mParentId;         // _24
+    BE<u16> _26;               // _26
+    BE<u16> _28[4];            // _28
+    BE<u32> mContentColors[4]; // _30
 };
 
 // Size: 0x148

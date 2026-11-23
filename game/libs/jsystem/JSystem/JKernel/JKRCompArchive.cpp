@@ -85,6 +85,9 @@ bool JKRCompArchive::open(long entryNum) {
 
         JKRDvdToMainRam(entryNum, (u8 *)arcHeader, EXPAND_SWITCH_DECOMPRESS, 32, nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 0, &mCompression, nullptr);
         DCInvalidateRange(arcHeader, 32);
+#ifdef FSA_PORT
+        portSwapHeader(arcHeader);
+#endif
 
         mSizeOfMemPart = arcHeader->_14;
         mSizeOfAramPart = arcHeader->_18;
@@ -106,6 +109,9 @@ bool JKRCompArchive::open(long entryNum) {
                 JKRDvdToMainRam(entryNum, (u8 *)mArcInfoBlock, EXPAND_SWITCH_DECOMPRESS, (u32)arcHeader->file_data_offset + mSizeOfMemPart,
                                 nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 0x20, nullptr, nullptr);
                 DCInvalidateRange(mArcInfoBlock, (u32)arcHeader->file_data_offset + mSizeOfMemPart);
+#ifdef FSA_PORT
+                portSwapInfoBlock(mArcInfoBlock);
+#endif
                 _64 = (u32)mArcInfoBlock + arcHeader->file_data_offset;
 
                 if (mSizeOfAramPart != 0) {
@@ -146,6 +152,9 @@ bool JKRCompArchive::open(long entryNum) {
                     arcHeader = (SArcHeader *)mem;
                     JKRDecompress((u8 *)buf, (u8 *)mem, expandSize, 0);
                     JKRFreeToSysHeap(buf);
+#ifdef FSA_PORT
+                    portSwapHeader(arcHeader);
+#endif
 
                     mArcInfoBlock = (SArcDataInfo *)JKRAllocFromHeap(mHeap, arcHeader->file_data_offset + mSizeOfMemPart, alignment);
                     if(mArcInfoBlock == nullptr) {
@@ -154,6 +163,9 @@ bool JKRCompArchive::open(long entryNum) {
                     else {
                         // arcHeader + 1 should lead to 0x20, which is the data after the header
                         JKRHeap::copyMemory((u8 *)mArcInfoBlock, arcHeader + 1, (arcHeader->file_data_offset + mSizeOfMemPart));
+#ifdef FSA_PORT
+                        portSwapInfoBlock(mArcInfoBlock);
+#endif
                         _64 = (u32)mArcInfoBlock + arcHeader->file_data_offset;
                         if (mSizeOfAramPart != 0) {
                             mAramPart = JKRAllocFromAram(mSizeOfAramPart, JKRAramHeap::AM_Head);

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "JSystem/JGadget/search.h"
+#include "port/be.h"
 
 namespace JGadget {
 namespace binary {
@@ -69,7 +70,15 @@ struct TParseValue_raw : public TParseValue_raw_<T> {
 
 template <typename T>
 struct TParseValue_endian_big_ : public TParseValue_raw_<T> {
-	static T parse(const void* data) { return TParseValue_raw_<T>::parse(data); }
+	// Port: the data is big-endian; the original read it raw on a big-endian CPU.
+	static T parse(const void* data)
+	{
+		T v;
+		__builtin_memcpy(&v, data, sizeof(T));
+		if constexpr (sizeof(T) > 1)
+			v = be_swap_value(v);
+		return v;
+	}
 };
 
 template <class Parser>

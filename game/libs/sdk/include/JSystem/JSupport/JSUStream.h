@@ -3,6 +3,7 @@
 
 #include <JSystem/JKernel/JKRFile.h>
 #include "types.h"
+#include "port/be.h"
 
 // Named after standard C++ constants with the exact same meaning.
 enum JSUStreamSeekFrom
@@ -72,13 +73,18 @@ public:
 
     JSUInputStream &operator>>(u16 &val) {
         read(&val, sizeof(u16));
+        val = __builtin_bswap16(val); // port: streams carry big-endian file data
         return *this;
     }
 
     /** @fabricated */
+    // Port: a scalar read this way is big-endian in the stream; a struct read this
+    // way must declare its fields BE<T> (port/be.h).
     template<typename T>
     T read(T *pType) {
         read(pType, sizeof(T));
+        if constexpr (__is_arithmetic(T) && sizeof(T) > 1)
+            *pType = be_swap_value(*pType);
         return *pType;
     }
 
@@ -91,11 +97,15 @@ public:
     }
 
     inline s32 read(u16 &val) {
-        return read(&val, (sizeof(val)));
+        s32 r = read(&val, (sizeof(val)));
+        val = __builtin_bswap16(val);
+        return r;
     }
 
     inline s32 read(u32 &val) {
-        return read(&val, (sizeof(val)));
+        s32 r = read(&val, (sizeof(val)));
+        val = __builtin_bswap32(val);
+        return r;
     }
 
     /** @fabricated */
@@ -117,6 +127,7 @@ public:
     {
         u16 temp;
         read(&temp, 2);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -124,6 +135,7 @@ public:
     {
         u32 temp;
         read(&temp, 4);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -138,6 +150,7 @@ public:
     {
         s16 temp;
         read(&temp, 2);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -146,6 +159,7 @@ public:
     {
         s16 temp;
         read(&temp, 2);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -153,6 +167,7 @@ public:
     {
         u16 temp;
         read(&temp, 2);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -161,6 +176,7 @@ public:
     {
         u16 temp;
         read(&temp, 2);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -168,6 +184,7 @@ public:
     {
         u32 temp;
         read(&temp, 4);
+        temp = be_swap_value(temp);
         return temp;
     }
 
@@ -176,6 +193,7 @@ public:
     {
         s32 temp;
         read(&temp, 4);
+        temp = be_swap_value(temp);
         return temp;
     }
 

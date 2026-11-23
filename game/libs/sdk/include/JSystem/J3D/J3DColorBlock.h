@@ -174,18 +174,25 @@ struct J3DColorBlockNull : public J3DColorBlock {
 	// _00 = VTBL
 };
 
+// Port: GXColor bytes as the word 0xRRGGBBAA (a u32 load of them is 0xAABBGGRR
+// on a little-endian host, and the display list wants the bytes in order).
+inline u32 portGXColorWord(const GXColor* c)
+{
+	return ((u32)c->r << 24) | ((u32)c->g << 16) | ((u32)c->b << 8) | (u32)c->a;
+}
+
 inline void loadMatColors(const J3DGXColor* color)
 {
 	J3DGDWriteXFCmdHdr(GX_XF_REG_MATERIAL0, 2);
-	J3DGDWrite_u32(*(u32*)color);
-	J3DGDWrite_u32(*(u32*)(color + 1));
+	J3DGDWrite_u32(portGXColorWord(color));
+	J3DGDWrite_u32(portGXColorWord(color + 1));
 }
 
 inline void loadAmbColors(const J3DGXColor* color)
 {
 	J3DGDWriteXFCmdHdr(GX_XF_REG_AMBIENT0, 2);
-	J3DGDWrite_u32(*(u32*)color);
-	J3DGDWrite_u32(*(u32*)(color + 1));
+	J3DGDWrite_u32(portGXColorWord(color));
+	J3DGDWrite_u32(portGXColorWord(color + 1));
 }
 
 #endif

@@ -534,7 +534,7 @@ u16 J2DPrint::doEscapeCode(const u8** strPtr, u8 alpha)
         }
     } break;
     case 'CC': { // char color
-        mActiveCharColor = getNumberS32(strPtr, *(u32*)&mCharColor, *(u32*)&mActiveCharColor, 16);
+        mActiveCharColor = getNumberS32(strPtr, mCharColor.toUInt32(), mActiveCharColor.toUInt32(), 16);
         charColor        = mActiveCharColor;
         charColor.a      = charColor.a * alpha / 255;
         gradColor.a      = gradColor.a * alpha / 255;
@@ -548,7 +548,7 @@ u16 J2DPrint::doEscapeCode(const u8** strPtr, u8 alpha)
     } break;
 
     case 'GC': { // grad color
-        mActiveGradColor = getNumberS32(strPtr, *(u32*)&mGradientColor, *(u32*)&mActiveGradColor, 16);
+        mActiveGradColor = getNumberS32(strPtr, mGradientColor.toUInt32(), mActiveGradColor.toUInt32(), 16);
         gradColor        = mActiveGradColor;
         charColor.a      = charColor.a * alpha / 255;
         gradColor.a      = gradColor.a * alpha / 255;

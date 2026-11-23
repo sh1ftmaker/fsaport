@@ -80,6 +80,9 @@ bool JKRDvdArchive::open(long entryNum)
     {
         JKRDvdToMainRam(entryNum, (u8 *)mem, EXPAND_SWITCH_DECOMPRESS, 32, nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 0, &mCompression, nullptr);
         DCInvalidateRange(mem, 32);
+#ifdef FSA_PORT
+        portSwapHeader(mem);
+#endif
         int alignment = mMountDirection == MOUNT_DIRECTION_HEAD ? 32 : -32;
 
         mArcInfoBlock = (SArcDataInfo *)JKRAllocFromHeap(mHeap, mem->mSize, alignment);
@@ -89,6 +92,9 @@ bool JKRDvdArchive::open(long entryNum)
         else {
             JKRDvdToMainRam(entryNum, (u8 *)mArcInfoBlock, EXPAND_SWITCH_DECOMPRESS, mem->mSize, nullptr, JKRDvdRipper::ALLOC_DIR_TOP, 32, nullptr, nullptr);
             DCInvalidateRange(mArcInfoBlock, mem->mSize);
+#ifdef FSA_PORT
+            portSwapInfoBlock(mArcInfoBlock);
+#endif
 
             mDirectories = (SDIDirEntry *)((u8 *)mArcInfoBlock + mArcInfoBlock->node_offset);
             mFileEntries = (SDIFileEntry *)((u8 *)mArcInfoBlock + mArcInfoBlock->file_entry_offset);

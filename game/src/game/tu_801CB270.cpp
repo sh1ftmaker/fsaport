@@ -957,7 +957,7 @@ s32 fn_801CB434(s32 layer, const JGeometry::TVec3f* pos, bool flag) {
 f32 fn_801CB270(const char* name, GXTexObj* texObj, GXTlutObj* tlutObj) {
     ResTIMG* timg = (ResTIMG*)gGameRoot_8053AAF8->field_0xa4->getResource('TIMG', name);
     GXBool mipmap = timg->mIsMIPmapEnabled > 0;
-    u32 imageOffset = timg->mImageDataOffset != 0 ? timg->mImageDataOffset : 0x20;
+    u32 imageOffset = timg->mImageDataOffset != 0 ? (u32)timg->mImageDataOffset : 0x20;
     void* image = (u8*)timg + imageOffset;
 
     if (timg->mPaletteFormat) {

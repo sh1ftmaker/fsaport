@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_J2D_J2DMANAGE_H
 #define _JSYSTEM_J2D_J2DMANAGE_H
 
+#include "port/be.h"
 #include "types.h"
 #include "JSystem/JSupport/JSUStream.h"
 
@@ -9,8 +10,8 @@ struct J2DResReference
     char *getName(u16) const;
     s8 *getResReference(u16) const;
 
-    u16 mCount;     // _00
-    u16 mOffsets[]; // _02, array of offsets
+    BE<u16> mCount;     // _00
+    BE<u16> mOffsets[]; // _02, array of offsets
 };
 
 // fabricated name, but struct should exist

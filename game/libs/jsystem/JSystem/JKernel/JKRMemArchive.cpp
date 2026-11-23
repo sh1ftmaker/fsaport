@@ -99,6 +99,10 @@ bool JKRMemArchive::open(s32 entryNum, JKRArchive::EMountDirection mountDirectio
     }
     else
     {
+#ifdef FSA_PORT
+        if (portSwapHeader(mArcHeader))
+            portSwapInfoBlock((SArcDataInfo *)((u8 *)mArcHeader + mArcHeader->header_length));
+#endif
 #line 438
         JUT_ASSERT(mArcHeader->signature == 'RARC');
         mArcInfoBlock = (SArcDataInfo *)((u8 *)mArcHeader + mArcHeader->header_length);
@@ -124,6 +128,10 @@ bool JKRMemArchive::open(void *buffer, u32 bufferSize, JKRMemBreakFlag flag)
 {
 #line 490
     mArcHeader = (SArcHeader *)buffer;
+#ifdef FSA_PORT
+    if (portSwapHeader(mArcHeader))
+        portSwapInfoBlock((SArcDataInfo *)((u8 *)mArcHeader + mArcHeader->header_length));
+#endif
     JUT_ASSERT(mArcHeader->signature == 'RARC');
     mArcInfoBlock = (SArcDataInfo *)((u8 *)mArcHeader + mArcHeader->header_length);
     mDirectories = (SDIDirEntry *)((u8 *)&mArcInfoBlock->num_nodes + mArcInfoBlock->node_offset);

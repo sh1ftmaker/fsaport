@@ -5,40 +5,76 @@
 #include "dolphin/gx/GXEnum.h"
 
 
+// Port: the MAT1 block is big-endian. These runtime structs are also built from
+// host values elsewhere, so the factory swaps a copy of each file entry it hands out.
+static J2DTexMtxInfo portHostTexMtxInfo(const J2DTexMtxInfo& file)
+{
+    J2DTexMtxInfo info;
+    info = file;
+    be_swap_inplace(info.mCenter.x);
+    be_swap_inplace(info.mCenter.y);
+    be_swap_inplace(info.mCenter.z);
+    be_swap_inplace(info.mTextureSRTInfo.mScaleX);
+    be_swap_inplace(info.mTextureSRTInfo.mScaleY);
+    be_swap_inplace(info.mTextureSRTInfo.mRotationDeg);
+    be_swap_inplace(info.mTextureSRTInfo.mTranslationX);
+    be_swap_inplace(info.mTextureSRTInfo.mTranslationY);
+    return info;
+}
+
+static J2DIndTexMtxInfo portHostIndTexMtxInfo(const J2DIndTexMtxInfo& file)
+{
+    J2DIndTexMtxInfo info = file;
+    for (int r = 0; r < 2; r++)
+        for (int c = 0; c < 3; c++)
+            be_swap_inplace(info.mMtx[r][c]);
+    return info;
+}
+
+static GXColorS10 portHostColorS10(const GXColorS10& file)
+{
+    GXColorS10 c = file;
+    be_swap_inplace(c.r);
+    be_swap_inplace(c.g);
+    be_swap_inplace(c.b);
+    be_swap_inplace(c.a);
+    return c;
+}
+
 J2DMaterialFactory::J2DMaterialFactory(const J2DMaterialBlock& header)
 {
     _00               = header._08;
-    mMaterialInitData = JSUConvertOffsetToPtr<J2DMaterialInitData>(&header, (void*)header.mMatInitDataOffset);
-    mMatIndexTable    = JSUConvertOffsetToPtr<u16>(&header, (void*)header.mMatIndexTableOffset);
+    mMaterialInitData = JSUConvertOffsetToPtr<J2DMaterialInitData>(&header, (void*)(u32)header.mMatInitDataOffset);
+    mMatIndexTable    = JSUConvertOffsetToPtr<BE<u16> >(&header, (void*)(u32)header.mMatIndexTableOffset);
 
     if (header.mIndInitDataOffset && header.mIndInitDataOffset - header._14 > 4) {
-        mIndInitData = JSUConvertOffsetToPtr<J2DIndInitData>(&header, (void*)header.mIndInitDataOffset);
+        mIndInitData = JSUConvertOffsetToPtr<J2DIndInitData>(&header, (void*)(u32)header.mIndInitDataOffset);
     } else {
         mIndInitData = nullptr;
     }
 
-    mCullMode      = JSUConvertOffsetToPtr<GXCullMode>(&header, (void*)header.mCullModeOffset);
-    mMatColor      = JSUConvertOffsetToPtr<GXColor>(&header, (void*)header.mMatColorOffset);
-    mColorChanNum  = JSUConvertOffsetToPtr<u8>(&header, (void*)header.mColorChanNumOffset);
-    mColorChanInfo = JSUConvertOffsetToPtr<J2DColorChanInfo>(&header, (void*)header.mColorChanInfoOffset);
-    mTexGenNum     = JSUConvertOffsetToPtr<u8>(&header, (void*)header.mTexGenNumOffset);
+    mCullMode      = JSUConvertOffsetToPtr<BE<u32> >(&header, (void*)(u32)header.mCullModeOffset);
+    mMatColor      = JSUConvertOffsetToPtr<GXColor>(&header, (void*)(u32)header.mMatColorOffset);
+    mColorChanNum  = JSUConvertOffsetToPtr<u8>(&header, (void*)(u32)header.mColorChanNumOffset);
+    mColorChanInfo = JSUConvertOffsetToPtr<J2DColorChanInfo>(&header, (void*)(u32)header.mColorChanInfoOffset);
+    mTexGenNum     = JSUConvertOffsetToPtr<u8>(&header, (void*)(u32)header.mTexGenNumOffset);
 
-    mTexCoordInfo = JSUConvertOffsetToPtr<J2DTexCoordInfo>(&header, (void*)header.mTexCoordInfoOffset);
-    mTexMtxInfo   = JSUConvertOffsetToPtr<J2DTexMtxInfo>(&header, (void*)header.mTexMtxInfoOffset);
-    mTexNo        = JSUConvertOffsetToPtr<u16>(&header, (void*)header.mTexNoOffset);
-    mFontNo       = JSUConvertOffsetToPtr<u16>(&header, (void*)header.mFontNoOffset);
+    mTexCoordInfo = JSUConvertOffsetToPtr<J2DTexCoordInfo>(&header, (void*)(u32)header.mTexCoordInfoOffset);
+    mTexMtxInfo   = JSUConvertOffsetToPtr<J2DTexMtxInfo>(&header, (void*)(u32)header.mTexMtxInfoOffset);
+    mTexNo        = JSUConvertOffsetToPtr<BE<u16> >(&header, (void*)(u32)header.mTexNoOffset);
+    mFontNo       = JSUConvertOffsetToPtr<BE<u16> >(&header, (void*)(u32)header.mFontNoOffset);
 
-    mTevOrderInfo     = JSUConvertOffsetToPtr<J2DTevOrderInfo>(&header, (void*)header.mTevOrderInfoOffset);
-    mTevColor         = JSUConvertOffsetToPtr<GXColorS10>(&header, (void*)header.mTevColorOffset);
-    mTevKColor        = JSUConvertOffsetToPtr<GXColor>(&header, (void*)header.mTevKColorOffset);
-    mTevStageNum      = JSUConvertOffsetToPtr<u8>(&header, (void*)header.mTevStageNumOffset);
-    mTevStageInfo     = JSUConvertOffsetToPtr<J2DTevStageInfo>(&header, (void*)header.mTevStageInfoOffset);
-    mTevSwapInfo      = JSUConvertOffsetToPtr<J2DTevSwapModeInfo>(&header, (void*)header.mTevSwapInfoOffset);
-    mTevSwapTableInfo = JSUConvertOffsetToPtr<J2DTevSwapModeTableInfo>(&header, (void*)header.mTevSwapTableInfoOffset);
+    mTevOrderInfo     = JSUConvertOffsetToPtr<J2DTevOrderInfo>(&header, (void*)(u32)header.mTevOrderInfoOffset);
+    mTevColor         = JSUConvertOffsetToPtr<GXColorS10>(&header, (void*)(u32)header.mTevColorOffset);
+    mTevKColor        = JSUConvertOffsetToPtr<GXColor>(&header, (void*)(u32)header.mTevKColorOffset);
+    mTevStageNum      = JSUConvertOffsetToPtr<u8>(&header, (void*)(u32)header.mTevStageNumOffset);
+    mTevStageInfo     = JSUConvertOffsetToPtr<J2DTevStageInfo>(&header, (void*)(u32)header.mTevStageInfoOffset);
+    mTevSwapInfo      = JSUConvertOffsetToPtr<J2DTevSwapModeInfo>(&header, (void*)(u32)header.mTevSwapInfoOffset);
+    mTevSwapTableInfo = JSUConvertOffsetToPtr<J2DTevSwapModeTableInfo>(&header, (void*)(u32)header.mTevSwapTableInfoOffset);
 
-    mAlphaCompInfo = JSUConvertOffsetToPtr<J2DAlphaCompInfo>(&header, (void*)header.mAlphaCompInfoOffset);
-    mBlendInfo     = JSUConvertOffsetToPtr<J2DBlendInfo>(&header, (void*)header.mBlendInfoOffset);
-    mDither        = JSUConvertOffsetToPtr<u8>(&header, (void*)header.mDitherOffset);
+    mAlphaCompInfo = JSUConvertOffsetToPtr<J2DAlphaCompInfo>(&header, (void*)(u32)header.mAlphaCompInfoOffset);
+    mBlendInfo     = JSUConvertOffsetToPtr<J2DBlendInfo>(&header, (void*)(u32)header.mBlendInfoOffset);
+    mDither        = JSUConvertOffsetToPtr<u8>(&header, (void*)(u32)header.mDitherOffset);
 }
 
 u32 J2DMaterialFactory::countStages(int idx) const
@@ -276,7 +312,7 @@ J2DTexMtx* J2DMaterialFactory::newTexMtx(int idx, int texMtx) const
     J2DTexMtx* mtx                = nullptr;
     J2DMaterialInitData* initData = &mMaterialInitData[mMatIndexTable[idx]];
     if (initData->mTexMtxIdx[texMtx] != 0xFFFF) {
-        mtx = new J2DTexMtx(mTexMtxInfo[initData->mTexMtxIdx[texMtx]]);
+        mtx = new J2DTexMtx(portHostTexMtxInfo(mTexMtxInfo[initData->mTexMtxIdx[texMtx]]));
         mtx->calc();
     }
     return mtx;
@@ -325,7 +361,7 @@ J2DGXColorS10 J2DMaterialFactory::newTevColor(int idx, int p2) const
     J2DMaterialInitData& initData = mMaterialInitData[mMatIndexTable[idx]];
     
     if (initData.mTevColorIdx[p2] != 0xFFFF) {
-        return mTevColor[initData.mTevColorIdx[p2]];
+        return portHostColorS10(mTevColor[initData.mTevColorIdx[p2]]);
     }
     return c;
 
@@ -393,7 +429,7 @@ J2DIndTexMtx J2DMaterialFactory::newIndTexMtx(int idx, int p2) const
 {
     J2DIndTexMtx mtx;
     if (mIndInitData && mIndInitData[idx].mUseData == 1) {
-        return J2DIndTexMtx(mIndInitData[idx].mIndTexMtxInfo[p2]);
+        return J2DIndTexMtx(portHostIndTexMtxInfo(mIndInitData[idx].mIndTexMtxInfo[p2]));
     }
     return mtx;
 }

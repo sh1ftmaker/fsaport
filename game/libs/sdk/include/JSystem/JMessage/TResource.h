@@ -35,7 +35,8 @@ struct TResource : public JGadget::TLinkListNode {
 		return mInfo.getContent() + (messageIndex * getMessageEntrySize());
 	}
 
-	const char* getMessageText_messageEntry(const void* entry) const { return mMessages + *(int*)entry; }
+	// Port: an INF1 entry starts with the big-endian offset of its text in DAT1.
+	const char* getMessageText_messageEntry(const void* entry) const { return mMessages + be32s(entry); }
 
 	const char* getMessageText_messageIndex(u32 messageIndex) const
 	{

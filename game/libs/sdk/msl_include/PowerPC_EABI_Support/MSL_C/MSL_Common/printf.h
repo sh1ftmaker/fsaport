@@ -5,7 +5,7 @@
 #include "PowerPC_EABI_Support/MSL_C/MSL_Common/file_struc.h"
 #include "PowerPC_EABI_Support/MSL_C/MSL_Common/ansi_files.h"
 
-void printf(const char*, ...);
+int printf(const char*, ...); // port: int, as the C library defines it (a void declaration links to a trap on wasm)
 // printf_s
 int fprintf(FILE*, const char* format, ...);
 // fprintf_s

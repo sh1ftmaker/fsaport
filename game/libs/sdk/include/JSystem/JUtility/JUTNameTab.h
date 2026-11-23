@@ -1,18 +1,19 @@
 #ifndef _JSYSTEM_JUT_JUTNAMEPAD_H
 #define _JSYSTEM_JUT_JUTNAMEPAD_H
 
+#include "port/be.h"
 #include "types.h"
 
 struct ResNTAB
 {
     inline const char *getName(u32 index) const { return ((const char *)mEntries) + mEntries[index].mOffs - 4; }
 
-    u16 mEntryNum; // _00
-    u16 mPad0;     // _02
+    BE<u16> mEntryNum; // _00
+    BE<u16> mPad0;     // _02
     struct Entry
     {
-        u16 mKeyCode; // _04
-        u16 mOffs;    // _06
+        BE<u16> mKeyCode; // _04
+        BE<u16> mOffs;    // _06
     } mEntries[1];
 };
 

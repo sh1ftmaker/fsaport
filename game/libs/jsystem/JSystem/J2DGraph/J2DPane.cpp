@@ -102,7 +102,7 @@ void J2DPane::makePaneStream(J2DPane* parent, JSURandomInputStream* input)
     input->skip(2);
     u32 tag;
     input->read(&tag, 4);
-    mTag = tag;
+    mTag = __builtin_bswap32(tag); // port: big-endian in the BLO
 
     JGeometry::TVec2f topLeft;
     topLeft.x = input->readS16();

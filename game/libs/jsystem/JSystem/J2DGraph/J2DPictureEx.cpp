@@ -83,7 +83,7 @@ J2DPictureEx::J2DPictureEx(J2DPane* parent, JSURandomInputStream* input, u32 fla
     for (int i = 0; i < 4; i++) {
         _170[i]       = trailer._08[i];
         mTexCoords[i] = trailer.mTexCoords[i];
-        mCornerColors[i] = trailer.mCornerColor[i];
+        mCornerColors[i] = (u32)trailer.mCornerColor[i];
     }
 
     input->seek(origPosition + info[1], SEEK_SET);

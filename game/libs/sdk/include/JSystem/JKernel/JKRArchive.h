@@ -125,6 +125,50 @@ public:
         u32 _1C;              // _1C
     };
 
+#ifdef FSA_PORT
+    // Port: RARC metadata is big-endian on disc. The archive classes own the
+    // memory they read it into, so it is swapped to host order once, right after
+    // it is read, and every access stays as it was. File data is not touched.
+    static bool portSwapHeader(void *header)
+    {
+        u32 *w = (u32 *)header;
+        if (w[0] == 'RARC')
+            return false; // already host order (the same buffer mounted again)
+        for (int i = 0; i < 8; i++)
+            w[i] = __builtin_bswap32(w[i]);
+        return true;
+    }
+    static void portSwapInfoBlock(SArcDataInfo *info)
+    {
+        info->num_nodes = __builtin_bswap32(info->num_nodes);
+        info->node_offset = __builtin_bswap32(info->node_offset);
+        info->num_file_entries = __builtin_bswap32(info->num_file_entries);
+        info->file_entry_offset = __builtin_bswap32(info->file_entry_offset);
+        info->string_table_length = __builtin_bswap32(info->string_table_length);
+        info->string_table_offset = __builtin_bswap32(info->string_table_offset);
+        info->nextFreeFileID = __builtin_bswap16(info->nextFreeFileID);
+        SDIDirEntry *dir = (SDIDirEntry *)((u8 *)info + info->node_offset);
+        for (u32 i = 0; i < info->num_nodes; i++, dir++)
+        {
+            dir->mType = __builtin_bswap32(dir->mType);
+            dir->mOffset = __builtin_bswap32(dir->mOffset);
+            dir->_08 = __builtin_bswap16(dir->_08);
+            dir->mNum = __builtin_bswap16(dir->mNum);
+            dir->mFirstIdx = __builtin_bswap32(dir->mFirstIdx);
+        }
+        SDIFileEntry *file = (SDIFileEntry *)((u8 *)info + info->file_entry_offset);
+        for (u32 i = 0; i < info->num_file_entries; i++, file++)
+        {
+            file->mFileID = __builtin_bswap16(file->mFileID);
+            file->mHash = __builtin_bswap16(file->mHash);
+            file->mFlag = __builtin_bswap32(file->mFlag);
+            file->mDataOffset = __builtin_bswap32(file->mDataOffset);
+            file->mSize = __builtin_bswap32(file->mSize);
+            file->mData = nullptr; // runtime pointer; 0 on disc
+        }
+    }
+#endif
+
     JKRArchive(long, EMountMode);
 
     virtual bool becomeCurrent(const char *);                                                                 // _10

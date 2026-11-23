@@ -61,12 +61,13 @@ u16 JMessage::TResource::toMessageIndex_messageID(u32 lowerHalf, u32 upperHalf, 
 		return 0xFFFF;
 	}
 
-	const u32* first = (u32*)mMessageID.getContent();
-	const u32* last  = (u32*)(first + mMessageID.get_number());
+	// Port: MID1 ids are big-endian in the file.
+	const BE<u32>* first = (const BE<u32>*)mMessageID.getContent();
+	const BE<u32>* last  = first + mMessageID.get_number();
 
-	const u32* lower;
+	const BE<u32>* lower;
 	if (mMessageID.get_isOrdered()) {
-		lower = std::lower_bound<const u32*, u32>(first, last, val);
+		lower = std::lower_bound<const BE<u32>*, u32>(first, last, val);
 
 		if (lower == last || *lower != val) {
 			return 0xFFFF;
@@ -173,7 +174,8 @@ bool JMessage::TParse::parseHeader_next(const void** dataPtr, u32* outSize, u32 
 	*dataPtr = header.getContent();
 	*outSize = header.getBlockNumber();
 
-	if (memcmp(header.getSignature(), &data::ga4cSignature, sizeof(data::ga4cSignature)) != 0)
+	// Port: the signature is the file's big-endian word; ga4cSignature holds it as a value.
+	if (be32(header.getSignature()) != (u32)data::ga4cSignature)
 		return false;
 
 	if (header.getType() != 'bmg1')
@@ -277,7 +279,7 @@ bool JMessage::TParse_color::parseHeader_next(const void** dataPtr, u32* outSize
 	*dataPtr = header.getContent();
 	*outSize = header.getBlockNumber();
 
-	if (memcmp(header.getSignature(), &data::ga4cSignature_color, sizeof(data::ga4cSignature_color)) != 0)
+	if (be32(header.getSignature()) != (u32)data::ga4cSignature_color)
 		return false;
 
 	if (header.getType() != 'bmc1')
@@ -302,11 +304,11 @@ bool JMessage::TParse_color::parseBlock_next(const void** dataPtr, u32* outSize,
 {
 	const void* pData = *dataPtr;
 	data::TParse_TBlock block(pData);
-	*dataPtr = (const void*)((u32)pData + ((u32*)pData)[1]);
-	*outSize = ((u32*)pData)[1];
+	*dataPtr = (const void*)((u32)pData + be32((const u8*)pData + 4)); // port: big-endian block header
+	*outSize = be32((const u8*)pData + 4);
 
 	TResourceContainer* container = mResourceContainer;
-	switch (((int*)pData)[0]) {
+	switch (be32s(pData)) {
 	case 'CLT1':
 		container->mColor.mBlock.setRaw(pData);
 		break;

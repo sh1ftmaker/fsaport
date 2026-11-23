@@ -41,7 +41,7 @@ J2DPicture::J2DPicture(J2DPane* parent, JSURandomInputStream* input, J2DMaterial
 
     for (int i = 0; i < 4; i++) {
         mTexCoords[i]    = trailer.mTexCoords[i];
-        mCornerColors[i] = JUTColor(GXCOLOR_AS_U32(trailer.mCornerColor[i]));
+        mCornerColors[i] = JUTColor((u32)trailer.mCornerColor[i]); // port: 0xRRGGBBAA from the big-endian field
     }
     input->seek(headerPosition + header.mBlockLength, SEEK_SET);
 
