@@ -153,3 +153,9 @@ u32 LCLoadData(void* dest, void* src, u32 n) {
 }
 
 }  // extern "C"
+
+// Debug aid: print the current wasm call stack (function names come from
+// --profiling-funcs) to the console.
+extern "C" EMSCRIPTEN_KEEPALIVE void fsa_debug_stack(const char* why) {
+  EM_ASM({ console.log('[stack] ' + UTF8ToString($0) + '\n' + new Error().stack); }, why);
+}

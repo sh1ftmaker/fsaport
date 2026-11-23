@@ -36,14 +36,32 @@ void JASAudioThread::stop() {
 
 void *JASAudioThread::run() {
     OSInitFastCast();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "OSInitFastCast();");
+#endif
     JASDriver::initAI(DMACallback);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "JASDriver::initAI(DMACallback);");
+#endif
 #ifndef FSA_PORT
     JASDsp::boot(DSPCallback);  // the port has no DSP to hand the microcode to (audio: platform, later)
 #endif
     JASDsp::initBuffer();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "JASDsp::initBuffer();");
+#endif
     JASDSPChannel::initAll();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "JASDSPChannel::initAll();");
+#endif
     JASPoolAllocObject_MultiThreaded<JASChannel>::newMemPool(0x48);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "JASPoolAllocObject_MultiThreaded<JASChannel>::newMemPool(0x48);");
+#endif
     JASDriver::startDMA();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio thread: %s\n", "JASDriver::startDMA();");
+#endif
 
     do {
         OSMessage msg = waitMessageBlock();

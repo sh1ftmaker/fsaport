@@ -68,11 +68,18 @@ J2DPictureEx::J2DPictureEx(J2DPane* parent, JSURandomInputStream* input, u32 fla
 
     u32 info[2];
     input->read(info, 8);
+#ifdef FSA_PORT
+    info[0] = __builtin_bswap32(info[0]); // port: big-endian block header
+    info[1] = __builtin_bswap32(info[1]);
+#endif
     mBloBlockType = info[0];
 
     int newPosition = input->getPosition();
     u32 nextInfo[2];
     input->peek(nextInfo, 8);
+#ifdef FSA_PORT
+    nextInfo[1] = __builtin_bswap32(nextInfo[1]);
+#endif
     makePaneExStream(parent, input);
     input->seek(newPosition + nextInfo[1], SEEK_SET);
     J2DScrnBlockPictureParameter trailer;

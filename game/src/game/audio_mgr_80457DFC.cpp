@@ -259,54 +259,192 @@ AudioMgr_8045A080::AudioMgr_8045A080() {
 // FIXME(shotgun): 99.78 %, reloc-name; behaviour clean.
 void AudioMgr_8045A080::init_80459AE4(JKRSolidHeap* heap, u32 audioMemSize, void* initData, void* seqData) {
     JAU_JASInitializer jasInit;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 1\n");
+#endif
     jasInit.mChannelPoolCount = lbl_8053A228;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 2\n");
+#endif
     jasInit.mAudioMemSize = audioMemSize;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 3\n");
+#endif
     jasInit.mDSPLevel = lbl_8053A240;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 4\n");
+#endif
     jasInit.initJASystem(heap);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 5\n");
+#endif
 
     JAU_JAIInitializer jaiInit;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 6\n");
+#endif
     jaiInit.mSeCount = lbl_8053A220;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 7\n");
+#endif
     jaiInit.mSeqCount = lbl_8053A224;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 8\n");
+#endif
     jaiInit.initJAInterface();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 9\n");
+#endif
 
     field_0x2c = new (heap, 0) JASAudioReseter();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 10\n");
+#endif
     field_0x30 = new (heap, 0) JAUSoundMgr();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 11\n");
+#endif
     field_0x34 = &field_0x30->getSeMgr();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 12\n");
+#endif
     field_0x38 = &field_0x30->getSeqMgr();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 13\n");
+#endif
     field_0x3c = new (heap, 0) DopplerAudience_804B2074();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 14\n");
+#endif
     field_0x3c->setting_._04 = lbl_8053A22C;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 15\n");
+#endif
     field_0x3c->setting_._08 = lbl_8053A230;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 16\n");
+#endif
     field_0x3c->setting_.minVolume = lbl_8053AF78;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 17\n");
+#endif
     field_0x3c->setting_._10 = lbl_8053A238;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 18\n");
+#endif
     field_0x3c->setting_._14 = lbl_8053A23C;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 19\n");
+#endif
     field_0x3c->setting_._1c = lbl_8053A234;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 20\n");
+#endif
     fn_8045A0E4(jaiInit.mSeCount);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 21\n");
+#endif
     field_0x3c->updateSetting();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 22\n");
+#endif
     field_0x34->setAudience(field_0x3c);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 23\n");
+#endif
 
     JAISeCategoryArrangement catArrangement;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 24\n");
+#endif
     catArrangement.mItems[0].mMaxActiveSe = 4;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 25\n");
+#endif
     catArrangement.mItems[0].mMaxInactiveSe = 4;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 26\n");
+#endif
     catArrangement.mItems[1].mMaxActiveSe = 4;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 27\n");
+#endif
     catArrangement.mItems[1].mMaxInactiveSe = 4;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 28\n");
+#endif
     catArrangement.mItems[2].mMaxActiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 29\n");
+#endif
     catArrangement.mItems[2].mMaxInactiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 30\n");
+#endif
     catArrangement.mItems[3].mMaxActiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 31\n");
+#endif
     catArrangement.mItems[3].mMaxInactiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 32\n");
+#endif
     catArrangement.mItems[4].mMaxActiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 33\n");
+#endif
     catArrangement.mItems[4].mMaxInactiveSe = 12;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 34\n");
+#endif
     catArrangement.mItems[5].mMaxActiveSe = 8;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 35\n");
+#endif
     catArrangement.mItems[5].mMaxInactiveSe = 8;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 36\n");
+#endif
     catArrangement.mItems[6].mMaxActiveSe = 8;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 37\n");
+#endif
     catArrangement.mItems[6].mMaxInactiveSe = 8;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 38\n");
+#endif
     field_0x34->setCategoryArrangement(catArrangement);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 39\n");
+#endif
     field_0x34->getCategory(0)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 40\n");
+#endif
     field_0x34->getCategory(1)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 41\n");
+#endif
     field_0x34->getCategory(2)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 42\n");
+#endif
     field_0x34->getCategory(3)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 43\n");
+#endif
     field_0x34->getCategory(4)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 44\n");
+#endif
     field_0x34->getCategory(5)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 45\n");
+#endif
     field_0x34->getCategory(6)->getParams()->moveVolume(1.0f, 0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 46\n");
+#endif
 
     JASDsp::FxlineConfig_ fxConfig[4] = {
         {1, 0x6000, 1, 0, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
@@ -314,58 +452,163 @@ void AudioMgr_8045A080::init_80459AE4(JKRSolidHeap* heap, u32 audioMemSize, void
         {1, 0x6000, 1, 0, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
         {1, 0, 1, 0x6000, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
     };
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 47\n");
+#endif
     for (u8 i = 0; i < 4; i++) {
         s16* buf = new (heap, 0x20) s16[(fxConfig[i].mBufCount * 0xA0) / 2];
         JASDsp::setFXLine(i, buf, &fxConfig[i]);
     }
 
     field_0x14 = new ActorSoundObj_804578F4(NULL, heap, 4);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 48\n");
+#endif
     for (int i = 0; i < 4; i++) {
         field_0x18[i] = new ActorSoundObj_804578F4(NULL, heap, 4);
     }
     field_0x28 = new ActorSoundObj_804578F4(NULL, heap, 1);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 49\n");
+#endif
     field_0x40 = new (heap, 0) GameAudio::CustomSoundTable();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 50\n");
+#endif
 
     if (seqData == NULL) {
         seqData = JKRArchive::mount(lbl_8053A24C, JKRArchive::MOUNT_DVD, heap, JKRArchive::MOUNT_DIRECTION_HEAD);
     }
     JASWaveArcLoader::setCurrentDir(lbl_8053A248);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 51\n");
+#endif
     field_0x44 = JAUNewSectionHeap(true);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 52\n");
+#endif
     field_0x44->setSeqDataArchive((JKRArchive*)seqData);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 53\n");
+#endif
     field_0x44->newDynamicSeqBlock(0x16000);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 54\n");
+#endif
     field_0x44->newDynamicSeqBlock(0x16000);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 55\n");
+#endif
     field_0x44->newDynamicSeqBlock(0xB000);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 56\n");
+#endif
 
     JAUAudioArcLoader loader(field_0x44);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 57\n");
+#endif
     if (initData != NULL) {
         loader.load(initData);
     } else {
         loader.load(lbl_8053A244);
     }
     field_0x34->setSeqDataMgr(field_0x44->sectionHeapData_.seSeqDataMgr_);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 58\n");
+#endif
     field_0x38->setSeqDataMgr(field_0x44);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 59\n");
+#endif
     field_0x40->mSoundTable = field_0x44->getSoundTable();
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 60\n");
+#endif
     field_0x4c = 1.0f;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 61\n");
+#endif
     field_0x50 = 1.0f;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 62\n");
+#endif
     field_0x54 = 1.0f;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 63\n");
+#endif
     field_0x58 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 64\n");
+#endif
     field_0x5c = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 65\n");
+#endif
     field_0x60 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 66\n");
+#endif
     field_0x64 = -1;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 67\n");
+#endif
     field_0x68 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 68\n");
+#endif
     field_0x89 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 69\n");
+#endif
     field_0x69 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 70\n");
+#endif
     field_0x7c = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 71\n");
+#endif
     field_0x6a = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 72\n");
+#endif
     field_0x88 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 73\n");
+#endif
     field_0x8a = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 74\n");
+#endif
     field_0x8b = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 75\n");
+#endif
     field_0x8c = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 76\n");
+#endif
     field_0x8d = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 77\n");
+#endif
     field_0x8e = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 78\n");
+#endif
     field_0x75 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 79\n");
+#endif
     field_0x78 = 0;
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 80\n");
+#endif
     setVolumeMode_80458744(0);
+#ifdef FSA_PORT_TRACE
+    OSReport("[trace] audio init step 81\n");
+#endif
 }
 
 // 0x80459674

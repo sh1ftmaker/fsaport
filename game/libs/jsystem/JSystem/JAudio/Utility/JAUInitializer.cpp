@@ -34,14 +34,23 @@ void JAU_JASInitializer::initJASystem(JKRSolidHeap *heap)
     if (JASAudioThread::getThreadPointer() != NULL)
     {
         JUT_WARNING_F2("%s", "Though initialized JASAudioThread, called JAU_JASInitializer::initJASystem()\n");
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 1\n");
+#endif
     }
     else if (JASDvd::getThreadPointer() != NULL)
     {
         JUT_WARNING_F2("%s", "Though initialized JASDvd, called JAU_JASInitializer::initJASystem()\n");
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 2\n");
+#endif
     }
     else
     {
         JASKernel::setupRootHeap(heap, mHeapSize);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 3\n");
+#endif
         if (mAudioMemory == 0)
         {
             mAudioMemory = JKRAram::getManager()->getAudioMemory();
@@ -51,15 +60,30 @@ void JAU_JASInitializer::initJASystem(JKRSolidHeap *heap)
             mAudioMemSize = JKRAram::getManager()->getAudioMemSize();
         }
         JASKernel::setupAramHeap(mAudioMemory, mAudioMemSize);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 4\n");
+#endif
 
         JASPoolAllocObject_MultiThreaded<JASTrack>::newMemPool(mTrackPoolCount);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 5\n");
+#endif
         if(mChannelPoolCount > 0) {
             JASPoolAllocObject_MultiThreaded<JASTrack::TChannelMgr>::newMemPool(mChannelPoolCount);
         }
         JASDvd::createThread(mDvdThreadPrio, 0x80, 0x1000);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 6\n");
+#endif
         JASAudioThread::create(mAudioThreadPrio);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 7\n");
+#endif
 
         JKRThreadSwitch *threadSwitch = JKRThreadSwitch::getManager();
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 8\n");
+#endif
         if (threadSwitch)
         {
             if(mDvdThreadID >= 0) {
@@ -71,7 +95,13 @@ void JAU_JASInitializer::initJASystem(JKRSolidHeap *heap)
             }
         }
         JASDriver::setDSPLevel(mDSPLevel);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 9\n");
+#endif
         JASAramStream::initSystem(mBlockSize, mChannelMax);
+#ifdef FSA_PORT_TRACE
+        OSReport("[trace] initJASystem 10\n");
+#endif
     }
 
     if(mDir) {
