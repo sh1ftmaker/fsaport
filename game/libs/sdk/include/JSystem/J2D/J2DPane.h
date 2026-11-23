@@ -244,6 +244,9 @@ struct J2DPane
     JGeometry::TVec3f getGlbVtx(u8) const;
     void *getPointer(JSURandomInputStream *, u32, JKRArchive *);
     u64 getTagName() const;
+#ifdef FSA_PORT_TRACE
+    void portDumpTree(int depth = 0);
+#endif
 
     /**
      * @reifiedAddress{80309D98}

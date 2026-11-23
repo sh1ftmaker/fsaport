@@ -28,23 +28,23 @@
 
 // .rodata: J2DPane::search tags the unit's functions index (address order).
 static const u64 lbl_80476208[13] = {
-    'Tmmt01', 'Tmmt02', 'Pmmw01', 'Pmmw02', 'Pmmw03', 'Pmmw04', 'Pmmw05',
-    'Pmmw06', 'Pmmw07', 'Pmmw08', 'Pmmw09', 'Pmmwk01', 'Pmmwk02',
+    FSA_TAG64("Tmmt01"), FSA_TAG64("Tmmt02"), FSA_TAG64("Pmmw01"), FSA_TAG64("Pmmw02"), FSA_TAG64("Pmmw03"), FSA_TAG64("Pmmw04"), FSA_TAG64("Pmmw05"),
+    FSA_TAG64("Pmmw06"), FSA_TAG64("Pmmw07"), FSA_TAG64("Pmmw08"), FSA_TAG64("Pmmw09"), FSA_TAG64("Pmmwk01"), FSA_TAG64("Pmmwk02"),
 };
 static const u64 lbl_80476270[4][3] = {
-    {'P1agb01', 'P1agbb01', 'P1agbb02'},
-    {'P2agb01', 'P2agbb01', 'P2agbb02'},
-    {'P3agb01', 'P3agbb01', 'P3agbb02'},
-    {'P4agb01', 'P4agbb01', 'P4agbb02'},
+    {FSA_TAG64("P1agb01"), FSA_TAG64("P1agbb01"), FSA_TAG64("P1agbb02")},
+    {FSA_TAG64("P2agb01"), FSA_TAG64("P2agbb01"), FSA_TAG64("P2agbb02")},
+    {FSA_TAG64("P3agb01"), FSA_TAG64("P3agbb01"), FSA_TAG64("P3agbb02")},
+    {FSA_TAG64("P4agb01"), FSA_TAG64("P4agbb01"), FSA_TAG64("P4agbb02")},
 };
 static const u64 lbl_804762D0[4][2] = {
-    {'P1ok01', 'P1ok02'},
-    {'P2ok01', 'P2ok02'},
-    {'P3ok01', 'P3ok02'},
-    {'P4ok01', 'P4ok02'},
+    {FSA_TAG64("P1ok01"), FSA_TAG64("P1ok02")},
+    {FSA_TAG64("P2ok01"), FSA_TAG64("P2ok02")},
+    {FSA_TAG64("P3ok01"), FSA_TAG64("P3ok02")},
+    {FSA_TAG64("P4ok01"), FSA_TAG64("P4ok02")},
 };
 static const u64 lbl_80476310[8] = {
-    'Ndatar01', 'Ndatar21', 'Ndatar12', 'Ndatar22', 'Ndatar13', 'Ndatar23', 'Ndatar14', 'Ndatar24',
+    FSA_TAG64("Ndatar01"), FSA_TAG64("Ndatar21"), FSA_TAG64("Ndatar12"), FSA_TAG64("Ndatar22"), FSA_TAG64("Ndatar13"), FSA_TAG64("Ndatar23"), FSA_TAG64("Ndatar14"), FSA_TAG64("Ndatar24"),
 };
 // No code of the unit reads these (the original keeps them in .rodata at 0x80476350).
 static const f32 lbl_80476350[6] = {53.0f, 66.0f, 86.0f, 50.0f, 62.0f, 87.0f};
@@ -90,16 +90,16 @@ ResultScreen_804AF9A0::ResultScreen_804AF9A0() {
     mResultScreens_0x4[0]->setPriority("result_4P.blo", 0x1100000, lbl_8053AD68->field_0x18);
     mScoreScreens_0x10[0] = new J2DScreen;
     mScoreScreens_0x10[0]->setPriority("result_score_4P.blo", 0x1100000, lbl_8053AD68->field_0x18);
-    OSReport("Tmmt01===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[0]->search('Tmmt01'))->getStringAllocByte());
-    OSReport("Tmmt02===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[0]->search('Tmmt02'))->getStringAllocByte());
+    OSReport("Tmmt01===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[0]->search(FSA_TAG64("Tmmt01")))->getStringAllocByte());
+    OSReport("Tmmt02===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[0]->search(FSA_TAG64("Tmmt02")))->getStringAllocByte());
     mBackScreen_0x1c = new J2DScreen;
     mBackScreen_0x1c->setPriority("result_back.blo", 0x1100000, lbl_8053AD68->field_0x18);
     mResultScreens_0x4[1] = new J2DScreen;
     mResultScreens_0x4[1]->setPriority("result_3P.blo", 0x1100000, lbl_8053AD68->field_0x18);
     mScoreScreens_0x10[1] = new J2DScreen;
     mScoreScreens_0x10[1]->setPriority("result_score_3P.blo", 0x1100000, lbl_8053AD68->field_0x18);
-    OSReport("Tmmt01===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[1]->search('Tmmt01'))->getStringAllocByte());
-    OSReport("Tmmt02===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[1]->search('Tmmt02'))->getStringAllocByte());
+    OSReport("Tmmt01===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[1]->search(FSA_TAG64("Tmmt01")))->getStringAllocByte());
+    OSReport("Tmmt02===>%d\n", static_cast<J2DTextBox*>(mScoreScreens_0x10[1]->search(FSA_TAG64("Tmmt02")))->getStringAllocByte());
     mResultScreens_0x4[2] = new J2DScreen;
     mResultScreens_0x4[2]->setPriority("result_2P.blo", 0x1100000, lbl_8053AD68->field_0x18);
     mScoreScreens_0x10[2] = new J2DScreen;
@@ -117,33 +117,33 @@ ResultScreen_804AF9A0::ResultScreen_804AF9A0() {
     mFadePicture_0x170 = new J2DPicture(tex);
     mFadePicture_0x170->setBlackWhite(JUtility::TColor(0x000000FF), JUtility::TColor(0x00000000));
 
-    field_0x3f0 = mResultScreens_0x4[0]->search('Pltest4')->getHeight() / 2 +
-                  ((mResultScreens_0x4[0]->search('Prpst04')->getBounds()->i.y +
-                    (mResultScreens_0x4[0]->search('Ndata04')->getBounds()->i.y + mResultScreens_0x4[0]->search('Pltest4')->getBounds()->i.y)) -
-                   (mResultScreens_0x4[0]->search('Ndata05')->getBounds()->i.y + mResultScreens_0x4[0]->search('Prpst04')->getBounds()->i.y));
+    field_0x3f0 = mResultScreens_0x4[0]->search(FSA_TAG64("Pltest4"))->getHeight() / 2 +
+                  ((mResultScreens_0x4[0]->search(FSA_TAG64("Prpst04"))->getBounds()->i.y +
+                    (mResultScreens_0x4[0]->search(FSA_TAG64("Ndata04"))->getBounds()->i.y + mResultScreens_0x4[0]->search(FSA_TAG64("Pltest4"))->getBounds()->i.y)) -
+                   (mResultScreens_0x4[0]->search(FSA_TAG64("Ndata05"))->getBounds()->i.y + mResultScreens_0x4[0]->search(FSA_TAG64("Prpst04"))->getBounds()->i.y));
 
-    field_0x3f4 = mTitleScreen_0x20->search('Pttlbk05')->getBounds()->i.y;
-    field_0x3f8 = mTitleScreen_0x20->search('Pembsb06')->getBounds()->i.y;
-    field_0x3fc = mTitleScreen_0x20->search('Prmhb06')->getBounds()->i.y;
-    field_0x400 = mTitleScreen_0x20->search('Pllosb06')->getBounds()->i.y;
-    field_0x414 = mTitleScreen_0x20->search('Pwinbk05')->getBounds()->i.y;
-    field_0x418 = mTitleScreen_0x20->search('Pdrwbk05')->getBounds()->i.y;
-    field_0x408 = mTitleScreen_0x20->search('Plhbk02')->getBounds()->i.y;
-    field_0x404 = mTitleScreen_0x20->search('Pdhbk02')->getBounds()->i.y;
-    field_0x40c = mTitleScreen_0x20->search('Pfobk02')->getBounds()->i.y;
-    field_0x410 = mTitleScreen_0x20->search('Phabk02')->getBounds()->i.y;
-    mPttlbk05Pane_0x70 = mTitleScreen_0x20->search('Pttlbk05');
-    mPdrwbk05Pane_0x74 = mTitleScreen_0x20->search('Pdrwbk05');
-    mPwinbk05Pane_0x78 = mTitleScreen_0x20->search('Pwinbk05');
-    mPwnr01Pane_0x7c = mTitleScreen_0x20->search('Pwnr01');
-    mPwnr02Pane_0x80 = mTitleScreen_0x20->search('Pwnr02');
-    mPembsb06Pane_0x8c = mTitleScreen_0x20->search('Pembsb06');
-    mPrmhb06Pane_0x90 = mTitleScreen_0x20->search('Prmhb06');
-    mPllosb06Pane_0x94 = mTitleScreen_0x20->search('Pllosb06');
-    mPlhbk02Pane_0x98 = mTitleScreen_0x20->search('Plhbk02');
-    mPdhbk02Pane_0x9c = mTitleScreen_0x20->search('Pdhbk02');
-    mPhabk02Pane_0xa0 = mTitleScreen_0x20->search('Phabk02');
-    mPfobk02Pane_0xa4 = mTitleScreen_0x20->search('Pfobk02');
+    field_0x3f4 = mTitleScreen_0x20->search(FSA_TAG64("Pttlbk05"))->getBounds()->i.y;
+    field_0x3f8 = mTitleScreen_0x20->search(FSA_TAG64("Pembsb06"))->getBounds()->i.y;
+    field_0x3fc = mTitleScreen_0x20->search(FSA_TAG64("Prmhb06"))->getBounds()->i.y;
+    field_0x400 = mTitleScreen_0x20->search(FSA_TAG64("Pllosb06"))->getBounds()->i.y;
+    field_0x414 = mTitleScreen_0x20->search(FSA_TAG64("Pwinbk05"))->getBounds()->i.y;
+    field_0x418 = mTitleScreen_0x20->search(FSA_TAG64("Pdrwbk05"))->getBounds()->i.y;
+    field_0x408 = mTitleScreen_0x20->search(FSA_TAG64("Plhbk02"))->getBounds()->i.y;
+    field_0x404 = mTitleScreen_0x20->search(FSA_TAG64("Pdhbk02"))->getBounds()->i.y;
+    field_0x40c = mTitleScreen_0x20->search(FSA_TAG64("Pfobk02"))->getBounds()->i.y;
+    field_0x410 = mTitleScreen_0x20->search(FSA_TAG64("Phabk02"))->getBounds()->i.y;
+    mPttlbk05Pane_0x70 = mTitleScreen_0x20->search(FSA_TAG64("Pttlbk05"));
+    mPdrwbk05Pane_0x74 = mTitleScreen_0x20->search(FSA_TAG64("Pdrwbk05"));
+    mPwinbk05Pane_0x78 = mTitleScreen_0x20->search(FSA_TAG64("Pwinbk05"));
+    mPwnr01Pane_0x7c = mTitleScreen_0x20->search(FSA_TAG64("Pwnr01"));
+    mPwnr02Pane_0x80 = mTitleScreen_0x20->search(FSA_TAG64("Pwnr02"));
+    mPembsb06Pane_0x8c = mTitleScreen_0x20->search(FSA_TAG64("Pembsb06"));
+    mPrmhb06Pane_0x90 = mTitleScreen_0x20->search(FSA_TAG64("Prmhb06"));
+    mPllosb06Pane_0x94 = mTitleScreen_0x20->search(FSA_TAG64("Pllosb06"));
+    mPlhbk02Pane_0x98 = mTitleScreen_0x20->search(FSA_TAG64("Plhbk02"));
+    mPdhbk02Pane_0x9c = mTitleScreen_0x20->search(FSA_TAG64("Pdhbk02"));
+    mPhabk02Pane_0xa0 = mTitleScreen_0x20->search(FSA_TAG64("Phabk02"));
+    mPfobk02Pane_0xa4 = mTitleScreen_0x20->search(FSA_TAG64("Pfobk02"));
     mPttlbk05Pane_0x70->show();
     mPdrwbk05Pane_0x74->hide();
     mPwinbk05Pane_0x78->hide();
@@ -339,77 +339,77 @@ void ResultScreen_804AF9A0::fn_803B6768() {
 
 // The 4P layout's panes (fn_803B6768), as fn_803B42C0 with four players.
 void ResultScreen_804AF9A0::fn_803B5378() {
-    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran12'));
-    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran22'));
-    field_0x30[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran32'));
-    field_0x30[3] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran42'));
-    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran11'));
-    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran21'));
-    field_0x40[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran31'));
-    field_0x40[3] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran41'));
+    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran12")));
+    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran22")));
+    field_0x30[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran32")));
+    field_0x30[3] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran42")));
+    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran11")));
+    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran21")));
+    field_0x40[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran31")));
+    field_0x40[3] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran41")));
     for (int i = 0; i < 4; i++) {
         field_0x40[i]->getCornerColor(field_0x46c[i]);
     }
-    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01');
-    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar12');
-    field_0x50[2] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar13');
-    field_0x50[3] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar14');
-    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21');
-    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar22');
-    field_0x60[2] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar23');
-    field_0x60[3] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar24');
-    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore11'));
-    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore12'));
-    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore13'));
-    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore14'));
-    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore15'));
-    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork11'));
-    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork12'));
-    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork13'));
-    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork14'));
-    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork15'));
-    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore21'));
-    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore22'));
-    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore23'));
-    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore24'));
-    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore25'));
-    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork21'));
-    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork22'));
-    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork23'));
-    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork24'));
-    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork25'));
-    mScoreSignTexts_0xa8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore31'));
-    mScoreThousandsTexts_0xb8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore32'));
-    mScoreHundredsTexts_0xc8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore33'));
-    mScoreTensTexts_0xd8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore34'));
-    mScoreOnesTexts_0xe8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore35'));
-    mScorkSignTexts_0xf8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork31'));
-    mScorkThousandsTexts_0x108[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork32'));
-    mScorkHundredsTexts_0x118[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork33'));
-    mScorkTensTexts_0x128[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork34'));
-    mScorkOnesTexts_0x138[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork35'));
-    mScoreSignTexts_0xa8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore41'));
-    mScoreThousandsTexts_0xb8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore42'));
-    mScoreHundredsTexts_0xc8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore43'));
-    mScoreTensTexts_0xd8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore44'));
-    mScoreOnesTexts_0xe8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore45'));
-    mScorkSignTexts_0xf8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork41'));
-    mScorkThousandsTexts_0x108[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork42'));
-    mScorkHundredsTexts_0x118[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork43'));
-    mScorkTensTexts_0x128[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork44'));
-    mScorkOnesTexts_0x138[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork45'));
-    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search('Pltest1');
-    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search('Pltwst2');
-    field_0x148[2] = mResultScreens_0x4[mLayout_0x450]->search('Pltest3');
-    field_0x148[3] = mResultScreens_0x4[mLayout_0x450]->search('Pltest4');
-    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search('Prpst01');
-    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search('Prpst02');
-    mPrpstPanes_0x158[2] = mResultScreens_0x4[mLayout_0x450]->search('Prpst03');
-    mPrpstPanes_0x158[3] = mResultScreens_0x4[mLayout_0x450]->search('Prpst04');
-    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search('Ndata05');
-    mResultBgPane_0x16c = mBackScreen_0x1c->search('Prsltbg');
+    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"));
+    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar12"));
+    field_0x50[2] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar13"));
+    field_0x50[3] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar14"));
+    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"));
+    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar22"));
+    field_0x60[2] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar23"));
+    field_0x60[3] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar24"));
+    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore11")));
+    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore12")));
+    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore13")));
+    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore14")));
+    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore15")));
+    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork11")));
+    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork12")));
+    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork13")));
+    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork14")));
+    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork15")));
+    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore21")));
+    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore22")));
+    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore23")));
+    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore24")));
+    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore25")));
+    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork21")));
+    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork22")));
+    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork23")));
+    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork24")));
+    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork25")));
+    mScoreSignTexts_0xa8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore31")));
+    mScoreThousandsTexts_0xb8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore32")));
+    mScoreHundredsTexts_0xc8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore33")));
+    mScoreTensTexts_0xd8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore34")));
+    mScoreOnesTexts_0xe8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore35")));
+    mScorkSignTexts_0xf8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork31")));
+    mScorkThousandsTexts_0x108[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork32")));
+    mScorkHundredsTexts_0x118[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork33")));
+    mScorkTensTexts_0x128[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork34")));
+    mScorkOnesTexts_0x138[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork35")));
+    mScoreSignTexts_0xa8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore41")));
+    mScoreThousandsTexts_0xb8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore42")));
+    mScoreHundredsTexts_0xc8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore43")));
+    mScoreTensTexts_0xd8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore44")));
+    mScoreOnesTexts_0xe8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore45")));
+    mScorkSignTexts_0xf8[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork41")));
+    mScorkThousandsTexts_0x108[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork42")));
+    mScorkHundredsTexts_0x118[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork43")));
+    mScorkTensTexts_0x128[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork44")));
+    mScorkOnesTexts_0x138[3] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork45")));
+    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest1"));
+    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltwst2"));
+    field_0x148[2] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest3"));
+    field_0x148[3] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest4"));
+    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst01"));
+    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst02"));
+    mPrpstPanes_0x158[2] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst03"));
+    mPrpstPanes_0x158[3] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst04"));
+    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Ndata05"));
+    mResultBgPane_0x16c = mBackScreen_0x1c->search(FSA_TAG64("Prsltbg"));
     for (int i = 0; i < 4; i++) {
         mScoreSignTexts_0xa8[i]->setFont(lbl_8053AD78->mFont);
         mScoreThousandsTexts_0xb8[i]->setFont(lbl_8053AD78->mFont);
@@ -435,88 +435,88 @@ void ResultScreen_804AF9A0::fn_803B5378() {
         field_0x148[i]->hide();
     }
     JUTFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt02'))->setFont(font);
+    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt01'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt02'))->getStringPtr(), 0xDD, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt01'))->getStringPtr(), 0xDD, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt01")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt02")))->getStringPtr(), 0xDD, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt01")))->getStringPtr(), 0xDD, 0, NULL, NULL);
     for (int i = 0; i < 13; i++) {
         field_0x4c9[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_80476208[i])->getAlpha();
     }
-    field_0x41c = mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->getBounds()->i.y;
+    field_0x41c = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->getBounds()->i.y;
     for (int i = 0; i < 3; i++) {
         field_0x4d6[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_80476270[0][i])->getAlpha();
     }
-    field_0x420 = mScoreScreens_0x10[mLayout_0x450]->search('P1agbb02')->getBounds()->i.y;
+    field_0x420 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1agbb02"))->getBounds()->i.y;
     for (int i = 0; i < 2; i++) {
         field_0x4d9[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_804762D0[0][i])->getAlpha();
     }
-    field_0x424 = mScoreScreens_0x10[mLayout_0x450]->search('P1ok02')->getBounds()->i.y;
-    field_0x428 = mScoreScreens_0x10[mLayout_0x450]->search('P1agb01')->getBounds()->i.y;
-    mScoreScreens_0x10[mLayout_0x450]->search('Ndata02')->hide();
-    mScoreScreens_0x10[mLayout_0x450]->search('Ndata01')->hide();
-    mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->hide();
+    field_0x424 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1ok02"))->getBounds()->i.y;
+    field_0x428 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1agb01"))->getBounds()->i.y;
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata02"))->hide();
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata01"))->hide();
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->hide();
 }
 
 
 // The 3P layout's panes (fn_803B6768), as fn_803B38E8, then the score
 // screen's message texts and the panes' starting alphas and y.
 void ResultScreen_804AF9A0::fn_803B42C0() {
-    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran12'));
-    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran22'));
-    field_0x30[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran32'));
-    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran11'));
-    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran21'));
-    field_0x40[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran31'));
+    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran12")));
+    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran22")));
+    field_0x30[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran32")));
+    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran11")));
+    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran21")));
+    field_0x40[2] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran31")));
     for (int i = 0; i < 3; i++) {
         field_0x40[i]->getCornerColor(field_0x46c[i]);
     }
-    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01');
-    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar12');
-    field_0x50[2] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar13');
-    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21');
-    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar22');
-    field_0x60[2] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar23');
-    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore11'));
-    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore12'));
-    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore13'));
-    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore14'));
-    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore15'));
-    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork11'));
-    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork12'));
-    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork13'));
-    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork14'));
-    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork15'));
-    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore21'));
-    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore22'));
-    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore23'));
-    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore24'));
-    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore25'));
-    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork21'));
-    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork22'));
-    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork23'));
-    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork24'));
-    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork25'));
-    mScoreSignTexts_0xa8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore31'));
-    mScoreThousandsTexts_0xb8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore32'));
-    mScoreHundredsTexts_0xc8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore33'));
-    mScoreTensTexts_0xd8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore34'));
-    mScoreOnesTexts_0xe8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore35'));
-    mScorkSignTexts_0xf8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork31'));
-    mScorkThousandsTexts_0x108[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork32'));
-    mScorkHundredsTexts_0x118[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork33'));
-    mScorkTensTexts_0x128[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork34'));
-    mScorkOnesTexts_0x138[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork35'));
-    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search('Pltest1');
-    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search('Pltwst2');
-    field_0x148[2] = mResultScreens_0x4[mLayout_0x450]->search('Pltest3');
-    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search('Prpst01');
-    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search('Prpst02');
-    mPrpstPanes_0x158[2] = mResultScreens_0x4[mLayout_0x450]->search('Prpst03');
-    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search('Ndata05');
-    mResultBgPane_0x16c = mBackScreen_0x1c->search('Prsltbg');
+    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"));
+    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar12"));
+    field_0x50[2] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar13"));
+    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"));
+    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar22"));
+    field_0x60[2] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar23"));
+    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore11")));
+    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore12")));
+    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore13")));
+    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore14")));
+    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore15")));
+    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork11")));
+    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork12")));
+    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork13")));
+    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork14")));
+    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork15")));
+    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore21")));
+    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore22")));
+    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore23")));
+    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore24")));
+    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore25")));
+    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork21")));
+    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork22")));
+    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork23")));
+    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork24")));
+    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork25")));
+    mScoreSignTexts_0xa8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore31")));
+    mScoreThousandsTexts_0xb8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore32")));
+    mScoreHundredsTexts_0xc8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore33")));
+    mScoreTensTexts_0xd8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore34")));
+    mScoreOnesTexts_0xe8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore35")));
+    mScorkSignTexts_0xf8[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork31")));
+    mScorkThousandsTexts_0x108[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork32")));
+    mScorkHundredsTexts_0x118[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork33")));
+    mScorkTensTexts_0x128[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork34")));
+    mScorkOnesTexts_0x138[2] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork35")));
+    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest1"));
+    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltwst2"));
+    field_0x148[2] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest3"));
+    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst01"));
+    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst02"));
+    mPrpstPanes_0x158[2] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst03"));
+    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Ndata05"));
+    mResultBgPane_0x16c = mBackScreen_0x1c->search(FSA_TAG64("Prsltbg"));
     for (int i = 0; i < 3; i++) {
         mScoreSignTexts_0xa8[i]->setFont(lbl_8053AD78->mFont);
         mScoreThousandsTexts_0xb8[i]->setFont(lbl_8053AD78->mFont);
@@ -542,71 +542,71 @@ void ResultScreen_804AF9A0::fn_803B42C0() {
         field_0x148[i]->hide();
     }
     JUTFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt02'))->setFont(font);
+    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt01'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt02'))->getStringPtr(), 0xDD, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tmmt01'))->getStringPtr(), 0xDD, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt01")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt02")))->getStringPtr(), 0xDD, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tmmt01")))->getStringPtr(), 0xDD, 0, NULL, NULL);
     for (int i = 0; i < 13; i++) {
         field_0x4c9[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_80476208[i])->getAlpha();
     }
-    field_0x41c = mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->getBounds()->i.y;
+    field_0x41c = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->getBounds()->i.y;
     for (int i = 0; i < 3; i++) {
         field_0x4d6[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_80476270[0][i])->getAlpha();
     }
-    field_0x420 = mScoreScreens_0x10[mLayout_0x450]->search('P1agbb02')->getBounds()->i.y;
+    field_0x420 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1agbb02"))->getBounds()->i.y;
     for (int i = 0; i < 2; i++) {
         field_0x4d9[i] = mScoreScreens_0x10[mLayout_0x450]->search(lbl_804762D0[0][i])->getAlpha();
     }
-    field_0x424 = mScoreScreens_0x10[mLayout_0x450]->search('P1ok02')->getBounds()->i.y;
-    field_0x428 = mScoreScreens_0x10[mLayout_0x450]->search('P1agb01')->getBounds()->i.y;
-    mScoreScreens_0x10[mLayout_0x450]->search('Ndata02')->hide();
-    mScoreScreens_0x10[mLayout_0x450]->search('Ndata01')->hide();
-    mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->hide();
+    field_0x424 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1ok02"))->getBounds()->i.y;
+    field_0x428 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("P1agb01"))->getBounds()->i.y;
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata02"))->hide();
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata01"))->hide();
+    mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->hide();
 }
 
 // The 2P layout's panes (fn_803B6768): rank pictures, score digits and
 // the per-player panes of field_0x10[mLayout_0x450] / mResultScreens_0x4[mLayout_0x450].
 void ResultScreen_804AF9A0::fn_803B38E8() {
-    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran12'));
-    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran22'));
-    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21')->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
-    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran11'));
-    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search('Pran21'));
+    field_0x30[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran12")));
+    field_0x30[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran22")));
+    field_0x42c = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x430 = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"))->getBounds()->i.y - field_0x30[0]->getBounds()->i.y;
+    field_0x40[0] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran11")));
+    field_0x40[1] = static_cast<J2DPicture*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pran21")));
     for (int i = 0; i < 2; i++) {
         field_0x40[i]->getCornerColor(field_0x46c[i]);
     }
-    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar01');
-    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar12');
-    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar21');
-    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search('Ndatar22');
-    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore11'));
-    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore12'));
-    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore13'));
-    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore14'));
-    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore15'));
-    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork11'));
-    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork12'));
-    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork13'));
-    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork14'));
-    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork15'));
-    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore21'));
-    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore22'));
-    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore23'));
-    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore24'));
-    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscore25'));
-    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork21'));
-    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork22'));
-    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork23'));
-    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork24'));
-    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search('Tscork25'));
-    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search('Pltest1');
-    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search('Pltwst2');
-    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search('Prpst01');
-    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search('Prpst02');
-    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search('Ndata05');
-    mResultBgPane_0x16c = mBackScreen_0x1c->search('Prsltbg');
+    field_0x50[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar01"));
+    field_0x50[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar12"));
+    field_0x60[0] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar21"));
+    field_0x60[1] = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndatar22"));
+    mScoreSignTexts_0xa8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore11")));
+    mScoreThousandsTexts_0xb8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore12")));
+    mScoreHundredsTexts_0xc8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore13")));
+    mScoreTensTexts_0xd8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore14")));
+    mScoreOnesTexts_0xe8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore15")));
+    mScorkSignTexts_0xf8[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork11")));
+    mScorkThousandsTexts_0x108[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork12")));
+    mScorkHundredsTexts_0x118[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork13")));
+    mScorkTensTexts_0x128[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork14")));
+    mScorkOnesTexts_0x138[0] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork15")));
+    mScoreSignTexts_0xa8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore21")));
+    mScoreThousandsTexts_0xb8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore22")));
+    mScoreHundredsTexts_0xc8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore23")));
+    mScoreTensTexts_0xd8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore24")));
+    mScoreOnesTexts_0xe8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscore25")));
+    mScorkSignTexts_0xf8[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork21")));
+    mScorkThousandsTexts_0x108[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork22")));
+    mScorkHundredsTexts_0x118[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork23")));
+    mScorkTensTexts_0x128[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork24")));
+    mScorkOnesTexts_0x138[1] = static_cast<J2DTextBox*>(mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Tscork25")));
+    field_0x148[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltest1"));
+    field_0x148[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Pltwst2"));
+    mPrpstPanes_0x158[0] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst01"));
+    mPrpstPanes_0x158[1] = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Prpst02"));
+    field_0x168 = mResultScreens_0x4[mLayout_0x450]->search(FSA_TAG64("Ndata05"));
+    mResultBgPane_0x16c = mBackScreen_0x1c->search(FSA_TAG64("Prsltbg"));
     for (int i = 0; i < 2; i++) {
         mScoreSignTexts_0xa8[i]->setFont(lbl_8053AD78->mFont);
         mScoreThousandsTexts_0xb8[i]->setFont(lbl_8053AD78->mFont);
@@ -910,15 +910,15 @@ void ResultScreen_804AF9A0::fn_803B1B60() {
         }
     } else {
         if (timer >= t0) {
-            f32 x = mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->getBounds()->i.x;
+            f32 x = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->getBounds()->i.x;
             f32 offset = (200.0f + (f32)c) * (1.0f - (f32)((timer - t0) * (timer - t0)) / (f32)(a * a));
-            mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->move(x, field_0x41c - 200.0f + offset);
+            mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->move(x, field_0x41c - 200.0f + offset);
             f32 rate = 1.0f - (f32)(mStateTimer_0x440 - t0) / (f32)a;
             inl_803AA8F8_1(rate);
         } else if (timer >= t1) {
-            f32 x = mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->getBounds()->i.x;
+            f32 x = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->getBounds()->i.x;
             f32 offset = (f32)c * ((f32)((timer - t1) * (timer - t1)) / (f32)(b * b));
-            mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->move(x, field_0x41c + offset);
+            mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->move(x, field_0x41c + offset);
         }
         if (mStateTimer_0x440 <= t2) {
             if (mStateTimer_0x440 >= t3) {
@@ -1140,9 +1140,9 @@ void ResultScreen_804AF9A0::fn_803B03E8() {
     mStateTimer_0x440++;
     if (mStateTimer_0x440 > t0 && mStateTimer_0x440 <= t1 + t0) {
         s32 d = mStateTimer_0x440 - t0;
-        f32 x = mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->getBounds()->i.x;
+        f32 x = mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->getBounds()->i.x;
         f32 offset = 200.0f * ((f32)(d * d) / (f32)(t1 * t1));
-        mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->move(x, field_0x41c - offset);
+        mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->move(x, field_0x41c - offset);
         inl_803AA8F8_1(1.0f - (f32)d / (f32)t1);
     }
     if (mStateTimer_0x440 > t2 && mStateTimer_0x440 <= t3 + t2 + t4 * (mPlayerCount_0x454 - 1)) {
@@ -2657,9 +2657,9 @@ void ResultScreen_804AF9A0::fn_803AA8F8() {
         if (mStateTimer_0x440 == 0) {
             mStateTimer_0x440 = 150;
             if (mLayout_0x450 < 2) {
-                mScoreScreens_0x10[mLayout_0x450]->search('Ndata01')->show();
-                mScoreScreens_0x10[mLayout_0x450]->search('Ndata02')->show();
-                mScoreScreens_0x10[mLayout_0x450]->search('Pmmwk02')->show();
+                mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata01"))->show();
+                mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Ndata02"))->show();
+                mScoreScreens_0x10[mLayout_0x450]->search(FSA_TAG64("Pmmwk02"))->show();
                 inl_803AA8F8_1(0.0f);
                 for (s32 i = 0; i < mPlayerCount_0x454; i++) {
                     inl_803AA8F8_2(i, 0.0f);

@@ -165,43 +165,43 @@ HudMgr_804B1920::HudMgr_804B1920() {
     field_0xc->setPriority("op_zelda.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
     field_0xc->search('Tm02')->hide();
     field_0xc->search('Tm01')->hide();
-    field_0xc->search('P1b02')->hide();
+    field_0xc->search(FSA_TAG64("P1b02"))->hide();
     field_0xc->search('P1ar')->hide();
-    field_0xc->search('P5b02')->hide();
+    field_0xc->search(FSA_TAG64("P5b02"))->hide();
     field_0xc->search('P5ar')->hide();
-    field_0x110 = 370.0f + field_0xc->search('Ndata05')->getBounds()->i.x;
-    field_0x114 = field_0xc->search('Ndata05')->getBounds()->i.y;
+    field_0x110 = 370.0f + field_0xc->search(FSA_TAG64("Ndata05"))->getBounds()->i.x;
+    field_0x114 = field_0xc->search(FSA_TAG64("Ndata05"))->getBounds()->i.y;
     field_0x106 = 0;
     field_0x108 = 0;
-    field_0xec = field_0x8->search('Pw0101')->getBounds()->i.x;
-    field_0xf0 = field_0x8->search('Pw0101')->getBounds()->i.y;
+    field_0xec = field_0x8->search(FSA_TAG64("Pw0101"))->getBounds()->i.x;
+    field_0xf0 = field_0x8->search(FSA_TAG64("Pw0101"))->getBounds()->i.y;
     field_0xf4 = 0.0f;
     field_0xf8 = 0.0f;
     field_0x10d = 0;
-    static_cast<J2DTextBox*>(field_0x4->search('Tmmt02'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(field_0x4->search('Tmmt01'))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tmmt02")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tmmt01")))->setFont(lbl_8053AD78->mFont);
 
     for (s32 i = 0; i < 12; i++) {
         field_0x40[i] = new PaneCtrl_804AF86C;
     }
-    field_0x40[0]->setPane_80402F04(field_0x4->search('Pmmwk02'));
-    field_0x40[1]->setPane_80402F04(field_0x4->search('Pmmwk01'));
-    field_0x40[2]->setPane_80402F04(field_0x4->search('Pmmw09'));
-    field_0x40[3]->setPane_80402F04(field_0x4->search('Pmmw08'));
-    field_0x40[4]->setPane_80402F04(field_0x4->search('Pmmw07'));
-    field_0x40[5]->setPane_80402F04(field_0x4->search('Pmmw06'));
-    field_0x40[6]->setPane_80402F04(field_0x4->search('Pmmw05'));
-    field_0x40[7]->setPane_80402F04(field_0x4->search('Pmmw04'));
-    field_0x40[8]->setPane_80402F04(field_0x4->search('Pmmw03'));
-    field_0x40[9]->setPane_80402F04(field_0x4->search('Pmmw02'));
-    field_0x40[10]->setPane_80402F04(field_0x4->search('Pmmw01'));
-    field_0x40[11]->setPane_80402F04(field_0x4->search('Pmmtp'));
+    field_0x40[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmwk02")));
+    field_0x40[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmwk01")));
+    field_0x40[2]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw09")));
+    field_0x40[3]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw08")));
+    field_0x40[4]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw07")));
+    field_0x40[5]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw06")));
+    field_0x40[6]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw05")));
+    field_0x40[7]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw04")));
+    field_0x40[8]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw03")));
+    field_0x40[9]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw02")));
+    field_0x40[10]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmw01")));
+    field_0x40[11]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmtp")));
     static_cast<J2DPicture*>(field_0x40[11]->mPane)->setBlackWhite(JUtility::TColor(0), JUtility::TColor(0));
 
     field_0x70[0] = new PaneCtrl_804AF86C;
-    field_0x70[0]->setPane_80402F04(field_0x4->search('Tmmt01'));
+    field_0x70[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Tmmt01")));
     field_0x70[1] = new PaneCtrl_804AF86C;
-    field_0x70[1]->setPane_80402F04(field_0x4->search('Tmmt02'));
+    field_0x70[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Tmmt02")));
     field_0x104 = 0;
     field_0x10b = 0;
     field_0x10c = 0;
@@ -652,7 +652,7 @@ void HudMgr_804B1920::fn_8043DC98() {
     }
     if (field_0x257 != 0) {
         gGameRoot2_8053AB10->setPort_8013B490();
-        field_0xc->search('Ndata05')->move(field_0x110 + lbl_8050DB0C.field_0x4c[(0x2A2 - 0x4C) / 2],
+        field_0xc->search(FSA_TAG64("Ndata05"))->move(field_0x110 + lbl_8050DB0C.field_0x4c[(0x2A2 - 0x4C) / 2],
                                            field_0x114 + lbl_8050DB0C.field_0x4c[(0x2A4 - 0x4C) / 2]);
         field_0xc->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     }
@@ -1246,9 +1246,9 @@ void HudMgr_804B1920::fn_8043ABCC(s32 index, s32 unused) {
     } else {
         res = getMain2DResource_804030C4('TIMG', lbl_804B1900[index]);
     }
-    static_cast<J2DPicture*>(field_0x8->search('Pdf01'))->changeTexture((const ResTIMG*)res, 0);
-    field_0x8->search('Pdf01')->show();
-    field_0x8->search('Pw0101')->hide();
+    static_cast<J2DPicture*>(field_0x8->search(FSA_TAG64("Pdf01")))->changeTexture((const ResTIMG*)res, 0);
+    field_0x8->search(FSA_TAG64("Pdf01"))->show();
+    field_0x8->search(FSA_TAG64("Pw0101"))->hide();
     field_0x106 = 1;
     field_0x10d = 0;
 }
@@ -1270,13 +1270,13 @@ void HudMgr_804B1920::fn_8043A638() {
     if (field_0x10d == 0) {
         delay = lbl_8050DB0C.field_0x4c[(0x2E6 - 0x4C) / 2] + 80;
         if (field_0x106 < delay) {
-            field_0x8->search('Pdf01')->setAlpha(0);
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(0);
         } else if (field_0x106 <= delay + fadeIn) {
-            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(field_0x106 - delay) / (f32)fadeIn));
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(255.0f * ((f32)(field_0x106 - delay) / (f32)fadeIn));
         } else if (field_0x106 > delay + fadeIn + hold) {
-            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(delay + fadeIn + hold + fadeOut - field_0x106) / (f32)fadeOut));
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(255.0f * ((f32)(delay + fadeIn + hold + fadeOut - field_0x106) / (f32)fadeOut));
         }
-        field_0x8->search('Pw0101')->setAlpha(field_0x8->search('Pdf01')->getAlpha());
+        field_0x8->search(FSA_TAG64("Pw0101"))->setAlpha(field_0x8->search(FSA_TAG64("Pdf01"))->getAlpha());
         if (field_0x106 < delay + fadeIn + hold + fadeOut) {
             field_0x106++;
         } else {
@@ -1287,23 +1287,23 @@ void HudMgr_804B1920::fn_8043A638() {
         }
         dx += lbl_8050DB0C.field_0x4c[(0x2E2 - 0x4C) / 2];
         dy += lbl_8050DB0C.field_0x4c[(0x2E4 - 0x4C) / 2];
-        field_0x8->search('Pw0101')->move(field_0xec + dx, field_0xf0 + dy);
+        field_0x8->search(FSA_TAG64("Pw0101"))->move(field_0xec + dx, field_0xf0 + dy);
     } else {
         wait = field_0x108;
         if (field_0x106 < 20) {
-            field_0x8->search('Pdf01')->setAlpha(0);
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(0);
         } else if (field_0x106 <= fadeIn + 20) {
-            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(field_0x106 - 20) / (f32)fadeIn));
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(255.0f * ((f32)(field_0x106 - 20) / (f32)fadeIn));
         } else if (field_0x106 > wait + (fadeIn + 20)) {
-            field_0x8->search('Pdf01')->setAlpha(255.0f * ((f32)(fadeOut + (wait + (fadeIn + 20)) - field_0x106) / (f32)fadeOut));
+            field_0x8->search(FSA_TAG64("Pdf01"))->setAlpha(255.0f * ((f32)(fadeOut + (wait + (fadeIn + 20)) - field_0x106) / (f32)fadeOut));
         }
-        field_0x8->search('Pw0101')->setAlpha(field_0x8->search('Pdf01')->getAlpha());
+        field_0x8->search(FSA_TAG64("Pw0101"))->setAlpha(field_0x8->search(FSA_TAG64("Pdf01"))->getAlpha());
         if (field_0x106 < 20 + fadeIn + wait + fadeOut) {
             field_0x106++;
         } else {
             field_0x106 = 0;
         }
-        field_0x8->search('Pw0101')->move(field_0xf4, field_0xf8);
+        field_0x8->search(FSA_TAG64("Pw0101"))->move(field_0xf4, field_0xf8);
     }
     gGameRoot2_8053AB10->setPort_8013B490();
     field_0x8->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
@@ -1327,9 +1327,9 @@ void HudMgr_804B1920::fn_8043A450(s32 stage, s32 sub) {
         } else {
             res = getMain2DResource_804030C4('TIMG', lbl_804B1820[index]);
         }
-        static_cast<J2DPicture*>(field_0x8->search('Pw0101'))->changeTexture((const ResTIMG*)res, 0);
-        field_0x8->search('Pw0101')->show();
-        field_0x8->search('Pdf01')->hide();
+        static_cast<J2DPicture*>(field_0x8->search(FSA_TAG64("Pw0101")))->changeTexture((const ResTIMG*)res, 0);
+        field_0x8->search(FSA_TAG64("Pw0101"))->show();
+        field_0x8->search(FSA_TAG64("Pdf01"))->hide();
         field_0x106 = 1;
         field_0x10d = 0;
     }
@@ -1349,9 +1349,9 @@ void HudMgr_804B1920::fn_8043A268(s32 stage, s32 sub, s16 value, f32 x, f32 y) {
         } else {
             res = getMain2DResource_804030C4('TIMG', lbl_804B1820[index]);
         }
-        static_cast<J2DPicture*>(field_0x8->search('Pw0101'))->changeTexture((const ResTIMG*)res, 0);
-        field_0x8->search('Pw0101')->show();
-        field_0x8->search('Pdf01')->hide();
+        static_cast<J2DPicture*>(field_0x8->search(FSA_TAG64("Pw0101")))->changeTexture((const ResTIMG*)res, 0);
+        field_0x8->search(FSA_TAG64("Pw0101"))->show();
+        field_0x8->search(FSA_TAG64("Pdf01"))->hide();
         field_0x106 = 1;
         field_0x10d = 1;
         field_0xf4 = x;

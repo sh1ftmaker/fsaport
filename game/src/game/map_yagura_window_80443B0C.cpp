@@ -21,32 +21,32 @@ MapYaguraWindow_804B1B60::MapYaguraWindow_804B1B60() {
     mScreen->setPriority("map_yagura_window.blo", 0x1100000, lbl_80529DEC.mMapArchive_0x34);
 
     field_0x8 = new PaneCtrl_804AF86C();
-    field_0x8->setPane_80402F04(mScreen->search('Nda01'));
+    field_0x8->setPane_80402F04(mScreen->search(FSA_TAG64("Nda01")));
     field_0x8->moveFromCentre_80402E08(0.0f, -480.0f);
     field_0x8->field_0x22 = 0;
 
     field_0xc = new PaneCtrl_804AF86C();
-    field_0xc->setPane_80402F04(mScreen->search('Pblack'));
+    field_0xc->setPane_80402F04(mScreen->search(FSA_TAG64("Pblack")));
     field_0xc->mPane->setAlpha(0);
     field_0xc->field_0x26 = 0;
 
     field_0x10[0] = new PaneCtrl_804AF86C();
-    field_0x10[0]->setPane_80402F04(mScreen->search('Pocur01'));
+    field_0x10[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur01")));
     field_0x10[1] = new PaneCtrl_804AF86C();
-    field_0x10[1]->setPane_80402F04(mScreen->search('Pocur02'));
+    field_0x10[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur02")));
     field_0x10[2] = new PaneCtrl_804AF86C();
-    field_0x10[2]->setPane_80402F04(mScreen->search('Pocur03'));
+    field_0x10[2]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur03")));
     field_0x10[3] = new PaneCtrl_804AF86C();
-    field_0x10[3]->setPane_80402F04(mScreen->search('Pocur04'));
+    field_0x10[3]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur04")));
     field_0x10[4] = new PaneCtrl_804AF86C();
-    field_0x10[4]->setPane_80402F04(mScreen->search('Pocur05'));
+    field_0x10[4]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur05")));
     field_0x10[5] = new PaneCtrl_804AF86C();
-    field_0x10[5]->setPane_80402F04(mScreen->search('Pocur06'));
+    field_0x10[5]->setPane_80402F04(mScreen->search(FSA_TAG64("Pocur06")));
 
     field_0x28[0] = new PaneCtrl_804AF86C();
-    field_0x28[0]->setPane_80402F04(mScreen->search('Ptcur02'));
+    field_0x28[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Ptcur02")));
     field_0x28[1] = new PaneCtrl_804AF86C();
-    field_0x28[1]->setPane_80402F04(mScreen->search('Ptcur04'));
+    field_0x28[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Ptcur04")));
 
     field_0x10[0]->mPane->hide();
     field_0x10[1]->mPane->hide();
@@ -55,20 +55,20 @@ MapYaguraWindow_804B1B60::MapYaguraWindow_804B1B60() {
     field_0x10[4]->mPane->hide();
     field_0x10[5]->mPane->hide();
 
-    field_0x30 = static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->getBlack();
-    field_0x34 = static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->getWhite();
-    field_0x38 = static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->getBlack();
-    field_0x3c = static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->getWhite();
+    field_0x30 = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->getBlack();
+    field_0x34 = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->getWhite();
+    field_0x38 = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->getBlack();
+    field_0x3c = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->getWhite();
 
-    static_cast<J2DTextBox*>(mScreen->search('Tmm01'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm02'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm04'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm06'))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm01")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm02")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm04")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm06")))->setFont(lbl_8053AD78->mFont);
 
-    f32 y5 = mScreen->search('Tmm05')->getBounds()->i.y;
-    f32 y3 = mScreen->search('Tmm03')->getBounds()->i.y;
+    f32 y5 = mScreen->search(FSA_TAG64("Tmm05"))->getBounds()->i.y;
+    f32 y3 = mScreen->search(FSA_TAG64("Tmm03"))->getBounds()->i.y;
     field_0x40 = y3 - y5;
     field_0x44 = 0;
     pool_80543D70();
@@ -95,12 +95,12 @@ MapYaguraWindow_804B1B60::~MapYaguraWindow_804B1B60() {
 
 void MapYaguraWindow_804B1B60::fn_804446F0(s32 arg) {
     field_0x44 = arg;
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm01'))->getStringPtr(), 0x241, arg);
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm02'))->getStringPtr(), 0x241, arg);
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->getStringPtr(), 0x242, arg);
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm04'))->getStringPtr(), 0x242, arg);
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->getStringPtr(), 0x243, arg);
-    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search('Tmm06'))->getStringPtr(), 0x243, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm01")))->getStringPtr(), 0x241, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm02")))->getStringPtr(), 0x241, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->getStringPtr(), 0x242, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm04")))->getStringPtr(), 0x242, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->getStringPtr(), 0x243, arg);
+    fn_80443B0C(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm06")))->getStringPtr(), 0x243, arg);
 
     field_0x8->moveFromCentre_80402E08(0.0f, -480.0f);
     field_0x8->field_0x22 = 0;
@@ -112,8 +112,8 @@ void MapYaguraWindow_804B1B60::fn_804446F0(s32 arg) {
     pool_80543D70();
     field_0x4c = 0;
 
-    static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->setBlackWhite(field_0x30, field_0x34);
-    static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->setBlackWhite(field_0x38, field_0x3c);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->setBlackWhite(field_0x30, field_0x34);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->setBlackWhite(field_0x38, field_0x3c);
 
     for (s32 i = 0; i < 6; i++) {
         field_0x10[i]->moveFromCentre_80402E08(0.0f, field_0x40);
@@ -157,8 +157,8 @@ void MapYaguraWindow_804B1B60::fn_80443DAC() {
     if (lbl_8053AD30->fn_80309C4C(4, -1)) {
         if (field_0x4c == 0) {
             field_0x4c = 1;
-            static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->setBlackWhite(field_0x38, field_0x3c);
-            static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->setBlackWhite(field_0x30, field_0x34);
+            static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->setBlackWhite(field_0x38, field_0x3c);
+            static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->setBlackWhite(field_0x30, field_0x34);
             for (s32 i = 0; i < 6; i++) {
                 field_0x10[i]->moveFromCentre_80402E08(0.0f, 0.0f);
             }
@@ -170,8 +170,8 @@ void MapYaguraWindow_804B1B60::fn_80443DAC() {
     } else if (lbl_8053AD30->fn_80309C4C(8, -1)) {
         if (field_0x4c == 1) {
             field_0x4c = 0;
-            static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->setBlackWhite(field_0x30, field_0x34);
-            static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->setBlackWhite(field_0x38, field_0x3c);
+            static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->setBlackWhite(field_0x30, field_0x34);
+            static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->setBlackWhite(field_0x38, field_0x3c);
             for (s32 i = 0; i < 6; i++) {
                 field_0x10[i]->moveFromCentre_80402E08(0.0f, field_0x40);
             }
@@ -190,8 +190,8 @@ void MapYaguraWindow_804B1B60::fn_80443DAC() {
         }
     } else if (lbl_8053AD30->fn_80309C4C(0x200, -1)) {
         field_0x4c = 1;
-        static_cast<J2DTextBox*>(mScreen->search('Tmm03'))->setBlackWhite(field_0x38, field_0x3c);
-        static_cast<J2DTextBox*>(mScreen->search('Tmm05'))->setBlackWhite(field_0x30, field_0x34);
+        static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm03")))->setBlackWhite(field_0x38, field_0x3c);
+        static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tmm05")))->setBlackWhite(field_0x30, field_0x34);
         for (s32 i = 0; i < 6; i++) {
             field_0x10[i]->moveFromCentre_80402E08(0.0f, 0.0f);
         }
@@ -205,27 +205,27 @@ void MapYaguraWindow_804B1B60::fn_80443DAC() {
 
     if (--field_0x48 <= 0) {
         pool_80543D70();
-        if (mScreen->search('Pocur01')->isVisible()) {
-            mScreen->search('Pocur01')->hide();
-            mScreen->search('Pocur02')->hide();
-            mScreen->search('Pocur03')->show();
-            mScreen->search('Pocur04')->show();
-            mScreen->search('Pocur05')->hide();
-            mScreen->search('Pocur06')->hide();
-        } else if (mScreen->search('Pocur03')->isVisible()) {
-            mScreen->search('Pocur01')->hide();
-            mScreen->search('Pocur02')->hide();
-            mScreen->search('Pocur03')->hide();
-            mScreen->search('Pocur04')->hide();
-            mScreen->search('Pocur05')->show();
-            mScreen->search('Pocur06')->show();
+        if (mScreen->search(FSA_TAG64("Pocur01"))->isVisible()) {
+            mScreen->search(FSA_TAG64("Pocur01"))->hide();
+            mScreen->search(FSA_TAG64("Pocur02"))->hide();
+            mScreen->search(FSA_TAG64("Pocur03"))->show();
+            mScreen->search(FSA_TAG64("Pocur04"))->show();
+            mScreen->search(FSA_TAG64("Pocur05"))->hide();
+            mScreen->search(FSA_TAG64("Pocur06"))->hide();
+        } else if (mScreen->search(FSA_TAG64("Pocur03"))->isVisible()) {
+            mScreen->search(FSA_TAG64("Pocur01"))->hide();
+            mScreen->search(FSA_TAG64("Pocur02"))->hide();
+            mScreen->search(FSA_TAG64("Pocur03"))->hide();
+            mScreen->search(FSA_TAG64("Pocur04"))->hide();
+            mScreen->search(FSA_TAG64("Pocur05"))->show();
+            mScreen->search(FSA_TAG64("Pocur06"))->show();
         } else {
-            mScreen->search('Pocur01')->show();
-            mScreen->search('Pocur02')->show();
-            mScreen->search('Pocur03')->hide();
-            mScreen->search('Pocur04')->hide();
-            mScreen->search('Pocur05')->hide();
-            mScreen->search('Pocur06')->hide();
+            mScreen->search(FSA_TAG64("Pocur01"))->show();
+            mScreen->search(FSA_TAG64("Pocur02"))->show();
+            mScreen->search(FSA_TAG64("Pocur03"))->hide();
+            mScreen->search(FSA_TAG64("Pocur04"))->hide();
+            mScreen->search(FSA_TAG64("Pocur05"))->hide();
+            mScreen->search(FSA_TAG64("Pocur06"))->hide();
         }
     }
 }

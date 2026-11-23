@@ -59,18 +59,18 @@ void StaffRollLoader_804B1D10::fn_8044B960() {
             // field_0x14 is the loaded archive (requestMountMemArchive_80401E10's object).
             mScreen->setPriority(name, 0x1100000, (JKRArchive*)mArchive->field_0x14);
             JUTResFont* font = lbl_8053AD78->mFont;
-            ((J2DTextBox*)mScreen->search('Tstf01'))->setFont(font);
+            ((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf01")))->setFont(font);
             font = lbl_8053AD78->mFont;
-            ((J2DTextBox*)mScreen->search('Tstf02'))->setFont(font);
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tstf01'))->getStringPtr(), lbl_80490F48[mPage], 0, NULL, NULL);
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tstf02'))->getStringPtr(), lbl_80490F48[mPage], 0, NULL, NULL);
+            ((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf02")))->setFont(font);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf01")))->getStringPtr(), lbl_80490F48[mPage], 0, NULL, NULL);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf02")))->getStringPtr(), lbl_80490F48[mPage], 0, NULL, NULL);
             if (mPage == 5) {
                 JUTResFont* font2 = lbl_8053AD78->mFont;
-                ((J2DTextBox*)mScreen->search('Tstf03'))->setFont(font2);
+                ((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf03")))->setFont(font2);
                 font2 = lbl_8053AD78->mFont;
-                ((J2DTextBox*)mScreen->search('Tstf04'))->setFont(font2);
-                getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tstf03'))->getStringPtr(), 0x861, 0, NULL, NULL);
-                getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tstf04'))->getStringPtr(), 0x861, 0, NULL, NULL);
+                ((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf04")))->setFont(font2);
+                getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf03")))->getStringPtr(), 0x861, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tstf04")))->getStringPtr(), 0x861, 0, NULL, NULL);
             }
             delete mArchive;
             mState = 3;

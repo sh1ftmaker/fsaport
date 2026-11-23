@@ -48,41 +48,41 @@ static const s32 lbl_8048C258[8] = {1, 5, 9, 14, 17, 21, 25, 29};
 static const s32 lbl_8048C278[8] = {2, 6, 10, 13, 18, 22, 26, 30};
 static const s32 lbl_8048C298[8] = {3, 7, 11, 15, 19, 23, 27, 31};
 static const u64 lbl_8048C2B8[8] = {
-    'Pwarea01', 'Pwarea02', 'Pwarea03', 'Pwarea04', 'Pwarea05', 'Pwarea06', 'Pwarea07', 'Pwarea08',
+    FSA_TAG64("Pwarea01"), FSA_TAG64("Pwarea02"), FSA_TAG64("Pwarea03"), FSA_TAG64("Pwarea04"), FSA_TAG64("Pwarea05"), FSA_TAG64("Pwarea06"), FSA_TAG64("Pwarea07"), FSA_TAG64("Pwarea08"),
 };
 static const u64 lbl_8048C2F8[32][2] = {
-    {'Ppoint01', 'Ppoint02'}, {'Ppoint03', 'Ppoint04'}, {'Ppoint05', 'Ppoint06'}, {'Ppoint07', 'Ppoint08'},
-    {'Ppoint09', 'Ppoint10'}, {'Ppoint11', 'Ppoint12'}, {'Ppoint13', 'Ppoint14'}, {'Ppoint15', 'Ppoint16'},
-    {'Ppoint17', 'Ppoint18'}, {'Ppoint19', 'Ppoint20'}, {'Ppoint21', 'Ppoint22'}, {'Ppoint23', 'Ppoint24'},
-    {'Ppoint25', 'Ppoint26'}, {'Ppoint27', 'Ppoint28'}, {'Ppoint29', 'Ppoint30'}, {'Ppoint31', 'Ppoint32'},
-    {'Ppoint33', 'Ppoint34'}, {'Ppoint35', 'Ppoint36'}, {'Ppoint37', 'Ppoint38'}, {'Ppoint39', 'Ppoint40'},
-    {'Ppoint41', 'Ppoint42'}, {'Ppoint43', 'Ppoint44'}, {'Ppoint45', 'Ppoint46'}, {'Ppoint47', 'Ppoint48'},
-    {'Ppoint49', 'Ppoint50'}, {'Ppoint51', 'Ppoint52'}, {'Ppoint53', 'Ppoint54'}, {'Ppoint55', 'Ppoint56'},
-    {'Ppoint57', 'Ppoint58'}, {'Ppoint59', 'Ppoint60'}, {'Ppoint61', 'Ppoint62'}, {'Ppoint63', 'Ppoint64'},
+    {FSA_TAG64("Ppoint01"), FSA_TAG64("Ppoint02")}, {FSA_TAG64("Ppoint03"), FSA_TAG64("Ppoint04")}, {FSA_TAG64("Ppoint05"), FSA_TAG64("Ppoint06")}, {FSA_TAG64("Ppoint07"), FSA_TAG64("Ppoint08")},
+    {FSA_TAG64("Ppoint09"), FSA_TAG64("Ppoint10")}, {FSA_TAG64("Ppoint11"), FSA_TAG64("Ppoint12")}, {FSA_TAG64("Ppoint13"), FSA_TAG64("Ppoint14")}, {FSA_TAG64("Ppoint15"), FSA_TAG64("Ppoint16")},
+    {FSA_TAG64("Ppoint17"), FSA_TAG64("Ppoint18")}, {FSA_TAG64("Ppoint19"), FSA_TAG64("Ppoint20")}, {FSA_TAG64("Ppoint21"), FSA_TAG64("Ppoint22")}, {FSA_TAG64("Ppoint23"), FSA_TAG64("Ppoint24")},
+    {FSA_TAG64("Ppoint25"), FSA_TAG64("Ppoint26")}, {FSA_TAG64("Ppoint27"), FSA_TAG64("Ppoint28")}, {FSA_TAG64("Ppoint29"), FSA_TAG64("Ppoint30")}, {FSA_TAG64("Ppoint31"), FSA_TAG64("Ppoint32")},
+    {FSA_TAG64("Ppoint33"), FSA_TAG64("Ppoint34")}, {FSA_TAG64("Ppoint35"), FSA_TAG64("Ppoint36")}, {FSA_TAG64("Ppoint37"), FSA_TAG64("Ppoint38")}, {FSA_TAG64("Ppoint39"), FSA_TAG64("Ppoint40")},
+    {FSA_TAG64("Ppoint41"), FSA_TAG64("Ppoint42")}, {FSA_TAG64("Ppoint43"), FSA_TAG64("Ppoint44")}, {FSA_TAG64("Ppoint45"), FSA_TAG64("Ppoint46")}, {FSA_TAG64("Ppoint47"), FSA_TAG64("Ppoint48")},
+    {FSA_TAG64("Ppoint49"), FSA_TAG64("Ppoint50")}, {FSA_TAG64("Ppoint51"), FSA_TAG64("Ppoint52")}, {FSA_TAG64("Ppoint53"), FSA_TAG64("Ppoint54")}, {FSA_TAG64("Ppoint55"), FSA_TAG64("Ppoint56")},
+    {FSA_TAG64("Ppoint57"), FSA_TAG64("Ppoint58")}, {FSA_TAG64("Ppoint59"), FSA_TAG64("Ppoint60")}, {FSA_TAG64("Ppoint61"), FSA_TAG64("Ppoint62")}, {FSA_TAG64("Ppoint63"), FSA_TAG64("Ppoint64")},
 };
 static const u64 lbl_8048C4F8[27] = {
-    'Ndata11', 'Ndata12', 'Ndata13', 'Ndata14', 'Ndata15', 'Ndata16', 'Ndata17', 'Ndata18',
-    'Ptink01', 'Ptink02', 'Ptink03', 'Ptink04', 'Ptink05', 'Ptink06', 'Ptink07', 'Ptink08',
-    'Ttlv11', 'Ttlv12', 'Ptlvb11', 'Ptlvbk11', 'Ptlvb12', 'Ptlvbk12', 'Ptlvb13', 'Ptlvb14',
-    'Ptlvb15', 'Ptlvbk13', 'Ptlvbk14',
+    FSA_TAG64("Ndata11"), FSA_TAG64("Ndata12"), FSA_TAG64("Ndata13"), FSA_TAG64("Ndata14"), FSA_TAG64("Ndata15"), FSA_TAG64("Ndata16"), FSA_TAG64("Ndata17"), FSA_TAG64("Ndata18"),
+    FSA_TAG64("Ptink01"), FSA_TAG64("Ptink02"), FSA_TAG64("Ptink03"), FSA_TAG64("Ptink04"), FSA_TAG64("Ptink05"), FSA_TAG64("Ptink06"), FSA_TAG64("Ptink07"), FSA_TAG64("Ptink08"),
+    FSA_TAG64("Ttlv11"), FSA_TAG64("Ttlv12"), FSA_TAG64("Ptlvb11"), FSA_TAG64("Ptlvbk11"), FSA_TAG64("Ptlvb12"), FSA_TAG64("Ptlvbk12"), FSA_TAG64("Ptlvb13"), FSA_TAG64("Ptlvb14"),
+    FSA_TAG64("Ptlvb15"), FSA_TAG64("Ptlvbk13"), FSA_TAG64("Ptlvbk14"),
 };
 static const u64 lbl_8048C5D0[9] = {
-    'Penback', 'Psky', 'Pclo04', 'Pclo03', 'Pclo02', 'Pmapca', 'Pmaptou', 'Pclo01',
-    'Penback1',
+    FSA_TAG64("Penback"), 'Psky', FSA_TAG64("Pclo04"), FSA_TAG64("Pclo03"), FSA_TAG64("Pclo02"), FSA_TAG64("Pmapca"), FSA_TAG64("Pmaptou"), FSA_TAG64("Pclo01"),
+    FSA_TAG64("Penback1"),
 };
 // The Plicu arrow pairs, one per stick direction (fn_804054B8 walks it from its start).
 static const u64 lbl_8048C618[4][2] = {
-    {'Plicu01', 'Plicu02'}, {'Plicu07', 'Plicu08'}, {'Plicu03', 'Plicu04'}, {'Plicu05', 'Plicu06'},
+    {FSA_TAG64("Plicu01"), FSA_TAG64("Plicu02")}, {FSA_TAG64("Plicu07"), FSA_TAG64("Plicu08")}, {FSA_TAG64("Plicu03"), FSA_TAG64("Plicu04")}, {FSA_TAG64("Plicu05"), FSA_TAG64("Plicu06")},
 };
 static const u64 lbl_8048C658[63] = {
-    'Plv1b02', 'Plv1b01', 'Tlv01', 'Plv2b02', 'Plv2b01', 'Tlv02', 'Plv3b02', 'Plv3b01',
-    'Tlv03', 'Plv4b02', 'Plv4b01', 'Tlv04', 'Plv5b02', 'Plv5b01', 'Tlv05', 'Plv6b02',
-    'Plv6b01', 'Tlv06', 'Plv7b02', 'Plv7b01', 'Tlv07', 'Plv8b02', 'Plv8b01', 'Tlv08',
-    'Pbsk01', 'Pdot03', 'Pdot02', 'Pdot01', 'Pbsbb05', 'Pbsbb04', 'Pbsbb03', 'Pbsbb02',
-    'Pbsbb01', 'Pbsb05', 'Pbsb04', 'Pbsb03', 'Pbsb02', 'Pbsb01', 'Pbs01', 'Ppl01',
-    'Ppl02', 'Ppl03', 'Ppl04', 'Ppl05', 'Ppl06', 'Ppl07', 'Ppl08', 'Ppl09',
-    'Ppl10', 'Ppl11', 'Ppl12', 'Ppl13', 'Ppl14', 'Ppl15', 'Ppl16', 'Ppl17',
-    'Ppl18', 'Ppl19', 'Ppl20', 'Ppl21', 'Ppl22', 'Ppl23', 'Ppl24',
+    FSA_TAG64("Plv1b02"), FSA_TAG64("Plv1b01"), FSA_TAG64("Tlv01"), FSA_TAG64("Plv2b02"), FSA_TAG64("Plv2b01"), FSA_TAG64("Tlv02"), FSA_TAG64("Plv3b02"), FSA_TAG64("Plv3b01"),
+    FSA_TAG64("Tlv03"), FSA_TAG64("Plv4b02"), FSA_TAG64("Plv4b01"), FSA_TAG64("Tlv04"), FSA_TAG64("Plv5b02"), FSA_TAG64("Plv5b01"), FSA_TAG64("Tlv05"), FSA_TAG64("Plv6b02"),
+    FSA_TAG64("Plv6b01"), FSA_TAG64("Tlv06"), FSA_TAG64("Plv7b02"), FSA_TAG64("Plv7b01"), FSA_TAG64("Tlv07"), FSA_TAG64("Plv8b02"), FSA_TAG64("Plv8b01"), FSA_TAG64("Tlv08"),
+    FSA_TAG64("Pbsk01"), FSA_TAG64("Pdot03"), FSA_TAG64("Pdot02"), FSA_TAG64("Pdot01"), FSA_TAG64("Pbsbb05"), FSA_TAG64("Pbsbb04"), FSA_TAG64("Pbsbb03"), FSA_TAG64("Pbsbb02"),
+    FSA_TAG64("Pbsbb01"), FSA_TAG64("Pbsb05"), FSA_TAG64("Pbsb04"), FSA_TAG64("Pbsb03"), FSA_TAG64("Pbsb02"), FSA_TAG64("Pbsb01"), FSA_TAG64("Pbs01"), FSA_TAG64("Ppl01"),
+    FSA_TAG64("Ppl02"), FSA_TAG64("Ppl03"), FSA_TAG64("Ppl04"), FSA_TAG64("Ppl05"), FSA_TAG64("Ppl06"), FSA_TAG64("Ppl07"), FSA_TAG64("Ppl08"), FSA_TAG64("Ppl09"),
+    FSA_TAG64("Ppl10"), FSA_TAG64("Ppl11"), FSA_TAG64("Ppl12"), FSA_TAG64("Ppl13"), FSA_TAG64("Ppl14"), FSA_TAG64("Ppl15"), FSA_TAG64("Ppl16"), FSA_TAG64("Ppl17"),
+    FSA_TAG64("Ppl18"), FSA_TAG64("Ppl19"), FSA_TAG64("Ppl20"), FSA_TAG64("Ppl21"), FSA_TAG64("Ppl22"), FSA_TAG64("Ppl23"), FSA_TAG64("Ppl24"),
 };
 static const f32 lbl_8048C850[7] = {
     1034.0f, 1277.0f, 1277.0f, 1034.0f, 1216.0f, 1277.0f, 1034.0f,
@@ -240,12 +240,12 @@ inline void MapScreen_804B1288::loadStageInfo() {
         char name[11];
         snprintf(name, sizeof(name), "w0%d_0%d.bti", mStage_0x340 + 1, mLevel_0x348 + 1);
         ResTIMG* picture = (ResTIMG*)fn_80403184('TIMG', name);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan01'))->remove((u8)0);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan01'))->append(picture, 1.0f);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan01'))->setBlendRatio(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan02'))->remove((u8)0);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan02'))->append(picture, 1.0f);
-        ((J2DPicture*)mMapAreaScreen_0x10->search('Pplan02'))->setBlendRatio(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan01")))->remove((u8)0);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan01")))->append(picture, 1.0f);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan01")))->setBlendRatio(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan02")))->remove((u8)0);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan02")))->append(picture, 1.0f);
+        ((J2DPicture*)mMapAreaScreen_0x10->search(FSA_TAG64("Pplan02")))->setBlendRatio(0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
         getMessageText_803832BC(field_0x564[0], lbl_8048C238[mStage_0x340], 0, NULL, NULL);
         getMessageText_803832BC(field_0x564[1], lbl_8048C258[mStage_0x340], 0, NULL, NULL);
         getMessageText_803832BC(field_0x564[2], lbl_8048C278[mStage_0x340], 0, NULL, NULL);
@@ -300,7 +300,7 @@ MapScreen_804B1288::MapScreen_804B1288() {
     OSInitFastCast();
     mMapAnmTransform_0x1c = static_cast<J2DAnmTransform*>(
         J2DAnmLoaderDataBase::load(JKRFileLoader::getGlbResource("map.bck", lbl_80529DEC.mMapArchive_0x34)));
-    mMapScreen_0xc->search('Ndata08')->setAnimation(mMapAnmTransform_0x1c);
+    mMapScreen_0xc->search(FSA_TAG64("Ndata08"))->setAnimation(mMapAnmTransform_0x1c);
     mMapAnmColor_0x20 = static_cast<J2DAnmColor*>(
         J2DAnmLoaderDataBase::load(JKRFileLoader::getGlbResource("map.bpk", lbl_80529DEC.mMapArchive_0x34)));
     mMapScreen_0xc->setAnimation(mMapAnmColor_0x20);
@@ -310,40 +310,40 @@ MapScreen_804B1288::MapScreen_804B1288() {
     mMapTenScreen_0x14->setPriority("map_ten.blo", 0x1100000, lbl_80529DEC.mMapArchive_0x34);
     mMessageWindowScreen_0x18 = new J2DScreen;
     mMessageWindowScreen_0x18->setPriority("main_message_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
-    mMapAreaScreen_0x10->search('Ndata10')->hide();
-    mMapAreaScreen_0x10->search('Pli01')->hide();
-    mMapAreaScreen_0x10->search('Pli02')->hide();
-    mMapAreaScreen_0x10->search('Pli03')->hide();
-    mMapAreaScreen_0x10->search('Pli04')->hide();
-    mMapAreaScreen_0x10->search('Pms02')->hide();
-    mMapAreaScreen_0x10->search('Pms03')->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pli01"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pli02"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pli03"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pli04"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pms02"))->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pms03"))->hide();
     if (gGameRoot_8053AAF8->field_0x7e == 1) {
-        mMapAreaScreen_0x10->search('Ndata08')->show();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata08"))->show();
     } else {
-        mMapAreaScreen_0x10->search('Ndata08')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata08"))->hide();
     }
     if (fn_804149C0()) {
-        mMapAreaScreen_0x10->search('Ndata03')->show();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata03"))->show();
         s32 tens = fn_803B8C90() / 10;
         s32 ones = fn_803B8C90() % 10;
         const ResTIMG* digit = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', lbl_804B1260[tens]));
-        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pfsk01'))->changeTexture(digit, 0);
-        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pfs01'))->changeTexture(digit, 0);
+        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pfsk01")))->changeTexture(digit, 0);
+        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pfs01")))->changeTexture(digit, 0);
         digit = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', lbl_804B1260[ones]));
-        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pfsk02'))->changeTexture(digit, 0);
-        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pfs02'))->changeTexture(digit, 0);
+        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pfsk02")))->changeTexture(digit, 0);
+        static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pfs02")))->changeTexture(digit, 0);
     } else {
-        mMapAreaScreen_0x10->search('Ndata03')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata03"))->hide();
     }
-    mMapAreaScreen_0x10->search('Pphu01')->hide();
+    mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->hide();
     mMapAreaScreen_0x10->search('Pp01')->hide();
     mMapAreaScreen_0x10->search('Pp02')->hide();
     mMapAreaScreen_0x10->search('Pp03')->hide();
     mMapAreaScreen_0x10->search('Pp04')->hide();
-    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search('Ttlv11'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search('Ttlv12'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search('Ttlv13'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search('Ttlv14'))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->setFont(lbl_8053AD78->mFont);
     for (s32 i = 0; i < 8; i++) {
         static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(lbl_8048C658[i * 3 + 2]))->setFont(lbl_8053AD78->mFont);
         getMessageText_803832BC(static_cast<J2DTextBox*>(mMapAreaScreen_0x10->search(lbl_8048C658[i * 3 + 2]))->getStringPtr(),
@@ -352,11 +352,11 @@ MapScreen_804B1288::MapScreen_804B1288() {
     for (s32 i = 0; i < 8; i++) {
         getMessageText_803832BC(mStageNames_0x474[i], lbl_8048C1F8[i], 0, NULL, NULL);
     }
-    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search('Tmt02'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search('Tmt01'))->setFont(lbl_8053AD78->mFont);
-    field_0x404 = mMapAreaScreen_0x10->search('Plvcu')->getBounds()->i.x - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.x;
-    field_0x408 = mMapAreaScreen_0x10->search('Plvcu')->getBounds()->i.y - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.y;
-    mMapAreaScreen_0x10->search('Plvcu')->setAlpha(0);
+    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt02")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt01")))->setFont(lbl_8053AD78->mFont);
+    field_0x404 = mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->getBounds()->i.x - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.x;
+    field_0x408 = mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->getBounds()->i.y - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.y;
+    mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->setAlpha(0);
     f32 y = 0.5f * (mMapAreaScreen_0x10->search(lbl_8048C658[0])->getBounds()->i.y + mMapAreaScreen_0x10->search(lbl_8048C658[6])->getBounds()->i.y);
     mMapAreaScreen_0x10->search(lbl_8048C658[3])->move(mMapAreaScreen_0x10->search(lbl_8048C658[0])->getBounds()->i.x, y);
     mMapAreaScreen_0x10->search(lbl_8048C658[4])->move(mMapAreaScreen_0x10->search(lbl_8048C658[1])->getBounds()->i.x,
@@ -381,22 +381,22 @@ MapScreen_804B1288::MapScreen_804B1288() {
         }
     }
     mTestMapPane_0xc8 = new PaneCtrl_804AF86C;
-    mTestMapPane_0xc8->setPane_80402F04(mMapScreen_0xc->search('Ptestmap'));
+    mTestMapPane_0xc8->setPane_80402F04(mMapScreen_0xc->search(FSA_TAG64("Ptestmap")));
     mTowerPane_0xcc = new PaneCtrl_804AF86C;
-    mTowerPane_0xcc->setPane_80402F04(mMapScreen_0xc->search('Ptower'));
+    mTowerPane_0xcc->setPane_80402F04(mMapScreen_0xc->search(FSA_TAG64("Ptower")));
     mTowerPane_0xcc->mPane->hide();
     field_0xd0 = new PaneCtrl_804AF86C;
-    field_0xd0->setPane_80402F04(mMapScreen_0xc->search('Ndata08'));
+    field_0xd0->setPane_80402F04(mMapScreen_0xc->search(FSA_TAG64("Ndata08")));
     for (s32 i = 0; i < 18; i++) {
         mRoutePanes_0xd4[i] = new PaneCtrl_804AF86C;
         mRoutePanes_0xd4[i]->setPane_80402F04(mMapScreen_0xc->search(lbl_8048CAC8[i]));
     }
     field_0x11c = new PaneCtrl_804AF86C;
-    field_0x11c->setPane_80402F04(mMapAreaScreen_0x10->search('Ndata07'));
+    field_0x11c->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Ndata07")));
     mPlanPanes_0x120[0] = new PaneCtrl_804AF86C;
-    mPlanPanes_0x120[0]->setPane_80402F04(mMapAreaScreen_0x10->search('Pplan02'));
+    mPlanPanes_0x120[0]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Pplan02")));
     mPlanPanes_0x120[1] = new PaneCtrl_804AF86C;
-    mPlanPanes_0x120[1]->setPane_80402F04(mMapAreaScreen_0x10->search('Pplan01'));
+    mPlanPanes_0x120[1]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Pplan01")));
     for (s32 i = 0; i < 32; i++) {
         mPointPanes_0x128[i] = new PaneCtrl_804AF86C;
         mPointPanes_0x128[i]->setPane_80402F04(mMapAreaScreen_0x10->search(lbl_8048C2F8[i][0]));
@@ -416,37 +416,37 @@ MapScreen_804B1288::MapScreen_804B1288() {
         mTinkPanes_0x208[i]->setPane_80402F04(mMapAreaScreen_0x10->search(lbl_8048C4F8[8 + i]));
     }
     mLevelCursorPanes_0x228[0][0] = new PaneCtrl_804AF86C;
-    mLevelCursorPanes_0x228[0][0]->setPane_80402F04(mMapAreaScreen_0x10->search('Plvcu01'));
+    mLevelCursorPanes_0x228[0][0]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu01")));
     mLevelCursorPanes_0x228[0][1] = new PaneCtrl_804AF86C;
-    mLevelCursorPanes_0x228[0][1]->setPane_80402F04(mMapAreaScreen_0x10->search('Plvcu02'));
+    mLevelCursorPanes_0x228[0][1]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu02")));
     mLevelCursorPanes_0x228[1][0] = new PaneCtrl_804AF86C;
-    mLevelCursorPanes_0x228[1][0]->setPane_80402F04(mMapAreaScreen_0x10->search('Plvcu03'));
+    mLevelCursorPanes_0x228[1][0]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu03")));
     mLevelCursorPanes_0x228[1][1] = new PaneCtrl_804AF86C;
-    mLevelCursorPanes_0x228[1][1]->setPane_80402F04(mMapAreaScreen_0x10->search('Plvcu04'));
+    mLevelCursorPanes_0x228[1][1]->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu04")));
     field_0x238 = new PaneCtrl_804AF86C;
-    field_0x238->setPane_80402F04(mMapAreaScreen_0x10->search('Plvse'));
+    field_0x238->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Plvse")));
     field_0x23c = new PaneCtrl_804AF86C;
-    field_0x23c->setPane_80402F04(mMapAreaScreen_0x10->search('Pms01'));
+    field_0x23c->setPane_80402F04(mMapAreaScreen_0x10->search(FSA_TAG64("Pms01")));
     for (s32 i = 0; i < 12; i++) {
         mMessageWindowPanes_0x240[i] = new PaneCtrl_804AF86C;
     }
-    mMessageWindowPanes_0x240[0]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmwk02'));
-    mMessageWindowPanes_0x240[1]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmwk01'));
-    mMessageWindowPanes_0x240[2]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw09'));
-    mMessageWindowPanes_0x240[3]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw08'));
-    mMessageWindowPanes_0x240[4]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw07'));
-    mMessageWindowPanes_0x240[5]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw06'));
-    mMessageWindowPanes_0x240[6]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw05'));
-    mMessageWindowPanes_0x240[7]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw04'));
-    mMessageWindowPanes_0x240[8]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw03'));
-    mMessageWindowPanes_0x240[9]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw02'));
-    mMessageWindowPanes_0x240[10]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmw01'));
-    mMessageWindowPanes_0x240[11]->setPane_80402F04(mMessageWindowScreen_0x18->search('Pmmtp'));
+    mMessageWindowPanes_0x240[0]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmwk02")));
+    mMessageWindowPanes_0x240[1]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmwk01")));
+    mMessageWindowPanes_0x240[2]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw09")));
+    mMessageWindowPanes_0x240[3]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw08")));
+    mMessageWindowPanes_0x240[4]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw07")));
+    mMessageWindowPanes_0x240[5]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw06")));
+    mMessageWindowPanes_0x240[6]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw05")));
+    mMessageWindowPanes_0x240[7]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw04")));
+    mMessageWindowPanes_0x240[8]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw03")));
+    mMessageWindowPanes_0x240[9]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw02")));
+    mMessageWindowPanes_0x240[10]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmw01")));
+    mMessageWindowPanes_0x240[11]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmtp")));
     static_cast<J2DPicture*>(mMessageWindowPanes_0x240[11]->mPane)->setBlackWhite(JUtility::TColor(0), JUtility::TColor(0));
     mMessageTextPanes_0x270[0] = new PaneCtrl_804AF86C;
-    mMessageTextPanes_0x270[0]->setPane_80402F04(mMessageWindowScreen_0x18->search('Tmt01'));
+    mMessageTextPanes_0x270[0]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt01")));
     mMessageTextPanes_0x270[1] = new PaneCtrl_804AF86C;
-    mMessageTextPanes_0x270[1]->setPane_80402F04(mMessageWindowScreen_0x18->search('Tmt02'));
+    mMessageTextPanes_0x270[1]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt02")));
     mMessageTimer_0x42a = 0;
     field_0x42c = 0;
     mMessageState_0x659 = 0;
@@ -461,9 +461,9 @@ MapScreen_804B1288::MapScreen_804B1288() {
     }
     mSoundObj_0x2c8 = new ActorSoundObj_804578F4(NULL, NULL, 8);
     const ResTIMG* plan = static_cast<const ResTIMG*>(fn_80403184('TIMG', "w01_01.bti"));
-    static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pplan01'))->append(plan, 1.0f);
+    static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pplan01")))->append(plan, 1.0f);
     plan = static_cast<const ResTIMG*>(fn_80403184('TIMG', "w01_01.bti"));
-    static_cast<J2DPicture*>(mMapAreaScreen_0x10->search('Pplan02'))->append(plan, 1.0f);
+    static_cast<J2DPicture*>(mMapAreaScreen_0x10->search(FSA_TAG64("Pplan02")))->append(plan, 1.0f);
     static_cast<J2DPicture*>(field_0x23c->mPane)->append(static_cast<const ResTIMG*>(fn_80403184('TIMG', "kk_mStick_02.bti")), 1.0f);
     static_cast<J2DPicture*>(field_0x23c->mPane)->setBlendRatio(1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
     field_0x2b4 = lbl_8053AED8->field_0x8;
@@ -484,7 +484,7 @@ MapScreen_804B1288::MapScreen_804B1288() {
         JUtility::TColor black = static_cast<J2DTextBox*>(mLevelRowPanes_0x28[i][2]->mPane)->getBlack();
         fn_8041499C(&mRowBlackColors_0x328[i * 3 + 2], &black);
     }
-    mPointAlpha_0x641 = mMapAreaScreen_0x10->search('Ppoint02')->getAlpha();
+    mPointAlpha_0x641 = mMapAreaScreen_0x10->search(FSA_TAG64("Ppoint02"))->getAlpha();
     for (s32 i = 0; i < 4; i++) {
         for (s32 j = 0; j < 2; j++) {
             mArrowHomeX_0x3bc[i][j] = mMapAreaScreen_0x10->search(lbl_8048C618[i][j])->getBounds()->i.x;
@@ -686,17 +686,17 @@ MapScreen_804B1288::MapScreen_804B1288() {
     if (!fn_803B8EBC(7)) {
         static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Psky'))
             ->setBlackWhite(JUtility::TColor(20, 50, 100, 255), JUtility::TColor(20, 50, 100, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pclo01'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pclo01")))
             ->setBlackWhite(JUtility::TColor(0, 30, 90, 0), JUtility::TColor(0, 30, 90, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pclo02'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pclo02")))
             ->setBlackWhite(JUtility::TColor(40, 90, 170, 0), JUtility::TColor(40, 90, 170, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pclo03'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pclo03")))
             ->setBlackWhite(JUtility::TColor(40, 100, 190, 0), JUtility::TColor(40, 100, 190, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pclo04'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pclo04")))
             ->setBlackWhite(JUtility::TColor(40, 96, 200, 0), JUtility::TColor(40, 96, 200, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pmaptou'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pmaptou")))
             ->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(30, 72, 139, 255));
-        static_cast<J2DPicture*>(mMapTenScreen_0x14->search('Pmapca'))
+        static_cast<J2DPicture*>(mMapTenScreen_0x14->search(FSA_TAG64("Pmapca")))
             ->setBlackWhite(JUtility::TColor(0, 0, 30, 0), JUtility::TColor(100, 200, 255, 255));
     }
     fn_80408F38(0.0f);
@@ -819,29 +819,29 @@ void MapScreen_804B1288::fn_80411A94(f32 alpha) {
 void MapScreen_804B1288::draw_80411230() {
     gGameRoot2_8053AB10->setPort_8013B490();
     if (mStage_0x340 < 7 && !isStageFlagSet(mStage_0x340, 3) && (isCursorState() || mState_0x350 == 0x13)) {
-        if (!mMapAreaScreen_0x10->search('Pphu01')->mIsVisible) {
-            mMapAreaScreen_0x10->search('Pphu01')->show();
+        if (!mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->mIsVisible) {
+            mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->show();
         }
-        mMapAreaScreen_0x10->search('Pphu01')->setAlpha(field_0x65b * field_0x3fc);
-        f32 height = mMapAreaScreen_0x10->search('Pphu01')->getHeight();
-        f32 width = mMapAreaScreen_0x10->search('Pphu01')->getWidth();
-        mMapAreaScreen_0x10->search('Pphu01')
-            ->move(lbl_8048C9DC[mStage_0x340][0] - mMapAreaScreen_0x10->search('Ndata06')->getBounds()->i.x - width / 2,
-                   lbl_8048C9DC[mStage_0x340][1] - mMapAreaScreen_0x10->search('Ndata06')->getBounds()->i.y - height / 2);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->setAlpha(field_0x65b * field_0x3fc);
+        f32 height = mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->getHeight();
+        f32 width = mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->getWidth();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))
+            ->move(lbl_8048C9DC[mStage_0x340][0] - mMapAreaScreen_0x10->search(FSA_TAG64("Ndata06"))->getBounds()->i.x - width / 2,
+                   lbl_8048C9DC[mStage_0x340][1] - mMapAreaScreen_0x10->search(FSA_TAG64("Ndata06"))->getBounds()->i.y - height / 2);
     } else if (mStage_0x340 == 10 && mLevel_0x348 == 2 && lbl_80529DEC.field_0x120 < 7 &&
                !isStageFlagSet(lbl_80529DEC.field_0x120, 3) && isCursorState())
     {
-        if (!mMapAreaScreen_0x10->search('Pphu01')->mIsVisible) {
-            mMapAreaScreen_0x10->search('Pphu01')->show();
+        if (!mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->mIsVisible) {
+            mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->show();
         }
-        mMapAreaScreen_0x10->search('Pphu01')->setAlpha(field_0x65b * field_0x3fc);
-        mMapAreaScreen_0x10->search('Pphu01')
-            ->move(lbl_8048C9DC[lbl_80529DEC.getField_0x120()][0] - mMapAreaScreen_0x10->search('Ndata06')->getBounds()->i.x -
-                       mMapAreaScreen_0x10->search('Pphu01')->getWidth() / 2,
-                   lbl_8048C9DC[lbl_80529DEC.getField_0x120()][1] - mMapAreaScreen_0x10->search('Ndata06')->getBounds()->i.y -
-                       mMapAreaScreen_0x10->search('Pphu01')->getHeight() / 2);
-    } else if (mMapAreaScreen_0x10->search('Pphu01')->mIsVisible == true) {
-        mMapAreaScreen_0x10->search('Pphu01')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->setAlpha(field_0x65b * field_0x3fc);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))
+            ->move(lbl_8048C9DC[lbl_80529DEC.getField_0x120()][0] - mMapAreaScreen_0x10->search(FSA_TAG64("Ndata06"))->getBounds()->i.x -
+                       mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->getWidth() / 2,
+                   lbl_8048C9DC[lbl_80529DEC.getField_0x120()][1] - mMapAreaScreen_0x10->search(FSA_TAG64("Ndata06"))->getBounds()->i.y -
+                       mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->getHeight() / 2);
+    } else if (mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->mIsVisible == true) {
+        mMapAreaScreen_0x10->search(FSA_TAG64("Pphu01"))->hide();
     }
     mMapScreen_0xc->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     mMapTenScreen_0x14->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
@@ -973,7 +973,7 @@ void MapScreen_804B1288::update_804108B4() {
         }
     }
     if (mStage_0x340 < 8) {
-        mMapAreaScreen_0x10->search('Plvcu')->move(field_0x404 + mMapAreaScreen_0x10->search(lbl_8048C658[mStage_0x340 * 3])->getBounds()->i.x,
+        mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->move(field_0x404 + mMapAreaScreen_0x10->search(lbl_8048C658[mStage_0x340 * 3])->getBounds()->i.x,
                                           field_0x408 + mMapAreaScreen_0x10->search(lbl_8048C658[mStage_0x340 * 3])->getBounds()->i.y);
         if (!isCursorState() || field_0x42e != 0) {
             field_0x42e++;
@@ -987,9 +987,9 @@ void MapScreen_804B1288::update_804108B4() {
         } else {
             t = 1.0f - (field_0x42e - 30.0f) * (field_0x42e - 30.0f) / 900.0f;
         }
-        mMapAreaScreen_0x10->search('Plvcu')->setAlpha(156.0f * t);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->setAlpha(156.0f * t);
     } else {
-        mMapAreaScreen_0x10->search('Plvcu')->setAlpha(0);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->setAlpha(0);
     }
     if (mState_0x350 != mPrevState_0x354) {
         mPrevState_0x354 = mState_0x350;
@@ -1121,11 +1121,11 @@ void MapScreen_804B1288::fn_8040F480() {
         }
     }
     setStageName();
-    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv11'))->getStringPtr(), mStageName_0x438);
-    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv12'))->getStringPtr(), mStageName_0x438);
+    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->getStringPtr(), mStageName_0x438);
+    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->getStringPtr(), mStageName_0x438);
     setStageName();
-    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+    strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
     if (!fn_804045F8(mStage_0x340)) {
         field_0x34c = mLevel_0x348;
         if (mLevel_0x348 == 3) {
@@ -1163,14 +1163,14 @@ void MapScreen_804B1288::fn_8040F480() {
         mCursorY_0x398 = y;
     }
     mMapAnmTransform_0x1c->setFrame(field_0x378);
-    mMapScreen_0xc->search('Ndata08')->animationTransform();
+    mMapScreen_0xc->search(FSA_TAG64("Ndata08"))->animationTransform();
     mMapAnmColor_0x20->setFrame(field_0x37c);
     mMapScreen_0xc->animation();
     if (mode != 2 || field_0x364 == 0) {
         for (int i = 0; i < 18; i++) {
             mRoutePanes_0xd4[i]->fn_80402E70();
         }
-        mMapScreen_0xc->search('Ndata08')->setAnimation((J2DAnmTransform*)NULL);
+        mMapScreen_0xc->search(FSA_TAG64("Ndata08"))->setAnimation((J2DAnmTransform*)NULL);
     }
     switch (mode) {
     case 0:
@@ -1232,11 +1232,11 @@ void MapScreen_804B1288::fn_8040F480() {
             mStage_0x340 = field_0x364 - 1;
             mLevel_0x348 = 3;
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv11'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv12'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->getStringPtr(), mStageName_0x438);
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
             fn_8040873C();
             field_0x39c = 0.0f;
             field_0x3a0 = 0.0f;
@@ -1436,14 +1436,14 @@ void MapScreen_804B1288::fn_8040E838() {
         field_0x37c = mMapAnmColor_0x20->getFrameMax() - 1;
     }
     mMapAnmTransform_0x1c->setFrame(field_0x378);
-    mMapScreen_0xc->search('Ndata08')->animationTransform();
+    mMapScreen_0xc->search(FSA_TAG64("Ndata08"))->animationTransform();
     mMapAnmColor_0x20->setFrame(field_0x37c);
     mMapScreen_0xc->animation();
     if (field_0x378 >= field_0x364 * 200) {
         for (int i = 0; i < 18; i++) {
             mRoutePanes_0xd4[i]->fn_80402E70();
         }
-        mMapScreen_0xc->search('Ndata08')->setAnimation((J2DAnmTransform*)NULL);
+        mMapScreen_0xc->search(FSA_TAG64("Ndata08"))->setAnimation((J2DAnmTransform*)NULL);
         field_0x378 = field_0x364 * 200;
         field_0x37c = field_0x364 * 200;
         inl_80404D70(field_0x364);
@@ -1600,8 +1600,8 @@ void MapScreen_804B1288::fn_8040D3D0() {
         } else {
             fn_804083D8();
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
             fn_80411A94(1.0f);
         }
         if (field_0x65d == 0 && field_0x657 == 0) {
@@ -1639,8 +1639,8 @@ void MapScreen_804B1288::fn_8040D3D0() {
         fn_804083D8();
         if (field_0x370 > 0) {
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
             fn_80411A94(1.0f);
             field_0x426 = 0;
             mState_0x350 = 0xC;
@@ -1655,8 +1655,8 @@ void MapScreen_804B1288::fn_8040D3D0() {
         fn_804083D8();
         if (field_0x370 > 0) {
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
             fn_80411A94(1.0f);
             field_0x426 = 0;
             mState_0x350 = 0xD;
@@ -1669,8 +1669,8 @@ void MapScreen_804B1288::fn_8040CE90() {
     field_0x426++;
     if (field_0x426 >= 8) {
         setStageName();
-        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv11'))->getStringPtr(), mStageName_0x438);
-        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv12'))->getStringPtr(), mStageName_0x438);
+        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->getStringPtr(), mStageName_0x438);
+        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->getStringPtr(), mStageName_0x438);
         fn_80411A94(1.0f);
         mState_0x350 = 0xB;
     } else {
@@ -1693,8 +1693,8 @@ void MapScreen_804B1288::fn_8040C950() {
     field_0x426++;
     if (field_0x426 >= 8) {
         setStageName();
-        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv11'))->getStringPtr(), mStageName_0x438);
-        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv12'))->getStringPtr(), mStageName_0x438);
+        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->getStringPtr(), mStageName_0x438);
+        strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->getStringPtr(), mStageName_0x438);
         fn_80411A94(1.0f);
         mState_0x350 = 0xB;
     } else {
@@ -2018,7 +2018,7 @@ void MapScreen_804B1288::fn_80409FDC() {
             mCursorY_0x398 += speed * dy / dist;
             mPlayerSoundObjs_0x2b8[0]->startSound(JAISoundID(0x20064));
         }
-        mMapAreaScreen_0x10->search('Ndata10')->move(mCursorX_0x394, mCursorY_0x398);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->move(mCursorX_0x394, mCursorY_0x398);
         if (mCursorX_0x394 == x) {
             field_0x360 = 0x10;
         } else {
@@ -2037,8 +2037,8 @@ void MapScreen_804B1288::fn_80409FDC() {
     }
     if (mStage_0x340 <= 7 && mCursorX_0x394 == x) {
         fn_804054B8();
-    } else if (mMapAreaScreen_0x10->search('Ndata10')->mIsVisible) {
-        mMapAreaScreen_0x10->search('Ndata10')->hide();
+    } else if (mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->mIsVisible) {
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
     }
     if (field_0x40c) {
         if (lbl_8053AD30->fn_80309A9C(8, -1)) {
@@ -2076,7 +2076,7 @@ void MapScreen_804B1288::fn_80409FDC() {
             field_0x65e = 1;
             gAudioMgr_8053AF80->stopBgm_80458F9C(10);
             field_0x41e = 0;
-            mMapAreaScreen_0x10->search('Ndata10')->hide();
+            mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
             mState_0x350 = 0x14;
             gAudioMgr_8053AF80->playSystemSound_80458880(0xb, -1);
         } else if (lbl_8053AD30->fn_80309C4C(0x200, -1)) {
@@ -2163,7 +2163,7 @@ void MapScreen_804B1288::fn_80409FDC() {
         field_0x65e = 1;
         gAudioMgr_8053AF80->stopBgm_80458F9C(10);
         field_0x41e = 0;
-        mMapAreaScreen_0x10->search('Ndata10')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
         mState_0x350 = 0x14;
         gAudioMgr_8053AF80->playSystemSound_80458880(0xb, -1);
     } else if (lbl_8053AD30->fn_80309C4C(0x200, -1)) {
@@ -2289,11 +2289,11 @@ void MapScreen_804B1288::fn_804096E8() {
             mStage_0x340 = field_0x364;
             mLevel_0x348 = 0;
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv11'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv12'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv11")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv12")))->getStringPtr(), mStageName_0x438);
             setStageName();
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv13'))->getStringPtr(), mStageName_0x438);
-            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search('Ttlv14'))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv13")))->getStringPtr(), mStageName_0x438);
+            strcpy(((J2DTextBox*)mMapAreaScreen_0x10->search(FSA_TAG64("Ttlv14")))->getStringPtr(), mStageName_0x438);
             field_0x39c = -250.0f;
             mState_0x350 = 5;
         } else {
@@ -2526,10 +2526,10 @@ void MapScreen_804B1288::fn_804083D8() {
     if (mStage_0x340 < 8) {
         for (int i = 0; i < 8; i++) {
             if (i != mStage_0x340) {
-                mMapAreaScreen_0x10->search('Ndata01')->appendChild(mLevelRowPanes_0x28[i][0]->mPane);
+                mMapAreaScreen_0x10->search(FSA_TAG64("Ndata01"))->appendChild(mLevelRowPanes_0x28[i][0]->mPane);
             }
         }
-        mMapAreaScreen_0x10->search('Ndata01')->appendChild(mLevelRowPanes_0x28[mStage_0x340][0]->mPane);
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata01"))->appendChild(mLevelRowPanes_0x28[mStage_0x340][0]->mPane);
     }
 }
 
@@ -2828,13 +2828,13 @@ void MapScreen_804B1288::fn_80406634(s32 stage, bool raised) {
 // regalloc-only: the original keeps the render mode's fbWidth (read before
 // the first search) in r24, ours in r26.
 void MapScreen_804B1288::fn_80405FC0() {
-    f32 offset = 384.0f * (0.5f * (mMapAreaScreen_0x10->search('Pli02')->getBounds()->i.x -
-                                   mMapAreaScreen_0x10->search('Pli01')->getBounds()->i.x)) /
+    f32 offset = 384.0f * (0.5f * (mMapAreaScreen_0x10->search(FSA_TAG64("Pli02"))->getBounds()->i.x -
+                                   mMapAreaScreen_0x10->search(FSA_TAG64("Pli01"))->getBounds()->i.x)) /
                  (s32)JUTVideo::getManager()->getFbWidth();
     // Computed but never used (the players are offset by `offset` both ways); only
     // its two search calls are left.
-    f32 offsetY = 288.0f * (0.5f * (mMapAreaScreen_0x10->search('Pli01')->getBounds()->i.y -
-                                    mMapAreaScreen_0x10->search('Pli03')->getBounds()->i.y)) /
+    f32 offsetY = 288.0f * (0.5f * (mMapAreaScreen_0x10->search(FSA_TAG64("Pli01"))->getBounds()->i.y -
+                                    mMapAreaScreen_0x10->search(FSA_TAG64("Pli03"))->getBounds()->i.y)) /
                   (s32)JUTVideo::getManager()->getEfbHeight();
     for (int i = 0; i < 4; i++) {
         JGeometry::TVec3f pos;
@@ -2982,9 +2982,9 @@ void MapScreen_804B1288::inl_80405B10() {
 }
 
 void MapScreen_804B1288::fn_804054B8() {
-    if (!mMapAreaScreen_0x10->search('Ndata10')->mIsVisible) {
-        mMapAreaScreen_0x10->search('Ndata10')->show();
-        mMapAreaScreen_0x10->search('Ndata10')->move(mCursorX_0x394, mCursorY_0x398);
+    if (!mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->mIsVisible) {
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->show();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->move(mCursorX_0x394, mCursorY_0x398);
         mArrowBlinkTimer_0x424 = 0;
         for (int i = 0; i < 4; i++) {
             mMapAreaScreen_0x10->search(lbl_8048C618[i][0])->hide();
@@ -3161,7 +3161,7 @@ void MapScreen_804B1288::fn_804049DC() {
             mTinkPanes_0x208[mStage_0x340]->field_0x26 = 0;
             mTinkPanes_0x208[mStage_0x340]->mPane->setAlpha(0);
         }
-        mMapAreaScreen_0x10->search('Ndata10')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
         for (int i = 0; i < 8; i++) {
             mLevelRowPanes_0x28[i][0]->moveFromCentre_80402E08(-150.0f, 0.0f);
             mLevelRowPanes_0x28[i][0]->field_0x20 = 0;
@@ -3225,7 +3225,7 @@ void MapScreen_804B1288::fn_80404648() {
                 mLevelRowPanes_0x28[i][j]->field_0x26 = 0;
             }
         }
-        mMapAreaScreen_0x10->search('Ndata10')->hide();
+        mMapAreaScreen_0x10->search(FSA_TAG64("Ndata10"))->hide();
         mState_0x350 = 0x13;
     } else {
         field_0x668 = 4;

@@ -217,8 +217,20 @@ JKRHeap *JKRHeap::find(void *memory) const
     {
         if (mHeapTree.getNumChildren() != 0)
         {
+#ifdef FSA_PORT_TRACE
+            int guard = 0;
+#endif
             for (JSUTreeIterator<JKRHeap> iterator(mHeapTree.getFirstChild()); iterator != mHeapTree.getEndChild(); ++iterator)
             {
+#ifdef FSA_PORT_TRACE
+                if (++guard > 64) {
+                    OSReport("[trace] heap %p: child list loops (numChildren %d)\n", this, (int)mHeapTree.getNumChildren());
+                    int k = 0;
+                    for (JSUTree<JKRHeap>* t = mHeapTree.getFirstChild(); t && k < 8; t = t->getNextChild(), k++)
+                        OSReport("[trace]   child tree %p obj %p next %p\n", t, t->getObject(), t->getNextChild());
+                    for (;;) OSSuspendThread(OSGetCurrentThread());
+                }
+#endif
                 JKRHeap *result = iterator->find(memory);
                 if (result)
                 {

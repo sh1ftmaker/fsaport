@@ -38,10 +38,23 @@ void AudioResLoader_804B1A38::fn_80442810() {
         }
         if (lbl_8053AEE8->field_0x4 == 1 && lbl_8053AEEC->field_0x4 == 1) {
             OSReport("audio data load end!!\n");
+#ifdef FSA_PORT_NO_AUDIO
+            // Port: JAudio's formats are not big-endian-safe yet; boot silently.
+#else
             lbl_80529DEC.mAudioMgr_0xc->init_80459AE4(lbl_80529DEC.mSolidHeap_0x4, 0x800000,
                                                 lbl_8053AEE8->field_0x14, lbl_8053AEEC->field_0x14);
+#endif
+#ifdef FSA_PORT_TRACE
+            OSReport("[trace] free %p (heap %p)\n", lbl_8053AEE8->field_0x14, JKRHeap::findFromRoot(lbl_8053AEE8->field_0x14));
+#endif
             JKRHeap::free(lbl_8053AEE8->field_0x14, NULL);
+#ifdef FSA_PORT_TRACE
+            OSReport("[trace] freed; delete %p %p\n", lbl_8053AEE8, lbl_8053AEEC);
+#endif
             delete lbl_8053AEE8;
+#ifdef FSA_PORT_TRACE
+            OSReport("[trace] deleted 1\n");
+#endif
             delete lbl_8053AEEC;
             OSReport("auido init end!!\n");
             field_0x4 = 1;

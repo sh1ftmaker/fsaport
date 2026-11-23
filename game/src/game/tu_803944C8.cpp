@@ -23,11 +23,11 @@
 static const u64 lbl_80475768[5] = {'P1ar', 'P2ar', 'P3ar', 'P4ar', 'P5ar'};
 // Per player the 'PNb02', 'PNb01', 'PNn02', 'PNn01' panes (fn_80395BE8); player 5 has no 'P5n02'.
 static const u64 lbl_80475790[5][4] = {
-    {'P1b02', 'P1b01', 'P1n02', 'P1n01'},
-    {'P2b02', 'P2b01', 'P2n02', 'P2n01'},
-    {'P3b02', 'P3b01', 'P3n02', 'P3n01'},
-    {'P4b02', 'P4b01', 'P4n02', 'P4n01'},
-    {'P5b02', 'P5b01', 0, 'P5n01'},
+    {FSA_TAG64("P1b02"), FSA_TAG64("P1b01"), FSA_TAG64("P1n02"), FSA_TAG64("P1n01")},
+    {FSA_TAG64("P2b02"), FSA_TAG64("P2b01"), FSA_TAG64("P2n02"), FSA_TAG64("P2n01")},
+    {FSA_TAG64("P3b02"), FSA_TAG64("P3b01"), FSA_TAG64("P3n02"), FSA_TAG64("P3n01")},
+    {FSA_TAG64("P4b02"), FSA_TAG64("P4b01"), FSA_TAG64("P4n02"), FSA_TAG64("P4n01")},
+    {FSA_TAG64("P5b02"), FSA_TAG64("P5b01"), 0, FSA_TAG64("P5n01")},
 };
 // Shift-JIS character code -> glyph offset in the text-image font (32-pixel
 // cells: column * 0x20, row * 0x400); ends with 0xFFFF / 0xFFFF.
@@ -3446,8 +3446,8 @@ cls_804AF5A0::cls_804AF5A0(MessageWindow_804AF490* window, s32 index, const char
 
     field_0xb8 = field_0x20[0]->search('Pm00')->getWidth();
     field_0xbc = field_0x20[0]->search('Pm00')->getHeight();
-    field_0xc0 = field_0x20[0]->search('Nmdata01')->getBounds()->i.x;
-    field_0xc4 = field_0x20[0]->search('Nmdata01')->getBounds()->i.y;
+    field_0xc0 = field_0x20[0]->search(FSA_TAG64("Nmdata01"))->getBounds()->i.x;
+    field_0xc4 = field_0x20[0]->search(FSA_TAG64("Nmdata01"))->getBounds()->i.y;
     field_0xc8 = field_0x20[0]->search('Tm01')->getBounds()->i.x;
     field_0xcc = field_0x20[0]->search('Tm01')->getBounds()->i.y;
     field_0xd0 = field_0x20[0]->search('Tm02')->getBounds()->i.x - field_0x20[0]->search('Tm01')->getBounds()->i.x;
@@ -3461,10 +3461,10 @@ cls_804AF5A0::cls_804AF5A0(MessageWindow_804AF490* window, s32 index, const char
     field_0x100 = field_0x20[0]->search('P1ar')->getWidth();
     field_0x104 = field_0x20[0]->search('P1ar')->getHeight();
     field_0x1a3 = field_0x20[0]->search('P1ar')->getAlpha();
-    field_0x1a5[0] = field_0x20[0]->search('P1b01')->getAlpha();
-    field_0x1a5[1] = field_0x20[0]->search('P1b01')->getAlpha();
-    field_0x1a5[2] = field_0x20[0]->search('P1n02')->getAlpha();
-    field_0x1a5[3] = field_0x20[0]->search('P1n01')->getAlpha();
+    field_0x1a5[0] = field_0x20[0]->search(FSA_TAG64("P1b01"))->getAlpha();
+    field_0x1a5[1] = field_0x20[0]->search(FSA_TAG64("P1b01"))->getAlpha();
+    field_0x1a5[2] = field_0x20[0]->search(FSA_TAG64("P1n02"))->getAlpha();
+    field_0x1a5[3] = field_0x20[0]->search(FSA_TAG64("P1n01"))->getAlpha();
     field_0xd8 = field_0x20[3]->search('Tm01')->getBounds()->i.x;
     field_0xdc = field_0x20[3]->search('Tm01')->getBounds()->i.y;
     field_0xf0 = field_0x20[3]->search('Tm01')->getWidth();
@@ -3496,8 +3496,8 @@ cls_804AF5A0::cls_804AF5A0(MessageWindow_804AF490* window, s32 index, const char
     static_cast<J2DTextBox*>(field_0x20[0]->search('Tm02'))->setBlackWhite(
         JUtility::TColor(lbl_8050DB0C.field_0x304[3], lbl_8050DB0C.field_0x304[4], lbl_8050DB0C.field_0x304[5], 0),
         JUtility::TColor(lbl_8050DB0C.field_0x304[0], lbl_8050DB0C.field_0x304[1], lbl_8050DB0C.field_0x304[2], 0xFF));
-    field_0x20[3]->search('Ndata05')->hide();
-    field_0x20[3]->search('Ndata01')->hide();
+    field_0x20[3]->search(FSA_TAG64("Ndata05"))->hide();
+    field_0x20[3]->search(FSA_TAG64("Ndata01"))->hide();
 
     timg = (const ResTIMG*)gGameRoot_8053AAF8->field_0xa4->getResource('TIMG', "kk_yazirushi_01.bti");
     field_0x5c = new J2DPicture(timg);
@@ -3980,7 +3980,7 @@ void cls_804AF5A0::fn_8039499C(bool flag) {
         J2DScreen* screen = field_0x20[field_0x1a2];
         J2DTextBox* tm01 = static_cast<J2DTextBox*>(screen->search('Tm01'));
         J2DTextBox* tm02 = static_cast<J2DTextBox*>(screen->search('Tm02'));
-        J2DPane* nmdata = screen->search('Nmdata01');
+        J2DPane* nmdata = screen->search(FSA_TAG64("Nmdata01"));
         if (field_0x3b0 != 0) {
             field_0x8->render();
             field_0x3b0 = 0;
@@ -3996,15 +3996,15 @@ void cls_804AF5A0::fn_8039499C(bool flag) {
         f32 offset = 0.5f * ((3.0f - field_0x164) * tm01->getLineSpace());
         if (screen == field_0x20[0] && !field_0x20[0]->search('Pm00')->isVisible()) {
             field_0x20[0]->search('Pm00')->show();
-            field_0x20[0]->search('P5b02')->show();
+            field_0x20[0]->search(FSA_TAG64("P5b02"))->show();
             field_0x20[0]->search('P5ar')->show();
-            field_0x20[0]->search('P4b02')->show();
+            field_0x20[0]->search(FSA_TAG64("P4b02"))->show();
             field_0x20[0]->search('P4ar')->show();
-            field_0x20[0]->search('P3b02')->show();
+            field_0x20[0]->search(FSA_TAG64("P3b02"))->show();
             field_0x20[0]->search('P3ar')->show();
-            field_0x20[0]->search('P2b02')->show();
+            field_0x20[0]->search(FSA_TAG64("P2b02"))->show();
             field_0x20[0]->search('P2ar')->show();
-            field_0x20[0]->search('P1b02')->show();
+            field_0x20[0]->search(FSA_TAG64("P1b02"))->show();
             field_0x20[0]->search('P1ar')->show();
         }
         strcpy(tm01->getStringPtr(), field_0x1ab);

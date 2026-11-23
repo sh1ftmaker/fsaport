@@ -230,6 +230,9 @@ public:
 
     u32 getMountMode() const { return mMountMode; }
     u32 countFile() const { return mArcInfoBlock->num_file_entries; }
+#ifdef FSA_PORT_TRACE
+    void portDump() const;
+#endif
     int countDirectory() const { return mArcInfoBlock->num_nodes; }
     static u32 getCurrentDirID() { return sCurrentDirID; }
     static void setCurrentDirID(u32 dirID) { sCurrentDirID = dirID; }

@@ -16,50 +16,50 @@
 // constructor addresses them off one base (lbl_8048CD50). The first five
 // have an alpha array of the same length in BattleStageSelect_804B1378 (field_0x123 ...).
 static const u64 lbl_8048CD50[11] = {
-    'Pbsb01', 'Pbsb02', 'Pbsb03', 'Pbsb04', 'Pbsb05', 'Pbsb06',
-    'Pbsb07', 'Pbsb08', 'Pbsb09', 'Pbsbk01', 'Pbsbk02',
+    FSA_TAG64("Pbsb01"), FSA_TAG64("Pbsb02"), FSA_TAG64("Pbsb03"), FSA_TAG64("Pbsb04"), FSA_TAG64("Pbsb05"), FSA_TAG64("Pbsb06"),
+    FSA_TAG64("Pbsb07"), FSA_TAG64("Pbsb08"), FSA_TAG64("Pbsb09"), FSA_TAG64("Pbsbk01"), FSA_TAG64("Pbsbk02"),
 };
 static const u64 lbl_8048CDA8[11] = {
-    'Tsn01', 'Tsn02', 'Psnb01', 'Psnbk01', 'Psnb02', 'Psnbk02',
-    'Psnb03', 'Psnb04', 'Psnb05', 'Psnbk03', 'Psnbk04',
+    FSA_TAG64("Tsn01"), FSA_TAG64("Tsn02"), FSA_TAG64("Psnb01"), FSA_TAG64("Psnbk01"), FSA_TAG64("Psnb02"), FSA_TAG64("Psnbk02"),
+    FSA_TAG64("Psnb03"), FSA_TAG64("Psnb04"), FSA_TAG64("Psnb05"), FSA_TAG64("Psnbk03"), FSA_TAG64("Psnbk04"),
 };
 static const u64 lbl_8048CE00[9] = {
-    'Pss01', 'Pss02', 'Pssb01', 'Pssb02', 'Pssb03', 'Pssb04',
-    'Pssbk01', 'Pssbk02', 'Pssbk03',
+    FSA_TAG64("Pss01"), FSA_TAG64("Pss02"), FSA_TAG64("Pssb01"), FSA_TAG64("Pssb02"), FSA_TAG64("Pssb03"), FSA_TAG64("Pssb04"),
+    FSA_TAG64("Pssbk01"), FSA_TAG64("Pssbk02"), FSA_TAG64("Pssbk03"),
 };
 static const u64 lbl_8048CE48[6] = {
-    'Tom01', 'Tom02', 'Pomb01', 'Pomb02', 'Pomb03', 'Pomb04',
+    FSA_TAG64("Tom01"), FSA_TAG64("Tom02"), FSA_TAG64("Pomb01"), FSA_TAG64("Pomb02"), FSA_TAG64("Pomb03"), FSA_TAG64("Pomb04"),
 };
 // The panes of each stage's button; row 6 has no tenth tag (zero in the
 // original, skipped by fn_80416BD0).
 static const u64 lbl_8048CE78[10][10] = {
-    {'Pbsq01', 'Pbsqb01', 'Pbs01', 'Pbs01b01', 'Pbs01b02', 'Pbs01b03', 'Pbs01b04', 'Pbs01b05', 'Pbs01b06', 'Pbs01b07'},
-    {'Pbsq02', 'Pbsqb02', 'Pbs02', 'Pbs02b01', 'Pbs02b02', 'Pbs02b03', 'Pbs02b04', 'Pbs02b05', 'Pbs02b06', 'Pbs02b07'},
-    {'Pbsq03', 'Pbsqb03', 'Pbs03', 'Pbs03b01', 'Pbs03b02', 'Pbs03b03', 'Pbs03b04', 'Pbs03b05', 'Pbs03b06', 'Pbs03b07'},
-    {'Pbsq04', 'Pbsqb04', 'Pbs04', 'Pbs04b01', 'Pbs04b02', 'Pbs04b03', 'Pbs04b04', 'Pbs04b05', 'Pbs04b06', 'Pbs04b07'},
-    {'Pbsq05', 'Pbsqb05', 'Pbs05', 'Pbs05b01', 'Pbs05b02', 'Pbs05b03', 'Pbs05b04', 'Pbs05b05', 'Pbs05b06', 'Pbs05b07'},
-    {'Pbsq06', 'Pbsqb06', 'Pbs06', 'Pbs06b01', 'Pbs06b02', 'Pbs06b03', 'Pbs06b04', 'Pbs06b05', 'Pbs06b06', 'Pbs06b07'},
-    {'Pbsq07', 'Pbsqb07', 'Pbs07', 'Pbs07b01', 'Pbs07b02', 'Pbs07b03', 'Pbs07b04', 'Pbs07b05', 'Pbs07b06'},
-    {'Pbsq08', 'Pbsqb08', 'Pbs08', 'Pbs08b01', 'Pbs08b02', 'Pbs08b03', 'Pbs08b04', 'Pbs08b05', 'Pbs08b06', 'Pbs08b07'},
-    {'Pbsq09', 'Pbsqb09', 'Pbs09', 'Pbs09b01', 'Pbs09b02', 'Pbs09b03', 'Pbs09b04', 'Pbs09b05', 'Pbs09b06', 'Pbs09b07'},
-    {'Pbsq10', 'Pbsqb10', 'Pbs10', 'Pbs10b01', 'Pbs10b02', 'Pbs10b03', 'Pbs10b04', 'Pbs10b05', 'Pbs10b06', 'Pbs10b07'},
+    {FSA_TAG64("Pbsq01"), FSA_TAG64("Pbsqb01"), FSA_TAG64("Pbs01"), FSA_TAG64("Pbs01b01"), FSA_TAG64("Pbs01b02"), FSA_TAG64("Pbs01b03"), FSA_TAG64("Pbs01b04"), FSA_TAG64("Pbs01b05"), FSA_TAG64("Pbs01b06"), FSA_TAG64("Pbs01b07")},
+    {FSA_TAG64("Pbsq02"), FSA_TAG64("Pbsqb02"), FSA_TAG64("Pbs02"), FSA_TAG64("Pbs02b01"), FSA_TAG64("Pbs02b02"), FSA_TAG64("Pbs02b03"), FSA_TAG64("Pbs02b04"), FSA_TAG64("Pbs02b05"), FSA_TAG64("Pbs02b06"), FSA_TAG64("Pbs02b07")},
+    {FSA_TAG64("Pbsq03"), FSA_TAG64("Pbsqb03"), FSA_TAG64("Pbs03"), FSA_TAG64("Pbs03b01"), FSA_TAG64("Pbs03b02"), FSA_TAG64("Pbs03b03"), FSA_TAG64("Pbs03b04"), FSA_TAG64("Pbs03b05"), FSA_TAG64("Pbs03b06"), FSA_TAG64("Pbs03b07")},
+    {FSA_TAG64("Pbsq04"), FSA_TAG64("Pbsqb04"), FSA_TAG64("Pbs04"), FSA_TAG64("Pbs04b01"), FSA_TAG64("Pbs04b02"), FSA_TAG64("Pbs04b03"), FSA_TAG64("Pbs04b04"), FSA_TAG64("Pbs04b05"), FSA_TAG64("Pbs04b06"), FSA_TAG64("Pbs04b07")},
+    {FSA_TAG64("Pbsq05"), FSA_TAG64("Pbsqb05"), FSA_TAG64("Pbs05"), FSA_TAG64("Pbs05b01"), FSA_TAG64("Pbs05b02"), FSA_TAG64("Pbs05b03"), FSA_TAG64("Pbs05b04"), FSA_TAG64("Pbs05b05"), FSA_TAG64("Pbs05b06"), FSA_TAG64("Pbs05b07")},
+    {FSA_TAG64("Pbsq06"), FSA_TAG64("Pbsqb06"), FSA_TAG64("Pbs06"), FSA_TAG64("Pbs06b01"), FSA_TAG64("Pbs06b02"), FSA_TAG64("Pbs06b03"), FSA_TAG64("Pbs06b04"), FSA_TAG64("Pbs06b05"), FSA_TAG64("Pbs06b06"), FSA_TAG64("Pbs06b07")},
+    {FSA_TAG64("Pbsq07"), FSA_TAG64("Pbsqb07"), FSA_TAG64("Pbs07"), FSA_TAG64("Pbs07b01"), FSA_TAG64("Pbs07b02"), FSA_TAG64("Pbs07b03"), FSA_TAG64("Pbs07b04"), FSA_TAG64("Pbs07b05"), FSA_TAG64("Pbs07b06")},
+    {FSA_TAG64("Pbsq08"), FSA_TAG64("Pbsqb08"), FSA_TAG64("Pbs08"), FSA_TAG64("Pbs08b01"), FSA_TAG64("Pbs08b02"), FSA_TAG64("Pbs08b03"), FSA_TAG64("Pbs08b04"), FSA_TAG64("Pbs08b05"), FSA_TAG64("Pbs08b06"), FSA_TAG64("Pbs08b07")},
+    {FSA_TAG64("Pbsq09"), FSA_TAG64("Pbsqb09"), FSA_TAG64("Pbs09"), FSA_TAG64("Pbs09b01"), FSA_TAG64("Pbs09b02"), FSA_TAG64("Pbs09b03"), FSA_TAG64("Pbs09b04"), FSA_TAG64("Pbs09b05"), FSA_TAG64("Pbs09b06"), FSA_TAG64("Pbs09b07")},
+    {FSA_TAG64("Pbsq10"), FSA_TAG64("Pbsqb10"), FSA_TAG64("Pbs10"), FSA_TAG64("Pbs10b01"), FSA_TAG64("Pbs10b02"), FSA_TAG64("Pbs10b03"), FSA_TAG64("Pbs10b04"), FSA_TAG64("Pbs10b05"), FSA_TAG64("Pbs10b06"), FSA_TAG64("Pbs10b07")},
 };
 // The stages' 'Ndata' panes (field_0x3c; setStageText moves the cursor there).
 static const u64 lbl_8048D198[10] = {
-    'Ndata06', 'Ndata07', 'Ndata08', 'Ndata09', 'Ndata10',
-    'Ndata11', 'Ndata12', 'Ndata13', 'Ndata14', 'Ndata15',
+    FSA_TAG64("Ndata06"), FSA_TAG64("Ndata07"), FSA_TAG64("Ndata08"), FSA_TAG64("Ndata09"), FSA_TAG64("Ndata10"),
+    FSA_TAG64("Ndata11"), FSA_TAG64("Ndata12"), FSA_TAG64("Ndata13"), FSA_TAG64("Ndata14"), FSA_TAG64("Ndata15"),
 };
 // The stages' lock panes (field_0x6c); the constructor hides those of the
 // open stages.
 static const u64 lbl_8048D1E8[10] = {
-    'Pbsqb01', 'Pbsqb02', 'Pbsqb03', 'Pbsqb04', 'Pbsqb05',
-    'Pbsqb06', 'Pbsqb07', 'Pbsqb08', 'Pbsqb09', 'Pbsqb10',
+    FSA_TAG64("Pbsqb01"), FSA_TAG64("Pbsqb02"), FSA_TAG64("Pbsqb03"), FSA_TAG64("Pbsqb04"), FSA_TAG64("Pbsqb05"),
+    FSA_TAG64("Pbsqb06"), FSA_TAG64("Pbsqb07"), FSA_TAG64("Pbsqb08"), FSA_TAG64("Pbsqb09"), FSA_TAG64("Pbsqb10"),
 };
 // field_0xa4.
 static const u64 lbl_8048D238[15] = {
-    'Pbsk01', 'Pdot03', 'Pdot02', 'Pdot01', 'Pbsbb05', 'Pbsbb04', 'Pbsbb03',
-    'Pbsbb02', 'Pbsbb01', 'Pbsb15', 'Pbsb14', 'Pbsb13', 'Pbsb12', 'Pbsb11',
-    'Pbs11',
+    FSA_TAG64("Pbsk01"), FSA_TAG64("Pdot03"), FSA_TAG64("Pdot02"), FSA_TAG64("Pdot01"), FSA_TAG64("Pbsbb05"), FSA_TAG64("Pbsbb04"), FSA_TAG64("Pbsbb03"),
+    FSA_TAG64("Pbsbb02"), FSA_TAG64("Pbsbb01"), FSA_TAG64("Pbsb15"), FSA_TAG64("Pbsb14"), FSA_TAG64("Pbsb13"), FSA_TAG64("Pbsb12"), FSA_TAG64("Pbsb11"),
+    FSA_TAG64("Pbs11"),
 };
 // The stages' name messages (setStageText).
 static const s32 lbl_8048D2B0[12] = {
@@ -142,8 +142,8 @@ inline void BattleStageSelect_804B1378::setStageText() {
         field_0x14 = 30;
         field_0x18 = 1;
         getMessageText_803832BC(field_0xe4, 0x109, 0, NULL, NULL);
-        strcpy(static_cast<J2DTextBox*>(mScreen->search('Tsn01'))->getStringPtr(), field_0xe4);
-        strcpy(static_cast<J2DTextBox*>(mScreen->search('Tsn02'))->getStringPtr(), field_0xe4);
+        strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn01")))->getStringPtr(), field_0xe4);
+        strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn02")))->getStringPtr(), field_0xe4);
     } else {
         if (field_0x14 > 30) {
             field_0x14 = 0;
@@ -153,11 +153,11 @@ inline void BattleStageSelect_804B1378::setStageText() {
         } else {
             field_0xe4[0] = 0;
         }
-        strcpy(static_cast<J2DTextBox*>(mScreen->search('Tsn01'))->getStringPtr(), field_0xe4);
-        strcpy(static_cast<J2DTextBox*>(mScreen->search('Tsn02'))->getStringPtr(), field_0xe4);
+        strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn01")))->getStringPtr(), field_0xe4);
+        strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn02")))->getStringPtr(), field_0xe4);
         f32 x = mScreen->search(lbl_8048D198[stage])->getBounds()->i.x;
         f32 y = mScreen->search(lbl_8048D198[stage])->getBounds()->i.y;
-        mScreen->search('Ndata04')->move(x, y);
+        mScreen->search(FSA_TAG64("Ndata04"))->move(x, y);
     }
 }
 
@@ -169,15 +169,15 @@ BattleStageSelect_804B1378::BattleStageSelect_804B1378() {
     mScreen = new J2DScreen;
     mScreen->setPriority("bat_stage_select.blo", 0x1100000, lbl_80529DEC.mMapArchive_0x34);
     JUTResFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tom01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tom01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tom02'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tom02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tsn01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tsn02'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tom01'))->getStringPtr(), 0x100, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tom02'))->getStringPtr(), 0x100, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsn02")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tom01")))->getStringPtr(), 0x100, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tom02")))->getStringPtr(), 0x100, 0, NULL, NULL);
     for (int i = 0; i < 11; i++) {
         field_0x123[i] = mScreen->search(lbl_8048CD50[i])->getAlpha();
         field_0x12e[i] = mScreen->search(lbl_8048CDA8[i])->getAlpha();
@@ -192,58 +192,58 @@ BattleStageSelect_804B1378::BattleStageSelect_804B1378() {
         field_0x148[i] = mScreen->search(lbl_8048CE78[0][i])->getAlpha();
     }
     field_0x28[0] = new PaneCtrl_804AF86C;
-    field_0x28[0]->setPane_80402F04(mScreen->search('Pbsbk02'));
+    field_0x28[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsbk02")));
     field_0x28[1] = new PaneCtrl_804AF86C;
-    field_0x28[1]->setPane_80402F04(mScreen->search('Pbsbk01'));
+    field_0x28[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsbk01")));
     field_0x28[2] = new PaneCtrl_804AF86C;
-    field_0x28[2]->setPane_80402F04(mScreen->search('Pbsb09'));
+    field_0x28[2]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsb09")));
     field_0x34 = new PaneCtrl_804AF86C;
-    field_0x34->setPane_80402F04(mScreen->search('Ndata03'));
+    field_0x34->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata03")));
     field_0x38 = new PaneCtrl_804AF86C;
-    field_0x38->setPane_80402F04(mScreen->search('Ndata02'));
+    field_0x38->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata02")));
     // The tags are immediates here, not loads from lbl_8048D198 / lbl_8048D1E8.
     field_0x3c[0] = new PaneCtrl_804AF86C;
-    field_0x3c[0]->setPane_80402F04(mScreen->search('Ndata06'));
+    field_0x3c[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata06")));
     field_0x6c[0] = new PaneCtrl_804AF86C;
-    field_0x6c[0]->setPane_80402F04(mScreen->search('Pbsqb01'));
+    field_0x6c[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb01")));
     field_0x3c[1] = new PaneCtrl_804AF86C;
-    field_0x3c[1]->setPane_80402F04(mScreen->search('Ndata07'));
+    field_0x3c[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata07")));
     field_0x6c[1] = new PaneCtrl_804AF86C;
-    field_0x6c[1]->setPane_80402F04(mScreen->search('Pbsqb02'));
+    field_0x6c[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb02")));
     field_0x3c[2] = new PaneCtrl_804AF86C;
-    field_0x3c[2]->setPane_80402F04(mScreen->search('Ndata08'));
+    field_0x3c[2]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata08")));
     field_0x6c[2] = new PaneCtrl_804AF86C;
-    field_0x6c[2]->setPane_80402F04(mScreen->search('Pbsqb03'));
+    field_0x6c[2]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb03")));
     field_0x3c[3] = new PaneCtrl_804AF86C;
-    field_0x3c[3]->setPane_80402F04(mScreen->search('Ndata09'));
+    field_0x3c[3]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata09")));
     field_0x6c[3] = new PaneCtrl_804AF86C;
-    field_0x6c[3]->setPane_80402F04(mScreen->search('Pbsqb04'));
+    field_0x6c[3]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb04")));
     field_0x3c[4] = new PaneCtrl_804AF86C;
-    field_0x3c[4]->setPane_80402F04(mScreen->search('Ndata10'));
+    field_0x3c[4]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata10")));
     field_0x6c[4] = new PaneCtrl_804AF86C;
-    field_0x6c[4]->setPane_80402F04(mScreen->search('Pbsqb05'));
+    field_0x6c[4]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb05")));
     field_0x3c[5] = new PaneCtrl_804AF86C;
-    field_0x3c[5]->setPane_80402F04(mScreen->search('Ndata11'));
+    field_0x3c[5]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata11")));
     field_0x6c[5] = new PaneCtrl_804AF86C;
-    field_0x6c[5]->setPane_80402F04(mScreen->search('Pbsqb06'));
+    field_0x6c[5]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb06")));
     field_0x3c[6] = new PaneCtrl_804AF86C;
-    field_0x3c[6]->setPane_80402F04(mScreen->search('Ndata12'));
+    field_0x3c[6]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata12")));
     field_0x6c[6] = new PaneCtrl_804AF86C;
-    field_0x6c[6]->setPane_80402F04(mScreen->search('Pbsqb07'));
+    field_0x6c[6]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb07")));
     field_0x3c[7] = new PaneCtrl_804AF86C;
-    field_0x3c[7]->setPane_80402F04(mScreen->search('Ndata13'));
+    field_0x3c[7]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata13")));
     field_0x6c[7] = new PaneCtrl_804AF86C;
-    field_0x6c[7]->setPane_80402F04(mScreen->search('Pbsqb08'));
+    field_0x6c[7]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb08")));
     field_0x3c[8] = new PaneCtrl_804AF86C;
-    field_0x3c[8]->setPane_80402F04(mScreen->search('Ndata14'));
+    field_0x3c[8]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata14")));
     field_0x6c[8] = new PaneCtrl_804AF86C;
-    field_0x6c[8]->setPane_80402F04(mScreen->search('Pbsqb09'));
+    field_0x6c[8]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb09")));
     field_0x3c[9] = new PaneCtrl_804AF86C;
-    field_0x3c[9]->setPane_80402F04(mScreen->search('Ndata15'));
+    field_0x3c[9]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata15")));
     field_0x6c[9] = new PaneCtrl_804AF86C;
-    field_0x6c[9]->setPane_80402F04(mScreen->search('Pbsqb10'));
+    field_0x6c[9]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbsqb10")));
     field_0x9c = new PaneCtrl_804AF86C;
-    field_0x9c->setPane_80402F04(mScreen->search('Ndata05'));
+    field_0x9c->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata05")));
     for (int i = 0; i < 15; i++) {
         field_0xa4[i] = new PaneCtrl_804AF86C;
         field_0xa4[i]->setPane_80402F04(mScreen->search(lbl_8048D238[i]));
@@ -275,8 +275,8 @@ BattleStageSelect_804B1378::BattleStageSelect_804B1378() {
         }
     }
     field_0x108 = 156;
-    field_0x4 = mScreen->search('Ndata05')->getBounds()->i.y;
-    field_0x8 = mScreen->search('Pocur02')->getBounds()->i.y;
+    field_0x4 = mScreen->search(FSA_TAG64("Ndata05"))->getBounds()->i.y;
+    field_0x8 = mScreen->search(FSA_TAG64("Pocur02"))->getBounds()->i.y;
     if (lbl_80529DEC.field_0x252 == 0) {
         s32 stage = lbl_80529DEC.field_0x128 * 4 + lbl_80529DEC.field_0x12c;
         field_0x10 = stage % 5;
@@ -332,17 +332,17 @@ void BattleStageSelect_804B1378::fn_804170EC() {
                 field_0x14 = 0;
             }
             if (field_0x14 < 10) {
-                mScreen->search('Pscur01')->show();
-                mScreen->search('Pscur02')->hide();
-                mScreen->search('Pscur03')->hide();
+                mScreen->search(FSA_TAG64("Pscur01"))->show();
+                mScreen->search(FSA_TAG64("Pscur02"))->hide();
+                mScreen->search(FSA_TAG64("Pscur03"))->hide();
             } else if (field_0x14 < 20) {
-                mScreen->search('Pscur01')->hide();
-                mScreen->search('Pscur02')->show();
-                mScreen->search('Pscur03')->hide();
+                mScreen->search(FSA_TAG64("Pscur01"))->hide();
+                mScreen->search(FSA_TAG64("Pscur02"))->show();
+                mScreen->search(FSA_TAG64("Pscur03"))->hide();
             } else {
-                mScreen->search('Pscur01')->hide();
-                mScreen->search('Pscur02')->hide();
-                mScreen->search('Pscur03')->show();
+                mScreen->search(FSA_TAG64("Pscur01"))->hide();
+                mScreen->search(FSA_TAG64("Pscur02"))->hide();
+                mScreen->search(FSA_TAG64("Pscur03"))->show();
             }
             alpha = 0;
         } else {
@@ -357,9 +357,9 @@ void BattleStageSelect_804B1378::fn_804170EC() {
                 s32 frame = field_0x14 - 30;
                 rate = 1.0f - (f32)(frame * frame) / 900.0f;
             }
-            mScreen->search('Pscur01')->hide();
-            mScreen->search('Pscur02')->hide();
-            mScreen->search('Pscur03')->hide();
+            mScreen->search(FSA_TAG64("Pscur01"))->hide();
+            mScreen->search(FSA_TAG64("Pscur02"))->hide();
+            mScreen->search(FSA_TAG64("Pscur03"))->hide();
             alpha = rate * field_0x108;
         }
         if (field_0x18 > 0) {
@@ -373,13 +373,13 @@ void BattleStageSelect_804B1378::fn_804170EC() {
                 field_0x18++;
             }
             f32 offset = 5.0f * (t * t) / 25.0f;
-            f32 x = mScreen->search('Ndata05')->getBounds()->i.x;
-            mScreen->search('Ndata05')->move(x, field_0x4 + offset);
-            x = mScreen->search('Pocur02')->getBounds()->i.x;
-            mScreen->search('Pocur02')->move(x, field_0x8 + offset);
+            f32 x = mScreen->search(FSA_TAG64("Ndata05"))->getBounds()->i.x;
+            mScreen->search(FSA_TAG64("Ndata05"))->move(x, field_0x4 + offset);
+            x = mScreen->search(FSA_TAG64("Pocur02"))->getBounds()->i.x;
+            mScreen->search(FSA_TAG64("Pocur02"))->move(x, field_0x8 + offset);
         }
-        mScreen->search('Pocur01')->setAlpha(alpha);
-        mScreen->search('Pocur02')->setAlpha(alpha);
+        mScreen->search(FSA_TAG64("Pocur01"))->setAlpha(alpha);
+        mScreen->search(FSA_TAG64("Pocur02"))->setAlpha(alpha);
     }
     mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     if (field_0x109 == 2) {
@@ -424,11 +424,11 @@ void BattleStageSelect_804B1378::fn_80416BD0() {
     field_0x9c->field_0x22 = 0;
     field_0xa0->moveFromCentre_80402E08(0.0f, -200.0f);
     field_0xa0->field_0x22 = 0;
-    mScreen->search('Pscur01')->hide();
-    mScreen->search('Pscur02')->hide();
-    mScreen->search('Pscur03')->hide();
-    mScreen->search('Pocur01')->setAlpha(0);
-    mScreen->search('Pocur02')->setAlpha(0);
+    mScreen->search(FSA_TAG64("Pscur01"))->hide();
+    mScreen->search(FSA_TAG64("Pscur02"))->hide();
+    mScreen->search(FSA_TAG64("Pscur03"))->hide();
+    mScreen->search(FSA_TAG64("Pocur01"))->setAlpha(0);
+    mScreen->search(FSA_TAG64("Pocur02"))->setAlpha(0);
     field_0xe0 = 6;
 }
 

@@ -105,10 +105,10 @@ inline void Title_804AF820::calcBlink(f32& blink) {
 
 inline void Title_804AF820::drawTitle(f32 blink) {
     mScreen->search('Pntd')->setAlpha(field_0x4c);
-    mScreen->search('Ptlogo01')->setAlpha(field_0x4c);
-    mScreen->search('Ptlogo02')->setAlpha(field_0x4c);
-    mScreen->search('prsstrt1')->setAlpha(field_0x14e * blink);
-    mScreen->search('prsstrt2')->setAlpha(field_0x14f * blink);
+    mScreen->search(FSA_TAG64("Ptlogo01"))->setAlpha(field_0x4c);
+    mScreen->search(FSA_TAG64("Ptlogo02"))->setAlpha(field_0x4c);
+    mScreen->search(FSA_TAG64("prsstrt1"))->setAlpha(field_0x14e * blink);
+    mScreen->search(FSA_TAG64("prsstrt2"))->setAlpha(field_0x14f * blink);
     mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     if (field_0x82 > 0 && field_0x4c == 255.0f) {
         field_0x82--;
@@ -125,9 +125,9 @@ Title_804AF820::Title_804AF820() {
     mAnm = static_cast<J2DAnmTextureSRTKey*>(
         J2DAnmLoaderDataBase::load(JKRFileLoader::getGlbResource("title.btk", lbl_80529DEC.mTitleArchive_0x24)));
     mScreen->setAnimation(mAnm);
-    mScreen->search('Pcmark')->hide();
-    field_0x14e = mScreen->search('prsstrt1')->getAlpha();
-    field_0x14f = mScreen->search('prsstrt2')->getAlpha();
+    mScreen->search(FSA_TAG64("Pcmark"))->hide();
+    field_0x14e = mScreen->search(FSA_TAG64("prsstrt1"))->getAlpha();
+    field_0x14f = mScreen->search(FSA_TAG64("prsstrt2"))->getAlpha();
     const ResTIMG* tex = (const ResTIMG*)fn_80403204('TIMG', "kk_titleCon_01.bti");
     field_0x8 = new J2DPicture(tex);
     mMovie = new THPMovie_804B15D0;
@@ -329,10 +329,10 @@ void Title_804AF820::fn_803A44D8() {
             }
             gGameRoot2_8053AB10->setPort_8013B490();
             mScreen->search('Pntd')->setAlpha(field_0x4c);
-            mScreen->search('Ptlogo01')->setAlpha(0);
-            mScreen->search('Ptlogo02')->setAlpha(0);
-            mScreen->search('prsstrt1')->setAlpha(field_0x14e * blink);
-            mScreen->search('prsstrt2')->setAlpha(field_0x14f * blink);
+            mScreen->search(FSA_TAG64("Ptlogo01"))->setAlpha(0);
+            mScreen->search(FSA_TAG64("Ptlogo02"))->setAlpha(0);
+            mScreen->search(FSA_TAG64("prsstrt1"))->setAlpha(field_0x14e * blink);
+            mScreen->search(FSA_TAG64("prsstrt2"))->setAlpha(field_0x14f * blink);
             mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
         }
     } else {

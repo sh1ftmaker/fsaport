@@ -599,6 +599,23 @@ BOOL OSRestoreInterrupts(BOOL level) { return level; }
 
 }  // extern "C"
 
+// Polling functions (DVDGetDriveStatus, VIGetRetraceCount, ...) call this. A
+// thread that polls for ~8 ms without blocking is waiting on something only the
+// browser can deliver (a retrace, a timer, a disc read), so it sleeps briefly
+// and lets the page's event loop run.
+void platform_poll_point() {
+  static double lastYield = 0;
+  if (!g_current || g_interruptDepth)
+    return;
+  double now = emscripten_get_now();
+  if (lastYield == 0)
+    lastYield = now;
+  if (now - lastYield < 8.0)
+    return;
+  platform_sleep_ticks(OS_TIMER_CLOCK / 1000);  // 1 ms
+  lastYield = emscripten_get_now();
+}
+
 // Timed sleep used by the platform (not an SDK call on the GameCube's 2003 SDK).
 void platform_sleep_ticks(OSTime ticks) {
   g_current->wakeAt = OSGetTime() + ticks;

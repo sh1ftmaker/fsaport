@@ -27,7 +27,7 @@ GameOverScreen_804B17A0::GameOverScreen_804B17A0() {
     field_0x4->setPriority("gameover.blo", 0x1100000, lbl_80529DEC.mGame2DArchive_0x4c);
     OSInitFastCast();
     field_0x8 = J2DAnmLoaderDataBase::load(getGame2DArchiveResource_80403084('SCRN', "gameover.bck"));
-    field_0x4->search('Ndata01')->setAnimation(static_cast<J2DAnmTransform*>(field_0x8));
+    field_0x4->search(FSA_TAG64("Ndata01"))->setAnimation(static_cast<J2DAnmTransform*>(field_0x8));
     field_0x3c = 0;
     field_0xc[0] = NULL;
     field_0xc[1] = NULL;
@@ -125,7 +125,7 @@ void GameOverScreen_804B17A0::fn_804399A0() {
     field_0x34->setAlpha((u8)field_0x50);
     field_0x34->draw(-1.0f, -1.0f, 611.0f, 451.0f, false, false, false);
     field_0x8->mCurrentFrame = field_0x3c;
-    field_0x4->search('Ndata01')->animationTransform();
+    field_0x4->search(FSA_TAG64("Ndata01"))->animationTransform();
     field_0x4->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     if (field_0x40 == 3) {
         lbl_8053ADC8->field_0x20 = 1;
@@ -280,7 +280,7 @@ u8 GameOverScreen_804B17A0::fn_80438E94() {
         break;
     }
     field_0x8->mCurrentFrame = field_0x3c;
-    field_0x4->search('Ndata01')->animationTransform();
+    field_0x4->search(FSA_TAG64("Ndata01"))->animationTransform();
     for (s32 i = 0; i < 8; i++) {
         if (field_0xc[i] != NULL && field_0xc[i]->isEnableDeleteEmitter()) {
             JPAEmitterManager* manager = getEffectSystem_8013C824()->mEmitterManager;

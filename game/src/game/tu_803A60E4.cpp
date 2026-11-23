@@ -23,47 +23,47 @@ cls_804AF860::cls_804AF860() {
     field_0x4 = new J2DScreen;
     field_0x4->setPriority("option.blo", 0x1100000, lbl_80529DEC.mGameModeArchive_0x2c);
     field_0x8 = new PaneCtrl_804AF86C;
-    field_0x8->setPane_80402F04(field_0x4->search('Popbbk03'));
+    field_0x8->setPane_80402F04(field_0x4->search(FSA_TAG64("Popbbk03")));
     field_0xc[0] = new PaneCtrl_804AF86C;
-    field_0xc[0]->setPane_80402F04(field_0x4->search('Pocur01'));
+    field_0xc[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur01")));
     field_0xc[1] = new PaneCtrl_804AF86C;
-    field_0xc[1]->setPane_80402F04(field_0x4->search('Pocur02'));
+    field_0xc[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur02")));
     field_0xc[2] = new PaneCtrl_804AF86C;
-    field_0xc[2]->setPane_80402F04(field_0x4->search('Pocur03'));
+    field_0xc[2]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur03")));
     field_0xc[3] = new PaneCtrl_804AF86C;
-    field_0xc[3]->setPane_80402F04(field_0x4->search('Pocur04'));
+    field_0xc[3]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur04")));
     field_0xc[4] = new PaneCtrl_804AF86C;
-    field_0xc[4]->setPane_80402F04(field_0x4->search('Pocur05'));
+    field_0xc[4]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur05")));
     field_0xc[5] = new PaneCtrl_804AF86C;
-    field_0xc[5]->setPane_80402F04(field_0x4->search('Pocur06'));
+    field_0xc[5]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pocur06")));
     field_0x24[0] = new PaneCtrl_804AF86C;
-    field_0x24[0]->setPane_80402F04(field_0x4->search('Par01'));
+    field_0x24[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Par01")));
     field_0x24[1] = new PaneCtrl_804AF86C;
-    field_0x24[1]->setPane_80402F04(field_0x4->search('Par02'));
+    field_0x24[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Par02")));
     field_0x2c = new PaneCtrl_804AF86C;
-    field_0x2c->setPane_80402F04(field_0x4->search('Ndata03'));
+    field_0x2c->setPane_80402F04(field_0x4->search(FSA_TAG64("Ndata03")));
     field_0x30 = new PaneCtrl_804AF86C;
-    field_0x30->setPane_80402F04(field_0x4->search('Ptopbb07'));
+    field_0x30->setPane_80402F04(field_0x4->search(FSA_TAG64("Ptopbb07")));
     field_0x34 = lbl_8053AED8->field_0x8;
     const ResTIMG* tex = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_kettei_01.bti");
     lbl_8053AED8->fn_80440D78(tex);
     lbl_8053AED8->fn_80440CE4((const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_modoru_01.bti"));
-    ((J2DTextBox*)field_0x4->search('Tsi01'))->setFont(lbl_8053AD78->getFont());
-    ((J2DTextBox*)field_0x4->search('Tsi02'))->setFont(lbl_8053AD78->getFont());
-    ((J2DTextBox*)field_0x4->search('Tso01'))->setFont(lbl_8053AD78->getFont());
-    ((J2DTextBox*)field_0x4->search('Tso02'))->setFont(lbl_8053AD78->getFont());
-    getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso01'))->getStringPtr(), 0x97, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi01'))->getStringPtr(), 0x37, 0, NULL, NULL);
-    field_0x4->search('Pocur01')->show();
-    field_0x4->search('Pocur02')->show();
-    field_0x4->search('Pocur03')->hide();
-    field_0x4->search('Pocur04')->hide();
-    field_0x4->search('Pocur05')->hide();
-    field_0x4->search('Pocur06')->hide();
-    field_0x70 = (s32)field_0x4->search('Par01')->getRotate();
-    field_0x72 = (s32)field_0x4->search('Par02')->getRotate();
-    f32 y0 = field_0x4->search('Tso01')->getBounds()->i.y;
-    f32 y1 = field_0x4->search('Tsi01')->getBounds()->i.y;
+    ((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi01")))->setFont(lbl_8053AD78->getFont());
+    ((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->setFont(lbl_8053AD78->getFont());
+    ((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso01")))->setFont(lbl_8053AD78->getFont());
+    ((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->setFont(lbl_8053AD78->getFont());
+    getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso01")))->getStringPtr(), 0x97, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi01")))->getStringPtr(), 0x37, 0, NULL, NULL);
+    field_0x4->search(FSA_TAG64("Pocur01"))->show();
+    field_0x4->search(FSA_TAG64("Pocur02"))->show();
+    field_0x4->search(FSA_TAG64("Pocur03"))->hide();
+    field_0x4->search(FSA_TAG64("Pocur04"))->hide();
+    field_0x4->search(FSA_TAG64("Pocur05"))->hide();
+    field_0x4->search(FSA_TAG64("Pocur06"))->hide();
+    field_0x70 = (s32)field_0x4->search(FSA_TAG64("Par01"))->getRotate();
+    field_0x72 = (s32)field_0x4->search(FSA_TAG64("Par02"))->getRotate();
+    f32 y0 = field_0x4->search(FSA_TAG64("Tso01"))->getBounds()->i.y;
+    f32 y1 = field_0x4->search(FSA_TAG64("Tsi01"))->getBounds()->i.y;
     field_0x60 = y1 - y0;
     field_0x64 = 0;
     field_0x68 = 0;
@@ -71,17 +71,17 @@ cls_804AF860::cls_804AF860() {
     field_0x77 = lbl_80529DEC.mSoundMode_0x245;
     field_0x78 = lbl_80529DEC.field_0x246;
     if (field_0x77 == 1) {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x98, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x98, 0, NULL, NULL);
     } else {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x99, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x99, 0, NULL, NULL);
     }
     if (field_0x78 == 1) {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x38, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x38, 0, NULL, NULL);
     } else {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x39, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x39, 0, NULL, NULL);
     }
-    field_0x4->search('Par01')->rotate(0.5f * field_0x4->search('Par01')->getWidth(), 0.5f * field_0x4->search('Par01')->getHeight(), J2DROTATE_Z, (f32)(field_0x70 + field_0x74));
-    field_0x4->search('Par02')->rotate(0.5f * field_0x4->search('Par02')->getWidth(), 0.5f * field_0x4->search('Par02')->getHeight(), J2DROTATE_Z, (f32)(field_0x72 + field_0x74));
+    field_0x4->search(FSA_TAG64("Par01"))->rotate(0.5f * field_0x4->search(FSA_TAG64("Par01"))->getWidth(), 0.5f * field_0x4->search(FSA_TAG64("Par01"))->getHeight(), J2DROTATE_Z, (f32)(field_0x70 + field_0x74));
+    field_0x4->search(FSA_TAG64("Par02"))->rotate(0.5f * field_0x4->search(FSA_TAG64("Par02"))->getWidth(), 0.5f * field_0x4->search(FSA_TAG64("Par02"))->getHeight(), J2DROTATE_Z, (f32)(field_0x72 + field_0x74));
     field_0x6a = (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 10;
     field_0x6c = (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 10;
     field_0x6e = 0;
@@ -138,17 +138,17 @@ void cls_804AF860::fn_803A7280() {
     field_0x77 = lbl_80529DEC.mSoundMode_0x245;
     field_0x78 = lbl_80529DEC.field_0x246;
     if (field_0x77 == 1) {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x98, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x98, 0, NULL, NULL);
     } else {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x99, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x99, 0, NULL, NULL);
     }
     if (field_0x78 == 1) {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x38, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x38, 0, NULL, NULL);
     } else {
-        getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x39, 0, NULL, NULL);
+        getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x39, 0, NULL, NULL);
     }
-    field_0x4->search('Par01')->rotate(0.5f * field_0x4->search('Par01')->getWidth(), 0.5f * field_0x4->search('Par01')->getHeight(), J2DROTATE_Z, (f32)(field_0x70 + field_0x74));
-    field_0x4->search('Par02')->rotate(0.5f * field_0x4->search('Par02')->getWidth(), 0.5f * field_0x4->search('Par02')->getHeight(), J2DROTATE_Z, (f32)(field_0x72 + field_0x74));
+    field_0x4->search(FSA_TAG64("Par01"))->rotate(0.5f * field_0x4->search(FSA_TAG64("Par01"))->getWidth(), 0.5f * field_0x4->search(FSA_TAG64("Par01"))->getHeight(), J2DROTATE_Z, (f32)(field_0x70 + field_0x74));
+    field_0x4->search(FSA_TAG64("Par02"))->rotate(0.5f * field_0x4->search(FSA_TAG64("Par02"))->getWidth(), 0.5f * field_0x4->search(FSA_TAG64("Par02"))->getHeight(), J2DROTATE_Z, (f32)(field_0x72 + field_0x74));
     field_0x6a = (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 10;
     field_0x6c = (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 10;
     field_0x6e = 0;
@@ -232,13 +232,13 @@ void cls_804AF860::fn_803A6608() {
         if (field_0x64 == 0) {
             if (field_0x77 == 1) {
                 field_0x77 = 0;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x99, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x99, 0, NULL, NULL);
                 gAudioMgr_8053AF80->fn_804594E4(0);
                 gAudioMgr_8053AF80->playSystemSound_80458880(0x43, -1);
                 OSSetSoundMode(0);
             } else {
                 field_0x77 = 1;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x98, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x98, 0, NULL, NULL);
                 gAudioMgr_8053AF80->fn_804594E4(1);
                 gAudioMgr_8053AF80->playSystemSound_80458880(0x43, -1);
                 OSSetSoundMode(1);
@@ -247,13 +247,13 @@ void cls_804AF860::fn_803A6608() {
             // rumble row
             if (field_0x78 == 1) {
                 field_0x78 = 0;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x39, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x39, 0, NULL, NULL);
                 if (lbl_8053AD30->fn_8030A388(getPlayerInputSlot_8030AAF4(0))) {
                     gGameRoot_8053AAF8->fn_80134CC0(0);
                 }
             } else {
                 field_0x78 = 1;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x38, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x38, 0, NULL, NULL);
                 if (lbl_8053AD30->fn_8030A388(getPlayerInputSlot_8030AAF4(0))) {
                     gGameRoot_8053AAF8->fn_80134CC0(30);
                 }
@@ -265,13 +265,13 @@ void cls_804AF860::fn_803A6608() {
         if (field_0x64 == 0) {
             if (field_0x77 == 1) {
                 field_0x77 = 0;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x99, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x99, 0, NULL, NULL);
                 gAudioMgr_8053AF80->fn_804594E4(0);
                 gAudioMgr_8053AF80->playSystemSound_80458880(0x43, -1);
                 OSSetSoundMode(0);
             } else {
                 field_0x77 = 1;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tso02'))->getStringPtr(), 0x98, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tso02")))->getStringPtr(), 0x98, 0, NULL, NULL);
                 gAudioMgr_8053AF80->fn_804594E4(1);
                 gAudioMgr_8053AF80->playSystemSound_80458880(0x43, -1);
                 OSSetSoundMode(1);
@@ -280,13 +280,13 @@ void cls_804AF860::fn_803A6608() {
             // rumble row
             if (field_0x78 == 1) {
                 field_0x78 = 0;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x39, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x39, 0, NULL, NULL);
                 if (lbl_8053AD30->fn_8030A388(getPlayerInputSlot_8030AAF4(0))) {
                     gGameRoot_8053AAF8->fn_80134CC0(0);
                 }
             } else {
                 field_0x78 = 1;
-                getMessageText_803832BC(((J2DTextBox*)field_0x4->search('Tsi02'))->getStringPtr(), 0x38, 0, NULL, NULL);
+                getMessageText_803832BC(((J2DTextBox*)field_0x4->search(FSA_TAG64("Tsi02")))->getStringPtr(), 0x38, 0, NULL, NULL);
                 if (lbl_8053AD30->fn_8030A388(getPlayerInputSlot_8030AAF4(0))) {
                     gGameRoot_8053AAF8->fn_80134CC0(30);
                 }
@@ -295,27 +295,27 @@ void cls_804AF860::fn_803A6608() {
     }
     if (--field_0x6a <= 0) {
         field_0x6a = (s32)(11.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 10;
-        if (field_0x4->search('Pocur01')->isVisible()) {
-            field_0x4->search('Pocur01')->hide();
-            field_0x4->search('Pocur02')->hide();
-            field_0x4->search('Pocur03')->show();
-            field_0x4->search('Pocur04')->show();
-            field_0x4->search('Pocur05')->hide();
-            field_0x4->search('Pocur06')->hide();
-        } else if (field_0x4->search('Pocur03')->isVisible()) {
-            field_0x4->search('Pocur01')->hide();
-            field_0x4->search('Pocur02')->hide();
-            field_0x4->search('Pocur03')->hide();
-            field_0x4->search('Pocur04')->hide();
-            field_0x4->search('Pocur05')->show();
-            field_0x4->search('Pocur06')->show();
+        if (field_0x4->search(FSA_TAG64("Pocur01"))->isVisible()) {
+            field_0x4->search(FSA_TAG64("Pocur01"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur02"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur03"))->show();
+            field_0x4->search(FSA_TAG64("Pocur04"))->show();
+            field_0x4->search(FSA_TAG64("Pocur05"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur06"))->hide();
+        } else if (field_0x4->search(FSA_TAG64("Pocur03"))->isVisible()) {
+            field_0x4->search(FSA_TAG64("Pocur01"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur02"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur03"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur04"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur05"))->show();
+            field_0x4->search(FSA_TAG64("Pocur06"))->show();
         } else {
-            field_0x4->search('Pocur01')->show();
-            field_0x4->search('Pocur02')->show();
-            field_0x4->search('Pocur03')->hide();
-            field_0x4->search('Pocur04')->hide();
-            field_0x4->search('Pocur05')->hide();
-            field_0x4->search('Pocur06')->hide();
+            field_0x4->search(FSA_TAG64("Pocur01"))->show();
+            field_0x4->search(FSA_TAG64("Pocur02"))->show();
+            field_0x4->search(FSA_TAG64("Pocur03"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur04"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur05"))->hide();
+            field_0x4->search(FSA_TAG64("Pocur06"))->hide();
         }
     }
     fn_803A60E4();
@@ -355,15 +355,15 @@ void cls_804AF860::fn_803A60E4() {
         } else {
             field_0x74 = -6;
         }
-        field_0x4->search('Par01')->rotate(
-            0.5f * field_0x4->search('Par01')->getWidth(),
-            0.5f * field_0x4->search('Par01')->getHeight(),
+        field_0x4->search(FSA_TAG64("Par01"))->rotate(
+            0.5f * field_0x4->search(FSA_TAG64("Par01"))->getWidth(),
+            0.5f * field_0x4->search(FSA_TAG64("Par01"))->getHeight(),
             J2DROTATE_Z,
             (f32)(field_0x70 + field_0x74)
         );
-        field_0x4->search('Par02')->rotate(
-            0.5f * field_0x4->search('Par02')->getWidth(),
-            0.5f * field_0x4->search('Par02')->getHeight(),
+        field_0x4->search(FSA_TAG64("Par02"))->rotate(
+            0.5f * field_0x4->search(FSA_TAG64("Par02"))->getWidth(),
+            0.5f * field_0x4->search(FSA_TAG64("Par02"))->getHeight(),
             J2DROTATE_Z,
             (f32)(field_0x72 + field_0x74)
         );
@@ -371,15 +371,15 @@ void cls_804AF860::fn_803A60E4() {
     }
     if (field_0x6e == 1 || field_0x6e == -1) {
         field_0x74 = 0;
-        field_0x4->search('Par01')->rotate(
-            0.5f * field_0x4->search('Par01')->getWidth(),
-            0.5f * field_0x4->search('Par01')->getHeight(),
+        field_0x4->search(FSA_TAG64("Par01"))->rotate(
+            0.5f * field_0x4->search(FSA_TAG64("Par01"))->getWidth(),
+            0.5f * field_0x4->search(FSA_TAG64("Par01"))->getHeight(),
             J2DROTATE_Z,
             (f32)(field_0x70 + field_0x74)
         );
-        field_0x4->search('Par02')->rotate(
-            0.5f * field_0x4->search('Par02')->getWidth(),
-            0.5f * field_0x4->search('Par02')->getHeight(),
+        field_0x4->search(FSA_TAG64("Par02"))->rotate(
+            0.5f * field_0x4->search(FSA_TAG64("Par02"))->getWidth(),
+            0.5f * field_0x4->search(FSA_TAG64("Par02"))->getHeight(),
             J2DROTATE_Z,
             (f32)(field_0x72 + field_0x74)
         );

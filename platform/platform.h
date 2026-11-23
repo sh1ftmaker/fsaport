@@ -16,6 +16,7 @@ void platform_check_alarms(OSTime now);
 void platform_check_sleepers(OSTime now);
 OSTime platform_next_alarm();               // 0 = none
 void platform_sleep_ticks(OSTime ticks);
+void platform_poll_point();                 // see os_thread.cpp
 
 // os_misc.cpp: run pending "interrupts" (DVD callbacks, due alarms). Safe to
 // call from any thread context; callbacks never switch threads.

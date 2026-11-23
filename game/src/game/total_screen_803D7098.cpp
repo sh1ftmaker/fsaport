@@ -11,33 +11,33 @@
 #include "JSystem/J2D/J2DAnmLoader.h"
 
 static const u64 lbl_80476F80[4][16] = {
-    { 'P1ka01', 'P1ka02', 'P1ka03', 'P1ka04', 'P1ka05', 'P1ka06', 'P1ka07', 'P1ka08',
-      'P1ka09', 'P1ka10', 'P1ka11', 'P1ka12', 'P1ka13', 'P1ka14', 'P1ka15', 'P1ka16' },
-    { 'P2ka01', 'P2ka02', 'P2ka03', 'P2ka04', 'P2ka05', 'P2ka06', 'P2ka07', 'P2ka08',
-      'P2ka09', 'P2ka10', 'P2ka11', 'P2ka12', 'P2ka13', 'P2ka14', 'P2ka15', 'P2ka16' },
-    { 'P3ka01', 'P3ka02', 'P3ka03', 'P3ka04', 'P3ka05', 'P3ka06', 'P3ka07', 'P3ka08',
-      'P3ka09', 'P3ka10', 'P3ka11', 'P3ka12', 'P3ka13', 'P3ka14', 'P3ka15', 'P3ka16' },
-    { 'P4ka01', 'P4ka02', 'P4ka03', 'P4ka04', 'P4ka05', 'P4ka06', 'P4ka07', 'P4ka08',
-      'P4ka09', 'P4ka10', 'P4ka11', 'P4ka12', 'P4ka13', 'P4ka14', 'P4ka15', 'P4ka16' },
+    { FSA_TAG64("P1ka01"), FSA_TAG64("P1ka02"), FSA_TAG64("P1ka03"), FSA_TAG64("P1ka04"), FSA_TAG64("P1ka05"), FSA_TAG64("P1ka06"), FSA_TAG64("P1ka07"), FSA_TAG64("P1ka08"),
+      FSA_TAG64("P1ka09"), FSA_TAG64("P1ka10"), FSA_TAG64("P1ka11"), FSA_TAG64("P1ka12"), FSA_TAG64("P1ka13"), FSA_TAG64("P1ka14"), FSA_TAG64("P1ka15"), FSA_TAG64("P1ka16") },
+    { FSA_TAG64("P2ka01"), FSA_TAG64("P2ka02"), FSA_TAG64("P2ka03"), FSA_TAG64("P2ka04"), FSA_TAG64("P2ka05"), FSA_TAG64("P2ka06"), FSA_TAG64("P2ka07"), FSA_TAG64("P2ka08"),
+      FSA_TAG64("P2ka09"), FSA_TAG64("P2ka10"), FSA_TAG64("P2ka11"), FSA_TAG64("P2ka12"), FSA_TAG64("P2ka13"), FSA_TAG64("P2ka14"), FSA_TAG64("P2ka15"), FSA_TAG64("P2ka16") },
+    { FSA_TAG64("P3ka01"), FSA_TAG64("P3ka02"), FSA_TAG64("P3ka03"), FSA_TAG64("P3ka04"), FSA_TAG64("P3ka05"), FSA_TAG64("P3ka06"), FSA_TAG64("P3ka07"), FSA_TAG64("P3ka08"),
+      FSA_TAG64("P3ka09"), FSA_TAG64("P3ka10"), FSA_TAG64("P3ka11"), FSA_TAG64("P3ka12"), FSA_TAG64("P3ka13"), FSA_TAG64("P3ka14"), FSA_TAG64("P3ka15"), FSA_TAG64("P3ka16") },
+    { FSA_TAG64("P4ka01"), FSA_TAG64("P4ka02"), FSA_TAG64("P4ka03"), FSA_TAG64("P4ka04"), FSA_TAG64("P4ka05"), FSA_TAG64("P4ka06"), FSA_TAG64("P4ka07"), FSA_TAG64("P4ka08"),
+      FSA_TAG64("P4ka09"), FSA_TAG64("P4ka10"), FSA_TAG64("P4ka11"), FSA_TAG64("P4ka12"), FSA_TAG64("P4ka13"), FSA_TAG64("P4ka14"), FSA_TAG64("P4ka15"), FSA_TAG64("P4ka16") },
 };
 
 static const u64 lbl_80477180[4][16] = {
-    { 'P1kak01', 'P1kak02', 'P1kak03', 'P1kak04', 'P1kak05', 'P1kak06', 'P1kak07', 'P1kak08',
-      'P1kak09', 'P1kak10', 'P1kak11', 'P1kak12', 'P1kak13', 'P1kak14', 'P1kak15', 'P1kak16' },
-    { 'P2kak01', 'P2kak02', 'P2kak03', 'P2kak04', 'P2kak05', 'P2kak06', 'P2kak07', 'P2kak08',
-      'P2kak09', 'P2kak10', 'P2kak11', 'P2kak12', 'P2kak13', 'P2kak14', 'P2kak15', 'P2kak16' },
-    { 'P3kak01', 'P3kak02', 'P3kak03', 'P3kak04', 'P3kak05', 'P3kak06', 'P3kak07', 'P3kak08',
-      'P3kak09', 'P3kak10', 'P3kak11', 'P3kak12', 'P3kak13', 'P3kak14', 'P3kak15', 'P3kak16' },
-    { 'P4kak01', 'P4kak02', 'P4kak03', 'P4kak04', 'P4kak05', 'P4kak06', 'P4kak07', 'P4kak08',
-      'P4kak09', 'P4kak10', 'P4kak11', 'P4kak12', 'P4kak13', 'P4kak14', 'P4kak15', 'P4kak16' },
+    { FSA_TAG64("P1kak01"), FSA_TAG64("P1kak02"), FSA_TAG64("P1kak03"), FSA_TAG64("P1kak04"), FSA_TAG64("P1kak05"), FSA_TAG64("P1kak06"), FSA_TAG64("P1kak07"), FSA_TAG64("P1kak08"),
+      FSA_TAG64("P1kak09"), FSA_TAG64("P1kak10"), FSA_TAG64("P1kak11"), FSA_TAG64("P1kak12"), FSA_TAG64("P1kak13"), FSA_TAG64("P1kak14"), FSA_TAG64("P1kak15"), FSA_TAG64("P1kak16") },
+    { FSA_TAG64("P2kak01"), FSA_TAG64("P2kak02"), FSA_TAG64("P2kak03"), FSA_TAG64("P2kak04"), FSA_TAG64("P2kak05"), FSA_TAG64("P2kak06"), FSA_TAG64("P2kak07"), FSA_TAG64("P2kak08"),
+      FSA_TAG64("P2kak09"), FSA_TAG64("P2kak10"), FSA_TAG64("P2kak11"), FSA_TAG64("P2kak12"), FSA_TAG64("P2kak13"), FSA_TAG64("P2kak14"), FSA_TAG64("P2kak15"), FSA_TAG64("P2kak16") },
+    { FSA_TAG64("P3kak01"), FSA_TAG64("P3kak02"), FSA_TAG64("P3kak03"), FSA_TAG64("P3kak04"), FSA_TAG64("P3kak05"), FSA_TAG64("P3kak06"), FSA_TAG64("P3kak07"), FSA_TAG64("P3kak08"),
+      FSA_TAG64("P3kak09"), FSA_TAG64("P3kak10"), FSA_TAG64("P3kak11"), FSA_TAG64("P3kak12"), FSA_TAG64("P3kak13"), FSA_TAG64("P3kak14"), FSA_TAG64("P3kak15"), FSA_TAG64("P3kak16") },
+    { FSA_TAG64("P4kak01"), FSA_TAG64("P4kak02"), FSA_TAG64("P4kak03"), FSA_TAG64("P4kak04"), FSA_TAG64("P4kak05"), FSA_TAG64("P4kak06"), FSA_TAG64("P4kak07"), FSA_TAG64("P4kak08"),
+      FSA_TAG64("P4kak09"), FSA_TAG64("P4kak10"), FSA_TAG64("P4kak11"), FSA_TAG64("P4kak12"), FSA_TAG64("P4kak13"), FSA_TAG64("P4kak14"), FSA_TAG64("P4kak15"), FSA_TAG64("P4kak16") },
 };
 
-static const u64 lbl_80477380[4] = { 'Pbcur01', 'Pbcur02', 'Pbcur03', 'Pbcur04' };
-static const u64 lbl_804773A0[3] = { 'Pblk01', 'Pblk02', 'Pblk03' };
-static const u64 lbl_804773B8[3] = { 'Ndata002', 'Ndata003', 'Ndata004' };
-static const u64 lbl_804773D0[3] = { 'P2P02', 'P3P02', 'P4P02' };
-static const u64 lbl_804773E8[4] = { 'Pp1i03', 'Pp2i03', 'Pp3i03', 'Pp4i03' };
-static const u64 lbl_80477408[4] = { 'Ndata11', 'Ndata12', 'Ndata13', 'Ndata14' };
+static const u64 lbl_80477380[4] = { FSA_TAG64("Pbcur01"), FSA_TAG64("Pbcur02"), FSA_TAG64("Pbcur03"), FSA_TAG64("Pbcur04") };
+static const u64 lbl_804773A0[3] = { FSA_TAG64("Pblk01"), FSA_TAG64("Pblk02"), FSA_TAG64("Pblk03") };
+static const u64 lbl_804773B8[3] = { FSA_TAG64("Ndata002"), FSA_TAG64("Ndata003"), FSA_TAG64("Ndata004") };
+static const u64 lbl_804773D0[3] = { FSA_TAG64("P2P02"), FSA_TAG64("P3P02"), FSA_TAG64("P4P02") };
+static const u64 lbl_804773E8[4] = { FSA_TAG64("Pp1i03"), FSA_TAG64("Pp2i03"), FSA_TAG64("Pp3i03"), FSA_TAG64("Pp4i03") };
+static const u64 lbl_80477408[4] = { FSA_TAG64("Ndata11"), FSA_TAG64("Ndata12"), FSA_TAG64("Ndata13"), FSA_TAG64("Ndata14") };
 
 // FIXME(shotgun): 99.94 %, same-text; behaviour drift.
 TotalScreen_804B03D8::TotalScreen_804B03D8() {
@@ -53,35 +53,35 @@ TotalScreen_804B03D8::TotalScreen_804B03D8() {
     field_0x20 = new J2DPicture(tex);
     field_0x20->setBlackWhite(JUtility::TColor(0x000000FF), JUtility::TColor(0x00000000));
     JUTResFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(field_0x4->search('Tno01'))->setFont(font);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tno01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(field_0x4->search('Tyes01'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(field_0x4->search('Tyes01'))->getStringPtr(), 0x10C, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(field_0x4->search('Tno01'))->getStringPtr(), 0x10D, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tyes01")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tyes01")))->getStringPtr(), 0x10C, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tno01")))->getStringPtr(), 0x10D, 0, NULL, NULL);
     field_0x24[0] = new PaneCtrl_804AF86C;
-    field_0x24[0]->setPane_80402F04(field_0x4->search('Pyesb04'));
+    field_0x24[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pyesb04")));
     field_0x24[1] = new PaneCtrl_804AF86C;
-    field_0x24[1]->setPane_80402F04(field_0x4->search('Pnob04'));
+    field_0x24[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pnob04")));
     field_0x2c = new PaneCtrl_804AF86C;
-    field_0x2c->setPane_80402F04(field_0x4->search('Paccur02'));
+    field_0x2c->setPane_80402F04(field_0x4->search(FSA_TAG64("Paccur02")));
     field_0x30 = new PaneCtrl_804AF86C;
-    field_0x30->setPane_80402F04(field_0x4->search('Pttlbk05'));
+    field_0x30->setPane_80402F04(field_0x4->search(FSA_TAG64("Pttlbk05")));
     field_0x34[0] = new PaneCtrl_804AF86C;
-    field_0x34[0]->setPane_80402F04(field_0x4->search('Ndata03'));
+    field_0x34[0]->setPane_80402F04(field_0x4->search(FSA_TAG64("Ndata03")));
     field_0x34[1] = new PaneCtrl_804AF86C;
-    field_0x34[1]->setPane_80402F04(field_0x4->search('Pblk03'));
+    field_0x34[1]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pblk03")));
     field_0x34[2] = new PaneCtrl_804AF86C;
-    field_0x34[2]->setPane_80402F04(field_0x4->search('Pblk02'));
+    field_0x34[2]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pblk02")));
     field_0x34[3] = new PaneCtrl_804AF86C;
-    field_0x34[3]->setPane_80402F04(field_0x4->search('Pblk01'));
-    field_0x4->search('Ndata05')->hide();
+    field_0x34[3]->setPane_80402F04(field_0x4->search(FSA_TAG64("Pblk01")));
+    field_0x4->search(FSA_TAG64("Ndata05"))->hide();
     field_0x44 = new PaneCtrl_804AF86C;
     field_0x44->setPane_80402F04(field_0x8->search('ROOT'));
     field_0x48 = lbl_8053AED8->field_0x8;
     OSInitFastCast();
     field_0xc = fn_80403144('SCRN', "total_star.bck");
     field_0x10 = static_cast<J2DAnmTransform*>(J2DAnmLoaderDataBase::load(field_0xc));
-    field_0x8->search('P0kak00')->setAnimation(field_0x10);
+    field_0x8->search(FSA_TAG64("P0kak00"))->setAnimation(field_0x10);
     field_0x14 = fn_80403144('SCRN', "total_star.brk");
     field_0x18 = static_cast<J2DAnmTevRegKey*>(J2DAnmLoaderDataBase::load(field_0x14));
     field_0x8->setAnimation(field_0x18);
@@ -106,7 +106,7 @@ TotalScreen_804B03D8::TotalScreen_804B03D8() {
     field_0x7a = 0;
     field_0x7b = field_0x4->search(lbl_80476F80[0][0])->mAlpha;
     field_0x7c = field_0x4->search(lbl_80477180[0][0])->mAlpha;
-    field_0x7d = field_0x8->search('Pstarli')->mAlpha;
+    field_0x7d = field_0x8->search(FSA_TAG64("Pstarli"))->mAlpha;
     field_0x7e = 0;
     field_0x7f = 0;
     field_0x80 = 0;
@@ -195,9 +195,9 @@ void TotalScreen_804B03D8::fn_803D87C0() {
             }
         }
     }
-    field_0x8->search('P0kak00')->setAlpha(0);
-    field_0x8->search('P0ka00')->setAlpha(0);
-    field_0x8->search('Pstarli')->setAlpha(0);
+    field_0x8->search(FSA_TAG64("P0kak00"))->setAlpha(0);
+    field_0x8->search(FSA_TAG64("P0ka00"))->setAlpha(0);
+    field_0x8->search(FSA_TAG64("Pstarli"))->setAlpha(0);
     field_0x30->moveFromCentre_80402E08(0.0f, -200.0f);
     field_0x30->field_0x22 = 0;
     field_0x48->moveFromCentre_80402E08(0.0f, -200.0f);
@@ -212,7 +212,7 @@ void TotalScreen_804B03D8::fn_803D87C0() {
     lbl_8053AED8->fn_80440BF4(false);
     field_0x2c->mPane->hide();
     field_0x2c->mPane->setAlpha(0);
-    field_0x4->search('Paccur01')->setAlpha(0);
+    field_0x4->search(FSA_TAG64("Paccur01"))->setAlpha(0);
     for (s32 i = 0; i < 2; i++) {
         field_0x24[i]->moveFromCentre_80402E08(0.0f, 200.0f);
         field_0x24[i]->field_0x22 = 0;
@@ -301,7 +301,7 @@ void TotalScreen_804B03D8::fn_803D8364() {
             }
         }
         field_0x2c->mPane->setAlpha(alpha);
-        field_0x4->search('Paccur01')->setAlpha(alpha);
+        field_0x4->search(FSA_TAG64("Paccur01"))->setAlpha(alpha);
         lbl_8053AED8->draw_80440EE8();
     }
 }
@@ -405,14 +405,14 @@ void TotalScreen_804B03D8::fn_803D75B0() {
             if (field_0x64 <= 0x14) {
                 if (field_0x6a >= 0) {
                     f32 t = (f32)field_0x64 / 20.0f;
-                    field_0x8->search('P0ka00')->setAlpha(((f32)field_0x7b * t));
-                    static_cast<J2DPicture*>(field_0x8->search('P0ka00'))->setBlackWhite(
+                    field_0x8->search(FSA_TAG64("P0ka00"))->setAlpha(((f32)field_0x7b * t));
+                    static_cast<J2DPicture*>(field_0x8->search(FSA_TAG64("P0ka00")))->setBlackWhite(
                         static_cast<J2DPicture*>(field_0x4->search(lbl_80476F80[field_0x68][field_0x6a]))->getBlack(),
                         static_cast<J2DPicture*>(field_0x4->search(lbl_80476F80[field_0x68][field_0x6a]))->getWhite());
                     J2DPicture::TCornerColor cornerColor;
                     static_cast<J2DPicture*>(field_0x4->search(lbl_80476F80[field_0x68][field_0x6a]))->getCornerColor(cornerColor);
-                    static_cast<J2DPicture*>(field_0x8->search('P0ka00'))->setCornerColor(cornerColor);
-                    field_0x8->search('Pstarli')->setAlpha(((f32)field_0x7d * t));
+                    static_cast<J2DPicture*>(field_0x8->search(FSA_TAG64("P0ka00")))->setCornerColor(cornerColor);
+                    field_0x8->search(FSA_TAG64("Pstarli"))->setAlpha(((f32)field_0x7d * t));
                 }
             } else if (field_0x64 <= 0x28) {
                 f32 t = (f32)(field_0x64 - 0x14) / 20.0f;
@@ -424,26 +424,26 @@ void TotalScreen_804B03D8::fn_803D75B0() {
                     }
                 }
                 if (field_0x6a >= 0) {
-                    field_0x8->search('P0kak00')->setAlpha((s32)((f32)field_0x7c * t));
+                    field_0x8->search(FSA_TAG64("P0kak00"))->setAlpha((s32)((f32)field_0x7c * t));
                 }
             } else {
                 field_0x7e = 1;
             }
         }
         if (field_0x6a >= 0) {
-            f32 x = (field_0x58 + field_0x8->search('P0kak00')->getBounds()->i.x +
-                     field_0x8->search('P0ka00')->getBounds()->i.x) +
-                    field_0x8->search('P0ka00')->getWidth() * 0.5f;
-            f32 y = (field_0x5c + field_0x8->search('P0kak00')->getBounds()->i.y +
-                     field_0x8->search('P0ka00')->getBounds()->i.y) +
-                    field_0x8->search('P0ka00')->getHeight() * 0.5f;
+            f32 x = (field_0x58 + field_0x8->search(FSA_TAG64("P0kak00"))->getBounds()->i.x +
+                     field_0x8->search(FSA_TAG64("P0ka00"))->getBounds()->i.x) +
+                    field_0x8->search(FSA_TAG64("P0ka00"))->getWidth() * 0.5f;
+            f32 y = (field_0x5c + field_0x8->search(FSA_TAG64("P0kak00"))->getBounds()->i.y +
+                     field_0x8->search(FSA_TAG64("P0ka00"))->getBounds()->i.y) +
+                    field_0x8->search(FSA_TAG64("P0ka00"))->getHeight() * 0.5f;
             if (field_0x64 == 0x50 && field_0x4c[2] == NULL) {
                 JGeometry::TVec3f pos(x, y, 0.0f);
                 field_0x4c[2] = spawnEmitter_8013CC50(0, &pos, 0x4D0, 0, 0, NULL, NULL, true, 1.0f);
                 field_0x4c[2]->setStatus(0x40);
             }
             field_0x10->setFrame(field_0x64);
-            field_0x8->search('P0kak00')->animationTransform();
+            field_0x8->search(FSA_TAG64("P0kak00"))->animationTransform();
             if (field_0x64 > 1 && field_0x64 < 0x14) {
                 if (field_0x4c[0] == NULL) {
                     JGeometry::TVec3f pos(x, y, 0.0f);
@@ -542,18 +542,18 @@ void TotalScreen_804B03D8::fn_803D7098() {
         if (field_0x68 >= 0 && field_0x68 < 4 && field_0x6a >= 0) {
             field_0x58 =
                 (((field_0x4->search(lbl_80477180[0][0])->getBounds()->i.x +
-                   (field_0x4->search('Ndata03')->getBounds()->i.x +
+                   (field_0x4->search(FSA_TAG64("Ndata03"))->getBounds()->i.x +
                     field_0x4->search(lbl_80477408[0])->getBounds()->i.x)) -
-                  field_0x8->search('P0kak00')->getBounds()->i.x) +
+                  field_0x8->search(FSA_TAG64("P0kak00"))->getBounds()->i.x) +
                  (field_0x4->search(lbl_80477408[field_0x68])->getBounds()->i.x +
                   field_0x4->search(lbl_80477180[field_0x68][field_0x6a])->getBounds()->i.x)) -
                 (field_0x4->search(lbl_80477408[0])->getBounds()->i.x +
                  field_0x4->search(lbl_80477180[0][0])->getBounds()->i.x);
             field_0x5c =
                 (((field_0x4->search(lbl_80477180[0][0])->getBounds()->i.y +
-                   (field_0x4->search('Ndata03')->getBounds()->i.y +
+                   (field_0x4->search(FSA_TAG64("Ndata03"))->getBounds()->i.y +
                     field_0x4->search(lbl_80477408[0])->getBounds()->i.y)) -
-                  field_0x8->search('P0kak00')->getBounds()->i.y) +
+                  field_0x8->search(FSA_TAG64("P0kak00"))->getBounds()->i.y) +
                  (field_0x4->search(lbl_80477408[field_0x68])->getBounds()->i.y +
                   field_0x4->search(lbl_80477180[field_0x68][field_0x6a])->getBounds()->i.y)) -
                 (field_0x4->search(lbl_80477408[0])->getBounds()->i.y +

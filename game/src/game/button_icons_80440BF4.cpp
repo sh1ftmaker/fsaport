@@ -44,27 +44,27 @@ void ButtonIcons_804B1988::fn_80440E0C(f32 alpha) {
 }
 
 void ButtonIcons_804B1988::fn_80440D78(const ResTIMG* tex) {
-    mScreen->search('Pba04')->show();
-    ((J2DPicture*)mScreen->search('Pba02'))->changeTexture(tex, 0);
+    mScreen->search(FSA_TAG64("Pba04"))->show();
+    ((J2DPicture*)mScreen->search(FSA_TAG64("Pba02")))->changeTexture(tex, 0);
 }
 
 void ButtonIcons_804B1988::fn_80440CE4(const ResTIMG* tex) {
-    mScreen->search('Pbb03')->show();
-    ((J2DPicture*)mScreen->search('Pbb02'))->changeTexture(tex, 0);
+    mScreen->search(FSA_TAG64("Pbb03"))->show();
+    ((J2DPicture*)mScreen->search(FSA_TAG64("Pbb02")))->changeTexture(tex, 0);
 }
 
 void ButtonIcons_804B1988::fn_80440C6C(bool show) {
     if (show) {
-        mScreen->search('Pba04')->show();
+        mScreen->search(FSA_TAG64("Pba04"))->show();
     } else {
-        mScreen->search('Pba04')->hide();
+        mScreen->search(FSA_TAG64("Pba04"))->hide();
     }
 }
 
 void ButtonIcons_804B1988::fn_80440BF4(bool show) {
     if (show) {
-        mScreen->search('Pbb03')->show();
+        mScreen->search(FSA_TAG64("Pbb03"))->show();
     } else {
-        mScreen->search('Pbb03')->hide();
+        mScreen->search(FSA_TAG64("Pbb03"))->hide();
     }
 }

@@ -163,17 +163,17 @@ GameRoot_8049EF20::GameRoot_8049EF20() : mRandom(0) {
     img = (ResTIMG*)gGameRoot_8053AAF8->field_0xa4->getResource('TIMG', "go.bti");
     field_0xbc = new (field_0x98, 0) J2DPicture(img);
     if (fn_80021840() == 2) {
-        field_0xc0 = new (field_0x98, 0) J2DTextBox('TEXT1',
+        field_0xc0 = new (field_0x98, 0) J2DTextBox(FSA_TAG64("TEXT1"),
             JGeometry::TBox2f(-30000.0f, 210.0f, 60000.0f + (s32)JUTVideo::getManager()->getFbWidth(), 180.0f),
             "rock_24_20_4i_j.bfn", field_0xc8, 0x28, J2DHBIND_Center, J2DVBIND_Center);
-        field_0xc4 = new (field_0x98, 0) J2DTextBox('TEXT2',
+        field_0xc4 = new (field_0x98, 0) J2DTextBox(FSA_TAG64("TEXT2"),
             JGeometry::TBox2f(-29997.0f, 213.0f, 60000.0f + (s32)JUTVideo::getManager()->getFbWidth(), 180.0f),
             "rock_24_20_4i_j.bfn", field_0xc8, 0x28, J2DHBIND_Center, J2DVBIND_Center);
     } else {
-        field_0xc0 = new (field_0x98, 0) J2DTextBox('TEXT1',
+        field_0xc0 = new (field_0x98, 0) J2DTextBox(FSA_TAG64("TEXT1"),
             JGeometry::TBox2f(-30000.0f, 210.0f, 60000.0f + (s32)JUTVideo::getManager()->getFbWidth(), 180.0f),
             "rock_24_20_4i_e.bfn", field_0xc8, 0x28, J2DHBIND_Center, J2DVBIND_Center);
-        field_0xc4 = new (field_0x98, 0) J2DTextBox('TEXT2',
+        field_0xc4 = new (field_0x98, 0) J2DTextBox(FSA_TAG64("TEXT2"),
             JGeometry::TBox2f(-29997.0f, 213.0f, 60000.0f + (s32)JUTVideo::getManager()->getFbWidth(), 180.0f),
             "rock_24_20_4i_e.bfn", field_0xc8, 0x28, J2DHBIND_Center, J2DVBIND_Center);
     }

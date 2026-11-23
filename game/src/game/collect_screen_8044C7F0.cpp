@@ -19,23 +19,23 @@
 void* getGame2DArchiveResource_80403084(u32 type, const char* name);
 
 // The pane tag tables of the unit (.rodata 0x80490FC8..0x804912E8, back to back).
-static const u64 lbl_80490FC8[3] = {'Pcntn01', 'Psc01', 'Psg01'};
-static const u64 lbl_80490FE0[3] = {'Wcntn01', 'Wsc01', 'Wsg01'};
-static const u64 lbl_80490FF8[3] = {'Pcntnk01', 'Psck01', 'Psgk01'};
+static const u64 lbl_80490FC8[3] = {FSA_TAG64("Pcntn01"), FSA_TAG64("Psc01"), FSA_TAG64("Psg01")};
+static const u64 lbl_80490FE0[3] = {FSA_TAG64("Wcntn01"), FSA_TAG64("Wsc01"), FSA_TAG64("Wsg01")};
+static const u64 lbl_80490FF8[3] = {FSA_TAG64("Pcntnk01"), FSA_TAG64("Psck01"), FSA_TAG64("Psgk01")};
 static const u64 lbl_80491010[6] = {'Ps01', 'Ps02', 'Ps03', 'Ps04', 'Ps05', 'Ps06'};
-static const u64 lbl_80491040[6] = {'Psk01', 'Psk02', 'Psk03', 'Psk04', 'Psk05', 'Psk06'};
-static const u64 lbl_80491070[6] = {'Prs01', 'Prs02', 'Prs03', 'Prs04', 'Prs05', 'Prs06'};
-static const u64 lbl_804910A0[6] = {'Prsk01', 'Prsk02', 'Prsk03', 'Prsk04', 'Prsk05', 'Prsk06'};
-static const u64 lbl_804910D0[6] = {'Pts01', 'Pts02', 'Pts03', 'Pts04', 'Pts05', 'Pts06'};
-static const u64 lbl_80491100[6] = {'Ptsk01', 'Ptsk02', 'Ptsk03', 'Ptsk04', 'Ptsk05', 'Ptsk06'};
-static const u64 lbl_80491130[7] = {'Padhu12', 'Padhu22', 'Padhu32', 'Padhu42', 'Padhu52', 'Padhu62', 'Padhu72'};
-static const u64 lbl_80491168[7] = {'Padvw11', 'Padvw21', 'Padvw31', 'Padvw41', 'Padvw51', 'Padvw61', 'Padvw71'};
-static const u64 lbl_804911A0[7] = {'Padvw12', 'Padvw22', 'Padvw32', 'Padvw42', 'Padvw52', 'Padvw62', 'Padvw72'};
-static const u64 lbl_804911D8[7] = {'Phu01', 'Phu02', 'Phu03', 'Phu04', 'Phu05', 'Phu06', 'Phu07'};
-static const u64 lbl_80491210[4] = {'Pjb02', 'Pjg02', 'Pjr02', 'Pjp02'};
-static const u64 lbl_80491230[4] = {'Pjb01', 'Pjg01', 'Pjr01', 'Pjp01'};
-static const u64 lbl_80491250[4] = {'Pjb03', 'Pjg03', 'Pjr03', 'Pjp03'};
-static const u64 lbl_80491270[15] = {'Ndata01', 'Pswb01', 'Ndata09', 'Ndata07', 'Ndata04', 'Ndata06', 'Ndatal01', 'Psw02', 'Pfab01', 'Ndata08', 'Ndata03', 'Ndataj02', 'Ndataj01', 'Ndatat01', 'Ndata02'};
+static const u64 lbl_80491040[6] = {FSA_TAG64("Psk01"), FSA_TAG64("Psk02"), FSA_TAG64("Psk03"), FSA_TAG64("Psk04"), FSA_TAG64("Psk05"), FSA_TAG64("Psk06")};
+static const u64 lbl_80491070[6] = {FSA_TAG64("Prs01"), FSA_TAG64("Prs02"), FSA_TAG64("Prs03"), FSA_TAG64("Prs04"), FSA_TAG64("Prs05"), FSA_TAG64("Prs06")};
+static const u64 lbl_804910A0[6] = {FSA_TAG64("Prsk01"), FSA_TAG64("Prsk02"), FSA_TAG64("Prsk03"), FSA_TAG64("Prsk04"), FSA_TAG64("Prsk05"), FSA_TAG64("Prsk06")};
+static const u64 lbl_804910D0[6] = {FSA_TAG64("Pts01"), FSA_TAG64("Pts02"), FSA_TAG64("Pts03"), FSA_TAG64("Pts04"), FSA_TAG64("Pts05"), FSA_TAG64("Pts06")};
+static const u64 lbl_80491100[6] = {FSA_TAG64("Ptsk01"), FSA_TAG64("Ptsk02"), FSA_TAG64("Ptsk03"), FSA_TAG64("Ptsk04"), FSA_TAG64("Ptsk05"), FSA_TAG64("Ptsk06")};
+static const u64 lbl_80491130[7] = {FSA_TAG64("Padhu12"), FSA_TAG64("Padhu22"), FSA_TAG64("Padhu32"), FSA_TAG64("Padhu42"), FSA_TAG64("Padhu52"), FSA_TAG64("Padhu62"), FSA_TAG64("Padhu72")};
+static const u64 lbl_80491168[7] = {FSA_TAG64("Padvw11"), FSA_TAG64("Padvw21"), FSA_TAG64("Padvw31"), FSA_TAG64("Padvw41"), FSA_TAG64("Padvw51"), FSA_TAG64("Padvw61"), FSA_TAG64("Padvw71")};
+static const u64 lbl_804911A0[7] = {FSA_TAG64("Padvw12"), FSA_TAG64("Padvw22"), FSA_TAG64("Padvw32"), FSA_TAG64("Padvw42"), FSA_TAG64("Padvw52"), FSA_TAG64("Padvw62"), FSA_TAG64("Padvw72")};
+static const u64 lbl_804911D8[7] = {FSA_TAG64("Phu01"), FSA_TAG64("Phu02"), FSA_TAG64("Phu03"), FSA_TAG64("Phu04"), FSA_TAG64("Phu05"), FSA_TAG64("Phu06"), FSA_TAG64("Phu07")};
+static const u64 lbl_80491210[4] = {FSA_TAG64("Pjb02"), FSA_TAG64("Pjg02"), FSA_TAG64("Pjr02"), FSA_TAG64("Pjp02")};
+static const u64 lbl_80491230[4] = {FSA_TAG64("Pjb01"), FSA_TAG64("Pjg01"), FSA_TAG64("Pjr01"), FSA_TAG64("Pjp01")};
+static const u64 lbl_80491250[4] = {FSA_TAG64("Pjb03"), FSA_TAG64("Pjg03"), FSA_TAG64("Pjr03"), FSA_TAG64("Pjp03")};
+static const u64 lbl_80491270[15] = {FSA_TAG64("Ndata01"), FSA_TAG64("Pswb01"), FSA_TAG64("Ndata09"), FSA_TAG64("Ndata07"), FSA_TAG64("Ndata04"), FSA_TAG64("Ndata06"), FSA_TAG64("Ndatal01"), FSA_TAG64("Psw02"), FSA_TAG64("Pfab01"), FSA_TAG64("Ndata08"), FSA_TAG64("Ndata03"), FSA_TAG64("Ndataj02"), FSA_TAG64("Ndataj01"), FSA_TAG64("Ndatat01"), FSA_TAG64("Ndata02")};
 
 // The rupee digit textures (.data; the strings sit in .rodata after the tag tables).
 static const char* lbl_804B1D30[10] = {
@@ -94,12 +94,12 @@ CollectScreen_804B1D58::CollectScreen_804B1D58() {
     field_0xe8 = getGame2DArchiveResource_80403084('SCRN', "collect_02.btk");
     field_0xec = static_cast<J2DAnmTextureSRTKey*>(J2DAnmLoaderDataBase::load(field_0xe8));
     field_0xec->searchUpdateMaterialID(mScreen);
-    mScreen->search('Ppo01')->setAnimation(field_0xec);
+    mScreen->search(FSA_TAG64("Ppo01"))->setAnimation(field_0xec);
     field_0x128 = 0;
     field_0xf0 = getGame2DArchiveResource_80403084('SCRN', "collect_03.btk");
     mAnm_0xf4 = static_cast<J2DAnmTextureSRTKey*>(J2DAnmLoaderDataBase::load(field_0xf0));
     mAnm_0xf4->searchUpdateMaterialID(mScreen);
-    mScreen->search('Ppo02')->setAnimation(mAnm_0xf4);
+    mScreen->search(FSA_TAG64("Ppo02"))->setAnimation(mAnm_0xf4);
     field_0x12c = 0;
     field_0x13e = 0;
     field_0xcc = getGame2DArchiveResource_80403084('SCRN', "collect.brk");
@@ -107,8 +107,8 @@ CollectScreen_804B1D58::CollectScreen_804B1D58() {
     mScreen->setAnimation(mAnm_0xd0);
     field_0x130 = 0;
     field_0x132 = 0;
-    field_0x114 = mScreen->search('Pcul01')->getBounds()->i.x;
-    field_0x118 = mScreen->search('Pcul01')->getBounds()->i.y;
+    field_0x114 = mScreen->search(FSA_TAG64("Pcul01"))->getBounds()->i.x;
+    field_0x118 = mScreen->search(FSA_TAG64("Pcul01"))->getBounds()->i.y;
     for (s32 i = 0; i < 3; i++) {
         field_0x108[i] = mScreen->search(lbl_80490FC8[i])->getBounds()->i.y -
                          mScreen->search(lbl_80490FC8[0])->getBounds()->i.y;
@@ -195,7 +195,7 @@ CollectScreen_804B1D58::CollectScreen_804B1D58() {
     field_0x164[1].field_0xc.b = 0x46;
     mScreen->search(lbl_80490FE0[1])->setAlpha(255);
     field_0x8 = new PaneCtrl_804AF86C;
-    field_0x8->setPane_80402F04(mScreen->search('Pblack'));
+    field_0x8->setPane_80402F04(mScreen->search(FSA_TAG64("Pblack")));
     for (s32 i = 0; i < 15; i++) {
         field_0xc[i] = new PaneCtrl_804AF86C;
         field_0xc[i]->setPane_80402F04(mScreen->search(lbl_80491270[i]));
@@ -301,8 +301,8 @@ void CollectScreen_804B1D58::fn_80452350() {
         field_0x60[i]->mPane->setAlpha(0);
         field_0x60[i]->field_0x26 = 0;
     }
-    mScreen->search('Pcul01')->move(300.0f + field_0x114, field_0x118 + field_0x108[field_0xf8]);
-    mScreen->search('Pcul01')->setAlpha(0);
+    mScreen->search(FSA_TAG64("Pcul01"))->move(300.0f + field_0x114, field_0x118 + field_0x108[field_0xf8]);
+    mScreen->search(FSA_TAG64("Pcul01"))->setAlpha(0);
     field_0x132 = 0;
     field_0xfe = 0;
     field_0xfa = 2;
@@ -323,10 +323,10 @@ void CollectScreen_804B1D58::fn_80452350() {
          (lbl_80529DEC.mStage_0x118 == 6 && lbl_80529DEC.mLevel_0x11c == 2) ||
          (lbl_80529DEC.mStage_0x118 == 7 && lbl_80529DEC.mLevel_0x11c == 1))) {
         const ResTIMG* image = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', "kk_pYback_01.bti"));
-        static_cast<J2DPicture*>(mScreen->search('Psc01'))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Psc01")))->changeTexture(image, 0);
     } else {
         const ResTIMG* image = static_cast<const ResTIMG*>(getGame2DArchiveResource_80403084('TIMG', "kk_pCselect_01.bti"));
-        static_cast<J2DPicture*>(mScreen->search('Psc01'))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Psc01")))->changeTexture(image, 0);
     }
     fn_8044D894();
     field_0x184 = 9;
@@ -373,7 +373,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
                         field_0x60[i]->animateAlpha_80402628(frames, 0, field_0x60[i]->field_0x28);
                         if (i == field_0xf8) {
                             f32 x = field_0x48[i]->mPane->getBounds()->i.x;
-                            mScreen->search('Pcul01')->move(field_0x114 + (x - field_0x48[i]->field_0x8),
+                            mScreen->search(FSA_TAG64("Pcul01"))->move(field_0x114 + (x - field_0x48[i]->field_0x8),
                                                             field_0x118 + field_0x108[field_0xf8]);
                         }
                     }
@@ -387,7 +387,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
                 field_0x54[i]->mPane->setAlpha(field_0x54[i]->field_0x28);
                 field_0x60[i]->mPane->setAlpha(field_0x60[i]->field_0x28);
             }
-            mScreen->search('Pcul01')->move(field_0x114, field_0x118 + field_0x108[field_0xf8]);
+            mScreen->search(FSA_TAG64("Pcul01"))->move(field_0x114, field_0x118 + field_0x108[field_0xf8]);
             done = 1;
         }
     }
@@ -550,7 +550,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
         }
         s32 bounce = field_0xfc < 5 ? field_0xfc : 10 - field_0xfc;
         f32 offset = 5.0f * (bounce * bounce) / 25.0f;
-        mScreen->search('Pcul01')->move(field_0x114, offset + (field_0x118 + field_0x108[field_0xf8]));
+        mScreen->search(FSA_TAG64("Pcul01"))->move(field_0x114, offset + (field_0x118 + field_0x108[field_0xf8]));
         for (s32 i = 0; i < 3; i++) {
             if (i == field_0xf8) {
                 field_0x48[i]->moveFromCentre_80402E08(0.0f, offset);
@@ -653,7 +653,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             bounce = 0;
         }
         f32 offset = 5.0f * (bounce * bounce) / 25.0f;
-        mScreen->search('Pcul01')->move(field_0x114, offset + (field_0x118 + field_0x108[field_0xf8]));
+        mScreen->search(FSA_TAG64("Pcul01"))->move(field_0x114, offset + (field_0x118 + field_0x108[field_0xf8]));
         for (s32 i = 0; i < 3; i++) {
             if (i == field_0xf8) {
                 field_0x48[i]->moveFromCentre_80402E08(0.0f, offset);
@@ -867,7 +867,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
         } else {
             blink = (100.0f - field_0x130) / 50.0f;
         }
-        mScreen->search('Pswbli')->setAlpha(30.0f + 110.0f * blink);
+        mScreen->search(FSA_TAG64("Pswbli"))->setAlpha(30.0f + 110.0f * blink);
     }
 
     if (field_0xfa != 2 && field_0xfa != 3) {
@@ -881,7 +881,7 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
         } else {
             blink = 1.0f - ((field_0x132 - 30.0f) * (field_0x132 - 30.0f)) / 900.0f;
         }
-        mScreen->search('Pcul01')->setAlpha(156.0f * blink);
+        mScreen->search(FSA_TAG64("Pcul01"))->setAlpha(156.0f * blink);
     }
 
     field_0x128++;
@@ -900,8 +900,8 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             f32 w = mScreen->search(lbl_804911D8[field_0x138])->getWidth();
             JGeometry::TVec3f pos;
             fn_80178EB8(field_0xa4[i], fn_80453874(&pos,
-                            w * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x),
-                            h * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y),
+                            w * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x),
+                            h * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y),
                             0.0f));
         }
         if (field_0xc0[i] != NULL) {
@@ -910,9 +910,9 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             JGeometry::TVec3f pos;
             fn_80178EB8(field_0xc0[i], fn_80453874(&pos,
                             w * 0.5f + (mScreen->search(lbl_80491230[field_0x138])->getBounds()->i.x +
-                                        (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.x)),
+                                        (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.x)),
                             h * 0.5f + (mScreen->search(lbl_80491230[field_0x138])->getBounds()->i.y +
-                                        (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.y)),
+                                        (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.y)),
                             0.0f));
         }
     }
@@ -923,8 +923,8 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             f32 w = mScreen->search(lbl_804911D8[i])->getWidth();
             JGeometry::TVec3f pos;
             fn_80178EB8(field_0x88[i], fn_80453874(&pos,
-                            w * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
-                            h * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
+                            w * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
+                            h * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
                             0.0f));
             field_0x88[i]->setGlobalAlpha(mScreen->search(lbl_80491168[i])->getAlpha());
         }
@@ -933,8 +933,8 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             f32 w = mScreen->search(lbl_804911D8[i])->getWidth();
             JGeometry::TVec3f pos;
             fn_80178EB8(field_0x6c[i], fn_80453874(&pos,
-                            w * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
-                            h * 0.5f + (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
+                            w * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
+                            h * 0.5f + (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
                             0.0f));
             field_0x6c[i]->setGlobalAlpha(mScreen->search(lbl_80491168[i])->getAlpha());
         }
@@ -947,9 +947,9 @@ s32 CollectScreen_804B1D58::fn_8044F680() {
             JGeometry::TVec3f pos;
             fn_80178EB8(field_0xb0[i], fn_80453874(&pos,
                             w * 0.5f + (mScreen->search(lbl_80491230[i])->getBounds()->i.x +
-                                        (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[i])->getBounds()->i.x)),
+                                        (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[i])->getBounds()->i.x)),
                             h * 0.5f + (mScreen->search(lbl_80491230[i])->getBounds()->i.y +
-                                        (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[i])->getBounds()->i.y)),
+                                        (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[i])->getBounds()->i.y)),
                             0.0f));
             field_0xb0[i]->setGlobalAlpha(mScreen->search(lbl_80491230[i])->getAlpha());
         }
@@ -1010,11 +1010,11 @@ void CollectScreen_804B1D58::fn_8044D894() {
         s32 ones = rupees % 10;
         s32 tens = rupees / 10;
         const ResTIMG* image = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', lbl_804B1D30[tens]));
-        static_cast<J2DPicture*>(mScreen->search('Pfsk01'))->changeTexture(image, 0);
-        static_cast<J2DPicture*>(mScreen->search('Pfs01'))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pfsk01")))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pfs01")))->changeTexture(image, 0);
         image = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', lbl_804B1D30[ones]));
-        static_cast<J2DPicture*>(mScreen->search('Pfsk02'))->changeTexture(image, 0);
-        static_cast<J2DPicture*>(mScreen->search('Pfs02'))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pfsk02")))->changeTexture(image, 0);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pfs02")))->changeTexture(image, 0);
     } else {
         field_0xc[8]->mPane->hide();
         field_0xc[9]->mPane->hide();
@@ -1035,9 +1035,9 @@ void CollectScreen_804B1D58::fn_8044D894() {
         if (field_0xa4[0] == NULL) {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_804911D8[row])->getWidth() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
                 mScreen->search(lbl_804911D8[row])->getHeight() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
                 0.0f);
             field_0xa4[0] = spawnEmitter_8013CC50(0, &pos, lbl_804913D0[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xa4[0]->setStatus(0x40);
@@ -1048,9 +1048,9 @@ void CollectScreen_804B1D58::fn_8044D894() {
         if (field_0xa4[1] == NULL) {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_804911D8[row])->getWidth() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
                 mScreen->search(lbl_804911D8[row])->getHeight() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
                 0.0f);
             field_0xa4[1] = spawnEmitter_8013CC50(0, &pos, lbl_804913E0[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xa4[1]->setStatus(0x40);
@@ -1061,9 +1061,9 @@ void CollectScreen_804B1D58::fn_8044D894() {
         if (field_0xa4[2] == NULL) {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_804911D8[row])->getWidth() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[row])->getBounds()->i.x),
                 mScreen->search(lbl_804911D8[row])->getHeight() / 2.0f +
-                    (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
+                    (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[row])->getBounds()->i.y),
                 0.0f);
             field_0xa4[2] = spawnEmitter_8013CC50(0, &pos, lbl_804913F0[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xa4[2]->setStatus(0x40);
@@ -1091,10 +1091,10 @@ void CollectScreen_804B1D58::fn_8044D894() {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_80491230[row])->getWidth() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.x +
-                     (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
                 mScreen->search(lbl_80491230[row])->getHeight() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.y +
-                     (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
                 0.0f);
             field_0xc0[0] = spawnEmitter_8013CC50(0, &pos, lbl_80543DE0[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xc0[0]->setStatus(0x40);
@@ -1106,10 +1106,10 @@ void CollectScreen_804B1D58::fn_8044D894() {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_80491230[row])->getWidth() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.x +
-                     (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
                 mScreen->search(lbl_80491230[row])->getHeight() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.y +
-                     (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
                 0.0f);
             field_0xc0[1] = spawnEmitter_8013CC50(0, &pos, lbl_80543DE8[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xc0[1]->setStatus(0x40);
@@ -1121,10 +1121,10 @@ void CollectScreen_804B1D58::fn_8044D894() {
             JGeometry::TVec3f pos(
                 mScreen->search(lbl_80491230[row])->getWidth() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.x +
-                     (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[row])->getBounds()->i.x)),
                 mScreen->search(lbl_80491230[row])->getHeight() / 2.0f +
                     (mScreen->search(lbl_80491230[row])->getBounds()->i.y +
-                     (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
+                     (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[row])->getBounds()->i.y)),
                 0.0f);
             field_0xc0[2] = spawnEmitter_8013CC50(0, &pos, lbl_80543DF0[row], 0, 0, NULL, NULL, true, 1.0f);
             field_0xc0[2]->setStatus(0x40);
@@ -1141,18 +1141,18 @@ void CollectScreen_804B1D58::fn_8044D894() {
             if (field_0x6c[i] == NULL) {
                 JGeometry::TVec3f pos(
                     mScreen->search(lbl_804911D8[i])->getWidth() / 2.0f +
-                        (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
+                        (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
                     mScreen->search(lbl_804911D8[i])->getHeight() / 2.0f +
-                        (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
+                        (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
                     0.0f);
                 field_0x6c[i] = spawnEmitter_8013CC50(0, &pos, lbl_804913B0[i], 0, 0, NULL, NULL, true, 1.0f);
             }
             if (field_0x88[i] == NULL) {
                 JGeometry::TVec3f pos(
                     mScreen->search(lbl_804911D8[i])->getWidth() / 2.0f +
-                        (mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
+                        (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[i])->getBounds()->i.x),
                     mScreen->search(lbl_804911D8[i])->getHeight() / 2.0f +
-                        (mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
+                        (mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[i])->getBounds()->i.y),
                     0.0f);
                 field_0x88[i] = spawnEmitter_8013CC50(0, &pos, lbl_804913C0[i], 0, 0, NULL, NULL, true, 1.0f);
             }
@@ -1170,10 +1170,10 @@ void CollectScreen_804B1D58::fn_8044D894() {
                 JGeometry::TVec3f pos(
                     mScreen->search(lbl_80491230[i])->getWidth() / 2.0f +
                         (mScreen->search(lbl_80491230[i])->getBounds()->i.x +
-                         (mScreen->search('Ndataj01')->getBounds()->i.x + mScreen->search(lbl_80491210[i])->getBounds()->i.x)),
+                         (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x + mScreen->search(lbl_80491210[i])->getBounds()->i.x)),
                     mScreen->search(lbl_80491230[i])->getHeight() / 2.0f +
                         (mScreen->search(lbl_80491230[i])->getBounds()->i.y +
-                         (mScreen->search('Ndataj01')->getBounds()->i.y + mScreen->search(lbl_80491210[i])->getBounds()->i.y)),
+                         (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y + mScreen->search(lbl_80491210[i])->getBounds()->i.y)),
                     0.0f);
                 field_0xb0[i] = spawnEmitter_8013CC50(0, &pos, lbl_80543DD8[i], 0, 0, NULL, NULL, true, 1.0f);
             }
@@ -1215,7 +1215,7 @@ void CollectScreen_804B1D58::fn_8044D894() {
         mAnm_0xf4->setFrame(field_0x12c);
         field_0x13e = 1;
         mAnm_0xd0->setFrame(1.0f);
-        mScreen->search('Pswbli')->setAlpha(30);
+        mScreen->search(FSA_TAG64("Pswbli"))->setAlpha(30);
     } else {
         s32 value = 2000 - field_0x11c;
         if (value < 0) {
@@ -1253,14 +1253,14 @@ void CollectScreen_804B1D58::fn_8044D894() {
         mAnm_0xf4->setFrame(field_0x12c);
         field_0x13e = 1;
         mAnm_0xd0->setFrame(0.0f);
-        mScreen->search('Pswbli')->setAlpha(0);
+        mScreen->search(FSA_TAG64("Pswbli"))->setAlpha(0);
     }
 
     field_0x124 = 0;
     for (s32 i = 0; i < 4; i++) {
         field_0xd8[i]->setFrame(field_0x124);
     }
-    mScreen->search('Pcul01')->show();
+    mScreen->search(FSA_TAG64("Pcul01"))->show();
 }
 
 // Selects row `arg` (0-3) of the second list; like fn_8044CB08, with one emitter (field_0xb0).
@@ -1293,12 +1293,12 @@ void CollectScreen_804B1D58::fn_8044D298(int arg) {
         if (field_0xb0[field_0x138] == NULL) {
             J2DPane* box = mScreen->search(lbl_80491230[field_0x138]);
             f32 h = box->mBounds.f.y - box->mBounds.i.y;
-            f32 y = h / 2.0f + (mScreen->search('Ndataj01')->getBounds()->i.y
+            f32 y = h / 2.0f + (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.y
                 + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.y
                 + mScreen->search(lbl_80491230[field_0x138])->getBounds()->i.y);
             box = mScreen->search(lbl_80491230[field_0x138]);
             f32 w = box->mBounds.f.x - box->mBounds.i.x;
-            f32 x = w / 2.0f + (mScreen->search('Ndataj01')->getBounds()->i.x
+            f32 x = w / 2.0f + (mScreen->search(FSA_TAG64("Ndataj01"))->getBounds()->i.x
                 + mScreen->search(lbl_80491210[field_0x138])->getBounds()->i.x
                 + mScreen->search(lbl_80491230[field_0x138])->getBounds()->i.x);
             JGeometry::TVec3f pos(x, y, 0.0f);
@@ -1307,7 +1307,7 @@ void CollectScreen_804B1D58::fn_8044D298(int arg) {
         field_0xb0[field_0x138]->setStatus(1);
         field_0xb0[field_0x138]->setStatus(2);
         field_0xb0[field_0x138]->setStatus(4);
-        mScreen->search('Pcul01')->hide();
+        mScreen->search(FSA_TAG64("Pcul01"))->hide();
     }
 }
 
@@ -1345,15 +1345,15 @@ void CollectScreen_804B1D58::fn_8044CB08(int arg) {
         mScreen->search(lbl_804911A0[field_0x138])->setAlpha(0);
         if (field_0x6c[field_0x138] == NULL) {
             JGeometry::TVec3f pos(
-                mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getWidth() / 2.0f,
-                mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getHeight() / 2.0f,
+                mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getWidth() / 2.0f,
+                mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getHeight() / 2.0f,
                 0.0f);
             field_0x6c[field_0x138] = spawnEmitter_8013CC50(0, &pos, lbl_804913B0[field_0x138], 0, 0, NULL, NULL, true, 1.0f);
         }
         if (field_0x88[field_0x138] == NULL) {
             JGeometry::TVec3f pos(
-                mScreen->search('Ndata06')->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getWidth() / 2.0f,
-                mScreen->search('Ndata06')->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getHeight() / 2.0f,
+                mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.x + mScreen->search(lbl_804911D8[field_0x138])->getWidth() / 2.0f,
+                mScreen->search(FSA_TAG64("Ndata06"))->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getBounds()->i.y + mScreen->search(lbl_804911D8[field_0x138])->getHeight() / 2.0f,
                 0.0f);
             field_0x88[field_0x138] = spawnEmitter_8013CC50(0, &pos, lbl_804913C0[field_0x138], 0, 0, NULL, NULL, true, 1.0f);
         }
@@ -1363,7 +1363,7 @@ void CollectScreen_804B1D58::fn_8044CB08(int arg) {
         field_0x88[field_0x138]->setStatus(1);
         field_0x88[field_0x138]->setStatus(2);
         field_0x88[field_0x138]->setStatus(4);
-        mScreen->search('Pcul01')->hide();
+        mScreen->search(FSA_TAG64("Pcul01"))->hide();
     }
 }
 
@@ -1384,8 +1384,8 @@ void CollectScreen_804B1D58::fn_8044C968() {
         field_0x60[i]->mPane->setAlpha(0);
         field_0x60[i]->field_0x26 = 0;
     }
-    mScreen->search('Pcul01')->move(300.0f + field_0x114, field_0x118 + field_0x108[field_0xf8]);
-    mScreen->search('Pcul01')->setAlpha(0);
+    mScreen->search(FSA_TAG64("Pcul01"))->move(300.0f + field_0x114, field_0x118 + field_0x108[field_0xf8]);
+    mScreen->search(FSA_TAG64("Pcul01"))->setAlpha(0);
     field_0x132 = 0;
     field_0xfe = 0;
     field_0xfa = 2;

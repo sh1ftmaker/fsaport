@@ -28,40 +28,40 @@ extern u8 fsa_save_region[0x20];
 // functions address them off one base (lbl_804774C8). Each has an alpha
 // array of the same length in GameMode_804B0688 (field_0xa3 ...).
 static const u64 lbl_804774C8[50] = {
-    'Pmov01', 'Pexbk02', 'Pexbk01', 'Pexb07', 'Pexb06', 'Pexb05', 'Pexb04',
-    'Pexb03', 'Pexb02', 'Pexb01', 'Pmf06', 'Pmf05', 'Pmf04', 'Pmf03',
-    'Pmf02', 'Pmf01', 'Wgbco01', 'Pogb02', 'Pogb01', 'Tagb02', 'Tagb01',
-    'Wnop01', 'Tnop02', 'Tnop01', 'Pexpb09', 'Pexpb08', 'Pexpb07', 'Pexpb06',
-    'Pexpb05', 'Pexpb04', 'Pexpb03', 'Pexpb02', 'Pexpb01', 'Texp01', 'Wnop02',
-    'Pcon04', 'Pcon03', 'Pgba04', 'Pgba03', 'Psls04', 'Psls03', 'Tnop04',
-    'Tnop03', 'Wgbco02', 'Pogb03', 'Pogb04', 'Tagb03', 'Tagb04', 'Tnop05',
-    'Tnop06',
+    FSA_TAG64("Pmov01"), FSA_TAG64("Pexbk02"), FSA_TAG64("Pexbk01"), FSA_TAG64("Pexb07"), FSA_TAG64("Pexb06"), FSA_TAG64("Pexb05"), FSA_TAG64("Pexb04"),
+    FSA_TAG64("Pexb03"), FSA_TAG64("Pexb02"), FSA_TAG64("Pexb01"), FSA_TAG64("Pmf06"), FSA_TAG64("Pmf05"), FSA_TAG64("Pmf04"), FSA_TAG64("Pmf03"),
+    FSA_TAG64("Pmf02"), FSA_TAG64("Pmf01"), FSA_TAG64("Wgbco01"), FSA_TAG64("Pogb02"), FSA_TAG64("Pogb01"), FSA_TAG64("Tagb02"), FSA_TAG64("Tagb01"),
+    FSA_TAG64("Wnop01"), FSA_TAG64("Tnop02"), FSA_TAG64("Tnop01"), FSA_TAG64("Pexpb09"), FSA_TAG64("Pexpb08"), FSA_TAG64("Pexpb07"), FSA_TAG64("Pexpb06"),
+    FSA_TAG64("Pexpb05"), FSA_TAG64("Pexpb04"), FSA_TAG64("Pexpb03"), FSA_TAG64("Pexpb02"), FSA_TAG64("Pexpb01"), FSA_TAG64("Texp01"), FSA_TAG64("Wnop02"),
+    FSA_TAG64("Pcon04"), FSA_TAG64("Pcon03"), FSA_TAG64("Pgba04"), FSA_TAG64("Pgba03"), FSA_TAG64("Psls04"), FSA_TAG64("Psls03"), FSA_TAG64("Tnop04"),
+    FSA_TAG64("Tnop03"), FSA_TAG64("Wgbco02"), FSA_TAG64("Pogb03"), FSA_TAG64("Pogb04"), FSA_TAG64("Tagb03"), FSA_TAG64("Tagb04"), FSA_TAG64("Tnop05"),
+    FSA_TAG64("Tnop06"),
 };
 static const u64 lbl_80477658[6] = {
-    'Pmopb04', 'Pmopb03', 'Pmopb02', 'Pmopb01', 'Pmop02', 'Pmop01',
+    FSA_TAG64("Pmopb04"), FSA_TAG64("Pmopb03"), FSA_TAG64("Pmopb02"), FSA_TAG64("Pmopb01"), FSA_TAG64("Pmop02"), FSA_TAG64("Pmop01"),
 };
 static const u64 lbl_80477688[17] = {
-    'Pmadbb07', 'Pmadbb06', 'Pmadbb05', 'Pmadbb04', 'Pmadbb03', 'Pmadbb02',
-    'Pmadbb01', 'Pmadb05', 'Pmadb04', 'Pmadb03', 'Pmadb02', 'Pmadb01',
-    'Pmad02', 'Pmad01', 'Phy03', 'Phy02', 'Phy01',
+    FSA_TAG64("Pmadbb07"), FSA_TAG64("Pmadbb06"), FSA_TAG64("Pmadbb05"), FSA_TAG64("Pmadbb04"), FSA_TAG64("Pmadbb03"), FSA_TAG64("Pmadbb02"),
+    FSA_TAG64("Pmadbb01"), FSA_TAG64("Pmadb05"), FSA_TAG64("Pmadb04"), FSA_TAG64("Pmadb03"), FSA_TAG64("Pmadb02"), FSA_TAG64("Pmadb01"),
+    FSA_TAG64("Pmad02"), FSA_TAG64("Pmad01"), FSA_TAG64("Phy03"), FSA_TAG64("Phy02"), FSA_TAG64("Phy01"),
 };
 static const u64 lbl_80477710[20] = {
-    'Pmbabb07', 'Pmbabb06', 'Pmbabb05', 'Pmbabb04', 'Pmbabb03', 'Pmbabb02',
-    'Pmbabb01', 'Pmbab05', 'Pmbab04', 'Pmbab03', 'Pmbab02', 'Pmbab01',
-    'Pmbam02', 'Pmbam01', 'Pmbalk02', 'Pmbal02', 'Pmbalk01', 'Pmbal01',
-    'Pmba02', 'Pmba01',
+    FSA_TAG64("Pmbabb07"), FSA_TAG64("Pmbabb06"), FSA_TAG64("Pmbabb05"), FSA_TAG64("Pmbabb04"), FSA_TAG64("Pmbabb03"), FSA_TAG64("Pmbabb02"),
+    FSA_TAG64("Pmbabb01"), FSA_TAG64("Pmbab05"), FSA_TAG64("Pmbab04"), FSA_TAG64("Pmbab03"), FSA_TAG64("Pmbab02"), FSA_TAG64("Pmbab01"),
+    FSA_TAG64("Pmbam02"), FSA_TAG64("Pmbam01"), FSA_TAG64("Pmbalk02"), FSA_TAG64("Pmbal02"), FSA_TAG64("Pmbalk01"), FSA_TAG64("Pmbal01"),
+    FSA_TAG64("Pmba02"), FSA_TAG64("Pmba01"),
 };
 // No function of the unit reads it (mHeightGrid_0x100 would hold its alphas).
 static const u64 lbl_804777B0[16] = {
-    'Pmnvbb07', 'Pmnvbb06', 'Pmnvbb05', 'Pmnvbb04', 'Pmnvbb03', 'Pmnvbb02',
-    'Pmnvbb01', 'Pmnvb05', 'Pmnvb04', 'Pmnvb03', 'Pmnvb02', 'Pmnvb01',
-    'Pmnv02', 'Pmnv01', 'Pmte02', 'Pmte01',
+    FSA_TAG64("Pmnvbb07"), FSA_TAG64("Pmnvbb06"), FSA_TAG64("Pmnvbb05"), FSA_TAG64("Pmnvbb04"), FSA_TAG64("Pmnvbb03"), FSA_TAG64("Pmnvbb02"),
+    FSA_TAG64("Pmnvbb01"), FSA_TAG64("Pmnvb05"), FSA_TAG64("Pmnvb04"), FSA_TAG64("Pmnvb03"), FSA_TAG64("Pmnvb02"), FSA_TAG64("Pmnvb01"),
+    FSA_TAG64("Pmnv02"), FSA_TAG64("Pmnv01"), FSA_TAG64("Pmte02"), FSA_TAG64("Pmte01"),
 };
 static const u64 lbl_80477830[5] = {
-    'Pstrb04', 'Pstrb03', 'Pstrb02', 'Pstrb01', 'Tstr01',
+    FSA_TAG64("Pstrb04"), FSA_TAG64("Pstrb03"), FSA_TAG64("Pstrb02"), FSA_TAG64("Pstrb01"), FSA_TAG64("Tstr01"),
 };
 static const u64 lbl_80477858[5] = {
-    'Pbacb04', 'Pbacb03', 'Pbacb02', 'Pbacb01', 'Tbac01',
+    FSA_TAG64("Pbacb04"), FSA_TAG64("Pbacb03"), FSA_TAG64("Pbacb02"), FSA_TAG64("Pbacb01"), FSA_TAG64("Tbac01"),
 };
 // fn_803DEC44.
 static const s32 lbl_80477880[3] = {0x34, 0x35, 0x36};
@@ -113,41 +113,41 @@ GameMode_804B0688::GameMode_804B0688() {
     mMovieScreen = new J2DScreen;
     mMovieScreen->setPriority("gamemode_movie.blo", 0x1100000, lbl_80529DEC.mGameModeArchive_0x2c);
     field_0x14[0] = new PaneCtrl_804AF86C;
-    field_0x14[0]->setPane_80402F04(mMovieScreen->search('Pmov01'));
+    field_0x14[0]->setPane_80402F04(mMovieScreen->search(FSA_TAG64("Pmov01")));
     field_0x14[1] = new PaneCtrl_804AF86C;
-    field_0x14[1]->setPane_80402F04(mScreen->search('Ndata08'));
+    field_0x14[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata08")));
     field_0x14[2] = new PaneCtrl_804AF86C;
-    field_0x14[2]->setPane_80402F04(mScreen->search('Wgbco01'));
+    field_0x14[2]->setPane_80402F04(mScreen->search(FSA_TAG64("Wgbco01")));
     field_0x14[3] = new PaneCtrl_804AF86C;
-    field_0x14[3]->setPane_80402F04(mScreen->search('Wnop01'));
+    field_0x14[3]->setPane_80402F04(mScreen->search(FSA_TAG64("Wnop01")));
     field_0x14[4] = new PaneCtrl_804AF86C;
-    field_0x14[4]->setPane_80402F04(mScreen->search('Pexpb09'));
+    field_0x14[4]->setPane_80402F04(mScreen->search(FSA_TAG64("Pexpb09")));
     field_0x14[5] = new PaneCtrl_804AF86C;
-    field_0x14[5]->setPane_80402F04(mScreen->search('Wnop02'));
+    field_0x14[5]->setPane_80402F04(mScreen->search(FSA_TAG64("Wnop02")));
     field_0x14[6] = new PaneCtrl_804AF86C;
-    field_0x14[6]->setPane_80402F04(mScreen->search('Wgbco02'));
+    field_0x14[6]->setPane_80402F04(mScreen->search(FSA_TAG64("Wgbco02")));
     field_0x30 = new PaneCtrl_804AF86C;
-    field_0x30->setPane_80402F04(mScreen->search('Ndata05'));
+    field_0x30->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata05")));
     field_0x34[0] = new PaneCtrl_804AF86C;
-    field_0x34[0]->setPane_80402F04(mScreen->search('Ndata02'));
+    field_0x34[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata02")));
     field_0x34[1] = new PaneCtrl_804AF86C;
-    field_0x34[1]->setPane_80402F04(mScreen->search('Ndata03'));
+    field_0x34[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata03")));
     field_0x40 = new PaneCtrl_804AF86C;
-    field_0x40->setPane_80402F04(mScreen->search('Pscuro02'));
+    field_0x40->setPane_80402F04(mScreen->search(FSA_TAG64("Pscuro02")));
     field_0x44[0] = new PaneCtrl_804AF86C;
-    field_0x44[0]->setPane_80402F04(mScreen->search('Pscurh05'));
+    field_0x44[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pscurh05")));
     f32 x;
-    f32 y = 1.0f + mScreen->search('Pscurs05')->getBounds()->i.y;
-    x = mScreen->search('Pscurs05')->getBounds()->i.x;
-    mScreen->search('Pscurs05')->move(x, y);
+    f32 y = 1.0f + mScreen->search(FSA_TAG64("Pscurs05"))->getBounds()->i.y;
+    x = mScreen->search(FSA_TAG64("Pscurs05"))->getBounds()->i.x;
+    mScreen->search(FSA_TAG64("Pscurs05"))->move(x, y);
     field_0x44[1] = new PaneCtrl_804AF86C;
-    field_0x44[1]->setPane_80402F04(mScreen->search('Pscurs05'));
+    field_0x44[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pscurs05")));
     field_0x50[0] = new PaneCtrl_804AF86C;
-    field_0x50[0]->setPane_80402F04(mScreen->search('Pstrb04'));
+    field_0x50[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pstrb04")));
     field_0x50[1] = new PaneCtrl_804AF86C;
-    field_0x50[1]->setPane_80402F04(mScreen->search('Pbacb04'));
+    field_0x50[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pbacb04")));
     field_0x58 = new PaneCtrl_804AF86C;
-    field_0x58->setPane_80402F04(mScreen->search('Paccur02'));
+    field_0x58->setPane_80402F04(mScreen->search(FSA_TAG64("Paccur02")));
     field_0x5c = lbl_8053AED8->field_0x8;
     // `tex` and `font` are locals reused for each use: the original loads them
     // before the call (inlined into the call arguments the constructor drops to
@@ -160,51 +160,51 @@ GameMode_804B0688::GameMode_804B0688() {
     field_0x10->setBlackWhite(JUtility::TColor(0x000000FF), JUtility::TColor(0x00000000));
     field_0xa2 = 156;
     JUTResFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tagb01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tagb02'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tagb03'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb03")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tagb04'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb04")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop02'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop03'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop03")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop04'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop04")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop05'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop05")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tnop06'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop06")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Texp01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Texp01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tbac01'))->setFont(font);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tbac01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mScreen->search('Tstr01'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tstr01'))->getStringPtr(), 0x118, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tbac01'))->getStringPtr(), 0x11B, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop03'))->getStringPtr(), 0x93, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop04'))->getStringPtr(), 0x93, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop05'))->getStringPtr(), 0xF4, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop06'))->getStringPtr(), 0xF4, 0, NULL, NULL);
-    strcpy(static_cast<J2DTextBox*>(mScreen->search('Tagb01'))->getStringPtr(), "Only");
-    strcpy(static_cast<J2DTextBox*>(mScreen->search('Tagb02'))->getStringPtr(), "Only");
-    strcpy(static_cast<J2DTextBox*>(mScreen->search('Tagb03'))->getStringPtr(), "Only");
-    strcpy(static_cast<J2DTextBox*>(mScreen->search('Tagb04'))->getStringPtr(), "Only");
-    field_0x6c[0] = mScreen->search('Ndata02')->getBounds()->i.y +
-                    mScreen->search('Pmadbb07')->getBounds()->i.y +
-                    mScreen->search('Pmadbb01')->getBounds()->i.y;
-    field_0x6c[1] = mScreen->search('Ndata03')->getBounds()->i.y +
-                    mScreen->search('Pmbabb07')->getBounds()->i.y +
-                    mScreen->search('Pmbabb01')->getBounds()->i.y;
-    field_0x11a[0] = mMovieScreen->search('Pim01')->getAlpha();
-    field_0x11a[1] = mMovieScreen->search('Pim02')->getAlpha();
-    field_0x11a[2] = mMovieScreen->search('Pim11')->getAlpha();
-    field_0x11a[3] = mMovieScreen->search('Pim12')->getAlpha();
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tstr01")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x118, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tbac01")))->getStringPtr(), 0x11B, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop03")))->getStringPtr(), 0x93, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop04")))->getStringPtr(), 0x93, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop05")))->getStringPtr(), 0xF4, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop06")))->getStringPtr(), 0xF4, 0, NULL, NULL);
+    strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb01")))->getStringPtr(), "Only");
+    strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb02")))->getStringPtr(), "Only");
+    strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb03")))->getStringPtr(), "Only");
+    strcpy(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tagb04")))->getStringPtr(), "Only");
+    field_0x6c[0] = mScreen->search(FSA_TAG64("Ndata02"))->getBounds()->i.y +
+                    mScreen->search(FSA_TAG64("Pmadbb07"))->getBounds()->i.y +
+                    mScreen->search(FSA_TAG64("Pmadbb01"))->getBounds()->i.y;
+    field_0x6c[1] = mScreen->search(FSA_TAG64("Ndata03"))->getBounds()->i.y +
+                    mScreen->search(FSA_TAG64("Pmbabb07"))->getBounds()->i.y +
+                    mScreen->search(FSA_TAG64("Pmbabb01"))->getBounds()->i.y;
+    field_0x11a[0] = mMovieScreen->search(FSA_TAG64("Pim01"))->getAlpha();
+    field_0x11a[1] = mMovieScreen->search(FSA_TAG64("Pim02"))->getAlpha();
+    field_0x11a[2] = mMovieScreen->search(FSA_TAG64("Pim11"))->getAlpha();
+    field_0x11a[3] = mMovieScreen->search(FSA_TAG64("Pim12"))->getAlpha();
     for (s32 i = 0; i < 7; i++) {
         field_0x14[i]->mPane->hide();
     }
@@ -322,10 +322,10 @@ void GameMode_804B0688::fn_803DF9E8() {
     field_0x50[0]->mPane->hide();
     field_0x50[1]->mPane->hide();
     field_0x58->mPane->hide();
-    mMovieScreen->search('Pim01')->setAlpha(0);
-    mMovieScreen->search('Pim02')->setAlpha(0);
-    mMovieScreen->search('Pim11')->setAlpha(0);
-    mMovieScreen->search('Pim12')->setAlpha(0);
+    mMovieScreen->search(FSA_TAG64("Pim01"))->setAlpha(0);
+    mMovieScreen->search(FSA_TAG64("Pim02"))->setAlpha(0);
+    mMovieScreen->search(FSA_TAG64("Pim11"))->setAlpha(0);
+    mMovieScreen->search(FSA_TAG64("Pim12"))->setAlpha(0);
     mState = 0;
     field_0x68 = 2;
 }
@@ -498,29 +498,29 @@ void GameMode_804B0688::fn_803DEC44() {
             }
             switch (field_0x9e) {
             case 0:
-                mScreen->search('Wgbco01')->hide();
-                mScreen->search('Wnop01')->hide();
-                mScreen->search('Wnop02')->show();
-                mScreen->search('Wgbco02')->show();
+                mScreen->search(FSA_TAG64("Wgbco01"))->hide();
+                mScreen->search(FSA_TAG64("Wnop01"))->hide();
+                mScreen->search(FSA_TAG64("Wnop02"))->show();
+                mScreen->search(FSA_TAG64("Wgbco02"))->show();
                 break;
             case 1:
-                mScreen->search('Wgbco01')->show();
-                mScreen->search('Wnop01')->show();
-                mScreen->search('Wnop02')->hide();
-                mScreen->search('Wgbco02')->hide();
+                mScreen->search(FSA_TAG64("Wgbco01"))->show();
+                mScreen->search(FSA_TAG64("Wnop01"))->show();
+                mScreen->search(FSA_TAG64("Wnop02"))->hide();
+                mScreen->search(FSA_TAG64("Wgbco02"))->hide();
                 break;
             default:
-                mScreen->search('Wgbco01')->show();
-                mScreen->search('Wnop01')->show();
-                mScreen->search('Wnop02')->hide();
-                mScreen->search('Wgbco02')->hide();
+                mScreen->search(FSA_TAG64("Wgbco01"))->show();
+                mScreen->search(FSA_TAG64("Wnop01"))->show();
+                mScreen->search(FSA_TAG64("Wnop02"))->hide();
+                mScreen->search(FSA_TAG64("Wgbco02"))->hide();
                 break;
             }
-            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop01'))->getStringPtr(),
+            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop01")))->getStringPtr(),
                         lbl_8047788C[field_0x9e], 0, NULL, NULL);
-            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tnop02'))->getStringPtr(),
+            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tnop02")))->getStringPtr(),
                         lbl_8047788C[field_0x9e], 0, NULL, NULL);
-            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Texp01'))->getStringPtr(),
+            getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Texp01")))->getStringPtr(),
                         lbl_80477880[field_0x9e], 0, NULL, NULL);
             field_0x44[field_0x9e]->mPane->hide();
             mState = 2;
@@ -1045,8 +1045,8 @@ void GameMode_804B0688::fn_803DD1A4() {
         field_0x50[1]->moveFromCentre_80402E08(0.0f, y);
         field_0x58->moveFromCentre_80402E08(field_0x50[1]->field_0x8 - field_0x50[0]->field_0x8, y);
     }
-    mScreen->search('Paccur01')->setAlpha(field_0xa2 * alpha);
-    mScreen->search('Paccur02')->setAlpha(field_0xa2 * alpha);
+    mScreen->search(FSA_TAG64("Paccur01"))->setAlpha(field_0xa2 * alpha);
+    mScreen->search(FSA_TAG64("Paccur02"))->setAlpha(field_0xa2 * alpha);
 }
 
 void GameMode_804B0688::fn_803DD1A0() {}
@@ -1066,22 +1066,22 @@ void GameMode_804B0688::fn_803DCCA4() {
         field_0x90 = 0;
     }
     if (field_0x9e != 0 && field_0x9f != 0) {
-        mMovieScreen->search('Pim01')->setAlpha(0);
-        mMovieScreen->search('Pim02')->setAlpha(0);
+        mMovieScreen->search(FSA_TAG64("Pim01"))->setAlpha(0);
+        mMovieScreen->search(FSA_TAG64("Pim02"))->setAlpha(0);
     }
     if (field_0x9e != 1 && field_0x9f != 1) {
-        mMovieScreen->search('Pim11')->setAlpha(0);
-        mMovieScreen->search('Pim12')->setAlpha(0);
+        mMovieScreen->search(FSA_TAG64("Pim11"))->setAlpha(0);
+        mMovieScreen->search(FSA_TAG64("Pim12"))->setAlpha(0);
     }
     if (mState != 2) {
         switch (field_0x9e) {
         case 0:
-            mMovieScreen->search('Pim01')->setAlpha(field_0x11a[0] * t);
-            mMovieScreen->search('Pim02')->setAlpha(field_0x11a[1] * t);
+            mMovieScreen->search(FSA_TAG64("Pim01"))->setAlpha(field_0x11a[0] * t);
+            mMovieScreen->search(FSA_TAG64("Pim02"))->setAlpha(field_0x11a[1] * t);
             break;
         case 1:
-            mMovieScreen->search('Pim11')->setAlpha(field_0x11a[2] * t);
-            mMovieScreen->search('Pim12')->setAlpha(field_0x11a[3] * t);
+            mMovieScreen->search(FSA_TAG64("Pim11"))->setAlpha(field_0x11a[2] * t);
+            mMovieScreen->search(FSA_TAG64("Pim12"))->setAlpha(field_0x11a[3] * t);
             break;
         case 2: // entry 2 has no movie pictures
             break;
@@ -1093,12 +1093,12 @@ void GameMode_804B0688::fn_803DCCA4() {
     }
     switch (field_0x9f) {
     case 0:
-        mMovieScreen->search('Pim01')->setAlpha(field_0x11a[0] * t);
-        mMovieScreen->search('Pim02')->setAlpha(field_0x11a[1] * t);
+        mMovieScreen->search(FSA_TAG64("Pim01"))->setAlpha(field_0x11a[0] * t);
+        mMovieScreen->search(FSA_TAG64("Pim02"))->setAlpha(field_0x11a[1] * t);
         break;
     case 1:
-        mMovieScreen->search('Pim11')->setAlpha(field_0x11a[2] * t);
-        mMovieScreen->search('Pim12')->setAlpha(field_0x11a[3] * t);
+        mMovieScreen->search(FSA_TAG64("Pim11"))->setAlpha(field_0x11a[2] * t);
+        mMovieScreen->search(FSA_TAG64("Pim12"))->setAlpha(field_0x11a[3] * t);
         break;
     case 2: // entry 2 has no movie pictures
         break;
@@ -1108,102 +1108,102 @@ void GameMode_804B0688::fn_803DCCA4() {
 void GameMode_804B0688::fn_803DAC58(s32 entry, f32 alpha) {
     switch (entry) {
     case 0:
-        static_cast<J2DPicture*>(mScreen->search('Pscurh01'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh02'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh03'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh04'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh05'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        mScreen->search('Pscurh05')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurh04')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurh03')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurh02')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurh01')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurs05')->setAlpha(100);
-        mScreen->search('Pscurs04')->setAlpha(100);
-        mScreen->search('Pscurs03')->setAlpha(100);
-        mScreen->search('Pscurs02')->setAlpha(100);
-        mScreen->search('Pscurs01')->setAlpha(100);
-        static_cast<J2DPicture*>(mScreen->search('Pmad01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(255, 210, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pmba01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh01")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh02")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh03")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh04")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh05")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        mScreen->search(FSA_TAG64("Pscurh05"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurh04"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurh03"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurh02"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurh01"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurs05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs01"))->setAlpha(100);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmad01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(255, 210, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmba01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
         break;
     case 1:
-        static_cast<J2DPicture*>(mScreen->search('Pscurh01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs01'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs02'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs03'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs04'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs05'))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
-        mScreen->search('Pscurh05')->setAlpha(100);
-        mScreen->search('Pscurh04')->setAlpha(100);
-        mScreen->search('Pscurh03')->setAlpha(100);
-        mScreen->search('Pscurh02')->setAlpha(100);
-        mScreen->search('Pscurh01')->setAlpha(100);
-        mScreen->search('Pscurs05')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurs04')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurs03')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurs02')->setAlpha(100.0f * alpha);
-        mScreen->search('Pscurs01')->setAlpha(100.0f * alpha);
-        static_cast<J2DPicture*>(mScreen->search('Pmad01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pmba01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(255, 210, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs01")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs02")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs03")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs04")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs05")))->setBlackWhite(JUtility::TColor(255, 255, 120, 0), JUtility::TColor(255, 255, 120, 255));
+        mScreen->search(FSA_TAG64("Pscurh05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh01"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs05"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurs04"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurs03"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurs02"))->setAlpha(100.0f * alpha);
+        mScreen->search(FSA_TAG64("Pscurs01"))->setAlpha(100.0f * alpha);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmad01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmba01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(255, 210, 0, 255));
         break;
     case 2:
-        static_cast<J2DPicture*>(mScreen->search('Pscurh01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        mScreen->search('Pscurh05')->setAlpha(100);
-        mScreen->search('Pscurh04')->setAlpha(100);
-        mScreen->search('Pscurh03')->setAlpha(100);
-        mScreen->search('Pscurh02')->setAlpha(100);
-        mScreen->search('Pscurh01')->setAlpha(100);
-        mScreen->search('Pscurs05')->setAlpha(100);
-        mScreen->search('Pscurs04')->setAlpha(100);
-        mScreen->search('Pscurs03')->setAlpha(100);
-        mScreen->search('Pscurs02')->setAlpha(100);
-        mScreen->search('Pscurs01')->setAlpha(100);
-        static_cast<J2DPicture*>(mScreen->search('Pmad01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pmba01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        mScreen->search(FSA_TAG64("Pscurh05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh01"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs01"))->setAlpha(100);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmad01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmba01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
         break;
     default:
-        static_cast<J2DPicture*>(mScreen->search('Pscurh01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurh05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs02'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs03'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs04'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pscurs05'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
-        mScreen->search('Pscurh05')->setAlpha(100);
-        mScreen->search('Pscurh04')->setAlpha(100);
-        mScreen->search('Pscurh03')->setAlpha(100);
-        mScreen->search('Pscurh02')->setAlpha(100);
-        mScreen->search('Pscurh01')->setAlpha(100);
-        mScreen->search('Pscurs05')->setAlpha(100);
-        mScreen->search('Pscurs04')->setAlpha(100);
-        mScreen->search('Pscurs03')->setAlpha(100);
-        mScreen->search('Pscurs02')->setAlpha(100);
-        mScreen->search('Pscurs01')->setAlpha(100);
-        static_cast<J2DPicture*>(mScreen->search('Pmad01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
-        static_cast<J2DPicture*>(mScreen->search('Pmba01'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
-        mScreen->search('Pscuro02')->setAlpha(field_0xa2 * alpha);
-        mScreen->search('Pscuro01')->setAlpha(field_0xa2 * alpha);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurh05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs02")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs03")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs04")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pscurs05")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0, 0, 0, 255));
+        mScreen->search(FSA_TAG64("Pscurh05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurh01"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs05"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs04"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs03"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs02"))->setAlpha(100);
+        mScreen->search(FSA_TAG64("Pscurs01"))->setAlpha(100);
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmad01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Pmba01")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(130, 170, 0, 255));
+        mScreen->search(FSA_TAG64("Pscuro02"))->setAlpha(field_0xa2 * alpha);
+        mScreen->search(FSA_TAG64("Pscuro01"))->setAlpha(field_0xa2 * alpha);
         break;
     }
 }

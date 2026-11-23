@@ -185,6 +185,7 @@ void DVDReset() {}
 int DVDCheckDisk() { return 1; }
 s32 DVDGetDriveStatus() {
   platform_service_interrupts();
+  platform_poll_point();
   return g_requests.empty() ? DVD_STATE_END : DVD_STATE_BUSY;
 }
 DVDDiskID* DVDGetCurrentDiskID() { return &g_diskId; }
@@ -268,6 +269,7 @@ BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 off
 
 s32 DVDGetCommandBlockStatus(const DVDCommandBlock* block) {
   platform_service_interrupts();
+  platform_poll_point();
   return block->state;
 }
 s32 DVDGetFileInfoStatus(DVDFileInfo* fileInfo) { return DVDGetCommandBlockStatus(&fileInfo->cb); }

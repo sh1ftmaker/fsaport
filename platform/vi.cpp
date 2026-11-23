@@ -16,9 +16,13 @@ bool g_inFrame = false;
 OSThreadQueue g_retraceQueue;
 }  // namespace
 
+u32 g_framesBegun = 0, g_framesDrawn = 0;
+
 void platform_retrace() {
   platform_interrupt_enter();
   g_retraceCount++;
+  if (g_retraceCount % 60 == 0)
+    platform_log("[vi] retrace %u, frames begun %u drawn %u\n", g_retraceCount, g_framesBegun, g_framesDrawn);
   if (g_preRetrace)
     g_preRetrace(g_retraceCount);
   g_currentFb = g_nextFb;
@@ -33,16 +37,24 @@ void platform_frame_begin() {
   if (g_inFrame)
     return;
   HostAllocScope host;
+  if (g_framesBegun++ < 3)
+    platform_log("[vi] frame %u begin\n", g_framesBegun);
   aurora_update();
   g_inFrame = aurora_begin_frame();
+  if (g_framesBegun <= 3)
+    platform_log("[vi] frame %u begun=%d\n", g_framesBegun, (int)g_inFrame);
 }
 
 void platform_frame_end() {
   if (!g_inFrame)
     return;
   HostAllocScope host;
+  if (g_framesDrawn < 3)
+    platform_log("[vi] frame %u: game drawing done, aurora_end_frame\n", g_framesDrawn + 1);
   aurora_end_frame();
   g_inFrame = false;
+  if (g_framesDrawn++ < 3)
+    platform_log("[vi] frame %u ended\n", g_framesDrawn);
 }
 
 // The page calls this once per (paced) animation frame.
@@ -95,7 +107,10 @@ VIRetraceCallback VISetPostRetraceCallback(VIRetraceCallback cb) {
   return old;
 }
 void VISetBlack(BOOL) {}
-u32 VIGetRetraceCount() { return g_retraceCount; }
+u32 VIGetRetraceCount() {
+  platform_poll_point();
+  return g_retraceCount;
+}
 u32 VIGetNextField() { return 1; }
 u32 VIGetCurrentLine() { return 0; }
 u32 VIGetDTVStatus() { return 0; }

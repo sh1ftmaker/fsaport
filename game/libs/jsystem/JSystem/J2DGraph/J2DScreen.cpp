@@ -62,7 +62,7 @@ bool J2DScreen::set(const char* name, u32 flags, JKRArchive* archive)
     return false;
 }
 
-bool J2DScreen::set(JSURandomInputStream* stream, u32 flags) { private_set(stream, flags, nullptr); }
+bool J2DScreen::set(JSURandomInputStream* stream, u32 flags) { return private_set(stream, flags, nullptr); }
 
 bool J2DScreen::setPriority(const char *path, u32 flags, JKRArchive *archive) {
     if (archive == nullptr) {

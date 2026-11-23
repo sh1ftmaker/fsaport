@@ -42,200 +42,200 @@ const char* lbl_804B145C[4] = {
 };
 
 static const u64 lbl_8048E300[4][4] = {
-    { 'Pp1m01', 'Pp1m02', 'Pp1m03', 'Pp1m04' },
-    { 'Pp2m01', 'Pp2m02', 'Pp2m03', 'Pp2m04' },
-    { 'Pp3m01', 'Pp3m02', 'Pp3m03', 'Pp3m04' },
-    { 'Pp4m01', 'Pp4m02', 'Pp4m03', 'Pp4m04' },
+    { FSA_TAG64("Pp1m01"), FSA_TAG64("Pp1m02"), FSA_TAG64("Pp1m03"), FSA_TAG64("Pp1m04") },
+    { FSA_TAG64("Pp2m01"), FSA_TAG64("Pp2m02"), FSA_TAG64("Pp2m03"), FSA_TAG64("Pp2m04") },
+    { FSA_TAG64("Pp3m01"), FSA_TAG64("Pp3m02"), FSA_TAG64("Pp3m03"), FSA_TAG64("Pp3m04") },
+    { FSA_TAG64("Pp4m01"), FSA_TAG64("Pp4m02"), FSA_TAG64("Pp4m03"), FSA_TAG64("Pp4m04") },
 };
 
 static const u64 lbl_8048E380[4][3] = {
-    { 'Pp1mb01', 'Pp1mb02', 'Pp1mb03' },
-    { 'Pp2mb01', 'Pp2mb02', 'Pp2mb03' },
-    { 'Pp3mb01', 'Pp3mb02', 'Pp3mb03' },
-    { 'Pp4mb01', 'Pp4mb02', 'Pp4mb03' },
+    { FSA_TAG64("Pp1mb01"), FSA_TAG64("Pp1mb02"), FSA_TAG64("Pp1mb03") },
+    { FSA_TAG64("Pp2mb01"), FSA_TAG64("Pp2mb02"), FSA_TAG64("Pp2mb03") },
+    { FSA_TAG64("Pp3mb01"), FSA_TAG64("Pp3mb02"), FSA_TAG64("Pp3mb03") },
+    { FSA_TAG64("Pp4mb01"), FSA_TAG64("Pp4mb02"), FSA_TAG64("Pp4mb03") },
 };
 
 static const u64 lbl_8048E3E0[4][8] = {
-    { 'Pp1lf01', 'Pp1lf02', 'Pp1lf03', 'Pp1lf04', 'Pp1lf05', 'Pp1lf06', 'Pp1lf07', 'Pp1lf08' },
-    { 'Pp2lf01', 'Pp2lf02', 'Pp2lf03', 'Pp2lf04', 'Pp2lf05', 'Pp2lf06', 'Pp2lf07', 'Pp2lf08' },
-    { 'Pp3lf01', 'Pp3lf02', 'Pp3lf03', 'Pp3lf04', 'Pp3lf05', 'Pp3lf06', 'Pp3lf07', 'Pp3lf08' },
-    { 'Pp4lf01', 'Pp4lf02', 'Pp4lf03', 'Pp4lf04', 'Pp4lf05', 'Pp4lf06', 'Pp4lf07', 'Pp4lf08' },
+    { FSA_TAG64("Pp1lf01"), FSA_TAG64("Pp1lf02"), FSA_TAG64("Pp1lf03"), FSA_TAG64("Pp1lf04"), FSA_TAG64("Pp1lf05"), FSA_TAG64("Pp1lf06"), FSA_TAG64("Pp1lf07"), FSA_TAG64("Pp1lf08") },
+    { FSA_TAG64("Pp2lf01"), FSA_TAG64("Pp2lf02"), FSA_TAG64("Pp2lf03"), FSA_TAG64("Pp2lf04"), FSA_TAG64("Pp2lf05"), FSA_TAG64("Pp2lf06"), FSA_TAG64("Pp2lf07"), FSA_TAG64("Pp2lf08") },
+    { FSA_TAG64("Pp3lf01"), FSA_TAG64("Pp3lf02"), FSA_TAG64("Pp3lf03"), FSA_TAG64("Pp3lf04"), FSA_TAG64("Pp3lf05"), FSA_TAG64("Pp3lf06"), FSA_TAG64("Pp3lf07"), FSA_TAG64("Pp3lf08") },
+    { FSA_TAG64("Pp4lf01"), FSA_TAG64("Pp4lf02"), FSA_TAG64("Pp4lf03"), FSA_TAG64("Pp4lf04"), FSA_TAG64("Pp4lf05"), FSA_TAG64("Pp4lf06"), FSA_TAG64("Pp4lf07"), FSA_TAG64("Pp4lf08") },
 };
 
 static const u64 lbl_8048E4E0[4][8] = {
-    { 'Pp1lfk01', 'Pp1lfk02', 'Pp1lfk03', 'Pp1lfk04', 'Pp1lfk05', 'Pp1lfk06', 'Pp1lfk07', 'Pp1lfk08' },
-    { 'Pp2lfk01', 'Pp2lfk02', 'Pp2lfk03', 'Pp2lfk04', 'Pp2lfk05', 'Pp2lfk06', 'Pp2lfk07', 'Pp2lfk08' },
-    { 'Pp3lfk01', 'Pp3lfk02', 'Pp3lfk03', 'Pp3lfk04', 'Pp3lfk05', 'Pp3lfk06', 'Pp3lfk07', 'Pp3lfk08' },
-    { 'Pp4lfk01', 'Pp4lfk02', 'Pp4lfk03', 'Pp4lfk04', 'Pp4lfk05', 'Pp4lfk06', 'Pp4lfk07', 'Pp4lfk08' },
+    { FSA_TAG64("Pp1lfk01"), FSA_TAG64("Pp1lfk02"), FSA_TAG64("Pp1lfk03"), FSA_TAG64("Pp1lfk04"), FSA_TAG64("Pp1lfk05"), FSA_TAG64("Pp1lfk06"), FSA_TAG64("Pp1lfk07"), FSA_TAG64("Pp1lfk08") },
+    { FSA_TAG64("Pp2lfk01"), FSA_TAG64("Pp2lfk02"), FSA_TAG64("Pp2lfk03"), FSA_TAG64("Pp2lfk04"), FSA_TAG64("Pp2lfk05"), FSA_TAG64("Pp2lfk06"), FSA_TAG64("Pp2lfk07"), FSA_TAG64("Pp2lfk08") },
+    { FSA_TAG64("Pp3lfk01"), FSA_TAG64("Pp3lfk02"), FSA_TAG64("Pp3lfk03"), FSA_TAG64("Pp3lfk04"), FSA_TAG64("Pp3lfk05"), FSA_TAG64("Pp3lfk06"), FSA_TAG64("Pp3lfk07"), FSA_TAG64("Pp3lfk08") },
+    { FSA_TAG64("Pp4lfk01"), FSA_TAG64("Pp4lfk02"), FSA_TAG64("Pp4lfk03"), FSA_TAG64("Pp4lfk04"), FSA_TAG64("Pp4lfk05"), FSA_TAG64("Pp4lfk06"), FSA_TAG64("Pp4lfk07"), FSA_TAG64("Pp4lfk08") },
 };
 
 static const u64 lbl_8048E5E0[4][8] = {
-    { 'Pp1lf09', 'Pp1lf10', 'Pp1lf11', 'Pp1lf12', 'Pp1lf13', 'Pp1lf14', 'Pp1lf15', 'Pp1lf16' },
-    { 'Pp2lf09', 'Pp2lf10', 'Pp2lf11', 'Pp2lf12', 'Pp2lf13', 'Pp2lf14', 'Pp2lf15', 'Pp2lf16' },
-    { 'Pp3lf09', 'Pp3lf10', 'Pp3lf11', 'Pp3lf12', 'Pp3lf13', 'Pp3lf14', 'Pp3lf15', 'Pp3lf16' },
-    { 'Pp4lf09', 'Pp4lf10', 'Pp4lf11', 'Pp4lf12', 'Pp4lf13', 'Pp4lf14', 'Pp4lf15', 'Pp4lf16' },
+    { FSA_TAG64("Pp1lf09"), FSA_TAG64("Pp1lf10"), FSA_TAG64("Pp1lf11"), FSA_TAG64("Pp1lf12"), FSA_TAG64("Pp1lf13"), FSA_TAG64("Pp1lf14"), FSA_TAG64("Pp1lf15"), FSA_TAG64("Pp1lf16") },
+    { FSA_TAG64("Pp2lf09"), FSA_TAG64("Pp2lf10"), FSA_TAG64("Pp2lf11"), FSA_TAG64("Pp2lf12"), FSA_TAG64("Pp2lf13"), FSA_TAG64("Pp2lf14"), FSA_TAG64("Pp2lf15"), FSA_TAG64("Pp2lf16") },
+    { FSA_TAG64("Pp3lf09"), FSA_TAG64("Pp3lf10"), FSA_TAG64("Pp3lf11"), FSA_TAG64("Pp3lf12"), FSA_TAG64("Pp3lf13"), FSA_TAG64("Pp3lf14"), FSA_TAG64("Pp3lf15"), FSA_TAG64("Pp3lf16") },
+    { FSA_TAG64("Pp4lf09"), FSA_TAG64("Pp4lf10"), FSA_TAG64("Pp4lf11"), FSA_TAG64("Pp4lf12"), FSA_TAG64("Pp4lf13"), FSA_TAG64("Pp4lf14"), FSA_TAG64("Pp4lf15"), FSA_TAG64("Pp4lf16") },
 };
 
 static const u64 lbl_8048E6E0[4][8] = {
-    { 'Pp1lfk09', 'Pp1lfk10', 'Pp1lfk11', 'Pp1lfk12', 'Pp1lfk13', 'Pp1lfk14', 'Pp1lfk15', 'Pp1lfk16' },
-    { 'Pp2lfk09', 'Pp2lfk10', 'Pp2lfk11', 'Pp2lfk12', 'Pp2lfk13', 'Pp2lfk14', 'Pp2lfk15', 'Pp2lfk16' },
-    { 'Pp3lfk09', 'Pp3lfk10', 'Pp3lfk11', 'Pp3lfk12', 'Pp3lfk13', 'Pp3lfk14', 'Pp3lfk15', 'Pp3lfk16' },
-    { 'Pp4lfk09', 'Pp4lfk10', 'Pp4lfk11', 'Pp4lfk12', 'Pp4lfk13', 'Pp4lfk14', 'Pp4lfk15', 'Pp4lfk16' },
+    { FSA_TAG64("Pp1lfk09"), FSA_TAG64("Pp1lfk10"), FSA_TAG64("Pp1lfk11"), FSA_TAG64("Pp1lfk12"), FSA_TAG64("Pp1lfk13"), FSA_TAG64("Pp1lfk14"), FSA_TAG64("Pp1lfk15"), FSA_TAG64("Pp1lfk16") },
+    { FSA_TAG64("Pp2lfk09"), FSA_TAG64("Pp2lfk10"), FSA_TAG64("Pp2lfk11"), FSA_TAG64("Pp2lfk12"), FSA_TAG64("Pp2lfk13"), FSA_TAG64("Pp2lfk14"), FSA_TAG64("Pp2lfk15"), FSA_TAG64("Pp2lfk16") },
+    { FSA_TAG64("Pp3lfk09"), FSA_TAG64("Pp3lfk10"), FSA_TAG64("Pp3lfk11"), FSA_TAG64("Pp3lfk12"), FSA_TAG64("Pp3lfk13"), FSA_TAG64("Pp3lfk14"), FSA_TAG64("Pp3lfk15"), FSA_TAG64("Pp3lfk16") },
+    { FSA_TAG64("Pp4lfk09"), FSA_TAG64("Pp4lfk10"), FSA_TAG64("Pp4lfk11"), FSA_TAG64("Pp4lfk12"), FSA_TAG64("Pp4lfk13"), FSA_TAG64("Pp4lfk14"), FSA_TAG64("Pp4lfk15"), FSA_TAG64("Pp4lfk16") },
 };
 
 static const u64 lbl_8048E7E0[4][3] = {
-    { 'Pp1iib01', 'Pp1iib02', 'Pp1iib03' },
-    { 'Pp2iib01', 'Pp2iib02', 'Pp2iib03' },
-    { 'Pp3iib01', 'Pp3iib02', 'Pp3iib03' },
-    { 'Pp4iib01', 'Pp4iib02', 'Pp4iib03' },
+    { FSA_TAG64("Pp1iib01"), FSA_TAG64("Pp1iib02"), FSA_TAG64("Pp1iib03") },
+    { FSA_TAG64("Pp2iib01"), FSA_TAG64("Pp2iib02"), FSA_TAG64("Pp2iib03") },
+    { FSA_TAG64("Pp3iib01"), FSA_TAG64("Pp3iib02"), FSA_TAG64("Pp3iib03") },
+    { FSA_TAG64("Pp4iib01"), FSA_TAG64("Pp4iib02"), FSA_TAG64("Pp4iib03") },
 };
 
 static const u64 lbl_8048E840[4][3] = {
-    { 'P1le201', 'P1le202', 'P1le203' },
-    { 'P2le201', 'P2le202', 'P2le203' },
-    { 'P3le201', 'P3le202', 'P3le203' },
-    { 'P4le201', 'P4le202', 'P4le203' },
+    { FSA_TAG64("P1le201"), FSA_TAG64("P1le202"), FSA_TAG64("P1le203") },
+    { FSA_TAG64("P2le201"), FSA_TAG64("P2le202"), FSA_TAG64("P2le203") },
+    { FSA_TAG64("P3le201"), FSA_TAG64("P3le202"), FSA_TAG64("P3le203") },
+    { FSA_TAG64("P4le201"), FSA_TAG64("P4le202"), FSA_TAG64("P4le203") },
 };
 
 static const u64 lbl_8048E8A0[4][12] = {
-    { 'Pp1ii01', 'Pp1ii03', 'Pp1ii05', 'Pp1ii07', 'Pp1ii09', 'Pp1ii11', 'Pp1ii13', 'Pp1ii15', 'Pp1ii17', 'Pp1ii19', 'Pp1ii21', 'Pp1ii23' },
-    { 'Pp2ii01', 'Pp2ii03', 'Pp2ii05', 'Pp2ii07', 'Pp2ii09', 'Pp2ii11', 'Pp2ii13', 'Pp2ii15', 'Pp2ii17', 'Pp2ii19', 'Pp2ii21', 'Pp2ii23' },
-    { 'Pp3ii01', 'Pp3ii03', 'Pp3ii05', 'Pp3ii07', 'Pp3ii09', 'Pp3ii11', 'Pp3ii13', 'Pp3ii15', 'Pp3ii17', 'Pp3ii19', 'Pp3ii21', 'Pp3ii23' },
-    { 'Pp4ii01', 'Pp4ii03', 'Pp4ii05', 'Pp4ii07', 'Pp4ii09', 'Pp4ii11', 'Pp4ii13', 'Pp4ii15', 'Pp4ii17', 'Pp4ii19', 'Pp4ii21', 'Pp4ii23' },
+    { FSA_TAG64("Pp1ii01"), FSA_TAG64("Pp1ii03"), FSA_TAG64("Pp1ii05"), FSA_TAG64("Pp1ii07"), FSA_TAG64("Pp1ii09"), FSA_TAG64("Pp1ii11"), FSA_TAG64("Pp1ii13"), FSA_TAG64("Pp1ii15"), FSA_TAG64("Pp1ii17"), FSA_TAG64("Pp1ii19"), FSA_TAG64("Pp1ii21"), FSA_TAG64("Pp1ii23") },
+    { FSA_TAG64("Pp2ii01"), FSA_TAG64("Pp2ii03"), FSA_TAG64("Pp2ii05"), FSA_TAG64("Pp2ii07"), FSA_TAG64("Pp2ii09"), FSA_TAG64("Pp2ii11"), FSA_TAG64("Pp2ii13"), FSA_TAG64("Pp2ii15"), FSA_TAG64("Pp2ii17"), FSA_TAG64("Pp2ii19"), FSA_TAG64("Pp2ii21"), FSA_TAG64("Pp2ii23") },
+    { FSA_TAG64("Pp3ii01"), FSA_TAG64("Pp3ii03"), FSA_TAG64("Pp3ii05"), FSA_TAG64("Pp3ii07"), FSA_TAG64("Pp3ii09"), FSA_TAG64("Pp3ii11"), FSA_TAG64("Pp3ii13"), FSA_TAG64("Pp3ii15"), FSA_TAG64("Pp3ii17"), FSA_TAG64("Pp3ii19"), FSA_TAG64("Pp3ii21"), FSA_TAG64("Pp3ii23") },
+    { FSA_TAG64("Pp4ii01"), FSA_TAG64("Pp4ii03"), FSA_TAG64("Pp4ii05"), FSA_TAG64("Pp4ii07"), FSA_TAG64("Pp4ii09"), FSA_TAG64("Pp4ii11"), FSA_TAG64("Pp4ii13"), FSA_TAG64("Pp4ii15"), FSA_TAG64("Pp4ii17"), FSA_TAG64("Pp4ii19"), FSA_TAG64("Pp4ii21"), FSA_TAG64("Pp4ii23") },
 };
 
 static const u64 lbl_8048EA20[4][12] = {
-    { 'Pp1ii02', 'Pp1ii04', 'Pp1ii06', 'Pp1ii08', 'Pp1ii10', 'Pp1ii12', 'Pp1ii14', 'Pp1ii16', 'Pp1ii18', 'Pp1ii20', 'Pp1ii22', 'Pp1ii24' },
-    { 'Pp2ii02', 'Pp2ii04', 'Pp2ii06', 'Pp2ii08', 'Pp2ii10', 'Pp2ii12', 'Pp2ii14', 'Pp2ii16', 'Pp2ii18', 'Pp2ii20', 'Pp2ii22', 'Pp2ii24' },
-    { 'Pp3ii02', 'Pp3ii04', 'Pp3ii06', 'Pp3ii08', 'Pp3ii10', 'Pp3ii12', 'Pp3ii14', 'Pp3ii16', 'Pp3ii18', 'Pp3ii20', 'Pp3ii22', 'Pp3ii24' },
-    { 'Pp4ii02', 'Pp4ii04', 'Pp4ii06', 'Pp4ii08', 'Pp4ii10', 'Pp4ii12', 'Pp4ii14', 'Pp4ii16', 'Pp4ii18', 'Pp4ii20', 'Pp4ii22', 'Pp4ii24' },
+    { FSA_TAG64("Pp1ii02"), FSA_TAG64("Pp1ii04"), FSA_TAG64("Pp1ii06"), FSA_TAG64("Pp1ii08"), FSA_TAG64("Pp1ii10"), FSA_TAG64("Pp1ii12"), FSA_TAG64("Pp1ii14"), FSA_TAG64("Pp1ii16"), FSA_TAG64("Pp1ii18"), FSA_TAG64("Pp1ii20"), FSA_TAG64("Pp1ii22"), FSA_TAG64("Pp1ii24") },
+    { FSA_TAG64("Pp2ii02"), FSA_TAG64("Pp2ii04"), FSA_TAG64("Pp2ii06"), FSA_TAG64("Pp2ii08"), FSA_TAG64("Pp2ii10"), FSA_TAG64("Pp2ii12"), FSA_TAG64("Pp2ii14"), FSA_TAG64("Pp2ii16"), FSA_TAG64("Pp2ii18"), FSA_TAG64("Pp2ii20"), FSA_TAG64("Pp2ii22"), FSA_TAG64("Pp2ii24") },
+    { FSA_TAG64("Pp3ii02"), FSA_TAG64("Pp3ii04"), FSA_TAG64("Pp3ii06"), FSA_TAG64("Pp3ii08"), FSA_TAG64("Pp3ii10"), FSA_TAG64("Pp3ii12"), FSA_TAG64("Pp3ii14"), FSA_TAG64("Pp3ii16"), FSA_TAG64("Pp3ii18"), FSA_TAG64("Pp3ii20"), FSA_TAG64("Pp3ii22"), FSA_TAG64("Pp3ii24") },
+    { FSA_TAG64("Pp4ii02"), FSA_TAG64("Pp4ii04"), FSA_TAG64("Pp4ii06"), FSA_TAG64("Pp4ii08"), FSA_TAG64("Pp4ii10"), FSA_TAG64("Pp4ii12"), FSA_TAG64("Pp4ii14"), FSA_TAG64("Pp4ii16"), FSA_TAG64("Pp4ii18"), FSA_TAG64("Pp4ii20"), FSA_TAG64("Pp4ii22"), FSA_TAG64("Pp4ii24") },
 };
 
 static const u64 lbl_8048EBA0[4][2] = {
-    { 'P1r01', 'P1rk01' },
-    { 'P2r01', 'P2rk01' },
-    { 'P3r01', 'P3rk01' },
-    { 'P4r01', 'P4rk01' },
+    { FSA_TAG64("P1r01"), FSA_TAG64("P1rk01") },
+    { FSA_TAG64("P2r01"), FSA_TAG64("P2rk01") },
+    { FSA_TAG64("P3r01"), FSA_TAG64("P3rk01") },
+    { FSA_TAG64("P4r01"), FSA_TAG64("P4rk01") },
 };
 
 static const u64 lbl_8048EBE0[4][5] = {
-    { 'P1s01', 'P1s02', 'P1s03', 'P1s04', 'P1s05' },
-    { 'P2s01', 'P2s02', 'P2s03', 'P2s04', 'P2s05' },
-    { 'P3s01', 'P3s02', 'P3s03', 'P3s04', 'P3s05' },
-    { 'P4r01', 'P4r02', 'P4r03', 'P4r04', 'P4r05' },
+    { FSA_TAG64("P1s01"), FSA_TAG64("P1s02"), FSA_TAG64("P1s03"), FSA_TAG64("P1s04"), FSA_TAG64("P1s05") },
+    { FSA_TAG64("P2s01"), FSA_TAG64("P2s02"), FSA_TAG64("P2s03"), FSA_TAG64("P2s04"), FSA_TAG64("P2s05") },
+    { FSA_TAG64("P3s01"), FSA_TAG64("P3s02"), FSA_TAG64("P3s03"), FSA_TAG64("P3s04"), FSA_TAG64("P3s05") },
+    { FSA_TAG64("P4r01"), FSA_TAG64("P4r02"), FSA_TAG64("P4r03"), FSA_TAG64("P4r04"), FSA_TAG64("P4r05") },
 };
 
 static const u64 lbl_8048EC80[4][5] = {
-    { 'P1sk01', 'P1sk02', 'P1sk03', 'P1sk04', 'P1sk05' },
-    { 'P2sk01', 'P2sk02', 'P2sk03', 'P2sk04', 'P2sk05' },
-    { 'P3sk01', 'P3sk02', 'P3sk03', 'P3sk04', 'P3sk05' },
-    { 'P4rk01', 'P4rk02', 'P4rk03', 'P4rk04', 'P4rk05' },
+    { FSA_TAG64("P1sk01"), FSA_TAG64("P1sk02"), FSA_TAG64("P1sk03"), FSA_TAG64("P1sk04"), FSA_TAG64("P1sk05") },
+    { FSA_TAG64("P2sk01"), FSA_TAG64("P2sk02"), FSA_TAG64("P2sk03"), FSA_TAG64("P2sk04"), FSA_TAG64("P2sk05") },
+    { FSA_TAG64("P3sk01"), FSA_TAG64("P3sk02"), FSA_TAG64("P3sk03"), FSA_TAG64("P3sk04"), FSA_TAG64("P3sk05") },
+    { FSA_TAG64("P4rk01"), FSA_TAG64("P4rk02"), FSA_TAG64("P4rk03"), FSA_TAG64("P4rk04"), FSA_TAG64("P4rk05") },
 };
 
 static const u64 lbl_8048ED20[4][6] = {
-    { 'Pp1i01', 'Pp1i02', 'Pp1ib01', 'Pp1ib02', 'Pp1ib03', 'Pp1ib04' },
-    { 'Pp2i01', 'Pp2i02', 'Pp2ib01', 'Pp2ib02', 'Pp2ib03', 'Pp2ib04' },
-    { 'Pp3i01', 'Pp3i02', 'Pp3ib01', 'Pp3ib02', 'Pp3ib03', 'Pp3ib04' },
-    { 'Pp4i01', 'Pp4i02', 'Pp4ib01', 'Pp4ib02', 'Pp4ib03', 'Pp4ib04' },
+    { FSA_TAG64("Pp1i01"), FSA_TAG64("Pp1i02"), FSA_TAG64("Pp1ib01"), FSA_TAG64("Pp1ib02"), FSA_TAG64("Pp1ib03"), FSA_TAG64("Pp1ib04") },
+    { FSA_TAG64("Pp2i01"), FSA_TAG64("Pp2i02"), FSA_TAG64("Pp2ib01"), FSA_TAG64("Pp2ib02"), FSA_TAG64("Pp2ib03"), FSA_TAG64("Pp2ib04") },
+    { FSA_TAG64("Pp3i01"), FSA_TAG64("Pp3i02"), FSA_TAG64("Pp3ib01"), FSA_TAG64("Pp3ib02"), FSA_TAG64("Pp3ib03"), FSA_TAG64("Pp3ib04") },
+    { FSA_TAG64("Pp4i01"), FSA_TAG64("Pp4i02"), FSA_TAG64("Pp4ib01"), FSA_TAG64("Pp4ib02"), FSA_TAG64("Pp4ib03"), FSA_TAG64("Pp4ib04") },
 };
 
 static const u64 lbl_8048EDE0[4][2] = {
-    { 'P11st01', 'P11st02' },
-    { 'P21st01', 'P21st02' },
-    { 'P31st01', 'P31st02' },
-    { 'P41st01', 'P41st02' },
+    { FSA_TAG64("P11st01"), FSA_TAG64("P11st02") },
+    { FSA_TAG64("P21st01"), FSA_TAG64("P21st02") },
+    { FSA_TAG64("P31st01"), FSA_TAG64("P31st02") },
+    { FSA_TAG64("P41st01"), FSA_TAG64("P41st02") },
 };
 
 static const u64 lbl_8048EE20[8] = {
-    'Pp1lf01', 'Pp1lf02', 'Pp1lf03', 'Pp1lf04', 'Pp1lf05', 'Pp1lf06', 'Pp1lf07', 'Pp1lf08',
+    FSA_TAG64("Pp1lf01"), FSA_TAG64("Pp1lf02"), FSA_TAG64("Pp1lf03"), FSA_TAG64("Pp1lf04"), FSA_TAG64("Pp1lf05"), FSA_TAG64("Pp1lf06"), FSA_TAG64("Pp1lf07"), FSA_TAG64("Pp1lf08"),
 };
 
 static const u64 lbl_8048EE60[8] = {
-    'Pp1lf09', 'Pp1lf10', 'Pp1lf11', 'Pp1lf12', 'Pp1lf13', 'Pp1lf14', 'Pp1lf15', 'Pp1lf16',
+    FSA_TAG64("Pp1lf09"), FSA_TAG64("Pp1lf10"), FSA_TAG64("Pp1lf11"), FSA_TAG64("Pp1lf12"), FSA_TAG64("Pp1lf13"), FSA_TAG64("Pp1lf14"), FSA_TAG64("Pp1lf15"), FSA_TAG64("Pp1lf16"),
 };
 
 static const u64 lbl_8048EEA0[8] = {
-    'Pp1lfk01', 'Pp1lfk02', 'Pp1lfk03', 'Pp1lfk04', 'Pp1lfk05', 'Pp1lfk06', 'Pp1lfk07', 'Pp1lfk08',
+    FSA_TAG64("Pp1lfk01"), FSA_TAG64("Pp1lfk02"), FSA_TAG64("Pp1lfk03"), FSA_TAG64("Pp1lfk04"), FSA_TAG64("Pp1lfk05"), FSA_TAG64("Pp1lfk06"), FSA_TAG64("Pp1lfk07"), FSA_TAG64("Pp1lfk08"),
 };
 
 static const u64 lbl_8048EEE0[8] = {
-    'Pp1lfk09', 'Pp1lfk10', 'Pp1lfk11', 'Pp1lfk12', 'Pp1lfk13', 'Pp1lfk14', 'Pp1lfk15', 'Pp1lfk16',
+    FSA_TAG64("Pp1lfk09"), FSA_TAG64("Pp1lfk10"), FSA_TAG64("Pp1lfk11"), FSA_TAG64("Pp1lfk12"), FSA_TAG64("Pp1lfk13"), FSA_TAG64("Pp1lfk14"), FSA_TAG64("Pp1lfk15"), FSA_TAG64("Pp1lfk16"),
 };
 
 static const u64 lbl_8048EF20[4] = {
-    'P11st02', 'P21st02', 'P31st02', 'P41st02',
+    FSA_TAG64("P11st02"), FSA_TAG64("P21st02"), FSA_TAG64("P31st02"), FSA_TAG64("P41st02"),
 };
 
 static const u64 lbl_8048EF40[4] = {
-    'P11st01', 'P21st01', 'P31st01', 'P41st01',
+    FSA_TAG64("P11st01"), FSA_TAG64("P21st01"), FSA_TAG64("P31st01"), FSA_TAG64("P41st01"),
 };
 
 static const u64 lbl_8048EF60[4] = {
-    'Pp1ra02', 'Pp2ra02', 'Pp3ra02', 'Pp4ra02',
+    FSA_TAG64("Pp1ra02"), FSA_TAG64("Pp2ra02"), FSA_TAG64("Pp3ra02"), FSA_TAG64("Pp4ra02"),
 };
 
 static const u64 lbl_8048EF80[4] = {
-    'Pp1ra01', 'Pp2ra01', 'Pp3ra01', 'Pp4ra01',
+    FSA_TAG64("Pp1ra01"), FSA_TAG64("Pp2ra01"), FSA_TAG64("Pp3ra01"), FSA_TAG64("Pp4ra01"),
 };
 
 static const u64 lbl_8048EFA0[4] = {
-    'Ndata01', 'Ndata04', 'Ndata07', 'Ndata10',
+    FSA_TAG64("Ndata01"), FSA_TAG64("Ndata04"), FSA_TAG64("Ndata07"), FSA_TAG64("Ndata10"),
 };
 
 static const u64 lbl_8048EFC0[4] = {
-    'Ndata20', 'Ndata21', 'Ndata22', 'Ndata23',
+    FSA_TAG64("Ndata20"), FSA_TAG64("Ndata21"), FSA_TAG64("Ndata22"), FSA_TAG64("Ndata23"),
 };
 
 static const u64 lbl_8048EFE0[4] = {
-    'Pp1noi02', 'Pp1noi03', 'Pp3noi02', 'Pp4noi02',
+    FSA_TAG64("Pp1noi02"), FSA_TAG64("Pp1noi03"), FSA_TAG64("Pp3noi02"), FSA_TAG64("Pp4noi02"),
 };
 
 static const u64 lbl_8048F000[4] = {
-    'Pp1noi01', 'Pp1noi04', 'Pp3noi01', 'Pp4noi01',
+    FSA_TAG64("Pp1noi01"), FSA_TAG64("Pp1noi04"), FSA_TAG64("Pp3noi01"), FSA_TAG64("Pp4noi01"),
 };
 
 static const u64 lbl_8048F020[4] = {
-    'Pp1iib03', 'Pp2iib03', 'Pp3iib03', 'Pp4iib03',
+    FSA_TAG64("Pp1iib03"), FSA_TAG64("Pp2iib03"), FSA_TAG64("Pp3iib03"), FSA_TAG64("Pp4iib03"),
 };
 
 static const u64 lbl_8048F040[4] = {
-    'Ndata03', 'Ndata06', 'Ndata09', 'Ndata12',
+    FSA_TAG64("Ndata03"), FSA_TAG64("Ndata06"), FSA_TAG64("Ndata09"), FSA_TAG64("Ndata12"),
 };
 
 static const u64 lbl_8048F060[4] = {
-    'Ndata02', 'Ndata05', 'Ndata08', 'Ndata11',
+    FSA_TAG64("Ndata02"), FSA_TAG64("Ndata05"), FSA_TAG64("Ndata08"), FSA_TAG64("Ndata11"),
 };
 
 static const u64 lbl_8048F080[4] = {
-    'Pp1nm04', 'Pp2nm04', 'Pp3nm04', 'Pp4nm04',
+    FSA_TAG64("Pp1nm04"), FSA_TAG64("Pp2nm04"), FSA_TAG64("Pp3nm04"), FSA_TAG64("Pp4nm04"),
 };
 
 static const u64 lbl_8048F0A0[4] = {
-    'Pp1nm03', 'Pp2nm03', 'Pp3nm03', 'Pp4nm03',
+    FSA_TAG64("Pp1nm03"), FSA_TAG64("Pp2nm03"), FSA_TAG64("Pp3nm03"), FSA_TAG64("Pp4nm03"),
 };
 
 static const u64 lbl_8048F0C0[4] = {
-    'Pp1nm02', 'Pp2nm02', 'Pp3nm02', 'Pp4nm02',
+    FSA_TAG64("Pp1nm02"), FSA_TAG64("Pp2nm02"), FSA_TAG64("Pp3nm02"), FSA_TAG64("Pp4nm02"),
 };
 
 static const u64 lbl_8048F0E0[4] = {
-    'Pp1nm01', 'Pp2nm01', 'Pp3nm01', 'Pp4nm01',
+    FSA_TAG64("Pp1nm01"), FSA_TAG64("Pp2nm01"), FSA_TAG64("Pp3nm01"), FSA_TAG64("Pp4nm01"),
 };
 
 static const u64 lbl_8048F100[3] = {
-    'Php1mb03', 'Php1mb01', 'Php1mb01',
+    FSA_TAG64("Php1mb03"), FSA_TAG64("Php1mb01"), FSA_TAG64("Php1mb01"),
 };
 
 static const u64 lbl_8048F118[4] = {
-    'Php1m04', 'Php1m03', 'Php1m02', 'Php1m01',
+    FSA_TAG64("Php1m04"), FSA_TAG64("Php1m03"), FSA_TAG64("Php1m02"), FSA_TAG64("Php1m01"),
 };
 
 static const u64 lbl_8048F138[4] = {
-    'Php1nm04', 'Php1nm03', 'Php1nm02', 'Php1nm01',
+    FSA_TAG64("Php1nm04"), FSA_TAG64("Php1nm03"), FSA_TAG64("Php1nm02"), FSA_TAG64("Php1nm01"),
 };
 
 static const u64 lbl_8048F158[6] = {
-    'Ptk01', 'Pt01', 'Ptk02', 'Pt02', 'Ptim01', 'Ptim02',
+    FSA_TAG64("Ptk01"), 'Pt01', FSA_TAG64("Ptk02"), 'Pt02', FSA_TAG64("Ptim01"), FSA_TAG64("Ptim02"),
 };
 
 static const f32 lbl_8048F188[10] = {
@@ -284,10 +284,10 @@ BattleHud_804B146C::BattleHud_804B146C()
     }
     mScreen = new J2DScreen();
     mScreen->setPriority("main_bat_ranking.blo", 0x1100000, lbl_80529DEC.mGame2DArchive_0x4c);
-    field_0x4->search('Pp1li01')->hide();
-    field_0x4->search('Pp2li01')->hide();
-    field_0x4->search('Pp3li01')->hide();
-    field_0x4->search('Pp4li01')->hide();
+    field_0x4->search(FSA_TAG64("Pp1li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp2li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp3li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp4li01"))->hide();
     field_0xf4 = field_0x4->search(lbl_8048E300[0][0])->getWidth();
     field_0x214 = static_cast<J2DPicture*>(field_0x4->search(lbl_8048EBE0[0][0]))->getBlack();
     field_0x210 = static_cast<J2DPicture*>(field_0x4->search(lbl_8048EBE0[0][0]))->getWhite();

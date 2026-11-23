@@ -126,11 +126,11 @@ void DvdErrorScreen_804B0F90::fn_80400DC4(u32 index) {
     size.x = 27.0f;
     size.y = 27.0f;
 
-    J2DTextBox tpane('TEXT1', JGeometry::TBox2f(0.0f, 0.0f, JGeometry::TVec2f(width, 200.0f)),
+    J2DTextBox tpane(FSA_TAG64("TEXT1"), JGeometry::TBox2f(0.0f, 0.0f, JGeometry::TVec2f(width, 200.0f)),
                      (const ResFONT*)lbl_80479F00, msg, -1, J2DHBIND_Center, J2DVBIND_Center);
-    J2DTextBox spane('TEXT2', JGeometry::TBox2f(0.0f, 0.0f, JGeometry::TVec2f(width, 200.0f)),
+    J2DTextBox spane(FSA_TAG64("TEXT2"), JGeometry::TBox2f(0.0f, 0.0f, JGeometry::TVec2f(width, 200.0f)),
                      (const ResFONT*)lbl_80479F00, msg, -1, J2DHBIND_Center, J2DVBIND_Center);
-    J2DPicture ppane('PICT1', JGeometry::TBox2f(0.0f, 0.0f, 665.0f, 530.0f), &lbl_80479C60.mHeader,
+    J2DPicture ppane(FSA_TAG64("PICT1"), JGeometry::TBox2f(0.0f, 0.0f, 665.0f, 530.0f), &lbl_80479C60.mHeader,
                      NULL);
 
     tpane.setFontSize(size);

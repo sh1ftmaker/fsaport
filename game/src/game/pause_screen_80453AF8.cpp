@@ -30,8 +30,8 @@ static inline void setRowColors(PauseScreen_804B1DA8* self, s32 selected) {
 // The bounce of the selected row: its two frame panes and its pane controller move by off, the other rows stay.
 static inline void bounceRows(PauseScreen_804B1DA8* self, s32 k) {
     f32 off = 5.0f * (f32)(k * k) / 25.0f;
-    self->mScreen->search('Pkenc01')->move(self->field_0x24[self->field_0x1c], self->field_0x30[self->field_0x1c] + off);
-    self->mScreen->search('Pkenc02')->move(self->field_0x3c[self->field_0x1c], self->field_0x48[self->field_0x1c] + off);
+    self->mScreen->search(FSA_TAG64("Pkenc01"))->move(self->field_0x24[self->field_0x1c], self->field_0x30[self->field_0x1c] + off);
+    self->mScreen->search(FSA_TAG64("Pkenc02"))->move(self->field_0x3c[self->field_0x1c], self->field_0x48[self->field_0x1c] + off);
     for (s32 i = 0; i < 3; i++) {
         if (i == self->field_0x1c) {
             self->field_0x10[i]->moveFromCentre_80402E08(0.0f, off);
@@ -45,10 +45,10 @@ PauseScreen_804B1DA8::PauseScreen_804B1DA8() {
     lbl_8053AF48 = this;
     mScreen = new J2DScreen;
     mScreen->setPriority("pause.blo", 0x1100000, lbl_80529DEC.mGame2DArchive_0x4c);
-    field_0x24[0] = mScreen->search('Pkenc01')->getBounds()->i.x;
-    field_0x30[0] = mScreen->search('Pkenc01')->getBounds()->i.y;
-    field_0x3c[0] = mScreen->search('Pkenc02')->getBounds()->i.x;
-    field_0x48[0] = mScreen->search('Pkenc02')->getBounds()->i.y;
+    field_0x24[0] = mScreen->search(FSA_TAG64("Pkenc01"))->getBounds()->i.x;
+    field_0x30[0] = mScreen->search(FSA_TAG64("Pkenc01"))->getBounds()->i.y;
+    field_0x3c[0] = mScreen->search(FSA_TAG64("Pkenc02"))->getBounds()->i.x;
+    field_0x48[0] = mScreen->search(FSA_TAG64("Pkenc02"))->getBounds()->i.y;
     f32 dx = mScreen->search(lbl_80491470[0])->getBounds()->i.x - field_0x24[0];
     f32 dy = field_0x3c[0] - mScreen->search(lbl_80491470[0])->getBounds()->f.x;
     field_0x24[1] = mScreen->search(lbl_80491470[1])->getBounds()->i.x - dx;
@@ -60,9 +60,9 @@ PauseScreen_804B1DA8::PauseScreen_804B1DA8() {
     field_0x3c[2] = dy + mScreen->search(lbl_80491470[2])->getBounds()->f.x;
     field_0x48[2] = mScreen->search(lbl_80491470[2])->getBounds()->i.y;
     field_0x8 = new PaneCtrl_804AF86C;
-    field_0x8->setPane_80402F04(mScreen->search('Pblack'));
+    field_0x8->setPane_80402F04(mScreen->search(FSA_TAG64("Pblack")));
     field_0xc = new PaneCtrl_804AF86C;
-    field_0xc->setPane_80402F04(mScreen->search('Ndata01'));
+    field_0xc->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata01")));
     for (s32 i = 0; i < 3; i++) {
         field_0x10[i] = new PaneCtrl_804AF86C;
         field_0x10[i]->setPane_80402F04(mScreen->search(lbl_80491470[i]));
@@ -112,7 +112,7 @@ void PauseScreen_804B1DA8::fn_80454A6C() {
     field_0xc->moveFromCentre_80402E08(0.0f, -480.0f);
     field_0xc->field_0x22 = 0;
     const ResTIMG* image = static_cast<const ResTIMG*>(getGame2DArchiveResource_80403084('TIMG', "kk_pCselect_01.bti"));
-    static_cast<J2DPicture*>(mScreen->search('Psc01'))->changeTexture(image, 0);
+    static_cast<J2DPicture*>(mScreen->search(FSA_TAG64("Psc01")))->changeTexture(image, 0);
     for (s32 i = 0; i < 3; i++) {
         if (i == field_0x1c) {
             static_cast<J2DPicture*>(mScreen->search(lbl_80491470[i]))->setWhite(JUtility::TColor(0xFF, 0xED, 0xA0, 0xFF));
@@ -278,8 +278,8 @@ s32 PauseScreen_804B1DA8::fn_80453B14() {
                 field_0xc->field_0x22 = 0;
                 field_0x1c = 0;
                 setRowColors(this, field_0x1c);
-                mScreen->search('Pkenc01')->move(field_0x24[field_0x1c], field_0x30[field_0x1c]);
-                mScreen->search('Pkenc02')->move(field_0x3c[field_0x1c], field_0x48[field_0x1c]);
+                mScreen->search(FSA_TAG64("Pkenc01"))->move(field_0x24[field_0x1c], field_0x30[field_0x1c]);
+                mScreen->search(FSA_TAG64("Pkenc02"))->move(field_0x3c[field_0x1c], field_0x48[field_0x1c]);
             }
             lbl_8053AEC0->fn_804310BC();
         }

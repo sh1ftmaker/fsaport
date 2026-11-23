@@ -37,7 +37,9 @@ void JASAudioThread::stop() {
 void *JASAudioThread::run() {
     OSInitFastCast();
     JASDriver::initAI(DMACallback);
-    JASDsp::boot(DSPCallback);
+#ifndef FSA_PORT
+    JASDsp::boot(DSPCallback);  // the port has no DSP to hand the microcode to (audio: platform, later)
+#endif
     JASDsp::initBuffer();
     JASDSPChannel::initAll();
     JASPoolAllocObject_MultiThreaded<JASChannel>::newMemPool(0x48);

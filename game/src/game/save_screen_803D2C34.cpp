@@ -38,7 +38,7 @@ static inline void touchCurrentFile() {
 }
 
 // The tags of the eight border panes.
-static const u64 lbl_80476F20[8] = {'Psl01', 'Psl02', 'Psl03', 'Psl04', 'Psl05', 'Psl06', 'Psl07', 'Psl08'};
+static const u64 lbl_80476F20[8] = {FSA_TAG64("Psl01"), FSA_TAG64("Psl02"), FSA_TAG64("Psl03"), FSA_TAG64("Psl04"), FSA_TAG64("Psl05"), FSA_TAG64("Psl06"), FSA_TAG64("Psl07"), FSA_TAG64("Psl08")};
 
 // FIXME(shotgun): 97.11 %, missing/extra; behaviour drift.
 SaveScreen_804B0288::SaveScreen_804B0288(JKRArchive* archive, bool flag) {
@@ -66,12 +66,12 @@ SaveScreen_804B0288::SaveScreen_804B0288(JKRArchive* archive, bool flag) {
     field_0x1b4 = 0;
     mScreen = new J2DScreen();
     mScreen->setPriority("save.blo", 0x1100000, archive);
-    mScreen->search('Paccur02')->setAlpha(0x9C);
+    mScreen->search(FSA_TAG64("Paccur02"))->setAlpha(0x9C);
     ResTIMG* black = (ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_black.bti");
     field_0x8 = new J2DPicture(black);
     field_0x8->setBlackWhite(JUtility::TColor(0xFF), JUtility::TColor(0));
-    field_0xc = static_cast<J2DTextBox*>(mScreen->search('Tsave01'));
-    field_0x10 = static_cast<J2DTextBox*>(mScreen->search('Tsave02'));
+    field_0xc = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsave01")));
+    field_0x10 = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tsave02")));
     field_0x58 = field_0xc->getBounds()->i.x;
     field_0x5c = field_0x10->getBounds()->i.x;
     field_0x60 = field_0xc->getBounds()->i.y;
@@ -82,22 +82,22 @@ SaveScreen_804B0288::SaveScreen_804B0288(JKRArchive* archive, bool flag) {
     field_0x70 = 0.0f;
     field_0xc->setFont(lbl_8053AD78->mFont);
     field_0x10->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tno01'))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mScreen->search('Tyes01'))->setFont(lbl_8053AD78->mFont);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tyes01'))->getStringPtr(), 0x11E, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search('Tno01'))->getStringPtr(), 0x11F, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tno01")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tyes01")))->setFont(lbl_8053AD78->mFont);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tyes01")))->getStringPtr(), 0x11E, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tno01")))->getStringPtr(), 0x11F, 0, NULL, NULL);
     field_0x14 = new PaneCtrl_804AF86C();
-    field_0x14->setPane_80402F04(mScreen->search('Psaback'));
+    field_0x14->setPane_80402F04(mScreen->search(FSA_TAG64("Psaback")));
     field_0x18 = new PaneCtrl_804AF86C();
-    field_0x18->setPane_80402F04(mScreen->search('Psabbk03'));
+    field_0x18->setPane_80402F04(mScreen->search(FSA_TAG64("Psabbk03")));
     field_0x1c[0] = new PaneCtrl_804AF86C();
-    field_0x1c[0]->setPane_80402F04(mScreen->search('Pyesb04'));
+    field_0x1c[0]->setPane_80402F04(mScreen->search(FSA_TAG64("Pyesb04")));
     field_0x1c[1] = new PaneCtrl_804AF86C();
-    field_0x1c[1]->setPane_80402F04(mScreen->search('Pnob04'));
+    field_0x1c[1]->setPane_80402F04(mScreen->search(FSA_TAG64("Pnob04")));
     field_0x24 = new PaneCtrl_804AF86C();
-    field_0x24->setPane_80402F04(mScreen->search('Ptopbb07'));
+    field_0x24->setPane_80402F04(mScreen->search(FSA_TAG64("Ptopbb07")));
     field_0x28 = new PaneCtrl_804AF86C();
-    field_0x28->setPane_80402F04(mScreen->search('Paccur02'));
+    field_0x28->setPane_80402F04(mScreen->search(FSA_TAG64("Paccur02")));
     for (s32 i = 0; i < 8; i++) {
         field_0x2c[i] = new PaneCtrl_804AF86C();
         field_0x2c[i]->setPane_80402F04(mScreen->search(lbl_80476F20[i]));
@@ -214,7 +214,7 @@ void SaveScreen_804B0288::fn_803D521C() {
             alpha = ratio * (f32)field_0x28->field_0x28;
         }
         field_0x28->mPane->setAlpha(alpha);
-        mScreen->search('Paccur01')->setAlpha(alpha);
+        mScreen->search(FSA_TAG64("Paccur01"))->setAlpha(alpha);
         if (field_0x2171 == 0) {
             field_0x28->moveFromCentre_80402E08(0.0f, bounce);
             field_0x1c[0]->moveFromCentre_80402E08(0.0f, bounce);
@@ -302,8 +302,8 @@ void SaveScreen_804B0288::fn_803D4DB0() {
             }
             strcpy(field_0x10->getStringPtr(), "");
         } else {
-            char* yes = static_cast<J2DTextBox*>(mScreen->search('Tyes01'))->getStringPtr();
-            char* no = static_cast<J2DTextBox*>(mScreen->search('Tno01'))->getStringPtr();
+            char* yes = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tyes01")))->getStringPtr();
+            char* no = static_cast<J2DTextBox*>(mScreen->search(FSA_TAG64("Tno01")))->getStringPtr();
             fn_80382B48(field_0x88, field_0x50, 0, yes, no);
             msg = field_0x50;
             if (msg == 0x6F || msg == 0x72 || msg == 0x76 || msg == 0x7B || msg == 0x7D || msg == 0x82 || msg == 0x86 ||

@@ -10,6 +10,7 @@ project(fsaport C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FSA_GAME ${CMAKE_SOURCE_DIR}/game)
+option(FSA_DEBUG_LINES "keep DWARF line tables in fsa.wasm (llvm-symbolizer)" ON)
 set(FSA_ASSETS ${CMAKE_SOURCE_DIR}/build/assets CACHE PATH "assets extracted by tools/extract_assets.py")
 
 # The emscripten toolchain can leave CMAKE_AR empty in subdirectory scopes
@@ -28,11 +29,13 @@ add_subdirectory(extern/aurora EXCLUDE_FROM_ALL)
 # Flags every unit gets; each unit's own include paths come from game/units.txt.
 add_library(fsa_game_flags INTERFACE)
 target_compile_options(fsa_game_flags INTERFACE
-  -nostdinc -fno-rtti -fno-exceptions -fsigned-char -ffp-contract=off
+  -nostdinc -fno-rtti -fno-exceptions -fsigned-char -ffp-contract=off -gline-tables-only
   -Wno-everything "SHELL:-include ${FSA_GAME}/port/port_prefix.h"
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
-target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1)
+target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1 $<$<BOOL:${FSA_TRACE}>:FSA_PORT_TRACE=1> $<$<BOOL:${FSA_NO_AUDIO}>:FSA_PORT_NO_AUDIO=1>)
+option(FSA_NO_AUDIO "skip JAudio initialisation (boot without sound)" ON)
+option(FSA_TRACE "temporary [trace] OSReports in the game code" ON)
 
 execute_process(COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/gen_units_cmake.py
                 ${FSA_GAME}/units.txt ${CMAKE_BINARY_DIR}/fsa_units.cmake)
@@ -47,7 +50,7 @@ add_library(fsa_platform STATIC ${FSA_PLATFORM_SOURCES})
 target_include_directories(fsa_platform PRIVATE platform
   ${FSA_GAME}/libs/sdk/include ${FSA_GAME}/include)
 target_compile_definitions(fsa_platform PRIVATE FSA_PORT=1 FSA_PLATFORM=1)
-target_compile_options(fsa_platform PRIVATE "SHELL:-include ${FSA_GAME}/port/port_prefix.h" -Wno-everything)
+target_compile_options(fsa_platform PRIVATE "SHELL:-include ${FSA_GAME}/port/port_prefix.h" -Wno-everything -gline-tables-only)
 target_link_libraries(fsa_platform PRIVATE aurora::core)
 
 # Glue built against Aurora's own headers (not the decomp's SDK headers).
@@ -73,7 +76,8 @@ target_link_options(fsa PRIVATE
   "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
-  --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map)
+  --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map
+  $<$<BOOL:${FSA_DEBUG_LINES}>:-g -O1>)
 set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js)
 add_custom_command(TARGET fsa POST_BUILD

@@ -881,3 +881,20 @@ void J2DPane::updateTransform(const J2DAnmTransform* transform)
         calcMtx();
     }
 }
+
+#ifdef FSA_PORT_TRACE
+void J2DPane::portDumpTree(int depth)
+{
+    char tag[9];
+    for (int i = 0; i < 8; i++) {
+        char c = (char)(mTag >> (56 - 8 * i));
+        tag[i] = (c >= 32 && c < 127) ? c : '.';
+    }
+    tag[8] = 0;
+    OSReport("[trace] %*spane %p tag %016llx '%s' vis %d bounds %.0f,%.0f-%.0f,%.0f\n", depth * 2, "", this,
+             (unsigned long long)mTag, tag, (int)mIsVisible, mBounds.i.x, mBounds.i.y, mBounds.f.x, mBounds.f.y);
+    for (JSUTreeIterator<J2DPane> it = mTree.getFirstChild(); it != mTree.getEndChild(); ++it)
+        if (depth < 6)
+            it->portDumpTree(depth + 1);
+}
+#endif

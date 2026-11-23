@@ -61,117 +61,117 @@ static const s32 lbl_80478AA0[30] = {
     0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6,
 };
 static const u64 lbl_80478B18[20] = {
-    'Pmbabb07', 'Pmbabb06', 'Pmbabb05', 'Pmbabb04', 'Pmbabb03', 'Pmbabb02', 'Pmbabb01', 'Pmbab05', 'Pmbab04',
-    'Pmbab03', 'Pmbab02', 'Pmbab01', 'Pmbam02', 'Pmbam01', 'Pmbalk02', 'Pmbal02', 'Pmbalk01', 'Pmbal01', 'Pmba02',
-    'Pmba01',
+    FSA_TAG64("Pmbabb07"), FSA_TAG64("Pmbabb06"), FSA_TAG64("Pmbabb05"), FSA_TAG64("Pmbabb04"), FSA_TAG64("Pmbabb03"), FSA_TAG64("Pmbabb02"), FSA_TAG64("Pmbabb01"), FSA_TAG64("Pmbab05"), FSA_TAG64("Pmbab04"),
+    FSA_TAG64("Pmbab03"), FSA_TAG64("Pmbab02"), FSA_TAG64("Pmbab01"), FSA_TAG64("Pmbam02"), FSA_TAG64("Pmbam01"), FSA_TAG64("Pmbalk02"), FSA_TAG64("Pmbal02"), FSA_TAG64("Pmbalk01"), FSA_TAG64("Pmbal01"), FSA_TAG64("Pmba02"),
+    FSA_TAG64("Pmba01"),
 };
 static const u64 lbl_80478BB8[3][6] = {
-    {'Pnop03', 'Pnop04', 'Pnopb05', 'Pnopb06', 'Pnopb07', 'Pnopb08'},
-    {'Pnop05', 'Pnop06', 'Pnopb09', 'Pnopb10', 'Pnopb11', 'Pnopb12'},
-    {'Pnop07', 'Pnop08', 'Pnopb13', 'Pnopb14', 'Pnopb15', 'Pnopb16'},
+    {FSA_TAG64("Pnop03"), FSA_TAG64("Pnop04"), FSA_TAG64("Pnopb05"), FSA_TAG64("Pnopb06"), FSA_TAG64("Pnopb07"), FSA_TAG64("Pnopb08")},
+    {FSA_TAG64("Pnop05"), FSA_TAG64("Pnop06"), FSA_TAG64("Pnopb09"), FSA_TAG64("Pnopb10"), FSA_TAG64("Pnopb11"), FSA_TAG64("Pnopb12")},
+    {FSA_TAG64("Pnop07"), FSA_TAG64("Pnop08"), FSA_TAG64("Pnopb13"), FSA_TAG64("Pnopb14"), FSA_TAG64("Pnopb15"), FSA_TAG64("Pnopb16")},
 };
 static const u64 lbl_80478C48[24] = {
-    'Plibl02', 'Plibl03', 'Plibl04', 'Plw01', 'Plw02', 'Plw03', 'Plw04', 'Plw05', 'Plw06', 'Plw07', 'Plw08', 'Plw09',
-    'Plw10', 'Plili02', 'Plili03', 'Plili04', 'Plib01', 'Plib02', 'Plib03', 'Plib04', 'Plib05', 'Plibk01', 'Plibk02',
-    'Plibk03',
+    FSA_TAG64("Plibl02"), FSA_TAG64("Plibl03"), FSA_TAG64("Plibl04"), FSA_TAG64("Plw01"), FSA_TAG64("Plw02"), FSA_TAG64("Plw03"), FSA_TAG64("Plw04"), FSA_TAG64("Plw05"), FSA_TAG64("Plw06"), FSA_TAG64("Plw07"), FSA_TAG64("Plw08"), FSA_TAG64("Plw09"),
+    FSA_TAG64("Plw10"), FSA_TAG64("Plili02"), FSA_TAG64("Plili03"), FSA_TAG64("Plili04"), FSA_TAG64("Plib01"), FSA_TAG64("Plib02"), FSA_TAG64("Plib03"), FSA_TAG64("Plib04"), FSA_TAG64("Plib05"), FSA_TAG64("Plibk01"), FSA_TAG64("Plibk02"),
+    FSA_TAG64("Plibk03"),
 };
 static const u64 lbl_80478D08[18] = {
-    'P2pli01', 'P2pli02', 'P2pli03', 'P2pli04', 'P3pli01', 'P3pli02', 'P3pli03', 'P3pli04', 'P3pli05', 'P3pli06',
-    'P4pli01', 'P4pli02', 'P4pli03', 'P4pli04', 'P4pli05', 'P4pli06', 'P4pli07', 'P4pli08',
+    FSA_TAG64("P2pli01"), FSA_TAG64("P2pli02"), FSA_TAG64("P2pli03"), FSA_TAG64("P2pli04"), FSA_TAG64("P3pli01"), FSA_TAG64("P3pli02"), FSA_TAG64("P3pli03"), FSA_TAG64("P3pli04"), FSA_TAG64("P3pli05"), FSA_TAG64("P3pli06"),
+    FSA_TAG64("P4pli01"), FSA_TAG64("P4pli02"), FSA_TAG64("P4pli03"), FSA_TAG64("P4pli04"), FSA_TAG64("P4pli05"), FSA_TAG64("P4pli06"), FSA_TAG64("P4pli07"), FSA_TAG64("P4pli08"),
 };
 static const u64 lbl_80478D98[11] = {
-    'Ttkg01', 'Ttkg02', 'Ptkgb01', 'Ptkgbk01', 'Ptkgb02', 'Ptkgbk02', 'Ptkgb03', 'Ptkgb04', 'Ptkgb05', 'Ptkgbk03',
-    'Ptkgbk04',
+    FSA_TAG64("Ttkg01"), FSA_TAG64("Ttkg02"), FSA_TAG64("Ptkgb01"), FSA_TAG64("Ptkgbk01"), FSA_TAG64("Ptkgb02"), FSA_TAG64("Ptkgbk02"), FSA_TAG64("Ptkgb03"), FSA_TAG64("Ptkgb04"), FSA_TAG64("Ptkgb05"), FSA_TAG64("Ptkgbk03"),
+    FSA_TAG64("Ptkgbk04"),
 };
 static const u64 lbl_80478DF0[6] = {
-    'Tten01', 'Tten02', 'Ptgba01', 'Ptgba02', 'Ptn01', 'Ptn02',
+    FSA_TAG64("Tten01"), FSA_TAG64("Tten02"), FSA_TAG64("Ptgba01"), FSA_TAG64("Ptgba02"), FSA_TAG64("Ptn01"), FSA_TAG64("Ptn02"),
 };
 static const u64 lbl_80478E20[34] = {
-    'Pcgps01', 'Pcgp01', 'Pcgba01', 'Pcgbak01', 'Pcgps02', 'Pcgp02', 'Pcgba02', 'Pcgbak02', 'Pcgps03', 'Pcgp03',
-    'Pcgba03', 'Pcgbak03', 'Pcgps04', 'Pcgp04', 'Pcgba04', 'Pcgbak04', 'Pcc01', 'Pccaa01', 'Pcc02', 'Pccaa02',
-    'Pcc03', 'Pccaa03', 'Pcc04', 'Pccaa04', 'Pcca01', 'Pcca02', 'Pcca03', 'Pcca04', 'Pcca05', 'Pcca06', 'Pcca07',
-    'Pcca08', 'Pccu01', 'Pccuk01',
+    FSA_TAG64("Pcgps01"), FSA_TAG64("Pcgp01"), FSA_TAG64("Pcgba01"), FSA_TAG64("Pcgbak01"), FSA_TAG64("Pcgps02"), FSA_TAG64("Pcgp02"), FSA_TAG64("Pcgba02"), FSA_TAG64("Pcgbak02"), FSA_TAG64("Pcgps03"), FSA_TAG64("Pcgp03"),
+    FSA_TAG64("Pcgba03"), FSA_TAG64("Pcgbak03"), FSA_TAG64("Pcgps04"), FSA_TAG64("Pcgp04"), FSA_TAG64("Pcgba04"), FSA_TAG64("Pcgbak04"), FSA_TAG64("Pcc01"), FSA_TAG64("Pccaa01"), FSA_TAG64("Pcc02"), FSA_TAG64("Pccaa02"),
+    FSA_TAG64("Pcc03"), FSA_TAG64("Pccaa03"), FSA_TAG64("Pcc04"), FSA_TAG64("Pccaa04"), FSA_TAG64("Pcca01"), FSA_TAG64("Pcca02"), FSA_TAG64("Pcca03"), FSA_TAG64("Pcca04"), FSA_TAG64("Pcca05"), FSA_TAG64("Pcca06"), FSA_TAG64("Pcca07"),
+    FSA_TAG64("Pcca08"), FSA_TAG64("Pccu01"), FSA_TAG64("Pccuk01"),
 };
 static const u64 lbl_80478F30[4][9] = {
-    {'Ppln01', 'Pplli01', 'Ppllb01', 'Ppllb02', 'Ppllb03', 'Ppllb04', 'Ppllb05', 'Ppllbk01', 'Ppllbk02'},
-    {'Ppln02', 'Pplli02', 'Ppllb11', 'Ppllb12', 'Ppllb13', 'Ppllb14', 'Ppllb15', 'Ppllbk11', 'Ppllbk12'},
-    {'Ppln03', 'Pplli03', 'Ppllb21', 'Ppllb22', 'Ppllb23', 'Ppllb24', 'Ppllb25', 'Ppllbk21', 'Ppllbk22'},
-    {'Ppln04', 'Pplli04', 'Ppllb31', 'Ppllb32', 'Ppllb33', 'Ppllb34', 'Ppllb35', 'Ppllbk31', 'Ppllbk32'},
+    {FSA_TAG64("Ppln01"), FSA_TAG64("Pplli01"), FSA_TAG64("Ppllb01"), FSA_TAG64("Ppllb02"), FSA_TAG64("Ppllb03"), FSA_TAG64("Ppllb04"), FSA_TAG64("Ppllb05"), FSA_TAG64("Ppllbk01"), FSA_TAG64("Ppllbk02")},
+    {FSA_TAG64("Ppln02"), FSA_TAG64("Pplli02"), FSA_TAG64("Ppllb11"), FSA_TAG64("Ppllb12"), FSA_TAG64("Ppllb13"), FSA_TAG64("Ppllb14"), FSA_TAG64("Ppllb15"), FSA_TAG64("Ppllbk11"), FSA_TAG64("Ppllbk12")},
+    {FSA_TAG64("Ppln03"), FSA_TAG64("Pplli03"), FSA_TAG64("Ppllb21"), FSA_TAG64("Ppllb22"), FSA_TAG64("Ppllb23"), FSA_TAG64("Ppllb24"), FSA_TAG64("Ppllb25"), FSA_TAG64("Ppllbk21"), FSA_TAG64("Ppllbk22")},
+    {FSA_TAG64("Ppln04"), FSA_TAG64("Pplli04"), FSA_TAG64("Ppllb31"), FSA_TAG64("Ppllb32"), FSA_TAG64("Ppllb33"), FSA_TAG64("Ppllb34"), FSA_TAG64("Ppllb35"), FSA_TAG64("Ppllbk31"), FSA_TAG64("Ppllbk32")},
 };
 static const u64 lbl_80479050[20] = {
-    'Pmbabb07', 'Pmbabb06', 'Pmbabb05', 'Pmbabb04', 'Pmbabb03', 'Pmbabb02', 'Pmbabb01', 'Pmbab05', 'Pmbab04',
-    'Pmbab03', 'Pmbab02', 'Pmbab01', 'Pmbam02', 'Pmbam01', 'Pmbalk02', 'Pmbal02', 'Pmbalk01', 'Pmbal01', 'Pmba02',
-    'Pmba01',
+    FSA_TAG64("Pmbabb07"), FSA_TAG64("Pmbabb06"), FSA_TAG64("Pmbabb05"), FSA_TAG64("Pmbabb04"), FSA_TAG64("Pmbabb03"), FSA_TAG64("Pmbabb02"), FSA_TAG64("Pmbabb01"), FSA_TAG64("Pmbab05"), FSA_TAG64("Pmbab04"),
+    FSA_TAG64("Pmbab03"), FSA_TAG64("Pmbab02"), FSA_TAG64("Pmbab01"), FSA_TAG64("Pmbam02"), FSA_TAG64("Pmbam01"), FSA_TAG64("Pmbalk02"), FSA_TAG64("Pmbal02"), FSA_TAG64("Pmbalk01"), FSA_TAG64("Pmbal01"), FSA_TAG64("Pmba02"),
+    FSA_TAG64("Pmba01"),
 };
 static const u64 lbl_804790F0[3][5] = {
-    {'Tsta01', 'Pstab01', 'Pstab02', 'Pstab03', 'Pstab04'},
-    {'Than01', 'Phanb01', 'Phanb02', 'Phanb03', 'Phanb04'},
-    {'Trule01', 'Prub01', 'Prub02', 'Prub03', 'Prub04'},
+    {FSA_TAG64("Tsta01"), FSA_TAG64("Pstab01"), FSA_TAG64("Pstab02"), FSA_TAG64("Pstab03"), FSA_TAG64("Pstab04")},
+    {FSA_TAG64("Than01"), FSA_TAG64("Phanb01"), FSA_TAG64("Phanb02"), FSA_TAG64("Phanb03"), FSA_TAG64("Phanb04")},
+    {FSA_TAG64("Trule01"), FSA_TAG64("Prub01"), FSA_TAG64("Prub02"), FSA_TAG64("Prub03"), FSA_TAG64("Prub04")},
 };
 static const u64 lbl_80479168[26] = {
-    'Pcon01', 'Pcon02', 'Pgba01', 'Pgba02', 'Pnop01', 'Pnop02', 'Plwa01', 'Plwa02', 'Plwa03', 'Plwa04', 'Plwa05',
-    'Plwa06', 'Plwa07', 'Plwa08', 'Plwa09', 'Plwa10', 'Plibk01', 'Plibk02', 'Plibk03', 'Plibk04', 'Plibk11',
-    'Plibk12', 'Plibk05', 'Plibkk01', 'Plibkk02', 'Plibkk03',
+    FSA_TAG64("Pcon01"), FSA_TAG64("Pcon02"), FSA_TAG64("Pgba01"), FSA_TAG64("Pgba02"), FSA_TAG64("Pnop01"), FSA_TAG64("Pnop02"), FSA_TAG64("Plwa01"), FSA_TAG64("Plwa02"), FSA_TAG64("Plwa03"), FSA_TAG64("Plwa04"), FSA_TAG64("Plwa05"),
+    FSA_TAG64("Plwa06"), FSA_TAG64("Plwa07"), FSA_TAG64("Plwa08"), FSA_TAG64("Plwa09"), FSA_TAG64("Plwa10"), FSA_TAG64("Plibk01"), FSA_TAG64("Plibk02"), FSA_TAG64("Plibk03"), FSA_TAG64("Plibk04"), FSA_TAG64("Plibk11"),
+    FSA_TAG64("Plibk12"), FSA_TAG64("Plibk05"), FSA_TAG64("Plibkk01"), FSA_TAG64("Plibkk02"), FSA_TAG64("Plibkk03"),
 };
 static const u64 lbl_80479238[4] = {
-    'Pplli01', 'Pplli02', 'Pplli03', 'Pplli04',
+    FSA_TAG64("Pplli01"), FSA_TAG64("Pplli02"), FSA_TAG64("Pplli03"), FSA_TAG64("Pplli04"),
 };
 static const u64 lbl_80479258[4] = {
-    'Pcgbak01', 'Pcgbak02', 'Pcgbak03', 'Pcgbak04',
+    FSA_TAG64("Pcgbak01"), FSA_TAG64("Pcgbak02"), FSA_TAG64("Pcgbak03"), FSA_TAG64("Pcgbak04"),
 };
 static const u64 lbl_80479278[4] = {
-    'Pcgba01', 'Pcgba02', 'Pcgba03', 'Pcgba04',
+    FSA_TAG64("Pcgba01"), FSA_TAG64("Pcgba02"), FSA_TAG64("Pcgba03"), FSA_TAG64("Pcgba04"),
 };
 static const u64 lbl_80479298[4] = {
-    'Pcgp01', 'Pcgp02', 'Pcgp03', 'Pcgp04',
+    FSA_TAG64("Pcgp01"), FSA_TAG64("Pcgp02"), FSA_TAG64("Pcgp03"), FSA_TAG64("Pcgp04"),
 };
 static const u64 lbl_804792B8[4] = {
-    'Pcgps01', 'Pcgps02', 'Pcgps03', 'Pcgps04',
+    FSA_TAG64("Pcgps01"), FSA_TAG64("Pcgps02"), FSA_TAG64("Pcgps03"), FSA_TAG64("Pcgps04"),
 };
 static const u64 lbl_804792D8[4] = {
-    'Ppln01', 'Ppln02', 'Ppln03', 'Ppln04',
+    FSA_TAG64("Ppln01"), FSA_TAG64("Ppln02"), FSA_TAG64("Ppln03"), FSA_TAG64("Ppln04"),
 };
 static const u64 lbl_804792F8[4][4] = {
-    {'Pcc01', 'Pccaa01', 'Pcca01', 'Pcca02'},
-    {'Pcc02', 'Pccaa02', 'Pcca03', 'Pcca04'},
-    {'Pcc03', 'Pccaa03', 'Pcca05', 'Pcca06'},
-    {'Pcc04', 'Pccaa04', 'Pcca07', 'Pcca08'},
+    {FSA_TAG64("Pcc01"), FSA_TAG64("Pccaa01"), FSA_TAG64("Pcca01"), FSA_TAG64("Pcca02")},
+    {FSA_TAG64("Pcc02"), FSA_TAG64("Pccaa02"), FSA_TAG64("Pcca03"), FSA_TAG64("Pcca04")},
+    {FSA_TAG64("Pcc03"), FSA_TAG64("Pccaa03"), FSA_TAG64("Pcca05"), FSA_TAG64("Pcca06")},
+    {FSA_TAG64("Pcc04"), FSA_TAG64("Pccaa04"), FSA_TAG64("Pcca07"), FSA_TAG64("Pcca08")},
 };
 static const u64 lbl_80479378[4] = {
-    'Par01', 'Par02', 'Par03', 'Par04',
+    FSA_TAG64("Par01"), FSA_TAG64("Par02"), FSA_TAG64("Par03"), FSA_TAG64("Par04"),
 };
 static const u64 lbl_80479398[4] = {
-    'Ndatay01', 'Ndatay02', 'Ndatay03', 'Ndatay04',
+    FSA_TAG64("Ndatay01"), FSA_TAG64("Ndatay02"), FSA_TAG64("Ndatay03"), FSA_TAG64("Ndatay04"),
 };
 static const u64 lbl_804793B8[4] = {
-    'Pbcur01', 'Pbcur02', 'Pbcur03', 'Pbcur04',
+    FSA_TAG64("Pbcur01"), FSA_TAG64("Pbcur02"), FSA_TAG64("Pbcur03"), FSA_TAG64("Pbcur04"),
 };
 static const u64 lbl_804793D8[4] = {
-    'Pscur01', 'Pscur02', 'Pscur03', 'Pscur04',
+    FSA_TAG64("Pscur01"), FSA_TAG64("Pscur02"), FSA_TAG64("Pscur03"), FSA_TAG64("Pscur04"),
 };
 static const u64 lbl_804793F8[4] = {
-    'Paccur02', 'Paccur04', 'Paccur06', 'Paccur08',
+    FSA_TAG64("Paccur02"), FSA_TAG64("Paccur04"), FSA_TAG64("Paccur06"), FSA_TAG64("Paccur08"),
 };
 static const u64 lbl_80479418[4] = {
-    'Paccur01', 'Paccur03', 'Paccur05', 'Paccur07',
+    FSA_TAG64("Paccur01"), FSA_TAG64("Paccur03"), FSA_TAG64("Paccur05"), FSA_TAG64("Paccur07"),
 };
 static const u64 lbl_80479438[4] = {
-    'P1s03', 'P2s03', 'P3s03', 'P4s03',
+    FSA_TAG64("P1s03"), FSA_TAG64("P2s03"), FSA_TAG64("P3s03"), FSA_TAG64("P4s03"),
 };
 static const u64 lbl_80479458[4] = {
-    'P1sk03', 'P2sk03', 'P3sk03', 'P4sk03',
+    FSA_TAG64("P1sk03"), FSA_TAG64("P2sk03"), FSA_TAG64("P3sk03"), FSA_TAG64("P4sk03"),
 };
 static const u64 lbl_80479478[4] = {
-    'P1s02', 'P2s02', 'P3s02', 'P4s02',
+    FSA_TAG64("P1s02"), FSA_TAG64("P2s02"), FSA_TAG64("P3s02"), FSA_TAG64("P4s02"),
 };
 static const u64 lbl_80479498[4] = {
-    'P1sk02', 'P2sk02', 'P3sk02', 'P4sk02',
+    FSA_TAG64("P1sk02"), FSA_TAG64("P2sk02"), FSA_TAG64("P3sk02"), FSA_TAG64("P4sk02"),
 };
 static const u64 lbl_804794B8[4] = {
-    'P1s01', 'P2s01', 'P3s01', 'P4s01',
+    FSA_TAG64("P1s01"), FSA_TAG64("P2s01"), FSA_TAG64("P3s01"), FSA_TAG64("P4s01"),
 };
 static const u64 lbl_804794D8[4] = {
-    'P1sk01', 'P2sk01', 'P3sk01', 'P4sk01',
+    FSA_TAG64("P1sk01"), FSA_TAG64("P2sk01"), FSA_TAG64("P3sk01"), FSA_TAG64("P4sk01"),
 };
 // The rupee digit textures (the strings are emitted here, between the tag
 // tables, as in game/adv_entry_screen_803E1668.cpp).
@@ -181,45 +181,45 @@ static const char* lbl_804B0EE8[10] = {
     "kk_rupyNum_08.bti", "kk_rupyNum_09.bti",
 };
 static const u64 lbl_804795C0[4][6] = {
-    {'Pp1lf01', 'Pp1lf02', 'Pp1lf03', 'Pp1lf04', 'Pp1lf05', 'Pp1lf06'},
-    {'Pp2lf01', 'Pp2lf02', 'Pp2lf03', 'Pp2lf04', 'Pp2lf05', 'Pp2lf06'},
-    {'Pp3lf01', 'Pp3lf02', 'Pp3lf03', 'Pp3lf04', 'Pp3lf05', 'Pp3lf06'},
-    {'Pp4lf01', 'Pp4lf02', 'Pp4lf03', 'Pp4lf04', 'Pp4lf05', 'Pp4lf06'},
+    {FSA_TAG64("Pp1lf01"), FSA_TAG64("Pp1lf02"), FSA_TAG64("Pp1lf03"), FSA_TAG64("Pp1lf04"), FSA_TAG64("Pp1lf05"), FSA_TAG64("Pp1lf06")},
+    {FSA_TAG64("Pp2lf01"), FSA_TAG64("Pp2lf02"), FSA_TAG64("Pp2lf03"), FSA_TAG64("Pp2lf04"), FSA_TAG64("Pp2lf05"), FSA_TAG64("Pp2lf06")},
+    {FSA_TAG64("Pp3lf01"), FSA_TAG64("Pp3lf02"), FSA_TAG64("Pp3lf03"), FSA_TAG64("Pp3lf04"), FSA_TAG64("Pp3lf05"), FSA_TAG64("Pp3lf06")},
+    {FSA_TAG64("Pp4lf01"), FSA_TAG64("Pp4lf02"), FSA_TAG64("Pp4lf03"), FSA_TAG64("Pp4lf04"), FSA_TAG64("Pp4lf05"), FSA_TAG64("Pp4lf06")},
 };
 static const u64 lbl_80479680[4][6] = {
-    {'Pp1lfk01', 'Pp1lfk02', 'Pp1lfk03', 'Pp1lfk04', 'Pp1lfk05', 'Pp1lfk06'},
-    {'Pp2lfk01', 'Pp2lfk02', 'Pp2lfk03', 'Pp2lfk04', 'Pp2lfk05', 'Pp2lfk06'},
-    {'Pp3lfk01', 'Pp3lfk02', 'Pp3lfk03', 'Pp3lfk04', 'Pp3lfk05', 'Pp3lfk06'},
-    {'Pp4lfk01', 'Pp4lfk02', 'Pp4lfk03', 'Pp4lfk04', 'Pp4lfk05', 'Pp4lfk06'},
+    {FSA_TAG64("Pp1lfk01"), FSA_TAG64("Pp1lfk02"), FSA_TAG64("Pp1lfk03"), FSA_TAG64("Pp1lfk04"), FSA_TAG64("Pp1lfk05"), FSA_TAG64("Pp1lfk06")},
+    {FSA_TAG64("Pp2lfk01"), FSA_TAG64("Pp2lfk02"), FSA_TAG64("Pp2lfk03"), FSA_TAG64("Pp2lfk04"), FSA_TAG64("Pp2lfk05"), FSA_TAG64("Pp2lfk06")},
+    {FSA_TAG64("Pp3lfk01"), FSA_TAG64("Pp3lfk02"), FSA_TAG64("Pp3lfk03"), FSA_TAG64("Pp3lfk04"), FSA_TAG64("Pp3lfk05"), FSA_TAG64("Pp3lfk06")},
+    {FSA_TAG64("Pp4lfk01"), FSA_TAG64("Pp4lfk02"), FSA_TAG64("Pp4lfk03"), FSA_TAG64("Pp4lfk04"), FSA_TAG64("Pp4lfk05"), FSA_TAG64("Pp4lfk06")},
 };
 static const u64 lbl_80479740[4][6] = {
-    {'Pp1lf09', 'Pp1lf10', 'Pp1lf11', 'Pp1lf12', 'Pp1lf13', 'Pp1lf14'},
-    {'Pp2lf09', 'Pp2lf10', 'Pp2lf11', 'Pp2lf12', 'Pp2lf13', 'Pp2lf14'},
-    {'Pp3lf09', 'Pp3lf10', 'Pp3lf11', 'Pp3lf12', 'Pp3lf13', 'Pp3lf14'},
-    {'Pp4lf09', 'Pp4lf10', 'Pp4lf11', 'Pp4lf12', 'Pp4lf13', 'Pp4lf14'},
+    {FSA_TAG64("Pp1lf09"), FSA_TAG64("Pp1lf10"), FSA_TAG64("Pp1lf11"), FSA_TAG64("Pp1lf12"), FSA_TAG64("Pp1lf13"), FSA_TAG64("Pp1lf14")},
+    {FSA_TAG64("Pp2lf09"), FSA_TAG64("Pp2lf10"), FSA_TAG64("Pp2lf11"), FSA_TAG64("Pp2lf12"), FSA_TAG64("Pp2lf13"), FSA_TAG64("Pp2lf14")},
+    {FSA_TAG64("Pp3lf09"), FSA_TAG64("Pp3lf10"), FSA_TAG64("Pp3lf11"), FSA_TAG64("Pp3lf12"), FSA_TAG64("Pp3lf13"), FSA_TAG64("Pp3lf14")},
+    {FSA_TAG64("Pp4lf09"), FSA_TAG64("Pp4lf10"), FSA_TAG64("Pp4lf11"), FSA_TAG64("Pp4lf12"), FSA_TAG64("Pp4lf13"), FSA_TAG64("Pp4lf14")},
 };
 static const u64 lbl_80479800[4][6] = {
-    {'Pp1lfk09', 'Pp1lfk10', 'Pp1lfk11', 'Pp1lfk12', 'Pp1lfk13', 'Pp1lfk14'},
-    {'Pp2lfk09', 'Pp2lfk10', 'Pp2lfk11', 'Pp2lfk12', 'Pp2lfk13', 'Pp2lfk14'},
-    {'Pp3lfk09', 'Pp3lfk10', 'Pp3lfk11', 'Pp3lfk12', 'Pp3lfk13', 'Pp3lfk14'},
-    {'Pp4lfk09', 'Pp4lfk10', 'Pp4lfk11', 'Pp4lfk12', 'Pp4lfk13', 'Pp4lfk14'},
+    {FSA_TAG64("Pp1lfk09"), FSA_TAG64("Pp1lfk10"), FSA_TAG64("Pp1lfk11"), FSA_TAG64("Pp1lfk12"), FSA_TAG64("Pp1lfk13"), FSA_TAG64("Pp1lfk14")},
+    {FSA_TAG64("Pp2lfk09"), FSA_TAG64("Pp2lfk10"), FSA_TAG64("Pp2lfk11"), FSA_TAG64("Pp2lfk12"), FSA_TAG64("Pp2lfk13"), FSA_TAG64("Pp2lfk14")},
+    {FSA_TAG64("Pp3lfk09"), FSA_TAG64("Pp3lfk10"), FSA_TAG64("Pp3lfk11"), FSA_TAG64("Pp3lfk12"), FSA_TAG64("Pp3lfk13"), FSA_TAG64("Pp3lfk14")},
+    {FSA_TAG64("Pp4lfk09"), FSA_TAG64("Pp4lfk10"), FSA_TAG64("Pp4lfk11"), FSA_TAG64("Pp4lfk12"), FSA_TAG64("Pp4lfk13"), FSA_TAG64("Pp4lfk14")},
 };
 static const u64 lbl_804798C0[3] = {
-    'Pnopb08', 'Pnopb12', 'Pnopb16',
+    FSA_TAG64("Pnopb08"), FSA_TAG64("Pnopb12"), FSA_TAG64("Pnopb16"),
 };
 static const u64 lbl_804798D8[3] = {
-    'Plibl02', 'Plibl03', 'Plibl04',
+    FSA_TAG64("Plibl02"), FSA_TAG64("Plibl03"), FSA_TAG64("Plibl04"),
 };
 static const u64 lbl_804798F0[3] = {
-    'Plili02', 'Plili03', 'Plili04',
+    FSA_TAG64("Plili02"), FSA_TAG64("Plili03"), FSA_TAG64("Plili04"),
 };
 static const u64 lbl_80479908[3] = {
-    'Pblk01', 'Pblk02', 'Pblk03',
+    FSA_TAG64("Pblk01"), FSA_TAG64("Pblk02"), FSA_TAG64("Pblk03"),
 };
 static const u64 lbl_80479920[3][4] = {
-    {'P2pli01', 'P2pli02', 0, 0},
-    {'P3pli01', 'P3pli02', 'P3pli03', 0},
-    {'P4pli01', 'P4pli02', 'P4pli03', 'P4pli04'},
+    {FSA_TAG64("P2pli01"), FSA_TAG64("P2pli02"), 0, 0},
+    {FSA_TAG64("P3pli01"), FSA_TAG64("P3pli02"), FSA_TAG64("P3pli03"), 0},
+    {FSA_TAG64("P4pli01"), FSA_TAG64("P4pli02"), FSA_TAG64("P4pli03"), FSA_TAG64("P4pli04")},
 };
 
 // A pane's initial alpha scaled by rate. The constructor fades every pane
@@ -452,7 +452,7 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
         mArrowAnimScreens_0x18[i]->setPriority("entry_arrow_anim.blo", 0x1100000, lbl_80529DEC.mEntryArchive_0x28);
         mConnectAnimScreens_0x28[i] = new J2DScreen;
         mConnectAnimScreens_0x28[i]->setPriority("entry_connect_anim.blo", 0x1100000, lbl_80529DEC.mEntryArchive_0x28);
-        static_cast<J2DPicture*>(mConnectAnimScreens_0x28[i]->search('Pccaa00'))
+        static_cast<J2DPicture*>(mConnectAnimScreens_0x28[i]->search(FSA_TAG64("Pccaa00")))
             ->setBlackWhite(JUtility::TColor(0x82, 0x82, 0xA0, 0xFF), JUtility::TColor(0x82, 0x82, 0xA0, 0x00));
     }
     OSInitFastCast();
@@ -461,8 +461,8 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
     for (int i = 0; i < 4; i++) {
         mArrowAnms_0x38[i] = static_cast<J2DAnmTransform*>(J2DAnmLoaderDataBase::load(arrowAnm));
         mConnectAnms_0x48[i] = static_cast<J2DAnmTransform*>(J2DAnmLoaderDataBase::load(connectAnm));
-        mArrowAnimScreens_0x18[i]->search('NULL_001')->setAnimation(mArrowAnms_0x38[i]);
-        mConnectAnimScreens_0x28[i]->search('Ndatay00')->setAnimation(mConnectAnms_0x48[i]);
+        mArrowAnimScreens_0x18[i]->search(FSA_TAG64("NULL_001"))->setAnimation(mArrowAnms_0x38[i]);
+        mConnectAnimScreens_0x28[i]->search(FSA_TAG64("Ndatay00"))->setAnimation(mConnectAnms_0x48[i]);
         field_0x220[i] = 0;
         field_0x230[i] = 0;
         mEntryScreen_0x8->search(lbl_80479378[i])->hide();
@@ -502,28 +502,28 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
         mScreen->search(lbl_80478D08[i])->setAlpha(fadeAlpha(field_0x29d[i], 0.0f));
     }
     field_0x258 = 156;
-    mPscuro02X_0xec = mScreen->search('Pscuro02')->getBounds()->i.x;
-    mPscuro02Y_0xf0 = mScreen->search('Pscuro02')->getBounds()->i.y;
-    mPmbabb07X_0x108 = mScreen->search('Pmbabb07')->getBounds()->i.x;
-    mPmbabb07Y_0x10c = mScreen->search('Pmbabb07')->getBounds()->i.y;
+    mPscuro02X_0xec = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+    mPscuro02Y_0xf0 = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    mPmbabb07X_0x108 = mScreen->search(FSA_TAG64("Pmbabb07"))->getBounds()->i.x;
+    mPmbabb07Y_0x10c = mScreen->search(FSA_TAG64("Pmbabb07"))->getBounds()->i.y;
     field_0x110 = 0.0f;
     field_0x114 = 0.0f;
-    mPnopbX_0x118[0] = mScreen->search('Pnopb08')->getBounds()->i.x;
-    mPnopbY_0x124[0] = mScreen->search('Pnopb08')->getBounds()->i.y;
+    mPnopbX_0x118[0] = mScreen->search(FSA_TAG64("Pnopb08"))->getBounds()->i.x;
+    mPnopbY_0x124[0] = mScreen->search(FSA_TAG64("Pnopb08"))->getBounds()->i.y;
     field_0x130[0] = 0.0f;
-    mPnopbX_0x118[1] = mScreen->search('Pnopb12')->getBounds()->i.x;
-    mPnopbY_0x124[1] = mScreen->search('Pnopb12')->getBounds()->i.y;
+    mPnopbX_0x118[1] = mScreen->search(FSA_TAG64("Pnopb12"))->getBounds()->i.x;
+    mPnopbY_0x124[1] = mScreen->search(FSA_TAG64("Pnopb12"))->getBounds()->i.y;
     field_0x130[1] = 0.0f;
-    mPnopbX_0x118[2] = mScreen->search('Pnopb16')->getBounds()->i.x;
-    mPnopbY_0x124[2] = mScreen->search('Pnopb16')->getBounds()->i.y;
+    mPnopbX_0x118[2] = mScreen->search(FSA_TAG64("Pnopb16"))->getBounds()->i.x;
+    mPnopbY_0x124[2] = mScreen->search(FSA_TAG64("Pnopb16"))->getBounds()->i.y;
     field_0x130[2] = 0.0f;
-    mNdata02X_0x13c = mScreen->search('Ndata02')->getBounds()->i.x;
-    mNdata02Y_0x140 = mScreen->search('Ndata02')->getBounds()->i.y;
+    mNdata02X_0x13c = mScreen->search(FSA_TAG64("Ndata02"))->getBounds()->i.x;
+    mNdata02Y_0x140 = mScreen->search(FSA_TAG64("Ndata02"))->getBounds()->i.y;
     field_0x144 = 0.0f;
-    mNdata05X_0x148 = mScreen->search('Ndata05')->getBounds()->i.x;
-    mNdata05Y_0x14c = mScreen->search('Ndata05')->getBounds()->i.y;
-    mNdata07X_0x150 = mScreen->search('Ndata07')->getBounds()->i.x;
-    mNdata07Y_0x154 = mScreen->search('Ndata07')->getBounds()->i.y;
+    mNdata05X_0x148 = mScreen->search(FSA_TAG64("Ndata05"))->getBounds()->i.x;
+    mNdata05Y_0x14c = mScreen->search(FSA_TAG64("Ndata05"))->getBounds()->i.y;
+    mNdata07X_0x150 = mScreen->search(FSA_TAG64("Ndata07"))->getBounds()->i.x;
+    mNdata07Y_0x154 = mScreen->search(FSA_TAG64("Ndata07"))->getBounds()->i.y;
     field_0x158 = 0.0f;
 
     // mEntryScreen_0x8 (the entry screen).
@@ -565,36 +565,36 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
         }
     }
     JUTResFont* font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Tten02'))->setFont(font);
+    static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Tten02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Tten01'))->setFont(font);
+    static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Tten01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Ttkg02'))->setFont(font);
+    static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Ttkg02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Ttkg01'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Tten02'))->getStringPtr(), 0xA6, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Tten01'))->getStringPtr(), 0xA6, 0, NULL, NULL);
-    mEntryNdata03X_0x94 = mEntryScreen_0x8->search('Ndata03')->getBounds()->i.x;
-    mEntryNdata03Y_0x98 = mEntryScreen_0x8->search('Ndata03')->getBounds()->i.y;
+    static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Ttkg01")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Tten02")))->getStringPtr(), 0xA6, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Tten01")))->getStringPtr(), 0xA6, 0, NULL, NULL);
+    mEntryNdata03X_0x94 = mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->getBounds()->i.x;
+    mEntryNdata03Y_0x98 = mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->getBounds()->i.y;
     field_0x9c = 0.0f;
-    mEntryNdata05X_0xa0 = mEntryScreen_0x8->search('Ndata05')->getBounds()->i.x;
-    mEntryNdata05Y_0xa4 = mEntryScreen_0x8->search('Ndata05')->getBounds()->i.y;
+    mEntryNdata05X_0xa0 = mEntryScreen_0x8->search(FSA_TAG64("Ndata05"))->getBounds()->i.x;
+    mEntryNdata05Y_0xa4 = mEntryScreen_0x8->search(FSA_TAG64("Ndata05"))->getBounds()->i.y;
     field_0xa8 = 0.0f;
-    mEntryNdata06X_0xac = mEntryScreen_0x8->search('Ndata06')->getBounds()->i.x;
-    mEntryNdata06Y_0xb0 = mEntryScreen_0x8->search('Ndata06')->getBounds()->i.y;
+    mEntryNdata06X_0xac = mEntryScreen_0x8->search(FSA_TAG64("Ndata06"))->getBounds()->i.x;
+    mEntryNdata06Y_0xb0 = mEntryScreen_0x8->search(FSA_TAG64("Ndata06"))->getBounds()->i.y;
     field_0xb4 = 0.0f;
     field_0xb8 = 0.0f;
-    mEntryPpllbkX_0xbc[0] = mEntryScreen_0x8->search('Ppllbk02')->getBounds()->i.x;
-    mEntryPpllbkY_0xcc[0] = mEntryScreen_0x8->search('Ppllbk02')->getBounds()->i.y;
+    mEntryPpllbkX_0xbc[0] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk02"))->getBounds()->i.x;
+    mEntryPpllbkY_0xcc[0] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk02"))->getBounds()->i.y;
     field_0xdc[0] = 0.0f;
-    mEntryPpllbkX_0xbc[1] = mEntryScreen_0x8->search('Ppllbk12')->getBounds()->i.x;
-    mEntryPpllbkY_0xcc[1] = mEntryScreen_0x8->search('Ppllbk12')->getBounds()->i.y;
+    mEntryPpllbkX_0xbc[1] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk12"))->getBounds()->i.x;
+    mEntryPpllbkY_0xcc[1] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk12"))->getBounds()->i.y;
     field_0xdc[1] = 0.0f;
-    mEntryPpllbkX_0xbc[2] = mEntryScreen_0x8->search('Ppllbk22')->getBounds()->i.x;
-    mEntryPpllbkY_0xcc[2] = mEntryScreen_0x8->search('Ppllbk22')->getBounds()->i.y;
+    mEntryPpllbkX_0xbc[2] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk22"))->getBounds()->i.x;
+    mEntryPpllbkY_0xcc[2] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk22"))->getBounds()->i.y;
     field_0xdc[2] = 0.0f;
-    mEntryPpllbkX_0xbc[3] = mEntryScreen_0x8->search('Ppllbk32')->getBounds()->i.x;
-    mEntryPpllbkY_0xcc[3] = mEntryScreen_0x8->search('Ppllbk32')->getBounds()->i.y;
+    mEntryPpllbkX_0xbc[3] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk32"))->getBounds()->i.x;
+    mEntryPpllbkY_0xcc[3] = mEntryScreen_0x8->search(FSA_TAG64("Ppllbk32"))->getBounds()->i.y;
     field_0xdc[3] = 0.0f;
 
     // mEntryConScreen_0xc (the connect screen).
@@ -620,73 +620,73 @@ ConnectScreen_804B0F10::ConnectScreen_804B0F10() {
     for (int i = 0; i < 26; i++) {
         mEntryConScreen_0xc->search(lbl_80479168[i])->setAlpha(fadeAlpha(field_0x335[i], 0.0f));
     }
-    mConPmbabb07X_0x15c = mEntryConScreen_0xc->search('Pmbabb07')->getBounds()->i.x;
-    mConPmbabb07Y_0x160 = mEntryConScreen_0xc->search('Pmbabb07')->getBounds()->i.y;
+    mConPmbabb07X_0x15c = mEntryConScreen_0xc->search(FSA_TAG64("Pmbabb07"))->getBounds()->i.x;
+    mConPmbabb07Y_0x160 = mEntryConScreen_0xc->search(FSA_TAG64("Pmbabb07"))->getBounds()->i.y;
     field_0x164 = 0.0f;
     field_0x168 = 0.0f;
-    field_0x16c[0] = mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.x;
-    field_0x178[0] = mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.y;
+    field_0x16c[0] = mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.x;
+    field_0x178[0] = mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.y;
     field_0x184[0] = 0.0f;
-    field_0x16c[1] = mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.x;
-    field_0x178[1] = mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.y;
+    field_0x16c[1] = mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.x;
+    field_0x178[1] = mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.y;
     field_0x184[1] = 0.0f;
-    field_0x16c[2] = mEntryConScreen_0xc->search('Prub04')->getBounds()->i.x;
-    field_0x178[2] = mEntryConScreen_0xc->search('Prub04')->getBounds()->i.y;
+    field_0x16c[2] = mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.x;
+    field_0x178[2] = mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.y;
     field_0x184[2] = 0.0f;
-    mConPlibkk03X_0x190 = mEntryConScreen_0xc->search('Plibkk03')->getBounds()->i.x;
-    mConPlibkk03Y_0x194 = mEntryConScreen_0xc->search('Plibkk03')->getBounds()->i.y;
+    mConPlibkk03X_0x190 = mEntryConScreen_0xc->search(FSA_TAG64("Plibkk03"))->getBounds()->i.x;
+    mConPlibkk03Y_0x194 = mEntryConScreen_0xc->search(FSA_TAG64("Plibkk03"))->getBounds()->i.y;
     field_0x198 = 0.0f;
     field_0x259 = 156;
-    mConPscuro02X_0xf4 = mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.x;
-    mConPscuro02Y_0xf8 = mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.y;
-    field_0xfc[0] = mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.y;
-    field_0xfc[1] = mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.y;
-    field_0xfc[2] = mEntryConScreen_0xc->search('Prub04')->getBounds()->i.y;
+    mConPscuro02X_0xf4 = mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+    mConPscuro02Y_0xf8 = mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    field_0xfc[0] = mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.y;
+    field_0xfc[1] = mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.y;
+    field_0xfc[2] = mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.y;
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Trule01'))->setFont(font);
+    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Trule01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Than01'))->setFont(font);
+    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Than01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Tsta01'))->setFont(font);
-    mEntryConScreen_0xc->search('P1pli01')->hide();
-    mEntryConScreen_0xc->search('P2pli01')->hide();
-    mEntryConScreen_0xc->search('P2pli02')->hide();
-    mEntryConScreen_0xc->search('P3pli01')->hide();
-    mEntryConScreen_0xc->search('P3pli02')->hide();
-    mEntryConScreen_0xc->search('P3pli03')->hide();
-    mEntryConScreen_0xc->search('P4pli01')->hide();
-    mEntryConScreen_0xc->search('P4pli02')->hide();
-    mEntryConScreen_0xc->search('P4pli03')->hide();
-    mEntryConScreen_0xc->search('P4pli04')->hide();
-    mEntryConScreen_0xc->search('Pgba02')->hide();
-    mEntryConScreen_0xc->search('Pcon02')->show();
+    static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Tsta01")))->setFont(font);
+    mEntryConScreen_0xc->search(FSA_TAG64("P1pli01"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P2pli01"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P2pli02"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P3pli01"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P3pli02"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P3pli03"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P4pli01"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P4pli02"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P4pli03"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("P4pli04"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("Pgba02"))->hide();
+    mEntryConScreen_0xc->search(FSA_TAG64("Pcon02"))->show();
 
     // mHandicapScreen_0x10 (the handicap screen).
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr01'))->setFont(font);
+    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr02'))->setFont(font);
+    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr02")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr03'))->setFont(font);
+    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr03")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr04'))->setFont(font);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr01'))->getStringPtr(), 0xF5, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr02'))->getStringPtr(), 0xF5, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr03'))->getStringPtr(), 0xF5, 0, NULL, NULL);
-    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search('Tstr04'))->getStringPtr(), 0xF5, 0, NULL, NULL);
+    static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr04")))->setFont(font);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0xF5, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr02")))->getStringPtr(), 0xF5, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr03")))->getStringPtr(), 0xF5, 0, NULL, NULL);
+    getMessageText_803832BC(static_cast<J2DTextBox*>(mHandicapScreen_0x10->search(FSA_TAG64("Tstr04")))->getStringPtr(), 0xF5, 0, NULL, NULL);
     field_0x25a = 156;
-    mPaccur02X_0x19c = mHandicapScreen_0x10->search('Paccur02')->getBounds()->i.x;
-    mPaccur02Y_0x1a0 = mHandicapScreen_0x10->search('Paccur02')->getBounds()->i.y;
+    mPaccur02X_0x19c = mHandicapScreen_0x10->search(FSA_TAG64("Paccur02"))->getBounds()->i.x;
+    mPaccur02Y_0x1a0 = mHandicapScreen_0x10->search(FSA_TAG64("Paccur02"))->getBounds()->i.y;
     mPthabb07Pane_0x60 = new PaneCtrl_804AF86C;
-    mPthabb07Pane_0x60->setPane_80402F04(mHandicapScreen_0x10->search('Pthabb07'));
+    mPthabb07Pane_0x60->setPane_80402F04(mHandicapScreen_0x10->search(FSA_TAG64("Pthabb07")));
     mPstrbPanes_0x64[0] = new PaneCtrl_804AF86C;
-    mPstrbPanes_0x64[0]->setPane_80402F04(mHandicapScreen_0x10->search('Pstrb14'));
+    mPstrbPanes_0x64[0]->setPane_80402F04(mHandicapScreen_0x10->search(FSA_TAG64("Pstrb14")));
     mPstrbPanes_0x64[1] = new PaneCtrl_804AF86C;
-    mPstrbPanes_0x64[1]->setPane_80402F04(mHandicapScreen_0x10->search('Pstrb24'));
+    mPstrbPanes_0x64[1]->setPane_80402F04(mHandicapScreen_0x10->search(FSA_TAG64("Pstrb24")));
     mPstrbPanes_0x64[2] = new PaneCtrl_804AF86C;
-    mPstrbPanes_0x64[2]->setPane_80402F04(mHandicapScreen_0x10->search('Pstrb34'));
+    mPstrbPanes_0x64[2]->setPane_80402F04(mHandicapScreen_0x10->search(FSA_TAG64("Pstrb34")));
     mPstrbPanes_0x64[3] = new PaneCtrl_804AF86C;
-    mPstrbPanes_0x64[3]->setPane_80402F04(mHandicapScreen_0x10->search('Pstrb44'));
+    mPstrbPanes_0x64[3]->setPane_80402F04(mHandicapScreen_0x10->search(FSA_TAG64("Pstrb44")));
     mButtonGuidePane_0x74 = lbl_8053AED8->field_0x8;
     const ResTIMG* tex = (const ResTIMG*)getMain2DResource_804030C4('TIMG', "kk_kettei_01.bti");
     lbl_8053AED8->fn_80440D78(tex);
@@ -880,18 +880,18 @@ void ConnectScreen_804B0F10::fn_803FB9E4() {
         field_0x240[0] = 0;
         fn_803F3310();
     }
-    mScreen->search('Pmbabb07')->move(mPmbabb07X_0x108, mPmbabb07Y_0x10c + field_0x110);
+    mScreen->search(FSA_TAG64("Pmbabb07"))->move(mPmbabb07X_0x108, mPmbabb07Y_0x10c + field_0x110);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0x114);
     // The y of each row is read one element on (the original reads
     // mPnopbY_0x124[1..3], the last one being field_0x130[0]).
-    mScreen->search('Pnopb08')->move(mPnopbX_0x118[0] + field_0x130[0], mPnopbY_0x124[1]);
-    mScreen->search('Pnopb12')->move(mPnopbX_0x118[1] + field_0x130[1], mPnopbY_0x124[2]);
-    mScreen->search('Pnopb16')->move(mPnopbX_0x118[2] + field_0x130[2], mPnopbY_0x124[3]);
-    mScreen->search('Ndata02')->move(mNdata02X_0x13c + field_0x144, mNdata02Y_0x140);
-    mScreen->search('Ndata05')->move(mNdata05X_0x148 + field_0x158, mNdata05Y_0x14c);
-    mScreen->search('Ndata07')->move(mNdata07X_0x150 + field_0x158, mNdata07Y_0x154);
-    f32 y = mScreen->search('Pscuro02')->getBounds()->i.y;
-    mScreen->search('Pscuro02')->move(mPscuro02X_0xec + field_0x130[field_0x1ac], y);
+    mScreen->search(FSA_TAG64("Pnopb08"))->move(mPnopbX_0x118[0] + field_0x130[0], mPnopbY_0x124[1]);
+    mScreen->search(FSA_TAG64("Pnopb12"))->move(mPnopbX_0x118[1] + field_0x130[1], mPnopbY_0x124[2]);
+    mScreen->search(FSA_TAG64("Pnopb16"))->move(mPnopbX_0x118[2] + field_0x130[2], mPnopbY_0x124[3]);
+    mScreen->search(FSA_TAG64("Ndata02"))->move(mNdata02X_0x13c + field_0x144, mNdata02Y_0x140);
+    mScreen->search(FSA_TAG64("Ndata05"))->move(mNdata05X_0x148 + field_0x158, mNdata05Y_0x14c);
+    mScreen->search(FSA_TAG64("Ndata07"))->move(mNdata07X_0x150 + field_0x158, mNdata07Y_0x154);
+    f32 y = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    mScreen->search(FSA_TAG64("Pscuro02"))->move(mPscuro02X_0xec + field_0x130[field_0x1ac], y);
 }
 
 void ConnectScreen_804B0F10::fn_803FB6F4() {
@@ -1069,16 +1069,16 @@ void ConnectScreen_804B0F10::fn_803FAA88() {
     if (field_0x1d0[0] >= 30) {
         field_0x1d0[0] = 0;
     }
-    mScreen->search('Pmbabb07')->move(mPmbabb07X_0x108, mPmbabb07Y_0x10c + field_0x110);
+    mScreen->search(FSA_TAG64("Pmbabb07"))->move(mPmbabb07X_0x108, mPmbabb07Y_0x10c + field_0x110);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0x114);
-    mScreen->search('Pnopb08')->move(mPnopbX_0x118[0] + field_0x130[0], mPnopbY_0x124[1]);
-    mScreen->search('Pnopb12')->move(mPnopbX_0x118[1] + field_0x130[1], mPnopbY_0x124[2]);
-    mScreen->search('Pnopb16')->move(mPnopbX_0x118[2] + field_0x130[2], mPnopbY_0x124[3]);
-    mScreen->search('Ndata02')->move(mNdata02X_0x13c + field_0x144, mNdata02Y_0x140);
-    mScreen->search('Ndata05')->move(mNdata05X_0x148 + field_0x158, mNdata05Y_0x14c);
-    mScreen->search('Ndata07')->move(mNdata07X_0x150 + field_0x158, mNdata07Y_0x154);
-    f32 y = mScreen->search('Pscuro02')->getBounds()->i.y;
-    mScreen->search('Pscuro02')->move(mPscuro02X_0xec + field_0x130[field_0x1ac], y);
+    mScreen->search(FSA_TAG64("Pnopb08"))->move(mPnopbX_0x118[0] + field_0x130[0], mPnopbY_0x124[1]);
+    mScreen->search(FSA_TAG64("Pnopb12"))->move(mPnopbX_0x118[1] + field_0x130[1], mPnopbY_0x124[2]);
+    mScreen->search(FSA_TAG64("Pnopb16"))->move(mPnopbX_0x118[2] + field_0x130[2], mPnopbY_0x124[3]);
+    mScreen->search(FSA_TAG64("Ndata02"))->move(mNdata02X_0x13c + field_0x144, mNdata02Y_0x140);
+    mScreen->search(FSA_TAG64("Ndata05"))->move(mNdata05X_0x148 + field_0x158, mNdata05Y_0x14c);
+    mScreen->search(FSA_TAG64("Ndata07"))->move(mNdata07X_0x150 + field_0x158, mNdata07Y_0x154);
+    f32 y = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    mScreen->search(FSA_TAG64("Pscuro02"))->move(mPscuro02X_0xec + field_0x130[field_0x1ac], y);
 }
 
 // FIXME: 97.46 %, missing/extra; behaviour near.
@@ -1203,14 +1203,14 @@ void ConnectScreen_804B0F10::fn_803F9EA8() {
         field_0x240[0] = 0;
         fn_803F2B48();
     }
-    mEntryScreen_0x8->search('Ndata03')->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
-    mEntryScreen_0x8->search('Ndata05')->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
-    mEntryScreen_0x8->search('Ndata06')->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata05"))->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata06"))->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0xb8);
-    mEntryScreen_0x8->search('Ppllbk02')->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
-    mEntryScreen_0x8->search('Ppllbk12')->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
-    mEntryScreen_0x8->search('Ppllbk22')->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
-    mEntryScreen_0x8->search('Ppllbk32')->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk02"))->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk12"))->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk22"))->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk32"))->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
 }
 
 // FIXME(shotgun): 97.53 %, missing/extra; behaviour drift.
@@ -1302,14 +1302,14 @@ void ConnectScreen_804B0F10::fn_803F943C() {
         }
         field_0x240[0] = 0;
     }
-    mEntryScreen_0x8->search('Ndata03')->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
-    mEntryScreen_0x8->search('Ndata05')->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
-    mEntryScreen_0x8->search('Ndata06')->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata05"))->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata06"))->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0xb8);
-    mEntryScreen_0x8->search('Ppllbk02')->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
-    mEntryScreen_0x8->search('Ppllbk12')->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
-    mEntryScreen_0x8->search('Ppllbk22')->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
-    mEntryScreen_0x8->search('Ppllbk32')->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk02"))->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk12"))->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk22"))->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk32"))->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
 }
 
 void ConnectScreen_804B0F10::fn_803F8FBC() {
@@ -1532,14 +1532,14 @@ void ConnectScreen_804B0F10::fn_803F8354() {
         field_0x240[0] = 0;
         fn_803F2660();
     }
-    mEntryConScreen_0xc->search('Pmbabb07')->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pmbabb07"))->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0x168);
-    mEntryConScreen_0xc->search('Pstab04')->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
-    mEntryConScreen_0xc->search('Phanb04')->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
-    mEntryConScreen_0xc->search('Prub04')->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
-    mEntryConScreen_0xc->search('Plibkk03')->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
-    f32 y = mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.y;
-    mEntryConScreen_0xc->search('Pscuro02')->move(mConPscuro02X_0xf4, y);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Plibkk03"))->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
+    f32 y = mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->move(mConPscuro02X_0xf4, y);
 }
 
 void ConnectScreen_804B0F10::fn_803F8050() {
@@ -1733,14 +1733,14 @@ void ConnectScreen_804B0F10::fn_803F726C() {
     if (field_0x1d0[0] >= 30) {
         field_0x1d0[0] = 0;
     }
-    mEntryConScreen_0xc->search('Pmbabb07')->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pmbabb07"))->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0x168);
-    mEntryConScreen_0xc->search('Pstab04')->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
-    mEntryConScreen_0xc->search('Phanb04')->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
-    mEntryConScreen_0xc->search('Prub04')->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
-    mEntryConScreen_0xc->search('Plibkk03')->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
-    f32 y = mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.y;
-    mEntryConScreen_0xc->search('Pscuro02')->move(mConPscuro02X_0xf4 + field_0x184[field_0x1a8], y);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Plibkk03"))->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
+    f32 y = mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.y;
+    mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->move(mConPscuro02X_0xf4 + field_0x184[field_0x1a8], y);
 }
 
 void ConnectScreen_804B0F10::fn_803F715C() {
@@ -1970,13 +1970,13 @@ void ConnectScreen_804B0F10::fn_803F5410() {
             f32 x = mScreen->search(lbl_804798C0[i])->getBounds()->i.x;
             mScreen->search(lbl_804798C0[i])->move(x, mPnopbY_0x124[i] + offset);
             if (i == 0) {
-                x = mScreen->search('Pscuro02')->getBounds()->i.x;
-                mScreen->search('Pscuro02')->move(x, mPscuro02Y_0xf0 + offset);
+                x = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+                mScreen->search(FSA_TAG64("Pscuro02"))->move(x, mPscuro02Y_0xf0 + offset);
             } else {
                 f32 top = mScreen->search(lbl_804798C0[0])->getBounds()->i.y;
                 f32 y = mPscuro02Y_0xf0 + mScreen->search(lbl_804798C0[i])->getBounds()->i.y - top;
-                x = mScreen->search('Pscuro02')->getBounds()->i.x;
-                mScreen->search('Pscuro02')->move(x, y);
+                x = mScreen->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+                mScreen->search(FSA_TAG64("Pscuro02"))->move(x, y);
             }
             mScreen->search(lbl_804798D8[i])->hide();
             mScreen->search(lbl_804798F0[i])->show();
@@ -1988,8 +1988,8 @@ void ConnectScreen_804B0F10::fn_803F5410() {
             mScreen->search(lbl_804798F0[i])->hide();
         }
     }
-    mScreen->search('Pscuro01')->setAlpha(alpha);
-    mScreen->search('Pscuro02')->setAlpha(alpha);
+    mScreen->search(FSA_TAG64("Pscuro01"))->setAlpha(alpha);
+    mScreen->search(FSA_TAG64("Pscuro02"))->setAlpha(alpha);
     mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     lbl_8053AED8->draw_80440EE8();
 }
@@ -2072,14 +2072,14 @@ void ConnectScreen_804B0F10::fn_803F4120() {
                 field_0x220[i] = 0;
             }
             mArrowAnms_0x38[i]->setFrame(field_0x220[i]);
-            mArrowAnimScreens_0x18[i]->search('NULL_001')->animationTransform();
+            mArrowAnimScreens_0x18[i]->search(FSA_TAG64("NULL_001"))->animationTransform();
             if (i == field_0x24e && field_0x220[i] == mArrowAnms_0x38[i]->getFrameMax() - 10) {
                 s16 next = nextUnconnected(field_0x24e, field_0x1ac + 1);
                 if (next != -1 && field_0x24e != next) {
                     field_0x24e = next;
                     field_0x220[next]++;
                     mArrowAnms_0x38[i]->setFrame(field_0x220[next]);
-                    mArrowAnimScreens_0x18[next]->search('NULL_001')->animationTransform();
+                    mArrowAnimScreens_0x18[next]->search(FSA_TAG64("NULL_001"))->animationTransform();
                 }
             }
         }
@@ -2089,34 +2089,34 @@ void ConnectScreen_804B0F10::fn_803F4120() {
                 field_0x230[i] = 0;
             }
             mConnectAnms_0x48[i]->setFrame(field_0x230[i]);
-            mConnectAnimScreens_0x28[i]->search('Ndatay00')->animationTransform();
+            mConnectAnimScreens_0x28[i]->search(FSA_TAG64("Ndatay00"))->animationTransform();
             if (i == field_0x250 && field_0x230[i] == mConnectAnms_0x48[i]->getFrameMax() - 10) {
                 s16 next = nextUnconnected(field_0x250, field_0x1ac + 1);
                 if (next != -1 && field_0x250 != next) {
                     field_0x250 = next;
                     field_0x230[next]++;
                     mConnectAnms_0x48[i]->setFrame(field_0x230[next]);
-                    mConnectAnimScreens_0x28[next]->search('Ndatay00')->animationTransform();
+                    mConnectAnimScreens_0x28[next]->search(FSA_TAG64("Ndatay00"))->animationTransform();
                 }
             }
         }
-        f32 w1 = mArrowAnimScreens_0x18[i]->search('NULL_001')->getWidth();
-        f32 x = mEntryScreen_0x8->search('NULL_001')->getBounds()->i.x +
+        f32 w1 = mArrowAnimScreens_0x18[i]->search(FSA_TAG64("NULL_001"))->getWidth();
+        f32 x = mEntryScreen_0x8->search(FSA_TAG64("NULL_001"))->getBounds()->i.x +
                 mEntryScreen_0x8->search(lbl_80479378[i])->getBounds()->i.x +
                 (mEntryScreen_0x8->search(lbl_80479378[i])->getWidth() - w1) / 2;
-        f32 h1 = mArrowAnimScreens_0x18[i]->search('NULL_001')->getHeight();
-        f32 y = mEntryScreen_0x8->search('NULL_001')->getBounds()->i.y +
+        f32 h1 = mArrowAnimScreens_0x18[i]->search(FSA_TAG64("NULL_001"))->getHeight();
+        f32 y = mEntryScreen_0x8->search(FSA_TAG64("NULL_001"))->getBounds()->i.y +
                 mEntryScreen_0x8->search(lbl_80479378[i])->getBounds()->i.y +
                 (mEntryScreen_0x8->search(lbl_80479378[i])->getHeight() - h1) / 2;
-        mArrowAnimScreens_0x18[i]->search('NULL_001')->move(x, y);
-        f32 x2 = mEntryScreen_0x8->search('Ndata03')->getBounds()->i.x +
+        mArrowAnimScreens_0x18[i]->search(FSA_TAG64("NULL_001"))->move(x, y);
+        f32 x2 = mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->getBounds()->i.x +
                  mEntryScreen_0x8->search(lbl_80479398[i])->getBounds()->i.x;
-        f32 y0 = mConnectAnimScreens_0x28[i]->search('Pccaa00')->getBounds()->i.y;
+        f32 y0 = mConnectAnimScreens_0x28[i]->search(FSA_TAG64("Pccaa00"))->getBounds()->i.y;
         f32 y2 = mEntryScreen_0x8->search(lbl_804792F8[i][1])->getBounds()->i.y +
-                 (mEntryScreen_0x8->search('Ndata03')->getBounds()->i.y +
+                 (mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->getBounds()->i.y +
                   mEntryScreen_0x8->search(lbl_80479398[i])->getBounds()->i.y) -
                  y0;
-        mConnectAnimScreens_0x28[i]->search('Ndatay00')->move(x2, y2);
+        mConnectAnimScreens_0x28[i]->search(FSA_TAG64("Ndatay00"))->move(x2, y2);
         mConnectAnimScreens_0x28[i]->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
         if (mState_0x1c4 != 3 && !(gGameRoot_8053AAF8->mPlayerMask & (u8)(1 << (i + 4)))) {
             mArrowAnimScreens_0x18[i]->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
@@ -2173,36 +2173,36 @@ void ConnectScreen_804B0F10::fn_803F4120() {
 
 static inline void updateGameSelectPanes(ConnectScreen_804B0F10* self, f32 offset) {
     if (self->field_0x1a8 == 0) {
-        f32 stabX = self->mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pstab04')->move(stabX, self->field_0xfc[0] + offset);
-        f32 hanbX = self->mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Phanb04')->move(hanbX, self->field_0xfc[1]);
-        f32 rubX = self->mEntryConScreen_0xc->search('Prub04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Prub04')->move(rubX, self->field_0xfc[2]);
-        f32 curX = self->mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pscuro02')->move(curX, self->mConPscuro02Y_0xf8 + offset);
+        f32 stabX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(stabX, self->field_0xfc[0] + offset);
+        f32 hanbX = self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(hanbX, self->field_0xfc[1]);
+        f32 rubX = self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(rubX, self->field_0xfc[2]);
+        f32 curX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->move(curX, self->mConPscuro02Y_0xf8 + offset);
     } else if (self->field_0x1a8 == 1) {
-        f32 stabX = self->mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pstab04')->move(stabX, self->field_0xfc[0]);
-        f32 hanbX = self->mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Phanb04')->move(hanbX, self->field_0xfc[1] + offset);
-        f32 rubX = self->mEntryConScreen_0xc->search('Prub04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Prub04')->move(rubX, self->field_0xfc[2]);
-        f32 top = self->mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.y;
-        f32 y = self->mConPscuro02Y_0xf8 + self->mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.y - top;
-        f32 curX = self->mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pscuro02')->move(curX, y);
+        f32 stabX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(stabX, self->field_0xfc[0]);
+        f32 hanbX = self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(hanbX, self->field_0xfc[1] + offset);
+        f32 rubX = self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(rubX, self->field_0xfc[2]);
+        f32 top = self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.y;
+        f32 y = self->mConPscuro02Y_0xf8 + self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.y - top;
+        f32 curX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->move(curX, y);
     } else {
-        f32 stabX = self->mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pstab04')->move(stabX, self->field_0xfc[0]);
-        f32 hanbX = self->mEntryConScreen_0xc->search('Phanb04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Phanb04')->move(hanbX, self->field_0xfc[1]);
-        f32 rubX = self->mEntryConScreen_0xc->search('Prub04')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Prub04')->move(rubX, self->field_0xfc[2] + offset);
-        f32 top = self->mEntryConScreen_0xc->search('Pstab04')->getBounds()->i.y;
-        f32 y = self->mConPscuro02Y_0xf8 + self->mEntryConScreen_0xc->search('Prub04')->getBounds()->i.y - top;
-        f32 curX = self->mEntryConScreen_0xc->search('Pscuro02')->getBounds()->i.x;
-        self->mEntryConScreen_0xc->search('Pscuro02')->move(curX, y);
+        f32 stabX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(stabX, self->field_0xfc[0]);
+        f32 hanbX = self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(hanbX, self->field_0xfc[1]);
+        f32 rubX = self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(rubX, self->field_0xfc[2] + offset);
+        f32 top = self->mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->getBounds()->i.y;
+        f32 y = self->mConPscuro02Y_0xf8 + self->mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->getBounds()->i.y - top;
+        f32 curX = self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->getBounds()->i.x;
+        self->mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->move(curX, y);
     }
 }
 
@@ -2247,8 +2247,8 @@ void ConnectScreen_804B0F10::fn_803F38A4() {
     }
     f32 offset = 5.0f * (f32)(bounce * bounce) / 25.0f;
     updateGameSelectPanes(this, offset);
-    mEntryConScreen_0xc->search('Pscuro01')->setAlpha(alpha);
-    mEntryConScreen_0xc->search('Pscuro02')->setAlpha(alpha);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pscuro01"))->setAlpha(alpha);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pscuro02"))->setAlpha(alpha);
     mEntryConScreen_0xc->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     JGeometry::TBox2f box(0.0f, 0.0f, 280.0f, 210.0f);
     gGameRoot2_8053AB10->fn_8013B414(&box, true);
@@ -2338,37 +2338,37 @@ void ConnectScreen_804B0F10::fn_803F32E8() {
 void ConnectScreen_804B0F10::fn_803F2B78() {
     if (field_0x1ac == 0) {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP2_01.bti");
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn01")))->changeTexture(tex, 0);
     } else if (field_0x1ac == 1) {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP3_01.bti");
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn01")))->changeTexture(tex, 0);
     } else {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP4_01.bti");
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryScreen_0x8->search('Ptn01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryScreen_0x8->search(FSA_TAG64("Ptn01")))->changeTexture(tex, 0);
     }
-    char* text1 = static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Ttkg01'))->getStringPtr();
-    char* text2 = static_cast<J2DTextBox*>(mEntryScreen_0x8->search('Ttkg02'))->getStringPtr();
+    char* text1 = static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Ttkg01")))->getStringPtr();
+    char* text2 = static_cast<J2DTextBox*>(mEntryScreen_0x8->search(FSA_TAG64("Ttkg02")))->getStringPtr();
     getMessageText_803832BC(text1, 0x3F, 0, NULL, NULL);
     getMessageText_803832BC(text2, 0x3F, 0, NULL, NULL);
     field_0x9c = -300.0f;
-    mEntryScreen_0x8->search('Ndata03')->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata03"))->move(mEntryNdata03X_0x94, mEntryNdata03Y_0x98 + field_0x9c);
     field_0xa8 = -100.0f;
-    mEntryScreen_0x8->search('Ndata05')->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata05"))->move(mEntryNdata05X_0xa0, mEntryNdata05Y_0xa4 + field_0xa8);
     field_0xb4 = -200.0f;
-    mEntryScreen_0x8->search('Ndata06')->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
+    mEntryScreen_0x8->search(FSA_TAG64("Ndata06"))->move(mEntryNdata06X_0xac, mEntryNdata06Y_0xb0 + field_0xb4);
     field_0xb8 = -200.0f;
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0xb8);
     field_0xdc[0] = 200.0f;
-    mEntryScreen_0x8->search('Ppllbk02')->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk02"))->move(mEntryPpllbkX_0xbc[0], mEntryPpllbkY_0xcc[0] + field_0xdc[0]);
     field_0xdc[1] = 200.0f;
-    mEntryScreen_0x8->search('Ppllbk12')->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk12"))->move(mEntryPpllbkX_0xbc[1], mEntryPpllbkY_0xcc[1] + field_0xdc[1]);
     field_0xdc[2] = 200.0f;
-    mEntryScreen_0x8->search('Ppllbk22')->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk22"))->move(mEntryPpllbkX_0xbc[2], mEntryPpllbkY_0xcc[2] + field_0xdc[2]);
     field_0xdc[3] = 200.0f;
-    mEntryScreen_0x8->search('Ppllbk32')->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
+    mEntryScreen_0x8->search(FSA_TAG64("Ppllbk32"))->move(mEntryPpllbkX_0xbc[3], mEntryPpllbkY_0xcc[3] + field_0xdc[3]);
     for (s32 i = 0; i < 4; i++) {
         if (i <= field_0x1ac + 1) {
             mEntryScreen_0x8->search(lbl_80479258[i])->show();
@@ -2427,24 +2427,24 @@ void ConnectScreen_804B0F10::fn_803F2AEC() {
 }
 
 void ConnectScreen_804B0F10::fn_803F267C() {
-    char* han = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Than01'))->getStringPtr();
-    char* sta = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Tsta01'))->getStringPtr();
-    char* rule = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search('Trule01'))->getStringPtr();
+    char* han = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Than01")))->getStringPtr();
+    char* sta = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Tsta01")))->getStringPtr();
+    char* rule = static_cast<J2DTextBox*>(mEntryConScreen_0xc->search(FSA_TAG64("Trule01")))->getStringPtr();
     getMessageText_803832BC(sta, 0x11B, 0, NULL, NULL);
     getMessageText_803832BC(han, 0xAC, 0, NULL, NULL);
     getMessageText_803832BC(rule, 0xF7, 0, NULL, NULL);
     if (field_0x1ac == 0) {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP2_01.bti");
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop01")))->changeTexture(tex, 0);
     } else if (field_0x1ac == 1) {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP3_01.bti");
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop01")))->changeTexture(tex, 0);
     } else {
         const ResTIMG* tex = (const ResTIMG*)getEntryArchiveResource_804031C4('TIMG', "kk_nPlayerP4_01.bti");
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop02'))->changeTexture(tex, 0);
-        static_cast<J2DPicture*>(mEntryConScreen_0xc->search('Pnop01'))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop02")))->changeTexture(tex, 0);
+        static_cast<J2DPicture*>(mEntryConScreen_0xc->search(FSA_TAG64("Pnop01")))->changeTexture(tex, 0);
     }
     field_0x164 = -200.0f;
     field_0x168 = -200.0f;
@@ -2452,12 +2452,12 @@ void ConnectScreen_804B0F10::fn_803F267C() {
     field_0x184[1] = 300.0f;
     field_0x184[2] = 300.0f;
     field_0x198 = -450.0f;
-    mEntryConScreen_0xc->search('Pmbabb07')->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pmbabb07"))->move(mConPmbabb07X_0x15c, mConPmbabb07Y_0x160 + field_0x164);
     mButtonGuidePane_0x74->moveFromCentre_80402E08(0.0f, field_0x168);
-    mEntryConScreen_0xc->search('Pstab04')->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
-    mEntryConScreen_0xc->search('Phanb04')->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
-    mEntryConScreen_0xc->search('Prub04')->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
-    mEntryConScreen_0xc->search('Plibkk03')->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
+    mEntryConScreen_0xc->search(FSA_TAG64("Pstab04"))->move(field_0x16c[0] + field_0x184[0], field_0x178[0]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Phanb04"))->move(field_0x16c[1] + field_0x184[1], field_0x178[1]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Prub04"))->move(field_0x16c[2] + field_0x184[2], field_0x178[2]);
+    mEntryConScreen_0xc->search(FSA_TAG64("Plibkk03"))->move(mConPlibkk03X_0x190 + field_0x198, mConPlibkk03Y_0x194);
     field_0x1d0[0] = 0;
     field_0x240[0] = 0;
     field_0x210[0] = 0;

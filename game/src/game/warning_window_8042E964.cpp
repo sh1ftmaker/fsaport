@@ -31,29 +31,29 @@ WarningWindow_804B1634::WarningWindow_804B1634() {
     field_0x8 = new J2DScreen;
     field_0x8->setPriority("warning_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
     field_0xc = new PaneCtrl_804AF86C;
-    field_0xc->setPane_80402F04(field_0x8->search('Ndata01'));
+    field_0xc->setPane_80402F04(field_0x8->search(FSA_TAG64("Ndata01")));
     field_0x10[0] = new PaneCtrl_804AF86C;
-    field_0x10[0]->setPane_80402F04(field_0x8->search('Pwbb01'));
+    field_0x10[0]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwbb01")));
     field_0x10[1] = new PaneCtrl_804AF86C;
-    field_0x10[1]->setPane_80402F04(field_0x8->search('Pwbb02'));
+    field_0x10[1]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwbb02")));
     field_0x10[2] = new PaneCtrl_804AF86C;
-    field_0x10[2]->setPane_80402F04(field_0x8->search('Pwbb03'));
+    field_0x10[2]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwbb03")));
     field_0x10[3] = new PaneCtrl_804AF86C;
-    field_0x10[3]->setPane_80402F04(field_0x8->search('Pwbb04'));
+    field_0x10[3]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwbb04")));
     field_0x10[4] = new PaneCtrl_804AF86C;
-    field_0x10[4]->setPane_80402F04(field_0x8->search('Pwbb05'));
+    field_0x10[4]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwbb05")));
     field_0x24[0] = new PaneCtrl_804AF86C;
-    field_0x24[0]->setPane_80402F04(field_0x8->search('Pwb01'));
+    field_0x24[0]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwb01")));
     field_0x24[1] = new PaneCtrl_804AF86C;
-    field_0x24[1]->setPane_80402F04(field_0x8->search('Pwb02'));
+    field_0x24[1]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwb02")));
     field_0x24[2] = new PaneCtrl_804AF86C;
-    field_0x24[2]->setPane_80402F04(field_0x8->search('Pwb03'));
+    field_0x24[2]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwb03")));
     field_0x24[3] = new PaneCtrl_804AF86C;
-    field_0x24[3]->setPane_80402F04(field_0x8->search('Pwb04'));
+    field_0x24[3]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwb04")));
     field_0x24[4] = new PaneCtrl_804AF86C;
-    field_0x24[4]->setPane_80402F04(field_0x8->search('Pwb05'));
+    field_0x24[4]->setPane_80402F04(field_0x8->search(FSA_TAG64("Pwb05")));
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(field_0x8->search('Twt01'))->setFont(font);
+    static_cast<J2DTextBox*>(field_0x8->search(FSA_TAG64("Twt01")))->setFont(font);
     for (s32 i = 0; i < 4; i++) {
         u8 k = 0;
         for (s32 j = 0; j < 4; j++) {
@@ -530,7 +530,7 @@ void WarningWindow_804B1634::fn_8042EF9C(char* str, s32 id, u8 value) {
         &static_cast<MessageFile_804AF070*>(gGameRoot_8053AAF8->mMsgArchive_0xa8->getResource('????', "gc_four_swords_text_e.bmg"))->inf1;
     const char* text = (const char*)inf1 + (inf1->size + inf1->entries[id].textOffset + 8);
     // The font width of the text box 'Twt01' (J2DTextBox::mFontSize at 0x11C).
-    f32 fontSize = static_cast<J2DTextBox*>(field_0x8->search('Twt01'))->mFontSize.x;
+    f32 fontSize = static_cast<J2DTextBox*>(field_0x8->search(FSA_TAG64("Twt01")))->mFontSize.x;
     f32 scale = fontSize / (f32)lbl_8053AD78->mFont->getCellWidth();
     lbl_8053AD78->mFont->getCellHeight();
     field_0xea = 0xFF;
@@ -684,13 +684,13 @@ StageSelectWindow_804B1600::StageSelectWindow_804B1600() {
     field_0x4 = new J2DScreen;
     field_0x4->setPriority("bat_stage_select_window.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
     field_0x8 = new PaneCtrl_804AF86C;
-    field_0x8->setPane_80402F04(field_0x4->search('Pmmwk02'));
+    field_0x8->setPane_80402F04(field_0x4->search(FSA_TAG64("Pmmwk02")));
     field_0xc = new PaneCtrl_804AF86C;
-    field_0xc->setPane_80402F04(field_0x4->search('Pbl01'));
+    field_0xc->setPane_80402F04(field_0x4->search(FSA_TAG64("Pbl01")));
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(field_0x4->search('Tmmt01'))->setFont(font);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tmmt01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    static_cast<J2DTextBox*>(field_0x4->search('Tmmt02'))->setFont(font);
+    static_cast<J2DTextBox*>(field_0x4->search(FSA_TAG64("Tmmt02")))->setFont(font);
     field_0x10 = 0;
     field_0x12 = 0;
 }

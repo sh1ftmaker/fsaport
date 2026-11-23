@@ -16,17 +16,38 @@ Module.fsaSched = {
     });
   },
   idle(from) {
+    queueMicrotask(() => Module.fsaClock.armTimer());
     return new Promise((resolve) => this.waiters.set(from, resolve));
+  },
+  // Switches run as microtasks, which the browser drains before any task, so
+  // threads that keep handing over to each other would starve rendering, input
+  // and timers. Every ~8 ms a switch goes through a MessageChannel task instead.
+  lastTask: 0,
+  channel: null,
+  later: [],
+  defer(fn) {
+    const now = performance.now();
+    if (now - this.lastTask < 8) { queueMicrotask(fn); return; }
+    if (!this.channel) {
+      this.channel = new MessageChannel();
+      this.channel.port1.onmessage = () => {
+        this.lastTask = performance.now();
+        const fns = this.later; this.later = [];
+        for (const f of fns) f();
+      };
+    }
+    this.later.push(fn);
+    if (this.later.length === 1) this.channel.port2.postMessage(0);
   },
   resume(to, start) {
     if (start) {
-      queueMicrotask(() => Module._fsa_thread_entry(to));
+      this.defer(() => Module._fsa_thread_entry(to));
       return;
     }
     const resolve = this.waiters.get(to);
     if (!resolve) throw new Error('fsaSched: thread ' + to + ' is not suspended');
     this.waiters.delete(to);
-    queueMicrotask(resolve);
+    this.defer(resolve);
   },
 };
 

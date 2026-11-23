@@ -1,6 +1,7 @@
 #include "game/GameAudio.h"
 #include "game/GameGlobals.h"
 #include "JSystem/JKernel/JKRArchive.h"
+#include <ctype.h>
 #include "JSystem/J2D/J2DGrafContext.h"
 #include "JSystem/J2D/J2DPicture.h"
 #include "JSystem/J2D/J2DPrint.h"
@@ -110,7 +111,22 @@ void BootLoader_804B0F50::fn_803FFAA8() {
             delete cmd;
             field_0x18 = new J2DScreen();
             field_0x18->setPriority("ZelPac_NIN_logo.blo", 0, lbl_80529DEC.mLogoArchive_0x18);
-            ((J2DPicture*)field_0x18->search('NIN_Logo'))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xDC, 0, 0, 0xFF));
+#ifdef FSA_PORT_TRACE
+            {
+                JKRArchive* arc = lbl_80529DEC.mLogoArchive_0x18;
+                arc->portDump();
+                field_0x18->portDumpTree();
+                OSReport("[trace] tolower('Z')=%d map['Z']=%d\n", tolower('Z'), (int)__lower_map['Z']);
+                void* blo = arc ? arc->getResource("ZelPac_NIN_logo.blo") : nullptr;
+                OSReport("[trace] logo arc=%p blo=%p children=%d search=%p\n", arc, blo,
+                         (int)field_0x18->getPaneTree()->getNumChildren(), field_0x18->search(FSA_TAG64("NIN_Logo")));
+                if (blo) {
+                    const u8* p = (const u8*)blo;
+                    OSReport("[trace] blo magic %.8s\n", p);
+                }
+            }
+#endif
+            ((J2DPicture*)field_0x18->search(FSA_TAG64("NIN_Logo")))->setBlackWhite(JUtility::TColor(0, 0, 0, 0), JUtility::TColor(0xDC, 0, 0, 0xFF));
             const ResTIMG* tex = (const ResTIMG*)getLogoArchiveResource_80403244('TIMG', "progressive_choice.bti");
             field_0x1c = new J2DPicture(tex);
             tex = (const ResTIMG*)getLogoArchiveResource_80403244('TIMG', "progressive_inter.bti");
@@ -380,7 +396,7 @@ void BootLoader_804B0F50::fn_803FF420() {
         J2DOrthoGraph ortho(0.0f, 0.0f, JFWDisplay::getManager()->getEfbWidth(), JFWDisplay::getManager()->getEfbHeight(), -1.0f, 1.0f);
         JFWDisplay::getManager()->setClearColor(JUtility::TColor(0, 0, 0, 0));
         ortho.setPort();
-        field_0x18->search('NIN_Logo')->setAlpha(field_0x64);
+        field_0x18->search(FSA_TAG64("NIN_Logo"))->setAlpha(field_0x64);
         field_0x18->draw(0.0f, 0.0f, &ortho);
         switch (lbl_80529DEC.field_0x238) {
         case 2:

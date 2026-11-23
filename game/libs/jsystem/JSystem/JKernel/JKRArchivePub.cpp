@@ -329,3 +329,19 @@ JKRFileFinder *JKRArchive::getFirstFile(const char *path) const
     }
     return nullptr;
 }
+
+#ifdef FSA_PORT_TRACE
+void JKRArchive::portDump() const
+{
+    OSReport("[trace] archive %p: %u dirs, %u files, str %p\n", this, mArcInfoBlock->num_nodes,
+             mArcInfoBlock->num_file_entries, mStrTable);
+    for (u32 i = 0; i < mArcInfoBlock->num_nodes && i < 4; i++)
+        OSReport("[trace]   dir %u type %08x name '%s' hash %04x num %u first %u\n", i, mDirectories[i].mType,
+                 mStrTable + mDirectories[i].mOffset, mDirectories[i]._08, mDirectories[i].mNum,
+                 mDirectories[i].mFirstIdx);
+    for (u32 i = 0; i < mArcInfoBlock->num_file_entries && i < 12; i++)
+        OSReport("[trace]   file %u id %04x hash %04x flag %08x name '%s' off %x size %x\n", i,
+                 mFileEntries[i].mFileID, mFileEntries[i].mHash, mFileEntries[i].mFlag,
+                 mStrTable + mFileEntries[i].getNameOffset(), mFileEntries[i].mDataOffset, mFileEntries[i].mSize);
+}
+#endif

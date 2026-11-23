@@ -47,29 +47,29 @@ static const char* lbl_804B13C4[4] = {
 
 // The heart panes of player 0 on the main screen: "Php1lf01".., "Php1lk01".., "Php1lf09".., "Php1lk09".. (fn_8041DD24).
 static const u64 lbl_8048D468[8] = {
-    'Php1lf01', 'Php1lf02', 'Php1lf03', 'Php1lf04', 'Php1lf05', 'Php1lf06', 'Php1lf07', 'Php1lf08',
+    FSA_TAG64("Php1lf01"), FSA_TAG64("Php1lf02"), FSA_TAG64("Php1lf03"), FSA_TAG64("Php1lf04"), FSA_TAG64("Php1lf05"), FSA_TAG64("Php1lf06"), FSA_TAG64("Php1lf07"), FSA_TAG64("Php1lf08"),
 };
 
 static const u64 lbl_8048D4A8[8] = {
-    'Php1lk01', 'Php1lk02', 'Php1lk03', 'Php1lk04', 'Php1lk05', 'Php1lk06', 'Php1lk07', 'Php1lk08',
+    FSA_TAG64("Php1lk01"), FSA_TAG64("Php1lk02"), FSA_TAG64("Php1lk03"), FSA_TAG64("Php1lk04"), FSA_TAG64("Php1lk05"), FSA_TAG64("Php1lk06"), FSA_TAG64("Php1lk07"), FSA_TAG64("Php1lk08"),
 };
 
 static const u64 lbl_8048D4E8[8] = {
-    'Php1lf09', 'Php1lf10', 'Php1lf11', 'Php1lf12', 'Php1lf13', 'Php1lf14', 'Php1lf15', 'Php1lf16',
+    FSA_TAG64("Php1lf09"), FSA_TAG64("Php1lf10"), FSA_TAG64("Php1lf11"), FSA_TAG64("Php1lf12"), FSA_TAG64("Php1lf13"), FSA_TAG64("Php1lf14"), FSA_TAG64("Php1lf15"), FSA_TAG64("Php1lf16"),
 };
 
 static const u64 lbl_8048D528[8] = {
-    'Php1lk09', 'Php1lk10', 'Php1lk11', 'Php1lk12', 'Php1lk13', 'Php1lk14', 'Php1lk15', 'Php1lk16',
+    FSA_TAG64("Php1lk09"), FSA_TAG64("Php1lk10"), FSA_TAG64("Php1lk11"), FSA_TAG64("Php1lk12"), FSA_TAG64("Php1lk13"), FSA_TAG64("Php1lk14"), FSA_TAG64("Php1lk15"), FSA_TAG64("Php1lk16"),
 };
 
 static const u64 lbl_8048D568[12] = {
-    'Php1ii01', 'Php1ii03', 'Php1ii05', 'Php1ii07', 'Php1ii09', 'Php1ii11',
-    'Php1ii13', 'Php1ii15', 'Php1ii17', 'Php1ii19', 'Php1ii21', 'Php1ii23',
+    FSA_TAG64("Php1ii01"), FSA_TAG64("Php1ii03"), FSA_TAG64("Php1ii05"), FSA_TAG64("Php1ii07"), FSA_TAG64("Php1ii09"), FSA_TAG64("Php1ii11"),
+    FSA_TAG64("Php1ii13"), FSA_TAG64("Php1ii15"), FSA_TAG64("Php1ii17"), FSA_TAG64("Php1ii19"), FSA_TAG64("Php1ii21"), FSA_TAG64("Php1ii23"),
 };
 
 static const u64 lbl_8048D5C8[12] = {
-    'Php1ii02', 'Php1ii04', 'Php1ii06', 'Php1ii08', 'Php1ii10', 'Php1ii12',
-    'Php1ii14', 'Php1ii16', 'Php1ii18', 'Php1ii20', 'Php1ii22', 'Php1ii24',
+    FSA_TAG64("Php1ii02"), FSA_TAG64("Php1ii04"), FSA_TAG64("Php1ii06"), FSA_TAG64("Php1ii08"), FSA_TAG64("Php1ii10"), FSA_TAG64("Php1ii12"),
+    FSA_TAG64("Php1ii14"), FSA_TAG64("Php1ii16"), FSA_TAG64("Php1ii18"), FSA_TAG64("Php1ii20"), FSA_TAG64("Php1ii22"), FSA_TAG64("Php1ii24"),
 };
 
 static const u64 lbl_8048D628[3] = {
@@ -116,58 +116,58 @@ static const u64 lbl_8048D6B8[4] = {
 // "P1s01" .. "P4r06" and "P1sk01" .. "P4rk06": the Force Gem digits per player (fn_8041C0C0;
 // player 4 has the r tags).
 static const u64 lbl_8048D6D8[4][5] = {
-    {'P1s01', 'P1s02', 'P1s03', 'P1s04', 'P1s05'},
-    {'P2s01', 'P2s02', 'P2s03', 'P2s04', 'P2s05'},
-    {'P3s01', 'P3s02', 'P3s03', 'P3s04', 'P3s05'},
-    {'P4r02', 'P4r03', 'P4r04', 'P4r05', 'P4r06'},
+    {FSA_TAG64("P1s01"), FSA_TAG64("P1s02"), FSA_TAG64("P1s03"), FSA_TAG64("P1s04"), FSA_TAG64("P1s05")},
+    {FSA_TAG64("P2s01"), FSA_TAG64("P2s02"), FSA_TAG64("P2s03"), FSA_TAG64("P2s04"), FSA_TAG64("P2s05")},
+    {FSA_TAG64("P3s01"), FSA_TAG64("P3s02"), FSA_TAG64("P3s03"), FSA_TAG64("P3s04"), FSA_TAG64("P3s05")},
+    {FSA_TAG64("P4r02"), FSA_TAG64("P4r03"), FSA_TAG64("P4r04"), FSA_TAG64("P4r05"), FSA_TAG64("P4r06")},
 };
 
 static const u64 lbl_8048D778[4][5] = {
-    {'P1sk01', 'P1sk02', 'P1sk03', 'P1sk04', 'P1sk05'},
-    {'P2sk01', 'P2sk02', 'P2sk03', 'P2sk04', 'P2sk05'},
-    {'P3sk01', 'P3sk02', 'P3sk03', 'P3sk04', 'P3sk05'},
-    {'P4rk02', 'P4rk03', 'P4rk04', 'P4rk05', 'P4rk06'},
+    {FSA_TAG64("P1sk01"), FSA_TAG64("P1sk02"), FSA_TAG64("P1sk03"), FSA_TAG64("P1sk04"), FSA_TAG64("P1sk05")},
+    {FSA_TAG64("P2sk01"), FSA_TAG64("P2sk02"), FSA_TAG64("P2sk03"), FSA_TAG64("P2sk04"), FSA_TAG64("P2sk05")},
+    {FSA_TAG64("P3sk01"), FSA_TAG64("P3sk02"), FSA_TAG64("P3sk03"), FSA_TAG64("P3sk04"), FSA_TAG64("P3sk05")},
+    {FSA_TAG64("P4rk02"), FSA_TAG64("P4rk03"), FSA_TAG64("P4rk04"), FSA_TAG64("P4rk05"), FSA_TAG64("P4rk06")},
 };
 static const u64 lbl_8048D818[4][2] = {
-    {'P1r01', 'P1rk01'},
-    {'P2r01', 'P2rk01'},
-    {'P3r01', 'P3rk01'},
-    {'P4r01', 'P4rk01'},
+    {FSA_TAG64("P1r01"), FSA_TAG64("P1rk01")},
+    {FSA_TAG64("P2r01"), FSA_TAG64("P2rk01")},
+    {FSA_TAG64("P3r01"), FSA_TAG64("P3rk01")},
+    {FSA_TAG64("P4r01"), FSA_TAG64("P4rk01")},
 };
 
 static const u64 lbl_8048D858[4][12] = {
-    {'Pp1ii01', 'Pp1ii03', 'Pp1ii05', 'Pp1ii07', 'Pp1ii09', 'Pp1ii11', 'Pp1ii13', 'Pp1ii15', 'Pp1ii17', 'Pp1ii19', 'Pp1ii21', 'Pp1ii23'},
-    {'Pp2ii01', 'Pp2ii03', 'Pp2ii05', 'Pp2ii07', 'Pp2ii09', 'Pp2ii11', 'Pp2ii13', 'Pp2ii15', 'Pp2ii17', 'Pp2ii19', 'Pp2ii21', 'Pp2ii23'},
-    {'Pp3ii01', 'Pp3ii03', 'Pp3ii05', 'Pp3ii07', 'Pp3ii09', 'Pp3ii11', 'Pp3ii13', 'Pp3ii15', 'Pp3ii17', 'Pp3ii19', 'Pp3ii21', 'Pp3ii23'},
-    {'Pp4ii01', 'Pp4ii03', 'Pp4ii05', 'Pp4ii07', 'Pp4ii09', 'Pp4ii11', 'Pp4ii13', 'Pp4ii15', 'Pp4ii17', 'Pp4ii19', 'Pp4ii21', 'Pp4ii23'},
+    {FSA_TAG64("Pp1ii01"), FSA_TAG64("Pp1ii03"), FSA_TAG64("Pp1ii05"), FSA_TAG64("Pp1ii07"), FSA_TAG64("Pp1ii09"), FSA_TAG64("Pp1ii11"), FSA_TAG64("Pp1ii13"), FSA_TAG64("Pp1ii15"), FSA_TAG64("Pp1ii17"), FSA_TAG64("Pp1ii19"), FSA_TAG64("Pp1ii21"), FSA_TAG64("Pp1ii23")},
+    {FSA_TAG64("Pp2ii01"), FSA_TAG64("Pp2ii03"), FSA_TAG64("Pp2ii05"), FSA_TAG64("Pp2ii07"), FSA_TAG64("Pp2ii09"), FSA_TAG64("Pp2ii11"), FSA_TAG64("Pp2ii13"), FSA_TAG64("Pp2ii15"), FSA_TAG64("Pp2ii17"), FSA_TAG64("Pp2ii19"), FSA_TAG64("Pp2ii21"), FSA_TAG64("Pp2ii23")},
+    {FSA_TAG64("Pp3ii01"), FSA_TAG64("Pp3ii03"), FSA_TAG64("Pp3ii05"), FSA_TAG64("Pp3ii07"), FSA_TAG64("Pp3ii09"), FSA_TAG64("Pp3ii11"), FSA_TAG64("Pp3ii13"), FSA_TAG64("Pp3ii15"), FSA_TAG64("Pp3ii17"), FSA_TAG64("Pp3ii19"), FSA_TAG64("Pp3ii21"), FSA_TAG64("Pp3ii23")},
+    {FSA_TAG64("Pp4ii01"), FSA_TAG64("Pp4ii03"), FSA_TAG64("Pp4ii05"), FSA_TAG64("Pp4ii07"), FSA_TAG64("Pp4ii09"), FSA_TAG64("Pp4ii11"), FSA_TAG64("Pp4ii13"), FSA_TAG64("Pp4ii15"), FSA_TAG64("Pp4ii17"), FSA_TAG64("Pp4ii19"), FSA_TAG64("Pp4ii21"), FSA_TAG64("Pp4ii23")},
 };
 
 static const u64 lbl_8048D9D8[4][12] = {
-    {'Pp1ii02', 'Pp1ii04', 'Pp1ii06', 'Pp1ii08', 'Pp1ii10', 'Pp1ii12', 'Pp1ii14', 'Pp1ii16', 'Pp1ii18', 'Pp1ii20', 'Pp1ii22', 'Pp1ii24'},
-    {'Pp2ii02', 'Pp2ii04', 'Pp2ii06', 'Pp2ii08', 'Pp2ii10', 'Pp2ii12', 'Pp2ii14', 'Pp2ii16', 'Pp2ii18', 'Pp2ii20', 'Pp2ii22', 'Pp2ii24'},
-    {'Pp3ii02', 'Pp3ii04', 'Pp3ii06', 'Pp3ii08', 'Pp3ii10', 'Pp3ii12', 'Pp3ii14', 'Pp3ii16', 'Pp3ii18', 'Pp3ii20', 'Pp3ii22', 'Pp3ii24'},
-    {'Pp4ii02', 'Pp4ii04', 'Pp4ii06', 'Pp4ii08', 'Pp4ii10', 'Pp4ii12', 'Pp4ii14', 'Pp4ii16', 'Pp4ii18', 'Pp4ii20', 'Pp4ii22', 'Pp4ii24'},
+    {FSA_TAG64("Pp1ii02"), FSA_TAG64("Pp1ii04"), FSA_TAG64("Pp1ii06"), FSA_TAG64("Pp1ii08"), FSA_TAG64("Pp1ii10"), FSA_TAG64("Pp1ii12"), FSA_TAG64("Pp1ii14"), FSA_TAG64("Pp1ii16"), FSA_TAG64("Pp1ii18"), FSA_TAG64("Pp1ii20"), FSA_TAG64("Pp1ii22"), FSA_TAG64("Pp1ii24")},
+    {FSA_TAG64("Pp2ii02"), FSA_TAG64("Pp2ii04"), FSA_TAG64("Pp2ii06"), FSA_TAG64("Pp2ii08"), FSA_TAG64("Pp2ii10"), FSA_TAG64("Pp2ii12"), FSA_TAG64("Pp2ii14"), FSA_TAG64("Pp2ii16"), FSA_TAG64("Pp2ii18"), FSA_TAG64("Pp2ii20"), FSA_TAG64("Pp2ii22"), FSA_TAG64("Pp2ii24")},
+    {FSA_TAG64("Pp3ii02"), FSA_TAG64("Pp3ii04"), FSA_TAG64("Pp3ii06"), FSA_TAG64("Pp3ii08"), FSA_TAG64("Pp3ii10"), FSA_TAG64("Pp3ii12"), FSA_TAG64("Pp3ii14"), FSA_TAG64("Pp3ii16"), FSA_TAG64("Pp3ii18"), FSA_TAG64("Pp3ii20"), FSA_TAG64("Pp3ii22"), FSA_TAG64("Pp3ii24")},
+    {FSA_TAG64("Pp4ii02"), FSA_TAG64("Pp4ii04"), FSA_TAG64("Pp4ii06"), FSA_TAG64("Pp4ii08"), FSA_TAG64("Pp4ii10"), FSA_TAG64("Pp4ii12"), FSA_TAG64("Pp4ii14"), FSA_TAG64("Pp4ii16"), FSA_TAG64("Pp4ii18"), FSA_TAG64("Pp4ii20"), FSA_TAG64("Pp4ii22"), FSA_TAG64("Pp4ii24")},
 };
 
 static const u64 lbl_8048DB58[4][3] = {
-    {'Pp1iib01', 'Pp1iib02', 'Pp1iib03'},
-    {'Pp2iib01', 'Pp2iib02', 'Pp2iib03'},
-    {'Pp3iib01', 'Pp3iib02', 'Pp3iib03'},
-    {'Pp4iib01', 'Pp4iib02', 'Pp4iib03'},
+    {FSA_TAG64("Pp1iib01"), FSA_TAG64("Pp1iib02"), FSA_TAG64("Pp1iib03")},
+    {FSA_TAG64("Pp2iib01"), FSA_TAG64("Pp2iib02"), FSA_TAG64("Pp2iib03")},
+    {FSA_TAG64("Pp3iib01"), FSA_TAG64("Pp3iib02"), FSA_TAG64("Pp3iib03")},
+    {FSA_TAG64("Pp4iib01"), FSA_TAG64("Pp4iib02"), FSA_TAG64("Pp4iib03")},
 };
 
 static const u64 lbl_8048DBB8[4][3] = {
-    {'P1le201', 'P1le202', 'P1le203'},
-    {'P2le201', 'P2le202', 'P2le203'},
-    {'P3le201', 'P3le202', 'P3le203'},
-    {'P4le201', 'P4le202', 'P4le203'},
+    {FSA_TAG64("P1le201"), FSA_TAG64("P1le202"), FSA_TAG64("P1le203")},
+    {FSA_TAG64("P2le201"), FSA_TAG64("P2le202"), FSA_TAG64("P2le203")},
+    {FSA_TAG64("P3le201"), FSA_TAG64("P3le202"), FSA_TAG64("P3le203")},
+    {FSA_TAG64("P4le201"), FSA_TAG64("P4le202"), FSA_TAG64("P4le203")},
 };
 
 static const u64 lbl_8048DC18[4][6] = {
-    {'Pp1i01', 'Pp1i02', 'Pp1ib01', 'Pp1ib02', 'Pp1ib03', 'Pp1ib04'},
-    {'Pp2i01', 'Pp2i02', 'Pp2ib01', 'Pp2ib02', 'Pp2ib03', 'Pp2ib04'},
-    {'Pp3i01', 'Pp3i02', 'Pp3ib01', 'Pp3ib02', 'Pp3ib03', 'Pp3ib04'},
-    {'Pp4i01', 'Pp4i02', 'Pp4ib01', 'Pp4ib02', 'Pp4ib03', 'Pp4ib04'},
+    {FSA_TAG64("Pp1i01"), FSA_TAG64("Pp1i02"), FSA_TAG64("Pp1ib01"), FSA_TAG64("Pp1ib02"), FSA_TAG64("Pp1ib03"), FSA_TAG64("Pp1ib04")},
+    {FSA_TAG64("Pp2i01"), FSA_TAG64("Pp2i02"), FSA_TAG64("Pp2ib01"), FSA_TAG64("Pp2ib02"), FSA_TAG64("Pp2ib03"), FSA_TAG64("Pp2ib04")},
+    {FSA_TAG64("Pp3i01"), FSA_TAG64("Pp3i02"), FSA_TAG64("Pp3ib01"), FSA_TAG64("Pp3ib02"), FSA_TAG64("Pp3ib03"), FSA_TAG64("Pp3ib04")},
+    {FSA_TAG64("Pp4i01"), FSA_TAG64("Pp4i02"), FSA_TAG64("Pp4ib01"), FSA_TAG64("Pp4ib02"), FSA_TAG64("Pp4ib03"), FSA_TAG64("Pp4ib04")},
 };
 
 static const u64 lbl_8048DCD8[4] = {
@@ -178,10 +178,10 @@ static const u64 lbl_8048DCD8[4] = {
 };
 
 static const u64 lbl_8048DCF8[4][4] = {
-    {'P1brak01', 'P1bra01', 'P1brak02', 'P1bra02'},
-    {'P2brak01', 'P2bra01', 'P2brak02', 'P2bra02'},
-    {'P3brak01', 'P3bra01', 'P3brak02', 'P3bra02'},
-    {'P4brak01', 'P4bra01', 'P4brak02', 'P4bra02'},
+    {FSA_TAG64("P1brak01"), FSA_TAG64("P1bra01"), FSA_TAG64("P1brak02"), FSA_TAG64("P1bra02")},
+    {FSA_TAG64("P2brak01"), FSA_TAG64("P2bra01"), FSA_TAG64("P2brak02"), FSA_TAG64("P2bra02")},
+    {FSA_TAG64("P3brak01"), FSA_TAG64("P3bra01"), FSA_TAG64("P3brak02"), FSA_TAG64("P3bra02")},
+    {FSA_TAG64("P4brak01"), FSA_TAG64("P4bra01"), FSA_TAG64("P4brak02"), FSA_TAG64("P4bra02")},
 };
 
 static const u64 lbl_8048DD78[3] = {
@@ -222,110 +222,110 @@ static const u64 lbl_8048DE00[4] = {
 };
 
 static const u64 lbl_8048DE20[4] = {
-    'P11st01',
-    'P21st01',
-    'P31st01',
-    'P41st01',
+    FSA_TAG64("P11st01"),
+    FSA_TAG64("P21st01"),
+    FSA_TAG64("P31st01"),
+    FSA_TAG64("P41st01"),
 };
 
 static const u64 lbl_8048DE40[4] = {
-    'Pp1ra02',
-    'Pp2ra02',
-    'Pp3ra02',
-    'Pp4ra02',
+    FSA_TAG64("Pp1ra02"),
+    FSA_TAG64("Pp2ra02"),
+    FSA_TAG64("Pp3ra02"),
+    FSA_TAG64("Pp4ra02"),
 };
 
 static const u64 lbl_8048DE60[4] = {
-    'Pp1ra01',
-    'Pp2ra01',
-    'Pp3ra01',
-    'Pp4ra01',
+    FSA_TAG64("Pp1ra01"),
+    FSA_TAG64("Pp2ra01"),
+    FSA_TAG64("Pp3ra01"),
+    FSA_TAG64("Pp4ra01"),
 };
 
 static const u64 lbl_8048DE80[4] = {
-    'Ndata01',
-    'Ndata04',
-    'Ndata07',
-    'Ndata10',
+    FSA_TAG64("Ndata01"),
+    FSA_TAG64("Ndata04"),
+    FSA_TAG64("Ndata07"),
+    FSA_TAG64("Ndata10"),
 };
 
 static const u64 lbl_8048DEA0[4] = {
-    'Pp1noi02',
-    'Pp1noi03',
-    'Pp3noi02',
-    'Pp4noi02',
+    FSA_TAG64("Pp1noi02"),
+    FSA_TAG64("Pp1noi03"),
+    FSA_TAG64("Pp3noi02"),
+    FSA_TAG64("Pp4noi02"),
 };
 
 static const u64 lbl_8048DEC0[4] = {
-    'Pp1noi01',
-    'Pp1noi04',
-    'Pp3noi01',
-    'Pp4noi01',
+    FSA_TAG64("Pp1noi01"),
+    FSA_TAG64("Pp1noi04"),
+    FSA_TAG64("Pp3noi01"),
+    FSA_TAG64("Pp4noi01"),
 };
 
 static const u64 lbl_8048DEE0[4] = {
-    'Pp1iib03',
-    'Pp2iib03',
-    'Pp3iib03',
-    'Pp4iib03',
+    FSA_TAG64("Pp1iib03"),
+    FSA_TAG64("Pp2iib03"),
+    FSA_TAG64("Pp3iib03"),
+    FSA_TAG64("Pp4iib03"),
 };
 
 static const u64 lbl_8048DF00[4] = {
-    'Ndata20',
-    'Ndata21',
-    'Ndata22',
-    'Ndata23',
+    FSA_TAG64("Ndata20"),
+    FSA_TAG64("Ndata21"),
+    FSA_TAG64("Ndata22"),
+    FSA_TAG64("Ndata23"),
 };
 
 static const u64 lbl_8048DF20[4] = {
-    'Ndata03',
-    'Ndata05',
-    'Ndata06',
-    'Ndata08',
+    FSA_TAG64("Ndata03"),
+    FSA_TAG64("Ndata05"),
+    FSA_TAG64("Ndata06"),
+    FSA_TAG64("Ndata08"),
 };
 
 static const u64 lbl_8048DF40[8] = {
-    'Pp1lf01',
-    'Pp1lf02',
-    'Pp1lf03',
-    'Pp1lf04',
-    'Pp1lf05',
-    'Pp1lf06',
-    'Pp1lf07',
-    'Pp1lf08',
+    FSA_TAG64("Pp1lf01"),
+    FSA_TAG64("Pp1lf02"),
+    FSA_TAG64("Pp1lf03"),
+    FSA_TAG64("Pp1lf04"),
+    FSA_TAG64("Pp1lf05"),
+    FSA_TAG64("Pp1lf06"),
+    FSA_TAG64("Pp1lf07"),
+    FSA_TAG64("Pp1lf08"),
 };
 
 static const u64 lbl_8048DF80[8] = {
-    'Pp1lf09',
-    'Pp1lf10',
-    'Pp1lf11',
-    'Pp1lf12',
-    'Pp1lf13',
-    'Pp1lf14',
-    'Pp1lf15',
-    'Pp1lf16',
+    FSA_TAG64("Pp1lf09"),
+    FSA_TAG64("Pp1lf10"),
+    FSA_TAG64("Pp1lf11"),
+    FSA_TAG64("Pp1lf12"),
+    FSA_TAG64("Pp1lf13"),
+    FSA_TAG64("Pp1lf14"),
+    FSA_TAG64("Pp1lf15"),
+    FSA_TAG64("Pp1lf16"),
 };
 
 static const u64 lbl_8048DFC0[8] = {
-    'Pp1lfk01',
-    'Pp1lfk02',
-    'Pp1lfk03',
-    'Pp1lfk04',
-    'Pp1lfk05',
-    'Pp1lfk06',
-    'Pp1lfk07',
-    'Pp1lfk08',
+    FSA_TAG64("Pp1lfk01"),
+    FSA_TAG64("Pp1lfk02"),
+    FSA_TAG64("Pp1lfk03"),
+    FSA_TAG64("Pp1lfk04"),
+    FSA_TAG64("Pp1lfk05"),
+    FSA_TAG64("Pp1lfk06"),
+    FSA_TAG64("Pp1lfk07"),
+    FSA_TAG64("Pp1lfk08"),
 };
 
 static const u64 lbl_8048E000[8] = {
-    'Pp1lfk09',
-    'Pp1lfk10',
-    'Pp1lfk11',
-    'Pp1lfk12',
-    'Pp1lfk13',
-    'Pp1lfk14',
-    'Pp1lfk15',
-    'Pp1lfk16',
+    FSA_TAG64("Pp1lfk09"),
+    FSA_TAG64("Pp1lfk10"),
+    FSA_TAG64("Pp1lfk11"),
+    FSA_TAG64("Pp1lfk12"),
+    FSA_TAG64("Pp1lfk13"),
+    FSA_TAG64("Pp1lfk14"),
+    FSA_TAG64("Pp1lfk15"),
+    FSA_TAG64("Pp1lfk16"),
 };
 
 const f32 lbl_8048E040[4][5] = {
@@ -418,10 +418,10 @@ AdventureHud_804B13D4::AdventureHud_804B13D4() : field_0x244(0xFFFFFFFF), field_
     }
     field_0x18 = new J2DScreen();
     field_0x18->setPriority("main_adv_ranking.blo", 0x1100000, lbl_80529DEC.mGame2DArchive_0x4c);
-    field_0x4->search('Pp1li01')->hide();
-    field_0x4->search('Pp2li01')->hide();
-    field_0x4->search('Pp3li01')->hide();
-    field_0x4->search('Pp4li01')->hide();
+    field_0x4->search(FSA_TAG64("Pp1li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp2li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp3li01"))->hide();
+    field_0x4->search(FSA_TAG64("Pp4li01"))->hide();
     field_0x24c[0] = field_0x4->search(lbl_8048D6A8[0])->getAlpha();
     field_0x24c[1] = field_0x4->search(lbl_8048D6A8[1])->getAlpha();
     field_0x24c[2] = field_0x4->search(lbl_8048D658[0])->getAlpha();
@@ -444,8 +444,8 @@ AdventureHud_804B13D4::AdventureHud_804B13D4() : field_0x244(0xFFFFFFFF), field_
     field_0x250[1] = field_0x4->search(lbl_8048D4A8[0])->getAlpha();
     field_0x250[2] = field_0x4->search(lbl_8048D4E8[0])->getAlpha();
     field_0x250[3] = field_0x4->search(lbl_8048D528[0])->getAlpha();
-    field_0x26a = field_0x4->search('Php1ni02')->getAlpha();
-    field_0x26b = field_0x4->search('Php1ni01')->getAlpha();
+    field_0x26a = field_0x4->search(FSA_TAG64("Php1ni02"))->getAlpha();
+    field_0x26b = field_0x4->search(FSA_TAG64("Php1ni01"))->getAlpha();
     field_0x26c[0] = field_0x4->search(lbl_8048D6B8[0])->getAlpha();
     field_0x26c[1] = field_0x4->search(lbl_8048D6B8[1])->getAlpha();
     field_0x26c[2] = field_0x4->search(lbl_8048D6B8[2])->getAlpha();
@@ -458,15 +458,15 @@ AdventureHud_804B13D4::AdventureHud_804B13D4() : field_0x244(0xFFFFFFFF), field_
     field_0x248 = static_cast<J2DPicture*>(field_0x4->search(lbl_8048D658[0]))->getBlack();
     field_0x244 = static_cast<J2DPicture*>(field_0x4->search(lbl_8048D658[0]))->getWhite();
     field_0x54 = new PaneCtrl_804AF86C();
-    field_0x54->setPane_80402F04(field_0x4->search('Ndata13'));
+    field_0x54->setPane_80402F04(field_0x4->search(FSA_TAG64("Ndata13")));
     field_0x58 = new PaneCtrl_804AF86C();
-    field_0x58->setPane_80402F04(field_0x4->search('Php1ni02'));
+    field_0x58->setPane_80402F04(field_0x4->search(FSA_TAG64("Php1ni02")));
     field_0x5c = new PaneCtrl_804AF86C();
-    field_0x5c->setPane_80402F04(field_0x4->search('Ph1piib3'));
+    field_0x5c->setPane_80402F04(field_0x4->search(FSA_TAG64("Ph1piib3")));
     field_0x6c = new PaneCtrl_804AF86C();
-    field_0x6c->setPane_80402F04(field_0x4->search('Ndata16'));
+    field_0x6c->setPane_80402F04(field_0x4->search(FSA_TAG64("Ndata16")));
     field_0x70 = new PaneCtrl_804AF86C();
-    field_0x70->setPane_80402F04(field_0x4->search('Ndata02'));
+    field_0x70->setPane_80402F04(field_0x4->search(FSA_TAG64("Ndata02")));
     for (s32 i = 0; i < 4; i++) {
         field_0x74[i] = new PaneCtrl_804AF86C();
         field_0x74[i]->setPane_80402F04(field_0x18->search(lbl_8048DE00[i]));
@@ -597,18 +597,18 @@ void AdventureHud_804B13D4::fn_8041FC2C() {
     }
     field_0x222 = -1;
     if (gGameRoot_8053AAF8->field_0x7e == 0) {
-        field_0x4->search('Ndata13')->show();
-        field_0x4->search('Php1ni02')->hide();
-        field_0x4->search('Ph1piib3')->show();
+        field_0x4->search(FSA_TAG64("Ndata13"))->show();
+        field_0x4->search(FSA_TAG64("Php1ni02"))->hide();
+        field_0x4->search(FSA_TAG64("Ph1piib3"))->show();
         field_0x4->search(lbl_8048D6B8[0])->hide();
         field_0x4->search(lbl_8048D6B8[1])->hide();
         field_0x4->search(lbl_8048D6B8[2])->hide();
         field_0x4->search(lbl_8048D6B8[3])->hide();
         u32 kind = gGameRoot_8053AAF8->field_0x83 & 3;
         if (kind == 2) {
-            field_0x4->search('Ndata16')->show();
+            field_0x4->search(FSA_TAG64("Ndata16"))->show();
         } else {
-            field_0x4->search('Ndata16')->hide();
+            field_0x4->search(FSA_TAG64("Ndata16"))->hide();
         }
         for (i = 0; i < 4; i++) {
             field_0x18->search(lbl_8048DE00[i])->hide();
@@ -1148,13 +1148,13 @@ void AdventureHud_804B13D4::fn_8041D18C(s32 player) {
         if (!isMaskBitSet(field_0x28d, player) && !fn_80230188(player)) {
             if (fn_8023BE0C(getRepresentativePlayer_8022EA0C(player)) && !(lbl_8053AED0->field_0x255 & (u8)(1 << player))) {
                 field_0x28d |= (u8)(1 << player);
-                field_0x4->search('Php1ni02')->show();
+                field_0x4->search(FSA_TAG64("Php1ni02"))->show();
             }
         } else {
             if (lbl_8053AD30->fn_80309D24(getPlayerInputSlot_8030AAF4(player), 0x100) == 0 ||
                 (lbl_8053AED0->field_0x255 & (u8)(1 << player)) || fn_80230188(player)) {
                 field_0x28d &= ~(u8)(1 << player);
-                field_0x4->search('Php1ni02')->hide();
+                field_0x4->search(FSA_TAG64("Php1ni02"))->hide();
             }
         }
         if (fn_80236D14(player)) {
@@ -1377,11 +1377,11 @@ void AdventureHud_804B13D4::fn_8041CC04() {
 }
 
 void AdventureHud_804B13D4::fn_8041C67C() {
-    field_0x4->search('Ndata13')->hide();
-    field_0x4->search('Php1ni02')->hide();
-    field_0x4->search('Ph1piib3')->hide();
-    field_0x4->search('Ndata16')->hide();
-    field_0x4->search('Ndata02')->hide();
+    field_0x4->search(FSA_TAG64("Ndata13"))->hide();
+    field_0x4->search(FSA_TAG64("Php1ni02"))->hide();
+    field_0x4->search(FSA_TAG64("Ph1piib3"))->hide();
+    field_0x4->search(FSA_TAG64("Ndata16"))->hide();
+    field_0x4->search(FSA_TAG64("Ndata02"))->hide();
     for (s32 i = 0; i < 4; i++) {
         if (gGameRoot_8053AAF8->mPlayerMask & (u8)(1 << i)) {
             field_0x18->search(lbl_8048DE00[i])->hide();
@@ -1705,8 +1705,8 @@ void AdventureHud_804B13D4::fn_8041A868(bool arg) {
         field_0x4->search(lbl_8048D4E8[i])->setAlpha(field_0x250[2] * field_0x118[0]);
         field_0x4->search(lbl_8048D528[i])->setAlpha(field_0x250[3] * field_0x118[0]);
     }
-    field_0x4->search('Php1ni02')->setAlpha(field_0x26a * field_0x118[0]);
-    field_0x4->search('Php1ni01')->setAlpha(field_0x26b * field_0x118[0]);
+    field_0x4->search(FSA_TAG64("Php1ni02"))->setAlpha(field_0x26a * field_0x118[0]);
+    field_0x4->search(FSA_TAG64("Php1ni01"))->setAlpha(field_0x26b * field_0x118[0]);
     for (s32 i = 0; i < 4; i++) {
         field_0x4->search(lbl_8048D6B8[i])->setAlpha(field_0x26c[i] * field_0x118[0]);
     }

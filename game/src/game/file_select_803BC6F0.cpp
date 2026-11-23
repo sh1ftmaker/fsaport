@@ -20,187 +20,187 @@
 // .rodata: the pane tag tables (J2DPane::search), in address order; most
 // functions address them off one base (lbl_804765D0).
 static const u64 lbl_804765D0[3] = {
-    'Tf1lv', 'Tf2lv', 'Tf3lv',
+    FSA_TAG64("Tf1lv"), FSA_TAG64("Tf2lv"), FSA_TAG64("Tf3lv"),
 };
 static const u64 lbl_804765E8[3] = {
-    'Tf1fir', 'Tf2fir', 'Tf3fir',
+    FSA_TAG64("Tf1fir"), FSA_TAG64("Tf2fir"), FSA_TAG64("Tf3fir"),
 };
 static const u64 lbl_80476600[3] = {
-    'Tf1date', 'Tf2date', 'Tf3date',
+    FSA_TAG64("Tf1date"), FSA_TAG64("Tf2date"), FSA_TAG64("Tf3date"),
 };
 static const u64 lbl_80476618[81] = {
-    'Pabb10', 'Pabb09', 'Pabb08',
-    'Pabb07', 'Pabb06', 'Pabb05',
-    'Pabb04', 'Pabb03', 'Pabb02',
-    'Pabb01', 'Wbat01', 'Pbatc10',
-    'Pbatc09', 'Pbatc08', 'Pbatc07',
-    'Pbatc06', 'Pbatc05', 'Pbatc04',
-    'Pbatc03', 'Pbatc02', 'Pbatc01',
-    'Pqb10', 'Pqb09', 'Pqb08',
-    'Pqb07', 'Pqb06', 'Pqb05',
-    'Pqb04', 'Pqb03', 'Pqb02',
-    'Pqb01', 'Pbatb09', 'Pbatb08',
-    'Pbatb07', 'Pbatb06', 'Pbatb05',
-    'Pbatb04', 'Pbatb03', 'Pbatb02',
-    'Pbatb01', 'Tbat01', 'Wadv01',
-    'Padhu03', 'Padhu02', 'Padvl02',
-    'Padvl01', 'Padvw72', 'Padvw71',
-    'Padvw70', 'Padvw62', 'Padvw61',
-    'Padvw60', 'Padvw52', 'Padvw51',
-    'Padvw50', 'Padvw42', 'Padvw41',
-    'Padvw40', 'Padvw32', 'Padvw31',
-    'Padvw30', 'Padvw22', 'Padvw21',
-    'Padvw20', 'Padvw12', 'Padvw11',
-    'Padvw10', 'Padvw74', 'Padvw73',
-    'Padvw64', 'Padvw63', 'Padvw54',
-    'Padvw53', 'Padvw44', 'Padvw43',
-    'Padvw34', 'Padvw33', 'Padvw24',
-    'Padvw23', 'Padvw14', 'Padvw13',
+    FSA_TAG64("Pabb10"), FSA_TAG64("Pabb09"), FSA_TAG64("Pabb08"),
+    FSA_TAG64("Pabb07"), FSA_TAG64("Pabb06"), FSA_TAG64("Pabb05"),
+    FSA_TAG64("Pabb04"), FSA_TAG64("Pabb03"), FSA_TAG64("Pabb02"),
+    FSA_TAG64("Pabb01"), FSA_TAG64("Wbat01"), FSA_TAG64("Pbatc10"),
+    FSA_TAG64("Pbatc09"), FSA_TAG64("Pbatc08"), FSA_TAG64("Pbatc07"),
+    FSA_TAG64("Pbatc06"), FSA_TAG64("Pbatc05"), FSA_TAG64("Pbatc04"),
+    FSA_TAG64("Pbatc03"), FSA_TAG64("Pbatc02"), FSA_TAG64("Pbatc01"),
+    FSA_TAG64("Pqb10"), FSA_TAG64("Pqb09"), FSA_TAG64("Pqb08"),
+    FSA_TAG64("Pqb07"), FSA_TAG64("Pqb06"), FSA_TAG64("Pqb05"),
+    FSA_TAG64("Pqb04"), FSA_TAG64("Pqb03"), FSA_TAG64("Pqb02"),
+    FSA_TAG64("Pqb01"), FSA_TAG64("Pbatb09"), FSA_TAG64("Pbatb08"),
+    FSA_TAG64("Pbatb07"), FSA_TAG64("Pbatb06"), FSA_TAG64("Pbatb05"),
+    FSA_TAG64("Pbatb04"), FSA_TAG64("Pbatb03"), FSA_TAG64("Pbatb02"),
+    FSA_TAG64("Pbatb01"), FSA_TAG64("Tbat01"), FSA_TAG64("Wadv01"),
+    FSA_TAG64("Padhu03"), FSA_TAG64("Padhu02"), FSA_TAG64("Padvl02"),
+    FSA_TAG64("Padvl01"), FSA_TAG64("Padvw72"), FSA_TAG64("Padvw71"),
+    FSA_TAG64("Padvw70"), FSA_TAG64("Padvw62"), FSA_TAG64("Padvw61"),
+    FSA_TAG64("Padvw60"), FSA_TAG64("Padvw52"), FSA_TAG64("Padvw51"),
+    FSA_TAG64("Padvw50"), FSA_TAG64("Padvw42"), FSA_TAG64("Padvw41"),
+    FSA_TAG64("Padvw40"), FSA_TAG64("Padvw32"), FSA_TAG64("Padvw31"),
+    FSA_TAG64("Padvw30"), FSA_TAG64("Padvw22"), FSA_TAG64("Padvw21"),
+    FSA_TAG64("Padvw20"), FSA_TAG64("Padvw12"), FSA_TAG64("Padvw11"),
+    FSA_TAG64("Padvw10"), FSA_TAG64("Padvw74"), FSA_TAG64("Padvw73"),
+    FSA_TAG64("Padvw64"), FSA_TAG64("Padvw63"), FSA_TAG64("Padvw54"),
+    FSA_TAG64("Padvw53"), FSA_TAG64("Padvw44"), FSA_TAG64("Padvw43"),
+    FSA_TAG64("Padvw34"), FSA_TAG64("Padvw33"), FSA_TAG64("Padvw24"),
+    FSA_TAG64("Padvw23"), FSA_TAG64("Padvw14"), FSA_TAG64("Padvw13"),
 };
 static const u64 lbl_804768A0[19] = {
-    'Padhu01', 'Padvb09', 'Padvb08',
-    'Padvb07', 'Padvb06', 'Padvb05',
-    'Padvb04', 'Padvb03', 'Padvb02',
-    'Padvb01', 'Tadv01', 'Pbli01',
-    'Pbli02', 'Pbli03', 'Pbli04',
-    'Pbli11', 'Pbli12', 'Pbli13',
-    'Pbli14',
+    FSA_TAG64("Padhu01"), FSA_TAG64("Padvb09"), FSA_TAG64("Padvb08"),
+    FSA_TAG64("Padvb07"), FSA_TAG64("Padvb06"), FSA_TAG64("Padvb05"),
+    FSA_TAG64("Padvb04"), FSA_TAG64("Padvb03"), FSA_TAG64("Padvb02"),
+    FSA_TAG64("Padvb01"), FSA_TAG64("Tadv01"), FSA_TAG64("Pbli01"),
+    FSA_TAG64("Pbli02"), FSA_TAG64("Pbli03"), FSA_TAG64("Pbli04"),
+    FSA_TAG64("Pbli11"), FSA_TAG64("Pbli12"), FSA_TAG64("Pbli13"),
+    FSA_TAG64("Pbli14"),
 };
 // The 'Pdb08'..'Pdb01' and 'Tdb01' panes of mScreen (fn_803CE11C fades
 // them out with field_0x196).
 static const u64 lbl_80476938[9] = {
-    'Pdb08', 'Pdb07', 'Pdb06',
-    'Pdb05', 'Pdb04', 'Pdb03',
-    'Pdb02', 'Pdb01', 'Tdb01',
+    FSA_TAG64("Pdb08"), FSA_TAG64("Pdb07"), FSA_TAG64("Pdb06"),
+    FSA_TAG64("Pdb05"), FSA_TAG64("Pdb04"), FSA_TAG64("Pdb03"),
+    FSA_TAG64("Pdb02"), FSA_TAG64("Pdb01"), FSA_TAG64("Tdb01"),
 };
 static const u64 lbl_80476980[10] = {
-    'Pqb01', 'Pqb02', 'Pqb03',
-    'Pqb04', 'Pqb05', 'Pqb06',
-    'Pqb07', 'Pqb08', 'Pqb09',
-    'Pqb10',
+    FSA_TAG64("Pqb01"), FSA_TAG64("Pqb02"), FSA_TAG64("Pqb03"),
+    FSA_TAG64("Pqb04"), FSA_TAG64("Pqb05"), FSA_TAG64("Pqb06"),
+    FSA_TAG64("Pqb07"), FSA_TAG64("Pqb08"), FSA_TAG64("Pqb09"),
+    FSA_TAG64("Pqb10"),
 };
 static const u64 lbl_804769D0[7] = {
-    'Padvw10', 'Padvw20', 'Padvw30',
-    'Padvw40', 'Padvw50', 'Padvw60',
-    'Padvw70',
+    FSA_TAG64("Padvw10"), FSA_TAG64("Padvw20"), FSA_TAG64("Padvw30"),
+    FSA_TAG64("Padvw40"), FSA_TAG64("Padvw50"), FSA_TAG64("Padvw60"),
+    FSA_TAG64("Padvw70"),
 };
 static const u64 lbl_80476A08[8] = {
-    'Padvw11', 'Padvw21', 'Padvw31',
-    'Padvw41', 'Padvw51', 'Padvw61',
-    'Padvw71', 'Padvl01',
+    FSA_TAG64("Padvw11"), FSA_TAG64("Padvw21"), FSA_TAG64("Padvw31"),
+    FSA_TAG64("Padvw41"), FSA_TAG64("Padvw51"), FSA_TAG64("Padvw61"),
+    FSA_TAG64("Padvw71"), FSA_TAG64("Padvl01"),
 };
 static const u64 lbl_80476A48[8] = {
-    'Padvw12', 'Padvw22', 'Padvw32',
-    'Padvw42', 'Padvw52', 'Padvw62',
-    'Padvw72', 'Padvl02',
+    FSA_TAG64("Padvw12"), FSA_TAG64("Padvw22"), FSA_TAG64("Padvw32"),
+    FSA_TAG64("Padvw42"), FSA_TAG64("Padvw52"), FSA_TAG64("Padvw62"),
+    FSA_TAG64("Padvw72"), FSA_TAG64("Padvl02"),
 };
 static const u64 lbl_80476A88[3] = {
-    'Pf1tbb07', 'Pf2tbb07', 'Pf3tbb07',
+    FSA_TAG64("Pf1tbb07"), FSA_TAG64("Pf2tbb07"), FSA_TAG64("Pf3tbb07"),
 };
 static const u64 lbl_80476AA0[3] = {
-    'Pf1tbb06', 'Pf2tbb06', 'Pf3tbb06',
+    FSA_TAG64("Pf1tbb06"), FSA_TAG64("Pf2tbb06"), FSA_TAG64("Pf3tbb06"),
 };
 static const u64 lbl_80476AB8[3] = {
-    'Pf1tbb05', 'Pf2tbb05', 'Pf3tbb05',
+    FSA_TAG64("Pf1tbb05"), FSA_TAG64("Pf2tbb05"), FSA_TAG64("Pf3tbb05"),
 };
 static const u64 lbl_80476AD0[3] = {
-    'Pf1tbb04', 'Pf2tbb04', 'Pf3tbb04',
+    FSA_TAG64("Pf1tbb04"), FSA_TAG64("Pf2tbb04"), FSA_TAG64("Pf3tbb04"),
 };
 static const u64 lbl_80476AE8[3] = {
-    'Pf1tbb03', 'Pf2tbb03', 'Pf3tbb03',
+    FSA_TAG64("Pf1tbb03"), FSA_TAG64("Pf2tbb03"), FSA_TAG64("Pf3tbb03"),
 };
 static const u64 lbl_80476B00[3] = {
-    'Pf1tbb02', 'Pf2tbb02', 'Pf3tbb02',
+    FSA_TAG64("Pf1tbb02"), FSA_TAG64("Pf2tbb02"), FSA_TAG64("Pf3tbb02"),
 };
 static const u64 lbl_80476B18[3] = {
-    'Pf1tbb01', 'Pf2tbb01', 'Pf3tbb01',
+    FSA_TAG64("Pf1tbb01"), FSA_TAG64("Pf2tbb01"), FSA_TAG64("Pf3tbb01"),
 };
 static const u64 lbl_80476B30[3] = {
-    'Pf1tb05', 'Pf2tb05', 'Pf3tb05',
+    FSA_TAG64("Pf1tb05"), FSA_TAG64("Pf2tb05"), FSA_TAG64("Pf3tb05"),
 };
 static const u64 lbl_80476B48[3] = {
-    'Pf1tb04', 'Pf2tb04', 'Pf3tb04',
+    FSA_TAG64("Pf1tb04"), FSA_TAG64("Pf2tb04"), FSA_TAG64("Pf3tb04"),
 };
 static const u64 lbl_80476B60[3] = {
-    'Pf1tb03', 'Pf2tb03', 'Pf3tb03',
+    FSA_TAG64("Pf1tb03"), FSA_TAG64("Pf2tb03"), FSA_TAG64("Pf3tb03"),
 };
 static const u64 lbl_80476B78[3] = {
-    'Pf1tb02', 'Pf2tb02', 'Pf3tb02',
+    FSA_TAG64("Pf1tb02"), FSA_TAG64("Pf2tb02"), FSA_TAG64("Pf3tb02"),
 };
 static const u64 lbl_80476B90[3] = {
-    'Pf1tb01', 'Pf2tb01', 'Pf3tb01',
+    FSA_TAG64("Pf1tb01"), FSA_TAG64("Pf2tb01"), FSA_TAG64("Pf3tb01"),
 };
 static const u64 lbl_80476BA8[3] = {
-    'Pf1t01', 'Pf2t01', 'Pf3t01',
+    FSA_TAG64("Pf1t01"), FSA_TAG64("Pf2t01"), FSA_TAG64("Pf3t01"),
 };
 static const u64 lbl_80476BC0[3] = {
-    'Pf1bb05', 'Pf2bb05', 'Pf3bb05',
+    FSA_TAG64("Pf1bb05"), FSA_TAG64("Pf2bb05"), FSA_TAG64("Pf3bb05"),
 };
 static const u64 lbl_80476BD8[3] = {
-    'Pf1bb04', 'Pf2bb04', 'Pf3bb04',
+    FSA_TAG64("Pf1bb04"), FSA_TAG64("Pf2bb04"), FSA_TAG64("Pf3bb04"),
 };
 static const u64 lbl_80476BF0[3] = {
-    'Pf1bb03', 'Pf2bb03', 'Pf3bb03',
+    FSA_TAG64("Pf1bb03"), FSA_TAG64("Pf2bb03"), FSA_TAG64("Pf3bb03"),
 };
 static const u64 lbl_80476C08[3] = {
-    'Pf1bb02', 'Pf2bb02', 'Pf3bb02',
+    FSA_TAG64("Pf1bb02"), FSA_TAG64("Pf2bb02"), FSA_TAG64("Pf3bb02"),
 };
 static const u64 lbl_80476C20[3] = {
-    'Pf1bb01', 'Pf2bb01', 'Pf3bb01',
+    FSA_TAG64("Pf1bb01"), FSA_TAG64("Pf2bb01"), FSA_TAG64("Pf3bb01"),
 };
 static const u64 lbl_80476C38[3] = {
-    'Pf1b05', 'Pf2b05', 'Pf3b05',
+    FSA_TAG64("Pf1b05"), FSA_TAG64("Pf2b05"), FSA_TAG64("Pf3b05"),
 };
 static const u64 lbl_80476C50[3] = {
-    'Pf1b04', 'Pf2b04', 'Pf3b04',
+    FSA_TAG64("Pf1b04"), FSA_TAG64("Pf2b04"), FSA_TAG64("Pf3b04"),
 };
 static const u64 lbl_80476C68[3] = {
-    'Pf1b03', 'Pf2b03', 'Pf3b03',
+    FSA_TAG64("Pf1b03"), FSA_TAG64("Pf2b03"), FSA_TAG64("Pf3b03"),
 };
 static const u64 lbl_80476C80[3] = {
-    'Pf1b02', 'Pf2b02', 'Pf3b02',
+    FSA_TAG64("Pf1b02"), FSA_TAG64("Pf2b02"), FSA_TAG64("Pf3b02"),
 };
 static const u64 lbl_80476C98[3] = {
-    'Pf1b01', 'Pf2b01', 'Pf3b01',
+    FSA_TAG64("Pf1b01"), FSA_TAG64("Pf2b01"), FSA_TAG64("Pf3b01"),
 };
 static const u64 lbl_80476CB0[4] = {
-    'Pstrb04', 'Pcopb04', 'Pdelb04',
-    'Pbacb04',
+    FSA_TAG64("Pstrb04"), FSA_TAG64("Pcopb04"), FSA_TAG64("Pdelb04"),
+    FSA_TAG64("Pbacb04"),
 };
 static const u64 lbl_80476CD0[3] = {
-    'Pf1bb06', 'Pf2bb06', 'Pf3bb06',
+    FSA_TAG64("Pf1bb06"), FSA_TAG64("Pf2bb06"), FSA_TAG64("Pf3bb06"),
 };
 static const u64 lbl_80476CE8[3] = {
-    'Pf1tbb08', 'Pf2tbb08', 'Pf3tbb08',
+    FSA_TAG64("Pf1tbb08"), FSA_TAG64("Pf2tbb08"), FSA_TAG64("Pf3tbb08"),
 };
 // Message ids (refreshFileRows_803CE4CC).
 static const s32 lbl_80476D00[8] = {
     0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33,
 };
 static const u64 lbl_80476D20[3] = {
-    'Tf1date', 'Tf2date', 'Tf3date',
+    FSA_TAG64("Tf1date"), FSA_TAG64("Tf2date"), FSA_TAG64("Tf3date"),
 };
 static const u64 lbl_80476D38[3] = {
-    'Tf1lv', 'Tf2lv', 'Tf3lv',
+    FSA_TAG64("Tf1lv"), FSA_TAG64("Tf2lv"), FSA_TAG64("Tf3lv"),
 };
 static const u64 lbl_80476D50[3] = {
-    'Tf1fir', 'Tf2fir', 'Tf3fir',
+    FSA_TAG64("Tf1fir"), FSA_TAG64("Tf2fir"), FSA_TAG64("Tf3fir"),
 };
 static const u64 lbl_80476D68[4] = {
-    'Pbacb01', 'Pbacb02', 'Pbacb03',
-    'Pbacb04',
+    FSA_TAG64("Pbacb01"), FSA_TAG64("Pbacb02"), FSA_TAG64("Pbacb03"),
+    FSA_TAG64("Pbacb04"),
 };
 static const u64 lbl_80476D88[4] = {
-    'Pdelb01', 'Pdelb02', 'Pdelb03',
-    'Pdelb04',
+    FSA_TAG64("Pdelb01"), FSA_TAG64("Pdelb02"), FSA_TAG64("Pdelb03"),
+    FSA_TAG64("Pdelb04"),
 };
 static const u64 lbl_80476DA8[4] = {
-    'Pcopb01', 'Pcopb02', 'Pcopb03',
-    'Pcopb04',
+    FSA_TAG64("Pcopb01"), FSA_TAG64("Pcopb02"), FSA_TAG64("Pcopb03"),
+    FSA_TAG64("Pcopb04"),
 };
 static const u64 lbl_80476DC8[4] = {
-    'Pstrb01', 'Pstrb02', 'Pstrb03',
-    'Pstrb04',
+    FSA_TAG64("Pstrb01"), FSA_TAG64("Pstrb02"), FSA_TAG64("Pstrb03"),
+    FSA_TAG64("Pstrb04"),
 };
 // fn_803BE3D8.
 static const s32 lbl_80476DE8[6] = {
@@ -303,7 +303,7 @@ inline void FileSelect_804AFF60::setMessage(u32 msg) {
         msg = 0x116;
     }
     field_0x84 = msg;
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tft01'))->getStringPtr(), field_0x84, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tft01")))->getStringPtr(), field_0x84, 0, NULL, NULL);
     if (field_0x84 == 0x60 || field_0x84 == 0x64) {
         field_0xb0 = 0x5A;
     }
@@ -314,10 +314,10 @@ inline void FileSelect_804AFF60::setMessage(u32 msg) {
 // sp 0x8 upwards there, the order of an inlined body (the callers that spell
 // the four calls out have them from the top downwards).
 inline void FileSelect_804AFF60::resetButtonColors() {
-    ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pcopb02'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb02'))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))->setBlackWhite(field_0xe4, field_0xe0);
 }
 
 static void pool_80543458(FileSelect_804AFF60* self, s16 frames);
@@ -479,27 +479,27 @@ FileSelect_804AFF60::FileSelect_804AFF60() {
     mScreen->setPriority("file_select.blo", 0x1100000, lbl_80529DEC.mFileArchive_0x30);
     mScreenHuuin = new J2DScreen;
     mScreenHuuin->setPriority("file_select_huuin.blo", 0x1100000, lbl_80529DEC.mFileArchive_0x30);
-    mScreenHuuin->search('Paccur02')->setAlpha(0x9C);
-    mScreenHuuin->search('Pfcur05')->setAlpha(0x9C);
+    mScreenHuuin->search(FSA_TAG64("Paccur02"))->setAlpha(0x9C);
+    mScreenHuuin->search(FSA_TAG64("Pfcur05"))->setAlpha(0x9C);
 
     const ResTIMG* img = static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', "kk_black.bti"));
     field_0x10 = new J2DPicture(img);
     field_0x10->setBlackWhite(JUtility::TColor(0x000000FF), JUtility::TColor(0x00000000));
 
     field_0x14 = new PaneCtrl_804AF86C;
-    field_0x14->setPane_80402F04(mScreen->search('Ndata04'));
+    field_0x14->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata04")));
     field_0x18 = new PaneCtrl_804AF86C;
-    field_0x18->setPane_80402F04(mScreenHuuin->search('Ndata01'));
+    field_0x18->setPane_80402F04(mScreenHuuin->search(FSA_TAG64("Ndata01")));
     field_0x1c = new PaneCtrl_804AF86C;
-    field_0x1c->setPane_80402F04(mScreenHuuin->search('Ndatab01'));
+    field_0x1c->setPane_80402F04(mScreenHuuin->search(FSA_TAG64("Ndatab01")));
     field_0x20 = new PaneCtrl_804AF86C;
-    field_0x20->setPane_80402F04(mScreen->search('Ndata06'));
+    field_0x20->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata06")));
     for (s32 i = 0; i < 4; i++) {
         field_0x24[i] = new PaneCtrl_804AF86C;
         field_0x24[i]->setPane_80402F04(mScreenHuuin->search(lbl_80476CB0[i]));
     }
     field_0x34 = new PaneCtrl_804AF86C;
-    field_0x34->setPane_80402F04(mScreenHuuin->search('Paccur02'));
+    field_0x34->setPane_80402F04(mScreenHuuin->search(FSA_TAG64("Paccur02")));
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i] = new PaneCtrl_804AF86C;
         field_0x38[i]->setPane_80402F04(mScreenHuuin->search(lbl_80476CD0[i]));
@@ -507,97 +507,97 @@ FileSelect_804AFF60::FileSelect_804AFF60() {
         field_0x44[i]->setPane_80402F04(mScreenHuuin->search(lbl_80476CE8[i]));
     }
     field_0x50 = new PaneCtrl_804AF86C;
-    field_0x50->setPane_80402F04(mScreenHuuin->search('Pfcur05'));
+    field_0x50->setPane_80402F04(mScreenHuuin->search(FSA_TAG64("Pfcur05")));
     field_0x54 = new PaneCtrl_804AF86C;
-    field_0x54->setPane_80402F04(mScreenHuuin->search('Pftbbk03'));
+    field_0x54->setPane_80402F04(mScreenHuuin->search(FSA_TAG64("Pftbbk03")));
     field_0x58 = lbl_8053AED8->field_0x8;
     lbl_8053AED8->fn_80440D78(static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', "kk_kettei_01.bti")));
     lbl_8053AED8->fn_80440CE4(static_cast<const ResTIMG*>(getMain2DResource_804030C4('TIMG', "kk_modoru_01.bti")));
 
     if (gGameRoot_8053AAF8->field_0x7f) {
-        mScreenHuuin->search('Pbli04')->hide();
+        mScreenHuuin->search(FSA_TAG64("Pbli04"))->hide();
     } else {
-        mScreenHuuin->search('Pbli14')->hide();
+        mScreenHuuin->search(FSA_TAG64("Pbli14"))->hide();
     }
 
     JUTResFont* font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreen->search('Tdb01'))->setFont(font);
+    ((J2DTextBox*)mScreen->search(FSA_TAG64("Tdb01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreen->search('Tbat01'))->setFont(font);
+    ((J2DTextBox*)mScreen->search(FSA_TAG64("Tbat01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tadv01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tadv01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tbac01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tbac01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tdel01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tdel01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tcop01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tstr01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf3date'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf3date")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf3lv'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf3lv")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf3fir'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf3fir")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf2date'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf2date")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf2lv'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf2lv")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf2fir'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf2fir")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf1date'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf1date")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf1lv'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf1lv")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tf1fir'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf1fir")))->setFont(font);
     font = lbl_8053AD78->mFont;
-    ((J2DTextBox*)mScreenHuuin->search('Tft01'))->setFont(font);
+    ((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tft01")))->setFont(font);
     // The colours of the file 1 pictures stand for all three files.
-    field_0xe4 = ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->getBlack();
-    field_0xe0 = ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->getWhite();
-    field_0xfc[0] = ((J2DPicture*)mScreenHuuin->search('Pf1t01'))->getBlack();
-    field_0xe8[0] = ((J2DPicture*)mScreenHuuin->search('Pf1t01'))->getWhite();
-    field_0xfc[1] = ((J2DPicture*)mScreenHuuin->search('Pf1tb01'))->getBlack();
-    field_0xe8[1] = ((J2DPicture*)mScreenHuuin->search('Pf1tb01'))->getWhite();
-    field_0xfc[2] = ((J2DPicture*)mScreenHuuin->search('Pf1tbb01'))->getBlack();
-    field_0xe8[2] = ((J2DPicture*)mScreenHuuin->search('Pf1tbb01'))->getWhite();
-    field_0xfc[3] = ((J2DPicture*)mScreenHuuin->search('Pf1b01'))->getBlack();
-    field_0xe8[3] = ((J2DPicture*)mScreenHuuin->search('Pf1b01'))->getWhite();
-    field_0xfc[4] = ((J2DPicture*)mScreenHuuin->search('Pf1bb01'))->getBlack();
-    field_0xe8[4] = ((J2DPicture*)mScreenHuuin->search('Pf1bb01'))->getWhite();
+    field_0xe4 = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->getBlack();
+    field_0xe0 = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->getWhite();
+    field_0xfc[0] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1t01")))->getBlack();
+    field_0xe8[0] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1t01")))->getWhite();
+    field_0xfc[1] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1tb01")))->getBlack();
+    field_0xe8[1] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1tb01")))->getWhite();
+    field_0xfc[2] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1tbb01")))->getBlack();
+    field_0xe8[2] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1tbb01")))->getWhite();
+    field_0xfc[3] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b01")))->getBlack();
+    field_0xe8[3] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b01")))->getWhite();
+    field_0xfc[4] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1bb01")))->getBlack();
+    field_0xe8[4] = ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1bb01")))->getWhite();
     // Read and dropped.
-    ((J2DPicture*)mScreenHuuin->search('Pf1b01'))->getBlack();
-    ((J2DPicture*)mScreenHuuin->search('Pf1b01'))->getWhite();
-    ((J2DPicture*)mScreenHuuin->search('Pf1b05'))->getBlack();
-    ((J2DPicture*)mScreenHuuin->search('Pf1b05'))->getWhite();
-    field_0x118[0] = mScreenHuuin->search('Pf1t01')->getAlpha();
-    field_0x118[1] = mScreenHuuin->search('Pf1tb01')->getAlpha();
-    field_0x118[2] = mScreenHuuin->search('Pf1tb02')->getAlpha();
-    field_0x118[3] = mScreenHuuin->search('Pf1tb03')->getAlpha();
-    field_0x118[4] = mScreenHuuin->search('Pf1tb04')->getAlpha();
-    field_0x118[5] = mScreenHuuin->search('Pf1tb05')->getAlpha();
-    field_0x118[6] = mScreenHuuin->search('Pf1tbb01')->getAlpha();
-    field_0x118[7] = mScreenHuuin->search('Pf1tbb02')->getAlpha();
-    field_0x118[8] = mScreenHuuin->search('Pf1tbb03')->getAlpha();
-    field_0x118[9] = mScreenHuuin->search('Pf1tbb04')->getAlpha();
-    field_0x118[10] = mScreenHuuin->search('Pf1tbb05')->getAlpha();
-    field_0x118[11] = mScreenHuuin->search('Pf1tbb06')->getAlpha();
-    field_0x118[12] = mScreenHuuin->search('Pf1tbb07')->getAlpha();
-    field_0x118[13] = mScreenHuuin->search('Tf1fir')->getAlpha();
-    field_0x118[14] = mScreenHuuin->search('Tf1lv')->getAlpha();
-    field_0x118[15] = mScreenHuuin->search('Tf1date')->getAlpha();
-    field_0x118[16] = mScreenHuuin->search('Pf1b01')->getAlpha();
-    field_0x118[17] = mScreenHuuin->search('Pf1b02')->getAlpha();
-    field_0x118[18] = mScreenHuuin->search('Pf1b03')->getAlpha();
-    field_0x118[19] = mScreenHuuin->search('Pf1b04')->getAlpha();
-    field_0x118[20] = mScreenHuuin->search('Pf1b05')->getAlpha();
-    field_0x118[21] = mScreenHuuin->search('Pf1bb01')->getAlpha();
-    field_0x118[22] = mScreenHuuin->search('Pf1bb02')->getAlpha();
-    field_0x118[23] = mScreenHuuin->search('Pf1bb03')->getAlpha();
-    field_0x118[24] = mScreenHuuin->search('Pf1bb04')->getAlpha();
-    field_0x118[25] = mScreenHuuin->search('Pf1bb05')->getAlpha();
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b01")))->getBlack();
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b01")))->getWhite();
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b05")))->getBlack();
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pf1b05")))->getWhite();
+    field_0x118[0] = mScreenHuuin->search(FSA_TAG64("Pf1t01"))->getAlpha();
+    field_0x118[1] = mScreenHuuin->search(FSA_TAG64("Pf1tb01"))->getAlpha();
+    field_0x118[2] = mScreenHuuin->search(FSA_TAG64("Pf1tb02"))->getAlpha();
+    field_0x118[3] = mScreenHuuin->search(FSA_TAG64("Pf1tb03"))->getAlpha();
+    field_0x118[4] = mScreenHuuin->search(FSA_TAG64("Pf1tb04"))->getAlpha();
+    field_0x118[5] = mScreenHuuin->search(FSA_TAG64("Pf1tb05"))->getAlpha();
+    field_0x118[6] = mScreenHuuin->search(FSA_TAG64("Pf1tbb01"))->getAlpha();
+    field_0x118[7] = mScreenHuuin->search(FSA_TAG64("Pf1tbb02"))->getAlpha();
+    field_0x118[8] = mScreenHuuin->search(FSA_TAG64("Pf1tbb03"))->getAlpha();
+    field_0x118[9] = mScreenHuuin->search(FSA_TAG64("Pf1tbb04"))->getAlpha();
+    field_0x118[10] = mScreenHuuin->search(FSA_TAG64("Pf1tbb05"))->getAlpha();
+    field_0x118[11] = mScreenHuuin->search(FSA_TAG64("Pf1tbb06"))->getAlpha();
+    field_0x118[12] = mScreenHuuin->search(FSA_TAG64("Pf1tbb07"))->getAlpha();
+    field_0x118[13] = mScreenHuuin->search(FSA_TAG64("Tf1fir"))->getAlpha();
+    field_0x118[14] = mScreenHuuin->search(FSA_TAG64("Tf1lv"))->getAlpha();
+    field_0x118[15] = mScreenHuuin->search(FSA_TAG64("Tf1date"))->getAlpha();
+    field_0x118[16] = mScreenHuuin->search(FSA_TAG64("Pf1b01"))->getAlpha();
+    field_0x118[17] = mScreenHuuin->search(FSA_TAG64("Pf1b02"))->getAlpha();
+    field_0x118[18] = mScreenHuuin->search(FSA_TAG64("Pf1b03"))->getAlpha();
+    field_0x118[19] = mScreenHuuin->search(FSA_TAG64("Pf1b04"))->getAlpha();
+    field_0x118[20] = mScreenHuuin->search(FSA_TAG64("Pf1b05"))->getAlpha();
+    field_0x118[21] = mScreenHuuin->search(FSA_TAG64("Pf1bb01"))->getAlpha();
+    field_0x118[22] = mScreenHuuin->search(FSA_TAG64("Pf1bb02"))->getAlpha();
+    field_0x118[23] = mScreenHuuin->search(FSA_TAG64("Pf1bb03"))->getAlpha();
+    field_0x118[24] = mScreenHuuin->search(FSA_TAG64("Pf1bb04"))->getAlpha();
+    field_0x118[25] = mScreenHuuin->search(FSA_TAG64("Pf1bb05"))->getAlpha();
     for (s32 i = 0; i < 81; i++) {
         field_0x132[i] = mScreen->search(lbl_80476618[i])->getAlpha();
     }
@@ -607,73 +607,73 @@ FileSelect_804AFF60::FileSelect_804AFF60() {
     for (s32 i = 0; i < 9; i++) {
         field_0x196[i] = mScreen->search(lbl_80476938[i])->getAlpha();
     }
-    field_0x19f[0] = mScreenHuuin->search('Pbacb01')->getAlpha();
-    field_0x19f[1] = mScreenHuuin->search('Pbacb02')->getAlpha();
-    field_0x19f[2] = mScreenHuuin->search('Pbacb03')->getAlpha();
-    field_0x19f[3] = mScreenHuuin->search('Pbacb04')->getAlpha();
+    field_0x19f[0] = mScreenHuuin->search(FSA_TAG64("Pbacb01"))->getAlpha();
+    field_0x19f[1] = mScreenHuuin->search(FSA_TAG64("Pbacb02"))->getAlpha();
+    field_0x19f[2] = mScreenHuuin->search(FSA_TAG64("Pbacb03"))->getAlpha();
+    field_0x19f[3] = mScreenHuuin->search(FSA_TAG64("Pbacb04"))->getAlpha();
     field_0x1a3 = 0;
 
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tadv01'))->getStringPtr(), 0xA4, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tbat01'))->getStringPtr(), 0xA5, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tstr01'))->getStringPtr(), 0x118, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tcop01'))->getStringPtr(), 0x119, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tdel01'))->getStringPtr(), 0x11A, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tbac01'))->getStringPtr(), 0x11B, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tadv01")))->getStringPtr(), 0xA4, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tbat01")))->getStringPtr(), 0xA5, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x118, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->getStringPtr(), 0x119, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tdel01")))->getStringPtr(), 0x11A, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tbac01")))->getStringPtr(), 0x11B, 0, NULL, NULL);
 
     for (s32 i = 0; i < 3; i++) {
         field_0x70[i] = 0.0f;
         field_0x64[i] = 0.0f;
     }
-    mScreen->search('Ndata06')->hide();
+    mScreen->search(FSA_TAG64("Ndata06"))->hide();
     mScreen->search(lbl_80476980[0])->hide();
     mScreen->search(lbl_80476980[1])->hide();
-    mScreen->search('Padvw10')->hide();
-    mScreen->search('Padvw11')->hide();
-    mScreen->search('Padvw12')->hide();
-    mScreen->search('Padvw13')->hide();
-    mScreen->search('Padvw14')->hide();
-    mScreen->search('Padvw20')->hide();
-    mScreen->search('Padvw21')->hide();
-    mScreen->search('Padvw22')->hide();
-    mScreen->search('Padvw23')->hide();
-    mScreen->search('Padvw24')->hide();
-    mScreen->search('Padvw30')->hide();
-    mScreen->search('Padvw31')->hide();
-    mScreen->search('Padvw32')->hide();
-    mScreen->search('Padvw33')->hide();
-    mScreen->search('Padvw34')->hide();
-    mScreen->search('Padvw40')->hide();
-    mScreen->search('Padvw41')->hide();
-    mScreen->search('Padvw42')->hide();
-    mScreen->search('Padvw43')->hide();
-    mScreen->search('Padvw44')->hide();
-    mScreen->search('Padvw50')->hide();
-    mScreen->search('Padvw51')->hide();
-    mScreen->search('Padvw52')->hide();
-    mScreen->search('Padvw53')->hide();
-    mScreen->search('Padvw54')->hide();
-    mScreen->search('Padvw60')->hide();
-    mScreen->search('Padvw61')->hide();
-    mScreen->search('Padvw62')->hide();
-    mScreen->search('Padvw63')->hide();
-    mScreen->search('Padvw64')->hide();
-    mScreen->search('Padvw70')->hide();
-    mScreen->search('Padvw71')->hide();
-    mScreen->search('Padvw72')->hide();
-    mScreen->search('Padvw73')->hide();
-    mScreen->search('Padvw74')->hide();
-    mScreen->search('Padvl02')->hide();
-    mScreen->search('Padvl01')->hide();
-    mScreenHuuin->search('Padhu01')->hide();
-    mScreen->search('Padhu02')->hide();
-    mScreen->search('Padhu03')->hide();
-    field_0x88[0] = mScreenHuuin->search('Padhu01')->getBounds()->i.x;
-    field_0x88[1] = mScreen->search('Padhu02')->getBounds()->i.x;
-    field_0x88[2] = mScreen->search('Padhu03')->getBounds()->i.x;
-    field_0x94[0] = mScreenHuuin->search('Padhu01')->getBounds()->i.y;
-    field_0x94[1] = mScreen->search('Padhu02')->getBounds()->i.y;
-    field_0x94[2] = mScreen->search('Padhu03')->getBounds()->i.y;
-    mScreenHuuin->search('Padhu01')->setAlpha(0xFF);
+    mScreen->search(FSA_TAG64("Padvw10"))->hide();
+    mScreen->search(FSA_TAG64("Padvw11"))->hide();
+    mScreen->search(FSA_TAG64("Padvw12"))->hide();
+    mScreen->search(FSA_TAG64("Padvw13"))->hide();
+    mScreen->search(FSA_TAG64("Padvw14"))->hide();
+    mScreen->search(FSA_TAG64("Padvw20"))->hide();
+    mScreen->search(FSA_TAG64("Padvw21"))->hide();
+    mScreen->search(FSA_TAG64("Padvw22"))->hide();
+    mScreen->search(FSA_TAG64("Padvw23"))->hide();
+    mScreen->search(FSA_TAG64("Padvw24"))->hide();
+    mScreen->search(FSA_TAG64("Padvw30"))->hide();
+    mScreen->search(FSA_TAG64("Padvw31"))->hide();
+    mScreen->search(FSA_TAG64("Padvw32"))->hide();
+    mScreen->search(FSA_TAG64("Padvw33"))->hide();
+    mScreen->search(FSA_TAG64("Padvw34"))->hide();
+    mScreen->search(FSA_TAG64("Padvw40"))->hide();
+    mScreen->search(FSA_TAG64("Padvw41"))->hide();
+    mScreen->search(FSA_TAG64("Padvw42"))->hide();
+    mScreen->search(FSA_TAG64("Padvw43"))->hide();
+    mScreen->search(FSA_TAG64("Padvw44"))->hide();
+    mScreen->search(FSA_TAG64("Padvw50"))->hide();
+    mScreen->search(FSA_TAG64("Padvw51"))->hide();
+    mScreen->search(FSA_TAG64("Padvw52"))->hide();
+    mScreen->search(FSA_TAG64("Padvw53"))->hide();
+    mScreen->search(FSA_TAG64("Padvw54"))->hide();
+    mScreen->search(FSA_TAG64("Padvw60"))->hide();
+    mScreen->search(FSA_TAG64("Padvw61"))->hide();
+    mScreen->search(FSA_TAG64("Padvw62"))->hide();
+    mScreen->search(FSA_TAG64("Padvw63"))->hide();
+    mScreen->search(FSA_TAG64("Padvw64"))->hide();
+    mScreen->search(FSA_TAG64("Padvw70"))->hide();
+    mScreen->search(FSA_TAG64("Padvw71"))->hide();
+    mScreen->search(FSA_TAG64("Padvw72"))->hide();
+    mScreen->search(FSA_TAG64("Padvw73"))->hide();
+    mScreen->search(FSA_TAG64("Padvw74"))->hide();
+    mScreen->search(FSA_TAG64("Padvl02"))->hide();
+    mScreen->search(FSA_TAG64("Padvl01"))->hide();
+    mScreenHuuin->search(FSA_TAG64("Padhu01"))->hide();
+    mScreen->search(FSA_TAG64("Padhu02"))->hide();
+    mScreen->search(FSA_TAG64("Padhu03"))->hide();
+    field_0x88[0] = mScreenHuuin->search(FSA_TAG64("Padhu01"))->getBounds()->i.x;
+    field_0x88[1] = mScreen->search(FSA_TAG64("Padhu02"))->getBounds()->i.x;
+    field_0x88[2] = mScreen->search(FSA_TAG64("Padhu03"))->getBounds()->i.x;
+    field_0x94[0] = mScreenHuuin->search(FSA_TAG64("Padhu01"))->getBounds()->i.y;
+    field_0x94[1] = mScreen->search(FSA_TAG64("Padhu02"))->getBounds()->i.y;
+    field_0x94[2] = mScreen->search(FSA_TAG64("Padhu03"))->getBounds()->i.y;
+    mScreenHuuin->search(FSA_TAG64("Padhu01"))->setAlpha(0xFF);
     field_0xd8 = 0;
     field_0xda = 0;
 
@@ -769,10 +769,10 @@ void FileSelect_804AFF60::fn_803CF504() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     field_0x50->field_0x26 = 0;
 
     for (s32 i = 0; i < 3; i++) {
@@ -819,9 +819,9 @@ void FileSelect_804AFF60::fn_803CEED4() {
                - mScreen->search(lbl_804769D0[4])->getBounds()->i.x;
         f32 dy = mScreen->search(lbl_804769D0[field_0xb4])->getBounds()->i.y
                - mScreen->search(lbl_804769D0[4])->getBounds()->i.y;
-        mScreenHuuin->search('Padhu01')->move(field_0x88[0] + dx, field_0x94[0] + dy);
-        mScreen->search('Padhu02')->move(field_0x88[1] + dx, field_0x94[1] + dy);
-        mScreen->search('Padhu03')->move(field_0x88[2] + dx, field_0x94[2] + dy);
+        mScreenHuuin->search(FSA_TAG64("Padhu01"))->move(field_0x88[0] + dx, field_0x94[0] + dy);
+        mScreen->search(FSA_TAG64("Padhu02"))->move(field_0x88[1] + dx, field_0x94[1] + dy);
+        mScreen->search(FSA_TAG64("Padhu03"))->move(field_0x88[2] + dx, field_0x94[2] + dy);
     }
     gGameRoot2_8053AB10->setPort_8013B490();
     mScreen->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
@@ -830,21 +830,21 @@ void FileSelect_804AFF60::fn_803CEED4() {
         if (fn_803B8CAC(field_0xa8, 0) && fn_803B8CAC(field_0xa8, 1) && fn_803B8CAC(field_0xa8, 2)
             && fn_803B8CAC(field_0xa8, 3) && fn_803B8CAC(field_0xa8, 4) && fn_803B8CAC(field_0xa8, 5)
             && fn_803B8CAC(field_0xa8, 6)) {
-            if (mScreenHuuin->search('Padhu01')->isVisible()) {
-                mScreenHuuin->search('Padhu01')->hide();
-                mScreen->search('Padhu02')->hide();
-                mScreen->search('Padhu03')->hide();
+            if (mScreenHuuin->search(FSA_TAG64("Padhu01"))->isVisible()) {
+                mScreenHuuin->search(FSA_TAG64("Padhu01"))->hide();
+                mScreen->search(FSA_TAG64("Padhu02"))->hide();
+                mScreen->search(FSA_TAG64("Padhu03"))->hide();
             }
-        } else if (!mScreenHuuin->search('Padhu01')->isVisible()) {
-            mScreenHuuin->search('Padhu01')->show();
-            mScreen->search('Padhu02')->show();
-            mScreen->search('Padhu03')->show();
+        } else if (!mScreenHuuin->search(FSA_TAG64("Padhu01"))->isVisible()) {
+            mScreenHuuin->search(FSA_TAG64("Padhu01"))->show();
+            mScreen->search(FSA_TAG64("Padhu02"))->show();
+            mScreen->search(FSA_TAG64("Padhu03"))->show();
         }
         fn_803BE3D8();
-    } else if (mScreenHuuin->search('Padhu01')->isVisible()) {
-        mScreenHuuin->search('Padhu01')->hide();
-        mScreen->search('Padhu02')->hide();
-        mScreen->search('Padhu03')->hide();
+    } else if (mScreenHuuin->search(FSA_TAG64("Padhu01"))->isVisible()) {
+        mScreenHuuin->search(FSA_TAG64("Padhu01"))->hide();
+        mScreen->search(FSA_TAG64("Padhu02"))->hide();
+        mScreen->search(FSA_TAG64("Padhu03"))->hide();
     }
     mScreenHuuin->draw(0.0f, 0.0f, gGameRoot2_8053AB10->field_0x10);
     if (field_0x116 != 0) {
@@ -1009,11 +1009,11 @@ void FileSelect_804AFF60::refreshFileRows_803CE4CC() {
                     mScreenHuuin->search(lbl_804765D0[i])->show();
                     mScreenHuuin->search(lbl_804765E8[i])->hide();
                     mScreenHuuin->search(lbl_80476600[i])->show();
-                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tf1lv'))->getStringPtr(),
+                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf1lv")))->getStringPtr(),
                                             inl_803CE4CC(0), 0, NULL, NULL);
-                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tf2lv'))->getStringPtr(),
+                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf2lv")))->getStringPtr(),
                                             inl_803CE4CC(1), 0, NULL, NULL);
-                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tf3lv'))->getStringPtr(),
+                    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tf3lv")))->getStringPtr(),
                                             inl_803CE4CC(2), 0, NULL, NULL);
                 } else {
                     getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(lbl_804765E8[i]))->getStringPtr(), 0x6A,
@@ -1252,7 +1252,7 @@ void FileSelect_804AFF60::fn_803CD2DC() {
         if (hasBadChecksum(field_0xa4)) {
             field_0x114 = 1;
             setMessage(0x5E);
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tdb01'))->getStringPtr(), 0x65, 0, NULL, NULL);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tdb01")))->getStringPtr(), 0x65, 0, NULL, NULL);
             fn_803BF9C4();
         } else {
             field_0xa0 = 0;
@@ -1305,10 +1305,10 @@ void FileSelect_804AFF60::fn_803CD2DC() {
         }
         field_0x50->moveFromCentre_80402E08(0.0f, field_0x44[field_0xa4]->mPane->getBounds()->i.y - field_0x44[0]->field_0xc);
         field_0x50->pulseAlpha_8040245C(0x3C, 0, field_0x50->field_0x28, 1);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     }
 }
 
@@ -1384,10 +1384,10 @@ void FileSelect_804AFF60::fn_803CC760() {
                                             0.0f);
     }
     if (field_0xd8 > end) {
-        ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pcopb02'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pdelb01'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pdelb02'))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))->setBlackWhite(field_0xe4, field_0xe0);
         setState(5);
     }
 }
@@ -1719,7 +1719,7 @@ void FileSelect_804AFF60::fn_803CABAC() {
                 field_0x114 = 1;
                 setMessage(0x5E);
                 field_0x34->mPane->setAlpha(0);
-                field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+                field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
                 field_0x34->field_0x26 = 0;
                 resetButtonColors();
                 for (s32 i = 0; i < 4; i++) {
@@ -1800,7 +1800,7 @@ void FileSelect_804AFF60::fn_803CABAC() {
         }
         field_0x34->moveFromCentre_80402E08(field_0x24[field_0xa0]->field_0x8 - field_0x24[0]->field_0x8, bob);
         field_0x34->pulseAlpha_8040245C(0x3C, 0, field_0x34->field_0x28, 1);
-        field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+        field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     }
 }
 
@@ -1964,7 +1964,7 @@ void FileSelect_804AFF60::fn_803C9898() {
         fadeFileRow_803BC6F0(field_0xa4, 1.0f - (f32)(field_0xd8 - boardDelay) / (f32)boardFrames);
         if (field_0xd8 == boardEnd) {
             setMessage(0x63);
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tdb01'))->getStringPtr(), 0x67, 0, NULL, NULL);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tdb01")))->getStringPtr(), 0x67, 0, NULL, NULL);
         }
     }
     for (int i = 0; i < 2; i++) {
@@ -2104,7 +2104,7 @@ void FileSelect_804AFF60::fn_803C8B80() {
         field_0x114 = 1;
         setMessage(0x62);
         if (hasBadChecksum(field_0xa0)) {
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tdb01'))->getStringPtr(), 0x66, 0, NULL, NULL);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tdb01")))->getStringPtr(), 0x66, 0, NULL, NULL);
         } else {
             field_0x80 = 0;
         }
@@ -2116,10 +2116,10 @@ void FileSelect_804AFF60::fn_803C8B80() {
         field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
         field_0x50->field_0x20 = 0;
         field_0x50->mPane->setAlpha(0);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
         for (int i = 0; i < 3; i++) {
             field_0x38[i]->field_0x20 = 0;
             field_0x38[i]->field_0x22 = 0;
@@ -2156,10 +2156,10 @@ void FileSelect_804AFF60::fn_803C8B80() {
         }
         field_0x50->moveFromCentre_80402E08(0.0f, field_0x44[field_0xa0]->mPane->getBounds()->i.y - field_0x44[0]->field_0xc);
         field_0x50->pulseAlpha_8040245C(0x3C, 0, field_0x50->field_0x28, 1);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     }
 }
 
@@ -2293,7 +2293,7 @@ void FileSelect_804AFF60::fn_803C7CA0() {
         }
         field_0x34->moveFromCentre_80402E08(field_0x24[field_0x114]->field_0x8 - field_0x24[0]->field_0x8, bob);
         field_0x34->pulseAlpha_8040245C(0x3C, 0, field_0x34->field_0x28, 1);
-        field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+        field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     }
 }
 
@@ -2462,11 +2462,11 @@ void FileSelect_804AFF60::fn_803C61C4() {
                     restoreButtonAlphas(this, i);
                     if (field_0xd8 == done) {
                         if (i == 0) {
-                            getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tstr01'))->getStringPtr(), 0x11E, 0, NULL, NULL);
+                            getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x11E, 0, NULL, NULL);
                             field_0x24[i]->field_0x22 = 0;
                             field_0x24[i]->field_0x26 = 0;
                         } else if (i == 1) {
-                            getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tcop01'))->getStringPtr(), 0x11F, 0, NULL, NULL);
+                            getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->getStringPtr(), 0x11F, 0, NULL, NULL);
                             field_0x24[i]->field_0x22 = 0;
                             field_0x24[i]->field_0x26 = 0;
                         }
@@ -2623,7 +2623,7 @@ void FileSelect_804AFF60::fn_803C5190() {
         }
         if (field_0xd8 == boardEnd) {
             setMessage(0x5F);
-            getMessageText_803832BC(((J2DTextBox*)mScreen->search('Tdb01'))->getStringPtr(), 0x67, 0, NULL, NULL);
+            getMessageText_803832BC(((J2DTextBox*)mScreen->search(FSA_TAG64("Tdb01")))->getStringPtr(), 0x67, 0, NULL, NULL);
         }
     }
     for (int i = 0; i < 2; i++) {
@@ -2738,10 +2738,10 @@ void FileSelect_804AFF60::fn_803C4330() {
         field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
         field_0x50->field_0x20 = 0;
         field_0x50->mPane->setAlpha(0);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-        field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+        field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
         for (int i = 0; i < 3; i++) {
             field_0x38[i]->field_0x20 = 0;
             field_0x38[i]->field_0x22 = 0;
@@ -2751,7 +2751,7 @@ void FileSelect_804AFF60::fn_803C4330() {
             field_0x44[i]->field_0x26 = 0;
         }
         field_0x34->mPane->setAlpha(0);
-        field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+        field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
         field_0xd8 = 0;
         field_0xda = 0;
         setState(38);
@@ -2810,7 +2810,7 @@ void FileSelect_804AFF60::fn_803C4054() {
         }
         field_0x34->moveFromCentre_80402E08(field_0x24[field_0x114]->field_0x8 - field_0x24[0]->field_0x8, bob);
         field_0x34->pulseAlpha_8040245C(0x3C, 0, field_0x34->field_0x28, 1);
-        field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+        field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     }
 }
 
@@ -2967,10 +2967,10 @@ void FileSelect_804AFF60::fn_803C24BC() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     field_0x50->field_0x26 = 0;
 
     for (s32 i = 0; i < 3; i++) {
@@ -3006,10 +3006,10 @@ void FileSelect_804AFF60::fn_803C21A8() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3025,7 +3025,7 @@ void FileSelect_804AFF60::fn_803C21A8() {
     field_0x1c->field_0x20 = 0;
     field_0x1c->field_0x26 = 0;
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     for (s32 i = 0; i < 4; i++) {
         field_0x24[i]->field_0x22 = 0;
         field_0x24[i]->field_0x26 = 0;
@@ -3055,26 +3055,26 @@ void FileSelect_804AFF60::fn_803C1734() {
         field_0x24[i]->mPane->show();
     }
     if (lbl_8050EC80.getFile(field_0xa4).field_0x0 == 0) {
-        ((J2DPicture*)mScreenHuuin->search('Pcopb01'))
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))
             ->setBlackWhite(JUtility::TColor(0x50, 0x50, 0x50, 0), JUtility::TColor(0xB4, 0xB4, 0xB4, 0xFF));
-        ((J2DPicture*)mScreenHuuin->search('Pcopb02'))
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))
             ->setBlackWhite(JUtility::TColor(0x50, 0x50, 0x50, 0), JUtility::TColor(0xB4, 0xB4, 0xB4, 0xFF));
-        ((J2DPicture*)mScreenHuuin->search('Pdelb01'))
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))
             ->setBlackWhite(JUtility::TColor(0x50, 0x50, 0x50, 0), JUtility::TColor(0xB4, 0xB4, 0xB4, 0xFF));
-        ((J2DPicture*)mScreenHuuin->search('Pdelb02'))
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))
             ->setBlackWhite(JUtility::TColor(0x50, 0x50, 0x50, 0), JUtility::TColor(0xB4, 0xB4, 0xB4, 0xFF));
     } else {
-        ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pcopb02'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pdelb01'))->setBlackWhite(field_0xe4, field_0xe0);
-        ((J2DPicture*)mScreenHuuin->search('Pdelb02'))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))->setBlackWhite(field_0xe4, field_0xe0);
+        ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))->setBlackWhite(field_0xe4, field_0xe0);
     }
 
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     field_0x50->field_0x26 = 0;
     for (int i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
@@ -3101,7 +3101,7 @@ void FileSelect_804AFF60::fn_803C1734() {
     field_0x1c->field_0x26 = 0;
 
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     for (s32 i = 0; i < 4; i++) {
         field_0x24[i]->moveFromCentre_80402E08(0.0f, 100.0f);
@@ -3111,10 +3111,10 @@ void FileSelect_804AFF60::fn_803C1734() {
         field_0x24[i]->field_0x26 = 0;
     }
 
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tstr01'))->getStringPtr(), 0x118, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tcop01'))->getStringPtr(), 0x119, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tdel01'))->getStringPtr(), 0x11A, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tbac01'))->getStringPtr(), 0x11B, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x118, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->getStringPtr(), 0x119, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tdel01")))->getStringPtr(), 0x11A, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tbac01")))->getStringPtr(), 0x11B, 0, NULL, NULL);
     field_0xd8 = 0;
     field_0xda = 0;
     setState(18);
@@ -3128,14 +3128,14 @@ void FileSelect_804AFF60::fn_803C1340() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
-    ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pcopb02'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb02'))->setBlackWhite(field_0xe4, field_0xe0);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))->setBlackWhite(field_0xe4, field_0xe0);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3151,7 +3151,7 @@ void FileSelect_804AFF60::fn_803C1340() {
     field_0x1c->field_0x20 = 0;
     field_0x1c->field_0x26 = 0;
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     for (s32 i = 0; i < 4; i++) {
         field_0x24[i]->field_0x22 = 0;
@@ -3174,10 +3174,10 @@ void FileSelect_804AFF60::fn_803C1054() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     if (hasBadChecksum(field_0xa0)) {
         field_0x20->field_0x20 = 0;
         field_0x20->field_0x26 = 0;
@@ -3195,7 +3195,7 @@ void FileSelect_804AFF60::fn_803C1054() {
         field_0x20->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     field_0x24[0]->field_0x22 = 0;
     field_0x24[0]->field_0x26 = 0;
@@ -3270,10 +3270,10 @@ void FileSelect_804AFF60::fn_803C05D8() {
         field_0xb8[i] = fn_803B8CAC(field_0xa0, i);
     }
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3283,7 +3283,7 @@ void FileSelect_804AFF60::fn_803C05D8() {
         field_0x44[i]->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     if (hasBadChecksum(field_0xa0)) {
         field_0x20->mPane->show();
@@ -3300,8 +3300,8 @@ void FileSelect_804AFF60::fn_803C05D8() {
         field_0x1c->field_0x20 = 0;
         field_0x1c->field_0x26 = 0;
     }
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tstr01'))->getStringPtr(), 0x11E, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tcop01'))->getStringPtr(), 0x11F, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x11E, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->getStringPtr(), 0x11F, 0, NULL, NULL);
     field_0x24[0]->field_0x22 = 0;
     field_0x24[0]->field_0x26 = 0;
     field_0x24[1]->field_0x22 = 0;
@@ -3321,10 +3321,10 @@ void FileSelect_804AFF60::fn_803C05D8() {
 void FileSelect_804AFF60::fn_803C02CC() {
     setMessage(0x117);
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3334,7 +3334,7 @@ void FileSelect_804AFF60::fn_803C02CC() {
         field_0x44[i]->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     if (hasBadChecksum(field_0xa0)) {
         field_0x20->field_0x20 = 0;
         field_0x20->field_0x26 = 0;
@@ -3366,10 +3366,10 @@ void FileSelect_804AFF60::fn_803C02CC() {
 void FileSelect_804AFF60::fn_803C0018() {
     setMessage(0x117);
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3379,7 +3379,7 @@ void FileSelect_804AFF60::fn_803C0018() {
         field_0x44[i]->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x14->field_0x20 = 0;
     field_0x14->field_0x26 = 0;
     field_0x18->field_0x20 = 0;
@@ -3400,14 +3400,14 @@ void FileSelect_804AFF60::fn_803BF9C4() {
     field_0x20->mPane->show();
     field_0x34->mPane->show();
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
-    ((J2DPicture*)mScreenHuuin->search('Pcopb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pcopb02'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb01'))->setBlackWhite(field_0xe4, field_0xe0);
-    ((J2DPicture*)mScreenHuuin->search('Pdelb02'))->setBlackWhite(field_0xe4, field_0xe0);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pcopb02")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb01")))->setBlackWhite(field_0xe4, field_0xe0);
+    ((J2DPicture*)mScreenHuuin->search(FSA_TAG64("Pdelb02")))->setBlackWhite(field_0xe4, field_0xe0);
     for (int i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3424,7 +3424,7 @@ void FileSelect_804AFF60::fn_803BF9C4() {
     field_0x20->field_0x26 = 0;
 
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     for (s32 i = 0; i < 4; i++) {
         field_0x24[i]->mPane->show();
@@ -3435,8 +3435,8 @@ void FileSelect_804AFF60::fn_803BF9C4() {
         restoreButtonAlphas(this, i);
     }
 
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tstr01'))->getStringPtr(), 0x11E, 0, NULL, NULL);
-    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search('Tcop01'))->getStringPtr(), 0x11F, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tstr01")))->getStringPtr(), 0x11E, 0, NULL, NULL);
+    getMessageText_803832BC(((J2DTextBox*)mScreenHuuin->search(FSA_TAG64("Tcop01")))->getStringPtr(), 0x11F, 0, NULL, NULL);
     s16 end = lbl_8050DB0C.field_0x4c[0xCA] + lbl_8050DB0C.field_0x4c[0xCC] + lbl_8050DB0C.field_0x4c[0xCB];
     field_0xd8 = lbl_8050DB0C.field_0x4c[0xCD];
     if (field_0xd8 < end) {
@@ -3456,10 +3456,10 @@ void FileSelect_804AFF60::fn_803BF698() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     for (s32 i = 0; i < 3; i++) {
         field_0x38[i]->field_0x20 = 0;
         field_0x38[i]->field_0x22 = 0;
@@ -3469,7 +3469,7 @@ void FileSelect_804AFF60::fn_803BF698() {
         field_0x44[i]->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     if (hasBadChecksum(field_0xa4)) {
         field_0x20->field_0x20 = 0;
         field_0x20->field_0x26 = 0;
@@ -3495,10 +3495,10 @@ void FileSelect_804AFF60::fn_803BF3BC() {
     field_0x50->moveFromCentre_80402E08(-300.0f, 0.0f);
     field_0x50->field_0x20 = 0;
     field_0x50->mPane->setAlpha(0);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur01'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur02'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur03'), field_0x50->field_0x28);
-    field_0x50->setAlpha_804023D0(mScreenHuuin->search('Pfcur04'), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur01")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur02")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur03")), field_0x50->field_0x28);
+    field_0x50->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Pfcur04")), field_0x50->field_0x28);
     if (hasBadChecksum(field_0xa4)) {
         field_0x20->field_0x20 = 0;
         field_0x20->field_0x26 = 0;
@@ -3516,7 +3516,7 @@ void FileSelect_804AFF60::fn_803BF3BC() {
         field_0x20->field_0x26 = 0;
     }
     field_0x34->mPane->setAlpha(0);
-    field_0x34->setAlpha_804023D0(mScreenHuuin->search('Paccur01'), field_0x34->field_0x28);
+    field_0x34->setAlpha_804023D0(mScreenHuuin->search(FSA_TAG64("Paccur01")), field_0x34->field_0x28);
     field_0x34->field_0x26 = 0;
     field_0x24[0]->field_0x22 = 0;
     field_0x24[0]->field_0x26 = 0;
