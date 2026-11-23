@@ -7,12 +7,249 @@
 #include "JSystem/J3D/J3DShapeFactory.h"
 #include "JSystem/J3D/J3DJointFactory.h"
 #include "JSystem/JSupport.h"
+
+#ifdef FSA_PORT
+// ---------------------------------------------------------------------------
+// Port: J3D model files (BMD/BDL/BMT) are big-endian. The loaders keep pointers
+// into the file's tables (hierarchy, envelopes, draw matrices, joints, shapes,
+// materials) that the runtime reads every frame, so those tables are swapped to
+// host order once, in place, before the first loader touches them. Block
+// headers stay big-endian (J3DFileBlock.h declares them BE), as do name tables
+// (ResNTAB), texture headers (ResTIMG), display lists and vertex arrays (Aurora
+// reads those big-endian). A marker in the header padding keeps a file from
+// being swapped twice when it is loaded again.
+#include "J3DPortSwapTables.h"
+
+// GX structs that are typedefs of unnamed structs: every field is a u32 enum / s16.
+static const unsigned short kPortSwap_GXVtxAttrFmtList[] = {0, 4, 4, 4, 8, 4};
+static const unsigned int kPortSwapCount_GXVtxAttrFmtList_ = 3;
+static const unsigned short kPortSwap_GXVtxDescList[] = {0, 4, 4, 4};
+static const unsigned int kPortSwapCount_GXVtxDescList_ = 2;
+static const unsigned short kPortSwap_GXColorS10[] = {0, 2, 2, 2, 4, 2, 6, 2};
+static const unsigned int kPortSwapCount_GXColorS10_ = 4;
+
+static void portSwapBytes(u8* p, u32 size)
+{
+	if (size == 2) {
+		u8 t = p[0]; p[0] = p[1]; p[1] = t;
+	} else if (size == 4) {
+		u8 t = p[0]; p[0] = p[3]; p[3] = t;
+		t = p[1]; p[1] = p[2]; p[2] = t;
+	} else if (size == 8) {
+		for (int i = 0; i < 4; i++) {
+			u8 t = p[i]; p[i] = p[7 - i]; p[7 - i] = t;
+		}
+	}
+}
+
+// Swaps every whole element of `elemSize` bytes in [p, p + bytes).
+static void portSwapElements(void* p, u32 bytes, const unsigned short* table, u32 count, u32 elemSize)
+{
+	if (p == nullptr || elemSize == 0 || count == 0)
+		return;
+	u8* base = (u8*)p;
+	for (u32 e = 0; e + elemSize <= bytes; e += elemSize)
+		for (u32 i = 0; i < count; i++)
+			portSwapBytes(base + e + table[2 * i], table[2 * i + 1]);
+}
+
+static void portSwapWords(void* p, u32 bytes, u32 width)
+{
+	if (p == nullptr)
+		return;
+	for (u32 o = 0; o + width <= bytes; o += width)
+		portSwapBytes((u8*)p + o, width);
+}
+
+#define PORT_SWAP(T, p, bytes) portSwapElements((p), (bytes), kPortSwap_##T, kPortSwapCount_##T, kPortSwapSize_##T)
+
+// The tables of one block: [offset, next offset in the block or the block end).
+struct PortBlockTables {
+	const u8* mBlock;
+	u32 mSize;
+	u32 mOffsets[40];
+	u32 mCount;
+
+	PortBlockTables(const void* block, u32 size) : mBlock((const u8*)block), mSize(size), mCount(0) {}
+	void add(u32 off)
+	{
+		if (off != 0 && off < mSize && mCount < 40)
+			mOffsets[mCount++] = off;
+	}
+	u8* at(u32 off) const { return off ? (u8*)mBlock + off : nullptr; }
+	u32 length(u32 off) const
+	{
+		u32 end = mSize;
+		for (u32 i = 0; i < mCount; i++)
+			if (mOffsets[i] > off && mOffsets[i] < end)
+				end = mOffsets[i];
+		return off ? end - off : 0;
+	}
+};
+
+static void portSwapBlock(const J3DFileBlockBase* blk)
+{
+	u32 size = (u32)blk->mSize;
+	switch ((u32)blk->mBlockType) {
+	case J3DFBT_Info: {
+		const J3DModelInfoBlock* b = (const J3DModelInfoBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 h = (u32)b->mHierarchyDataOffset;
+		t.add(h);
+		PORT_SWAP(J3DModelHierarchy, t.at(h), t.length(h));
+		break;
+	}
+	case J3DFBT_Vertex: {
+		const J3DVertexBlock* b = (const J3DVertexBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 fmt = (u32)b->mVertexFormatOffset;
+		t.add(fmt);
+		t.add((u32)b->mPositionDataOffset);
+		t.add((u32)b->mNormalDataOffset);
+		t.add((u32)b->mNBTDataOffset);
+		for (int i = 0; i < 2; i++)
+			t.add((u32)b->mColorDataOffset[i]);
+		for (int i = 0; i < 8; i++)
+			t.add((u32)b->mTexCoordDataOffset[i]);
+		// Only the format list; the vertex arrays stay big-endian for the GPU.
+		u8* p = t.at(fmt);
+		for (u32 o = 0; p && o + 16 <= t.length(fmt); o += 16) {
+			portSwapElements(p + o, 16, kPortSwap_GXVtxAttrFmtList, kPortSwapCount_GXVtxAttrFmtList_, 16);
+			if (*(u32*)(p + o) == GX_VA_NULL)
+				break;
+		}
+		break;
+	}
+	case J3DFBT_Envelope: {
+		const J3DEnvelopeBlock* b = (const J3DEnvelopeBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 cnt = (u32)b->mJointCountTableOffset, idx = (u32)b->mIndexTableOffset;
+		u32 wgt = (u32)b->mWeightTableOffset, inv = (u32)b->mInvBindTableOffset;
+		t.add(cnt);
+		t.add(idx);
+		t.add(wgt);
+		t.add(inv);
+		portSwapWords(t.at(idx), t.length(idx), 2);
+		portSwapWords(t.at(wgt), t.length(wgt), 4);
+		portSwapWords(t.at(inv), t.length(inv), 4);
+		break;
+	}
+	case J3DFBT_Draw: {
+		const J3DDrawBlock* b = (const J3DDrawBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 flags = (u32)b->mMatrixTypeArrayOffset, data = (u32)b->mDataArrayOffset;
+		t.add(flags);
+		t.add(data);
+		portSwapWords(t.at(data), t.length(data), 2);
+		break;
+	}
+	case J3DFBT_Joint: {
+		const J3DJointBlock* b = (const J3DJointBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 init = b->mJointInitData, remap = b->mRemapTableOffset, names = b->mNameTableOffset;
+		t.add(init);
+		t.add(remap);
+		t.add(names);
+		PORT_SWAP(J3DJointInitData, t.at(init), t.length(init));
+		portSwapWords(t.at(remap), t.length(remap), 2);
+		break;
+	}
+	case J3DFBT_Shape: {
+		const J3DShapeBlock* b = (const J3DShapeBlock*)blk;
+		PortBlockTables t(b, size);
+		u32 data = b->mShapeDataOffset, remap = b->mRemapTableOffset, names = b->mNameTableOffset;
+		u32 attr = b->mAttribTableOffset, mtx = b->mMatrixTableOffset, prim = b->mPrimDataOffset;
+		u32 mtxInit = b->mMatrixInitDataOffset, draw = b->mMtxGroupTableOffset;
+		t.add(data);
+		t.add(remap);
+		t.add(names);
+		t.add(attr);
+		t.add(mtx);
+		t.add(prim);
+		t.add(mtxInit);
+		t.add(draw);
+		PORT_SWAP(J3DShapeInitData, t.at(data), t.length(data));
+		portSwapWords(t.at(remap), t.length(remap), 2);
+		portSwapElements(t.at(attr), t.length(attr), kPortSwap_GXVtxDescList, kPortSwapCount_GXVtxDescList_, 8);
+		portSwapWords(t.at(mtx), t.length(mtx), 2);
+		PORT_SWAP(J3DShapeMtxInitData, t.at(mtxInit), t.length(mtxInit));
+		PORT_SWAP(J3DShapeDrawInitData, t.at(draw), t.length(draw));
+		break;
+	}
+	case J3DFBT_Material: {
+		const J3DMaterialBlock* b = (const J3DMaterialBlock*)blk;
+		PortBlockTables t(b, size);
+		// Every table, in header order (the string table only bounds the others).
+		const BEOffset* offs = &b->mMatEntryDataOffset;
+		for (int i = 0; i < 30; i++)
+			t.add((u32)offs[i]);
+		u32 o;
+		o = (u32)b->mMatEntryDataOffset;      PORT_SWAP(J3DMaterialInitData, t.at(o), t.length(o));
+		o = (u32)b->mMatRemapTableOffset;     portSwapWords(t.at(o), t.length(o), 2);
+		o = (u32)b->mIndTextureInfoOffset;    PORT_SWAP(J3DIndInitData, t.at(o), t.length(o));
+		o = (u32)b->mCullModeInfoOffset;      portSwapWords(t.at(o), t.length(o), 4);
+		o = (u32)b->mTexMtxInfoOffset;        PORT_SWAP(J3DTexMtxInfo, t.at(o), t.length(o));
+		o = (u32)b->mTexMtxInfo2Offset;       PORT_SWAP(J3DTexMtxInfo, t.at(o), t.length(o));
+		o = (u32)b->mTextureRemapTableOffset; portSwapWords(t.at(o), t.length(o), 2);
+		o = (u32)b->mTevColorsOffset;
+		portSwapElements(t.at(o), t.length(o), kPortSwap_GXColorS10, kPortSwapCount_GXColorS10_, 8);
+		o = (u32)b->mFogInfoOffset;           PORT_SWAP(J3DFogInfo, t.at(o), t.length(o));
+		o = (u32)b->mNBTScaleInfoOffset;      PORT_SWAP(J3DNBTScaleInfo, t.at(o), t.length(o));
+		// Not swapped: the light info (J3DLightInfo is an empty placeholder here)
+		// and the byte tables (colours, counts, TEV/blend/z/alpha settings).
+		break;
+	}
+	case J3DFBT_MaterialDL: {
+		const J3DMaterialDLBlock* b = (const J3DMaterialDLBlock*)blk;
+		PortBlockTables t(b, size);
+		const BEOffset* offs = &b->mPacketOffset;
+		for (int i = 0; i < 6; i++)
+			t.add((u32)offs[i]);
+		u32 o;
+		o = (u32)b->mPacketOffset;            PORT_SWAP(J3DDisplayListInit, t.at(o), t.length(o));
+		o = (u32)b->mSubPacketLocationOffset; PORT_SWAP(J3DPatchingInfo, t.at(o), t.length(o));
+		o = (u32)b->mMatrixIndexOffset;       PORT_SWAP(J3DCurrentMtxInfo, t.at(o), t.length(o));
+		o = (u32)b->mIndexesOffset;           portSwapWords(t.at(o), t.length(o), 2);
+		break;
+	}
+	default:
+		// TEX1 (ResTIMG and names are declared big-endian), MAT2 (v21, not
+		// converted yet), and anything else: left alone.
+		break;
+	}
+}
+
+void J3DPortSwapModelFile(const void* stream)
+{
+	if (stream == nullptr)
+		return;
+	J3DFileHeader* header = (J3DFileHeader*)stream;
+	if (header->mJ3dVersion != 'J3D2' && header->mJ3dVersion != 'J3D1')
+		return;
+	u8* mark = header->_10;
+	if (mark[0] == 'P' && mark[1] == 'O' && mark[2] == 'R' && mark[3] == 'T')
+		return; // already in host order
+	const J3DFileBlockBase* blk = header->getFirstBlock();
+	for (u32 i = 0; i < header->mBlockCount; i++) {
+		portSwapBlock(blk);
+		blk = blk->getNext();
+	}
+	mark[0] = 'P';
+	mark[1] = 'O';
+	mark[2] = 'R';
+	mark[3] = 'T';
+}
+#endif
+
 /**
  * @note Address: 0x8006F894
  * @note Size: 0x154
  */
 J3DModelData* J3DModelLoaderDataBase::load(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	if (stream == nullptr) {
 		return nullptr;
 	}
@@ -37,6 +274,9 @@ J3DModelData* J3DModelLoaderDataBase::load(const void* stream, u32 flags)
  */
 J3DModelData* J3DModelLoaderDataBase::loadBinaryDisplayList(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	if (stream == nullptr) {
 		return nullptr;
 	}
@@ -55,6 +295,9 @@ J3DModelData* J3DModelLoaderDataBase::loadBinaryDisplayList(const void* stream, 
  */
 J3DModelData* J3DModelLoader::load(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	JKRHeap::getCurrentHeap()->getTotalFreeSize();
 	mModelData = new J3DModelData;
 	mModelData->clear();
@@ -114,6 +357,9 @@ J3DModelData* J3DModelLoader::load(const void* stream, u32 flags)
  */
 J3DMaterialTable* J3DModelLoader::loadMaterialTable(const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	mMaterialTable = new J3DMaterialTable();
 	mMaterialTable->clear();
 	const J3DFileHeader* header       = reinterpret_cast<const J3DFileHeader*>(stream);
@@ -147,6 +393,9 @@ J3DMaterialTable* J3DModelLoader::loadMaterialTable(const void* stream)
  */
 J3DModelData* J3DModelLoader::loadBinaryDisplayList(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	mModelData = new J3DModelData();
 	mModelData->clear();
 	const J3DFileHeader* header           = reinterpret_cast<const J3DFileHeader*>(stream);
@@ -390,7 +639,7 @@ void J3DModelLoader::readJoint(const J3DJointBlock* block)
 	J3DJointFactory factory(*block);
 	mModelData->getJointTree().mJointCnt = block->mCount;
 	if (block->mNameTableOffset != nullptr) {
-		mModelData->getJointTree().mNametab = new JUTNameTab(JSUConvertOffsetToPtr<ResNTAB>(block, (const void*)block->mNameTableOffset));
+		mModelData->getJointTree().mNametab = new JUTNameTab(JSUConvertOffsetToPtr<ResNTAB>(block, (u32)block->mNameTableOffset));
 	} else {
 		mModelData->getJointTree().mNametab = nullptr;
 	}
@@ -498,7 +747,7 @@ void J3DModelLoader::readShape(const J3DShapeBlock* block, u32 flags)
 
 	model->mShapeTable.mCount = block->mShapeNum;
 	if (block->mNameTableOffset) {
-		model->mShapeTable.mNames = new JUTNameTab(JSUConvertOffsetToPtr<ResNTAB>(block, (const void*)block->mNameTableOffset));
+		model->mShapeTable.mNames = new JUTNameTab(JSUConvertOffsetToPtr<ResNTAB>(block, (u32)block->mNameTableOffset));
 	} else {
 		model->mShapeTable.mNames = nullptr;
 	}

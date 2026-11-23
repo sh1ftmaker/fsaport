@@ -15,6 +15,9 @@
  */
 u16 J3DModelLoader::countMaterialNum(const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	const J3DFileHeader* header   = (const J3DFileHeader*)stream;
 	u32 count                     = header->mBlockCount;
 	const J3DFileBlockBase* block = header->getFirstBlock();
@@ -32,6 +35,9 @@ u16 J3DModelLoader::countMaterialNum(const void* stream)
  */
 int J3DModelLoader::calcLoadSize(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	size_t size = 0;
 	// TODO: What sizeof will get us a size of 0xE4?
 	size += 0xE4;
@@ -79,6 +85,9 @@ int J3DModelLoader::calcLoadSize(const void* stream, u32 flags)
  */
 int J3DModelLoader::calcLoadMaterialTableSize(const void* stream)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	u32 flags   = J3DMLF_21 | J3DMLF_Material_UseIndirect | J3DMLF_Material_PE_Full | J3DMLF_Material_Color_LightOn;
 	size_t size = 0;
 
@@ -115,6 +124,9 @@ int J3DModelLoader::calcLoadMaterialTableSize(const void* stream)
  */
 int J3DModelLoader::calcLoadBinaryDisplayListSize(const void* stream, u32 flags)
 {
+#ifdef FSA_PORT
+	J3DPortSwapModelFile(stream); // port: host-order tables, once per file
+#endif
 	u32 size = 0;
 	size += sizeof(J3DModelData);
 	const J3DFileHeader* header       = (const J3DFileHeader*)stream;

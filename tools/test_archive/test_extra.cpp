@@ -1,7 +1,15 @@
 // BMG, J3D and JPA checks through the ported accessors and structs.
 #include "test_extra.h"
 
+#include "JSystem/J3D/J3DFileBlock.h"
+#include "JSystem/J3D/J3DJointFactory.h"
+#include "JSystem/J3D/J3DMaterialFactory.h"
+#include "JSystem/J3D/J3DModel.h"
+#include "JSystem/J3D/J3DModelLoader.h"
+#include "JSystem/J3D/J3DShape.h"
+#include "JSystem/J3D/J3DShapeFactory.h"
 #include "JSystem/JMessage/data.h"
+#include "JSystem/ResTIMG.h"
 #include "port/be.h"
 
 #include <stdio.h>
@@ -106,8 +114,93 @@ static void checkBmg(const char* name, const u8* file)
     }
 }
 
+static void checkBmd(const char* name, const u8* file)
+{
+    const J3DFileHeader* hdr = (const J3DFileHeader*)file;
+    char a[5], b[5];
+    tag4(hdr->mJ3dVersion, a);
+    tag4(hdr->mFileVersion, b);
+    J3DPortSwapModelFile(file);
+    J3DPortSwapModelFile(file); // a second load must not swap again
+    printf("  %s: %s%s, %u blocks\n", name, a, b, (unsigned)hdr->mBlockCount);
+    CHECK(hdr->mJ3dVersion == 'J3D2', "%s: header", name);
+    const J3DFileBlockBase* blk = hdr->getFirstBlock();
+    for (u32 i = 0; i < hdr->mBlockCount; i++, blk = blk->getNext()) {
+        char t[5];
+        tag4(blk->mBlockType, t);
+        printf("    %s %6d bytes", t, (int)blk->mSize);
+        switch ((u32)blk->mBlockType) {
+        case J3DFBT_Info: {
+            const J3DModelInfoBlock* inf = (const J3DModelInfoBlock*)blk;
+            const J3DModelHierarchy* h = (const J3DModelHierarchy*)((const u8*)blk + (u32)inf->mHierarchyDataOffset);
+            int n = 0;
+            for (; n < 4096 && h[n].mType != 0; n++) {}
+            printf(": flags %x, %u packets, %u vertices, hierarchy %d nodes (first %u/%u)", (unsigned)inf->mFlags,
+                   (unsigned)inf->mMatrixGroupCount, (unsigned)inf->mVertexCount, n, h[0].mType, h[0].mValue);
+            CHECK(n > 0 && n < 4096 && h[0].mType <= 0x12, "hierarchy");
+            break;
+        }
+        case J3DFBT_Vertex: {
+            const J3DVertexBlock* v = (const J3DVertexBlock*)blk;
+            const u32* fmt = (const u32*)((const u8*)blk + (u32)v->mVertexFormatOffset);
+            printf(": formats");
+            for (int k = 0; k < 16 && fmt[k * 4] != GX_VA_NULL; k++)
+                printf(" %u/%u/%u/%u", (unsigned)fmt[k * 4], (unsigned)fmt[k * 4 + 1], (unsigned)fmt[k * 4 + 2],
+                       ((const u8*)&fmt[k * 4 + 3])[0]);
+            CHECK(fmt[0] == GX_VA_POS && fmt[2] <= 4, "vertex format list");
+            break;
+        }
+        case J3DFBT_Joint: {
+            const J3DJointBlock* j = (const J3DJointBlock*)blk;
+            const J3DJointInitData* init = (const J3DJointInitData*)((const u8*)blk + j->mJointInitData);
+            const J3DTransformInfo& tf = init[0].mTransformInfo;
+            printf(": %u joints; joint 0 scale %.2f,%.2f,%.2f trans %.1f,%.1f,%.1f radius %.1f",
+                   (unsigned)j->mCount, tf.mScale.x, tf.mScale.y, tf.mScale.z, tf.mTranslation.x, tf.mTranslation.y,
+                   tf.mTranslation.z, init[0].mRadius);
+            CHECK(tf.mScale.x > 0.0f && tf.mScale.x < 1000.0f, "joint scale");
+            break;
+        }
+        case J3DFBT_Shape: {
+            const J3DShapeBlock* s = (const J3DShapeBlock*)blk;
+            const J3DShapeInitData* sh = (const J3DShapeInitData*)((const u8*)blk + s->mShapeDataOffset);
+            const J3DShapeDrawInitData* draw = (const J3DShapeDrawInitData*)((const u8*)blk + s->mMtxGroupTableOffset);
+            const u32* desc = (const u32*)((const u8*)blk + s->mAttribTableOffset);
+            printf(": %u shapes; shape 0 mtx type %u, %u groups, radius %.1f, bbox %.0f..%.0f; desc %u/%u; draw 0: %u bytes at %u",
+                   (unsigned)s->mShapeNum, sh[0].mShapeMtxType, sh[0].mMtxGroupNum, sh[0].mRadius, sh[0].mMin.x,
+                   sh[0].mMax.x, (unsigned)desc[0], (unsigned)desc[1], (unsigned)draw[0].mDisplayListSize,
+                   (unsigned)draw[0].mDisplayListIndex);
+            CHECK(sh[0].mMtxGroupNum > 0 && sh[0].mMtxGroupNum < 1024, "shape matrix groups");
+            CHECK(draw[0].mDisplayListSize > 0 && draw[0].mDisplayListSize < 0x100000 && (draw[0].mDisplayListSize & 31) == 0,
+                  "display list size");
+            break;
+        }
+        case J3DFBT_Material: {
+            const J3DMaterialBlock* m = (const J3DMaterialBlock*)blk;
+            const J3DMaterialInitData* init = (const J3DMaterialInitData*)((const u8*)blk + (u32)m->mMatEntryDataOffset);
+            const u16* remap = (const u16*)((const u8*)blk + (u32)m->mMatRemapTableOffset);
+            printf(": %u materials; material 0 = init %u: PE mode %u, colour index %u", (unsigned)m->mNumMaterials, remap[0],
+                   init[remap[0]].mPixelEngineMode, init[remap[0]].mMatColorIndex[0]);
+            CHECK(remap[0] < m->mNumMaterials, "material remap");
+            break;
+        }
+        case J3DFBT_Texture: {
+            const J3DTextureBlock* t = (const J3DTextureBlock*)blk;
+            const ResTIMG* timg = (const ResTIMG*)((const u8*)blk + (u32)t->mTexHeaderOffset);
+            printf(": %u textures; texture 0 %ux%u format %u", (unsigned)t->mTextureCount, (unsigned)timg->mSizeX,
+                   (unsigned)timg->mSizeY, timg->mTextureFormat);
+            CHECK(timg->mSizeX > 0 && timg->mSizeX <= 1024, "texture size");
+            break;
+        }
+        }
+        printf("\n");
+    }
+}
+
 void testExtra(const char* name, const u8* file, u32 size)
 {
+    static int bmds = 0;
     if (endsWith(name, "_text_e.bmg"))
         checkBmg(name, file);
+    if ((endsWith(name, ".bmd") || endsWith(name, ".bdl")) && bmds++ < 2)
+        checkBmd(name, file);
 }
