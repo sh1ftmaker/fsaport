@@ -92,6 +92,34 @@ set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_save.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_audio.js
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js)
+
+# --- Diagnostics build (docs/DIAGNOSTICS.md): function coverage and stub hits ---
+# Every game/JSystem unit and the platform layer are built with
+# -finstrument-functions (platform/diag_cov.cpp counts the entries); after the
+# link tools/diag_symtab.py writes fsa.diag.tsv (wasm table index -> decomp
+# symbol, demangled name, unit, kind) next to fsa.wasm. Use a separate build
+# directory (build/diag); the normal build is unchanged when this is OFF.
+option(FSA_DIAG "diagnostics build: -finstrument-functions coverage and stub-hit streams" OFF)
+set(FSA_DECOMP_SYMBOLS "${CMAKE_SOURCE_DIR}/../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt"
+    CACHE FILEPATH "the decomp's config/G4SE01/symbols.txt (join key for the diagnostics)")
+if(FSA_DIAG)
+  # -finstrument-functions-after-inlining instead counts only out-of-line calls
+  # (cheaper, but inlined functions then never show up).
+  set(FSA_DIAG_INSTRUMENT "-finstrument-functions" CACHE STRING "instrumentation flag for the diagnostics build")
+  target_compile_options(fsa_game_flags INTERFACE ${FSA_DIAG_INSTRUMENT})
+  target_compile_definitions(fsa_game_flags INTERFACE FSA_DIAG=1)
+  target_compile_options(fsa_platform PRIVATE ${FSA_DIAG_INSTRUMENT})
+  target_compile_definitions(fsa_platform PRIVATE FSA_DIAG=1)
+  # Mangled names in the wasm name section (the join key needs them).
+  target_link_options(fsa PRIVATE -Wl,--no-demangle)
+  get_filename_component(FSA_LLVM_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
+  add_custom_command(TARGET fsa POST_BUILD
+    COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/diag_symtab.py --build ${CMAKE_BINARY_DIR}
+            --source ${CMAKE_SOURCE_DIR} --symbols ${FSA_DECOMP_SYMBOLS}
+            --llvm-bin ${FSA_LLVM_BIN}/../bin --out ${CMAKE_BINARY_DIR}/fsa.diag.tsv
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR} VERBATIM)
+endif()
+
 add_custom_command(TARGET fsa POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js
@@ -102,8 +130,7 @@ add_custom_command(TARGET fsa POST_BUILD
 # tools/uninit_instrument.py adds poison checks to the game's loads and brackets
 # its constructors. Findings go to the "uninit" diagnostics stream.
 option(FSA_DIAG_UNINIT "poison fresh heap blocks and report uninitialised reads (slow; diagnostics only)" OFF)
-set(FSA_DECOMP_SYMBOLS "${CMAKE_SOURCE_DIR}/../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt"
-    CACHE FILEPATH "the decomp's symbols.txt (MWCC names and addresses for the diagnostics)")
+# (FSA_DECOMP_SYMBOLS, the decomp's symbols.txt, is set with FSA_DIAG above.)
 if(FSA_DIAG_UNINIT)
   target_compile_definitions(fsa_game_flags INTERFACE FSA_DIAG_UNINIT=1)
   # Constructors must stay functions for the instrumenter to bracket them:
