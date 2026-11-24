@@ -201,8 +201,11 @@ void MessageWindow_804AF490::fn_80390EBC() {
             u32 msg = field_0x20;
             proc->field_0x14c = msg;
             proc->field_0x8->setMessageCode(msg >> 16, msg & 0xFFFF);
-            proc->field_0x98 = pos;
-            proc->field_0xa4.set(boxPos);
+            // The window's own position goes to 0x98 (the box offset the draw
+            // adds to the layout) and the speaker's to 0xA4 (0x80391264-
+            // 0x803912A4); swapped, the box sat at the speaker's world position.
+            proc->field_0x98 = boxPos;
+            proc->field_0xa4.set(pos);
         } else {
             JGeometry::TVec3f pos = field_0x50;
             JGeometry::TVec3f boxPos = field_0x50;
