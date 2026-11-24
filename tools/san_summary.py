@@ -2,19 +2,24 @@
 """Collapse sanitizer streams to one record per site and print a table.
 
     python3 tools/san_summary.py logs/diag/<run>/sanitizer.jsonl [more.jsonl ...]
-        [--json OUT] [--kind KIND] [--grep TEXT]
+        [--json OUT] [--kind KIND] [--skip KIND,...] [--grep TEXT]
 
 The runtime (platform/sanitize/sanitize.cpp) posts a site's record when it is
 first hit and again while its count grows; the last line per "key" wins.
 Several files (e.g. a title run and a ?stage=1 run) are merged: counts add up,
-the first file's first_scene is kept. --json writes the merged records (one
-JSON object per line, sorted by kind then file:line)."""
-import argparse, collections, json
+the first file's first_scene is kept. The compile-time missing-return list
+(tools/san_return.py) has the same format and can be passed too. --json
+writes the merged records (one JSON object per line, sorted by kind then
+file:line). --skip alignment-wide hides the 4-aligned-but-wants-8 noise."""
+import argparse, collections, json, signal
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 ap = argparse.ArgumentParser()
 ap.add_argument('files', nargs='+')
 ap.add_argument('--json')
 ap.add_argument('--kind')
+ap.add_argument('--skip', default='')
 ap.add_argument('--grep')
 a = ap.parse_args()
 
@@ -39,6 +44,8 @@ for f in a.files:
 recs = sorted(merged.values(), key=lambda r: (r['kind'], r['file'], r['line'], r['col']))
 if a.kind:
     recs = [r for r in recs if r['kind'] == a.kind]
+if a.skip:
+    recs = [r for r in recs if r['kind'] not in a.skip.split(',')]
 if a.grep:
     recs = [r for r in recs if a.grep in json.dumps(r)]
 if a.json:
@@ -49,4 +56,4 @@ by = collections.Counter(r['kind'] for r in recs)
 print(f'{len(recs)} sites: ' + ', '.join(f'{k} {n}' for k, n in by.most_common()))
 for r in recs:
     print(f"{r['kind']:24} {r['count']:>9}  {r['file']}:{r['line']}:{r['col']}  {r['function'][:70]}\n"
-          f"{'':36}{r['detail'][:150]}  [{r.get('first_scene', '')}]")
+          f"{'':36}{r['detail'][:150]}  {json.dumps(r.get('first_scene', ''))}")

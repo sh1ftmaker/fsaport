@@ -537,9 +537,12 @@ extern "C" const char* __asan_default_options() {
   // 4 KB of each malloc with 0xbe by default; the port relies on fresh memory
   // being zero like emscripten's own malloc gives it (Aurora read a 0xbebebebe
   // pointer and trapped), so no fill: uninitialised reads are another stream.
+  // No allocation stacks: on wasm every one is a JS Error().stack, which made
+  // the many mallocs of a stage load take minutes (the page looked hung); the
+  // game's own blocks are JKR blocks anyway, described by fsa_jkr_describe.
   return "halt_on_error=0:suppress_equal_pcs=1:detect_leaks=0:print_summary=0:"
          "detect_stack_use_after_return=0:allocator_may_return_null=1:print_legend=0:"
-         "max_malloc_fill_size=0";
+         "max_malloc_fill_size=0:malloc_context_size=0";
 }
 
 namespace fsa_sanitizer_rt {
