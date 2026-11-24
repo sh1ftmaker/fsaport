@@ -29,10 +29,14 @@
 
 namespace {
 
-enum { PW_BYTES = 0, PW_NAMES = -1, PW_VTXIDX = -2 };
+// PW_REGTAB: J3DAnmCRegKeyTable / J3DAnmKRegKeyTable entries (0x1C: four
+// 6-byte key table bases, then the u8 register id and 3 pad bytes, which
+// must stay put: swapped as u16s the id became the 0xFF pad and the TEV
+// register animations indexed mTevColorAnm[255] / mTevKColorAnm[255]).
+enum { PW_BYTES = 0, PW_NAMES = -1, PW_VTXIDX = -2, PW_REGTAB = -3 };
 struct PortAnmTable {
 	u16 mField; // offset of the s32 offset in the block header
-	s8 mWidth;  // element width to swap: 2, 4, PW_BYTES, PW_NAMES, PW_VTXIDX
+	s8 mWidth;  // element width to swap: 2, 4, PW_BYTES, PW_NAMES, PW_VTXIDX, PW_REGTAB
 };
 
 #define T(type, field, width) { (u16)offsetof(type, field), width }
@@ -48,7 +52,7 @@ const PortAnmTable kColorKey[] = { T(J3DAnmColorKeyData, mTableOffset, 2), T(J3D
 	                                T(J3DAnmColorKeyData, mNameTabOffset, PW_NAMES), T(J3DAnmColorKeyData, mRValOffset, 2),
 	                                T(J3DAnmColorKeyData, mGValOffset, 2), T(J3DAnmColorKeyData, mBValOffset, 2),
 	                                T(J3DAnmColorKeyData, mAValOffset, 2) };
-const PortAnmTable kTevRegKey[] = { T(J3DAnmTevRegKeyData, mCRegTableOffset, 2), T(J3DAnmTevRegKeyData, mKRegTableOffset, 2),
+const PortAnmTable kTevRegKey[] = { T(J3DAnmTevRegKeyData, mCRegTableOffset, PW_REGTAB), T(J3DAnmTevRegKeyData, mKRegTableOffset, PW_REGTAB),
 	                                 T(J3DAnmTevRegKeyData, mCRegUpdateMaterialIDOffset, 2),
 	                                 T(J3DAnmTevRegKeyData, mKRegUpdateMaterialIDOffset, 2),
 	                                 T(J3DAnmTevRegKeyData, mCRegNameTabOffset, PW_NAMES),
@@ -127,6 +131,11 @@ void portSwapAnmBlock(u8* blk, const unsigned short* header, u32 headerCount, co
 		case 4:
 			for (u32 o = 0; o + tables[t].mWidth <= end - off; o += tables[t].mWidth)
 				portSwap(p + o, tables[t].mWidth);
+			break;
+		case PW_REGTAB:
+			for (u32 o = 0; o + sizeof(J3DAnmCRegKeyTable) <= end - off; o += sizeof(J3DAnmCRegKeyTable))
+				for (u32 k = 0; k < offsetof(J3DAnmCRegKeyTable, _18); k += 2)
+					portSwap(p + o + k, 2);
 			break;
 		case PW_VTXIDX:
 			for (u32 o = 0; o + kPortSwapSize_J3DAnmVtxColorIndexData <= end - off; o += kPortSwapSize_J3DAnmVtxColorIndexData)
