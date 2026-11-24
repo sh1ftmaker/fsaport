@@ -16,6 +16,9 @@
 #include "game/act_light_environment_control_802EF76C.h"
 #include "game/Camera.h"
 #include "JSystem/JKernel/JKRExpHeap.h"
+#ifdef FSA_PORT
+#include <stdio.h>
+#endif
 
 // Shift-JIS report strings (.rodata of this unit); not written as source because the bytes are escaped.
 extern const char lbl_80465920[];
@@ -329,5 +332,14 @@ extern "C" void fsa_debug_state() {
                  (char)(id >> 8), (char)id, (int)actor->mAlive, actor->mLayer_0x4, (double)actor->mPos.x,
                  (double)actor->mPos.y);
     }
+}
+
+// Diagnostics (platform/diag_uninit.cpp, ...): where the game is, as a JSON
+// object, for the decomp's diagnostics streams. Not game code.
+extern "C" int fsa_diag_scene(char* buf, int n) {
+    GameRoot_8049EF20* root = gGameRoot_8053AAF8;
+    return snprintf(buf, n, "{\"mode\":%d,\"stage\":%d,\"level\":%d,\"in_stage\":%d}",
+                    root != NULL ? (int)root->field_0x4c : -1, (int)lbl_80529DEC.mStage_0x118,
+                    (int)lbl_80529DEC.mLevel_0x11c, (int)(root != NULL && root->field_0x4 != NULL));
 }
 #endif

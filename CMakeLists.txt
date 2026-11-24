@@ -96,3 +96,24 @@ add_custom_command(TARGET fsa POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/gputrace.js ${CMAKE_BINARY_DIR}/gputrace.js)
+
+# --- Diagnostics build: uninitialised reads (docs/DIAGNOSTICS.md) --------------
+# Fresh JKR heap blocks are filled with 0xA5; after the link,
+# tools/uninit_instrument.py adds poison checks to the game's loads and brackets
+# its constructors. Findings go to the "uninit" diagnostics stream.
+option(FSA_DIAG_UNINIT "poison fresh heap blocks and report uninitialised reads (slow; diagnostics only)" OFF)
+set(FSA_DECOMP_SYMBOLS "${CMAKE_SOURCE_DIR}/../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt"
+    CACHE FILEPATH "the decomp's symbols.txt (MWCC names and addresses for the diagnostics)")
+if(FSA_DIAG_UNINIT)
+  target_compile_definitions(fsa_game_flags INTERFACE FSA_DIAG_UNINIT=1)
+  # Constructors must stay functions for the instrumenter to bracket them:
+  # no inlining in the game code, and none by wasm-opt at the link (-O1).
+  target_compile_options(fsa_game_flags INTERFACE -fno-inline)
+  target_compile_definitions(fsa_platform PRIVATE FSA_DIAG_UNINIT=1)
+  target_link_options(fsa PRIVATE -O1 "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_uninit.js")
+  set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS ${CMAKE_SOURCE_DIR}/platform/web/fsa_uninit.js)
+  add_custom_command(TARGET fsa POST_BUILD
+    COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/uninit_instrument.py ${CMAKE_BINARY_DIR}/fsa.wasm
+            ${CMAKE_BINARY_DIR}/fsa.map --symbols ${FSA_DECOMP_SYMBOLS}
+    VERBATIM)
+endif()
