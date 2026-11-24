@@ -28,6 +28,19 @@
 #include "JSystem/JUtility/JUTException.h"
 #include "JSystem/JUtility/JUTGamePad.h"
 
+#ifdef FSA_PORT
+// Debug stage jump (the page's ?stage=S or ?stage=S-L): the title screen
+// goes straight to the in-game mode, and its stage / level are replaced by
+// these once. -1: no jump pending.
+static s32 sFsaDebugStage = -1;
+static s32 sFsaDebugLevel = 0;
+extern "C" void fsa_debug_set_stage(int stage, int level) {
+    sFsaDebugStage = stage;
+    sFsaDebugLevel = level;
+    OSReport("[stage] debug jump to stage %d level %d armed\n", stage, level);
+}
+#endif
+
 void fn_80139958();
 void fn_80139D70(); // game/game_root_sub_04_80139BE8.cpp
 
@@ -438,6 +451,13 @@ void GameRoot_8049EF20::fn_80137300() {
                     }
                 }
                 if (joiner != 0 && allowed) {
+#ifdef FSA_PORT
+                    OSReport("[stage] controller window: player %d kind %d mask %02x kinds %02x slot %d a2e4 %d a364 %d mode %d\n",
+                             joiner - 1, fn_8013997C(joiner - 1), mPlayerMask, field_0x83,
+                             getPlayerInputSlot_8030AAF4(joiner - 1),
+                             lbl_8053AD30->fn_8030A2E4(getPlayerInputSlot_8030AAF4(joiner - 1)),
+                             lbl_8053AD30->fn_8030A364(getPlayerInputSlot_8030AAF4(joiner - 1)), field_0x4c);
+#endif
                     lbl_8053AEE0->fn_80442254(field_0x4c, joiner);
                     field_0x4c = 0x16;
                 }
@@ -463,6 +483,30 @@ void GameRoot_8049EF20::fn_80137300() {
             if (lbl_8053AD88 != NULL) {
                 lbl_8053AD88->fn_803A34A0();
             }
+#ifdef FSA_PORT
+            if (sFsaDebugStage >= 0 && field_0x58 == 0) {
+                OSReport("[stage] title: skipping the menus\n");
+                lbl_80529DEC.fn_80403680();
+                // What the adventure mode select and entry screens set for
+                // one player (AdvEntryScreen setSingleEntry): adventure mode,
+                // player 0 alone with a controller.
+                field_0x7f = 1;
+                field_0x7e = 0;
+                mPlayerMask = 0x11;
+                field_0x83 = (u8)((field_0x83 & ~3) |
+                                  (lbl_8053AD30->fn_8030A308(getPlayerInputSlot_8030AAF4(0)) ? 1 : 2));
+                // Set now: fn_80135A04(7) mounts the stage's archive from these
+                // before createModeScreen_80135020(7) copies them to the view.
+                lbl_80529DEC.mStage_0x118 = lbl_80529DEC.field_0x128 = sFsaDebugStage;
+                lbl_80529DEC.mLevel_0x11c = lbl_80529DEC.field_0x12c = sFsaDebugLevel;
+                field_0x50 = 7;
+                field_0x58 = 1;
+                lbl_8053ACA0->fn_802AC8AC(0);
+                field_0x84 = 0;
+                field_0x60 = 0;
+                break;
+            }
+#endif
             if (Title_804AF820::fn_803A3484() != 1) {
                 field_0x50 = Title_804AF820::fn_803A3484();
                 field_0x58 = 1;
@@ -1638,6 +1682,14 @@ void GameRoot_8049EF20::createModeScreen_80135020(s32 mode) {
             field_0x4 = new (field_0x98, 0) GameRootSub04_801F856C(field_0x98);
             gGameRoot2_8053AB10->fn_8013BE04();
             // The original loads both values before getGameView_802D6A9C() (level first).
+#ifdef FSA_PORT
+            if (sFsaDebugStage >= 0) {
+                lbl_80529DEC.mStage_0x118 = lbl_80529DEC.field_0x128 = sFsaDebugStage;
+                lbl_80529DEC.mLevel_0x11c = lbl_80529DEC.field_0x12c = sFsaDebugLevel;
+                OSReport("[stage] entering stage %d level %d\n", sFsaDebugStage, sFsaDebugLevel);
+                sFsaDebugStage = -1;
+            }
+#endif
             if (gGameRoot_8053AAF8->field_0x7f != 0) {
                 s32 level = lbl_80529DEC.mLevel_0x11c;
                 s32 stage = lbl_80529DEC.mStage_0x118;
