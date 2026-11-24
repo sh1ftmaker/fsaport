@@ -1,3 +1,4 @@
+#include <string.h>
 #include "JSystem/JUtility/JUTDbg.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "port/endian_diag.h"
@@ -112,6 +113,10 @@ void JKRHeap::destroy()
 extern "C" int fsa_host_alloc_depth;
 extern "C" void fsa_debug_stack(const char *);
 #endif
+#ifdef FSA_DIAG_UNINIT
+extern "C" void fsa_uninit_alloc(void *p, u32 size);
+extern "C" void fsa_uninit_free(void *p);
+#endif
 void *JKRHeap::alloc(u32 byteCount, int alignment, JKRHeap *heap)
 {
     void *memory;
@@ -137,6 +142,19 @@ void *JKRHeap::alloc(u32 byteCount, int alignment)
     u32 freeBefore = (u32)getFreeSize();
 #endif
     void *p = do_alloc(byteCount, alignment);
+#ifdef FSA_DIAG_UNINIT
+    // Diagnostics build: poison the block (platform/diag_uninit.cpp).
+    fsa_uninit_alloc(p, byteCount);
+#else
+    // Port: hand out zeroed blocks. Many constructors leave fields to the
+    // zeroed memory the GameCube gives them (MEM1 cleared at boot, heaps carved
+    // from it); the decomp checked them against the original (EffectSystem,
+    // MessageManager, ... are byte-identical there). Zeroing every block also
+    // covers memory a heap reuses.
+    if (p != NULL) {
+        memset(p, 0, byteCount);
+    }
+#endif
 #ifdef FSA_PORT_TRACE
     static u32 sCount = 0;
     if (this == (JKRHeap *)0x8d40e0 && sCount == 3000 && byteCount == 0x100) {
@@ -178,6 +196,9 @@ void JKRHeap::free(void *memory)
 #line 365
     JUT_WARNING_F(!mInitFlag, "free %x in heap %x", memory, this);
     FSA_ENDIAN_UNRANGE(memory, memory && getSize(memory) > 0 ? (u32)getSize(memory) : 0);
+#ifdef FSA_DIAG_UNINIT
+    fsa_uninit_free(memory);
+#endif
     do_free(memory);
 }
 

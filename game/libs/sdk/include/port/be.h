@@ -16,6 +16,12 @@
 
 #ifdef __cplusplus
 
+#ifdef FSA_DIAG
+// Port-only helpers without a decomp symbol, and the hottest functions there
+// are: not counted by the diagnostics build (docs/DIAGNOSTICS.md).
+#pragma clang attribute push(__attribute__((no_instrument_function)), apply_to = function)
+#endif
+
 template <unsigned N> struct be_uint_;
 template <> struct be_uint_<1> { typedef unsigned char type; };
 template <> struct be_uint_<2> { typedef unsigned short type; };
@@ -126,6 +132,10 @@ inline float bef32(const void* p) { return __builtin_bit_cast(float, be32(p)); }
 /* Swap a host value in place (for structs swapped once at load). */
 template <typename T>
 inline void be_swap_inplace(T& v) { v = be_swap_value(v); }
+
+#ifdef FSA_DIAG
+#pragma clang attribute pop
+#endif
 
 #endif /* __cplusplus */
 

@@ -132,6 +132,12 @@ if (args.wav && args.wav !== 'true') {
   fs.writeFileSync(args.wav, Buffer.concat([h, pcm]));
   log(`[wav] ${args.wav}: ${(pcm.length / 128000).toFixed(1)} s`);
 }
+// Diagnostics streams (docs/DIAGNOSTICS.md): write out the counters and post
+// what is buffered before the tab goes.
+if (await evalJs('typeof window.fsaDiagFlush') === 'function') {
+  await evalJs('window.fsaDiagFlush()');
+  await sleep(1500);
+}
 await fetch(`http://127.0.0.1:${cdp}/json/close/${tab.id}`);
 ws.close();
 log('[done]');

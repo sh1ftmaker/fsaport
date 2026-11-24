@@ -363,9 +363,11 @@
     diag.bufs.get(name).push(line);
     if (!diag.timer) diag.timer = setTimeout(diagFlush, 2000);
   };
-  window.fsaDiagFlush = () => diagFlush(false);
-  addEventListener('pagehide', () => diagFlush(true));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) diagFlush(true); });
+  // The diagnostics build (docs/DIAGNOSTICS.md) also writes out its counters.
+  const diagFinal = () => { try { if (Module._fsa_diag_flush_all) Module._fsa_diag_flush_all(); } catch (e) {} };
+  window.fsaDiagFlush = () => { diagFinal(); diagFlush(false); };
+  addEventListener('pagehide', () => { diagFinal(); diagFlush(true); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { diagFinal(); diagFlush(true); } });
   addEventListener('pagehide', () => remoteFlush(true));
   document.addEventListener('visibilitychange', () => {
     log(`[page] ${document.hidden ? 'hidden' : 'visible'}`);
