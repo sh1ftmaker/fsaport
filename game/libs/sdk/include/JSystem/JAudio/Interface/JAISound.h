@@ -58,6 +58,23 @@ public:
     // if something doesn't match because of this, mark JAUSeqDataBlockMgr.cpp as Equivalent
     {
         u32 mFullId;
+#ifdef FSA_PORT
+        // Port: mFullId is a host (little-endian) u32; its bytes and halves
+        // in the big-endian order the fields name (0x01000006: section 1,
+        // short ID 6).
+        struct
+        {
+            u8 b3;
+            u8 b2;
+            u8 mGroupId;
+            u8 mSectionId;
+        } mBytes;
+        struct
+        {
+            u16 mShortId;
+            u16 mSoundType;
+        } mAdvancedId;
+#else
         struct
         {
             u8 mSectionId;
@@ -71,6 +88,7 @@ public:
             u16 mShortId;
         } mAdvancedId; // Debug doesn't have an inline for referencing the short ID so I assume
                        // it's similar to this
+#endif
     } mId;
 };
 

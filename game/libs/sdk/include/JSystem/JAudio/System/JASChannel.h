@@ -76,9 +76,17 @@ public:
         u16 whole;
         struct
         {
+#ifdef FSA_PORT
+            // Port: `whole` is a host (little-endian) u16 and clang packs bit
+            // fields from the low bit: the same nibbles in the other order.
+            u8 lower1 : 4;
+            u8 lower0 : 4;
+            u8 upper;
+#else
             u8 upper;
             u8 lower0 : 4;
             u8 lower1 : 4;
+#endif
         } parts;
     };
 

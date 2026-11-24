@@ -24,6 +24,23 @@ struct JAUAudibleParam {
             u16 f0;
             u16 f1;
         } half;
+#ifdef FSA_PORT
+        // Port: half.f0 is a host (little-endian) u16 and clang packs bit
+        // fields from the low bit; the same bits of f0 as on the GameCube
+        // (b0_0 = bits 12-15 ... b1_2_7 = bits 0-5).
+        struct {
+            u16 b1_2_7 : 6;
+            u16 b1_1 : 1;
+            u16 b1_0 : 1;
+            u16 b0_7 : 1;
+            u16 b0_6 : 1;
+            u16 b0_5 : 1;
+            u16 b0_4 : 1;
+            u16 b0_0 : 4;
+            u8 b3;
+            u8 b2;
+        } bytes;
+#else
         struct {
             u8 b0_0 : 4;
             u8 b0_4 : 1;
@@ -36,6 +53,7 @@ struct JAUAudibleParam {
             u8 b2;
             u8 b3;
         } bytes;
+#endif
         u32 raw;
     } _00;
 };
