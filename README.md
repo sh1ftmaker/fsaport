@@ -40,6 +40,9 @@ python3 tools/serve.py --port 8811 --dir build/web          # then open it and d
 
 `--iso path/to/your.iso` on `tools/serve.py` also serves your image at
 `/local.iso`, for testing with `?iso=local.iso` (local only; never expose it).
+`--logs DIR` collects the page's log: each page load posts its lines (and
+device / WebGPU telemetry) to `/log`, written to `DIR/<time>-<id>.log`, with
+`DIR/latest.log` pointing at the newest.
 `main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
 
 ## Compile check only

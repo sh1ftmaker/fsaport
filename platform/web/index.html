@@ -288,22 +288,63 @@
     logFirst.textContent = 'First errors:\n' + [...firstErrors.values()]
       .map((e) => e.line + (e.n > 1 ? `  (x${e.n})` : '')).join('\n');
   }
+  // Remote log: the lines also go to the server this page came from
+  // (tools/serve.py --logs), batched, so a phone's log can be read on the
+  // machine running the server. Turned off for good if the server says no.
+  const remote = { id: Math.random().toString(36).slice(2, 10), buf: [], sent: 0, on: true, timer: 0 };
+  function remoteQueue(line, urgent) {
+    if (!remote.on || remote.sent > (4 << 20)) return;
+    remote.buf.push(`${(performance.now() / 1000).toFixed(2)} ${line}`);
+    if (!remote.timer) remote.timer = setTimeout(remoteFlush, urgent ? 250 : 2000);
+  }
+  function remoteFlush(beacon) {
+    clearTimeout(remote.timer); remote.timer = 0;
+    if (!remote.on || !remote.buf.length) return;
+    const body = remote.id + '\n' + remote.buf.join('\n') + '\n';
+    remote.buf = []; remote.sent += body.length;
+    if (beacon && navigator.sendBeacon) { navigator.sendBeacon('log', body); return; }
+    fetch('log', { method: 'POST', body, keepalive: body.length < 60000 })
+      .then((r) => { if (r.status === 404 || r.status === 501) remote.on = false; })
+      .catch(() => {});
+  }
+  addEventListener('pagehide', () => remoteFlush(true));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) remoteFlush(true); });
+  addEventListener('error', (e) => log(`[page error] ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`));
+  addEventListener('unhandledrejection', (e) => log(`[page error] unhandled rejection: ${e.reason && (e.reason.stack || e.reason)}`));
+
   function log(line) {
     console.log(line);
     pinError(line);
     if (line === lastLine) {
       repeats++;
       if (repeats === 1 || repeats % 60 === 0) {
+        remoteQueue(`  (previous line repeated ${repeats}x)`);
         logBody.textContent = logBody.textContent.replace(/(  \(repeated \d+x\))?\n$/, `  (repeated ${repeats}x)\n`);
       }
       return;
     }
     lastLine = line; repeats = 0;
+    remoteQueue(line, /error|abort|exception/i.test(line));
     logBody.textContent += line + '\n';
     if (logBody.textContent.length > 200000) logBody.textContent = logBody.textContent.slice(-100000);
     if (document.body.classList.contains('log-open')) logEl.scrollTop = logEl.scrollHeight;
   }
   log('[page] ' + navigator.userAgent + (navigator.gpu ? '' : '  (no navigator.gpu: WebGPU unavailable)'));
+  // Telemetry: what the device is and what its WebGPU adapter can do.
+  log(`[page] screen ${screen.width}x${screen.height} dpr ${devicePixelRatio} viewport ${innerWidth}x${innerHeight}` +
+      ` touch ${navigator.maxTouchPoints} jspi ${typeof WebAssembly.Suspending === 'function'}`);
+  if (navigator.gpu) {
+    navigator.gpu.requestAdapter().then((a) => {
+      if (!a) { log('[page] WebGPU: no adapter'); return; }
+      const i = a.info || {};
+      log(`[page] WebGPU adapter: vendor ${i.vendor || '?'} arch ${i.architecture || '?'} device ${i.device || '?'} ${i.description || ''}`);
+      log('[page] WebGPU features: ' + [...a.features].sort().join(' '));
+      const lim = [];
+      for (const k in a.limits) lim.push(`${k}=${a.limits[k]}`);
+      log('[page] WebGPU limits: ' + lim.join(' '));
+      log(`[page] preferred canvas format ${navigator.gpu.getPreferredCanvasFormat()}`);
+    }).catch((e) => log('[page] WebGPU requestAdapter failed: ' + e));
+  }
   var Module = {
     canvas: document.getElementById('canvas'),
     print: log,
