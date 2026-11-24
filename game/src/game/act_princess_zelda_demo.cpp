@@ -919,7 +919,7 @@ s32 PrincessZeldaDemo_8049D208::vfunc_0x58() {
     return field_0x238;
 }
 
-bool PrincessZeldaDemo_8049D208::fn_8010FA54() const {
+s32 PrincessZeldaDemo_8049D208::vfunc_0x5C() {
     switch (field_0x238) {
     case 0x2f:
     case 0x3d:

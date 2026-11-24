@@ -44,7 +44,7 @@ EscortWoman_8049E1D0::EscortWoman_8049E1D0() : EscortBase_8049E0C8("enemy_gc_sob
 EscortWoman_8049E1D0::~EscortWoman_8049E1D0() {}
 
 void EscortWoman_8049E1D0::init() {
-    fn_80124448();
+    EscortBase_8049E0C8::init();
 }
 
 bool EscortWoman_8049E1D0::vfunc_0x54() {

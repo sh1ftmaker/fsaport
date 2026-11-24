@@ -18,6 +18,9 @@ public:
     // SOB file name, a number and a flag (0x2E6 and 1 for the escort woman).
     EscortBase_8049E0C8(const char* sobName, s32 arg2, s32 arg3);
     /* 0x08 */ virtual ~EscortBase_8049E0C8();
+    // init (0x80124448): ActorBase::init, then the vtable's 0x64 slot, then the
+    // state fields 0x60-0x6C. Both children's init overrides call it.
+    /* 0x0C */ virtual void init();
     /* 0x14 */ virtual void update(); // fn_80124278; the vtable's update slot
     // Slots 0x54-0x5C: the callers test 0x54's byte result (escort woman's 0x6C-state code);
     // 0x58 is a flag, 0x5C returns a state number (3 here). fn_80124600 passes dir in r4.
@@ -60,7 +63,9 @@ public:
     // Parameters read off its register use: r4 (tested >= 0), f1, f2, f3 and f5 (f4 is not
     // read).
     /* 0x9C */ virtual void vfunc_0x9C(s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
+    // 0x8012309C: the angle, direction, distance and player of the escort's pull target.
     /* 0xA0 */ virtual void vfunc_0xA0(u16* outAngle, s32* outDir, f32* outDist, s32* outPlayer, s32 player);
+    // 0x80122F6C: the position offset of a life-meter slot for the player *player, as the 0xA8-0xB8 family.
     /* 0xA4 */ virtual void vfunc_0xA4(f32* x, f32* y, s32* player);
     /* 0xA8 */ virtual void vfunc_0xA8(f32* x, f32* y, s32* player); // fn_80122E34
     /* 0xAC */ virtual void vfunc_0xAC(f32* x, f32* y, s32* player); // fn_80122D38
@@ -90,7 +95,7 @@ public:
     // fn_80121ABC (escort_base_801213EC): spawns field_0x360 life-meter actors ('LIMT') in a row at the
     // escort, hidden, and stores their serials in field_0x364.
     void fn_80121ABC();
-    // Dead-stripped helper inlined into fn_80124448 and fn_80121ABC (their shared field_0x332 test and loop).
+    // Dead-stripped helper inlined into init and fn_80121ABC (their shared field_0x332 test and loop).
     void inl_80121ABC();
     // fn_801217EC (escort_base_801213EC): update's life-meter refresh (dead: mLife == 0).
     void fn_801217EC(bool dead);
@@ -111,10 +116,6 @@ public:
     void fn_80121FA8();
     void fn_8012202C();
     void fn_801220C4();
-    // fn_80122F6C (escort_base_801213EC): the position offset of a life-meter slot for the player *player, as the vfunc_0xA8-0xB8 family.
-    void fn_80122F6C(f32* x, f32* y, s32* player);
-    // fn_8012309C (escort_base_801213EC): the angle, direction, distance and player of the escort's pull target.
-    void fn_8012309C(u16* outAngle, s32* outDir, f32* outDist, s32* outPlayer, s32 player);
     void fn_80122148();
     void fn_80122548();
     // fn_80122898 (escort_base_801213EC): asks the player at the escort to talk (message msg); remembers
@@ -125,9 +126,6 @@ public:
     bool fn_80122804();
     // fn_8012285C (escort_base_801213EC): getRepresentativePlayer_8022EA0C of the state word 0x344 when it is 0-3, else -1.
     s32 fn_8012285C() const;
-    // fn_80124448 (escort_base_801213EC): calls ActorBase::init, then the vtable's 0x64
-    // slot, then sets the state fields 0x60-0x6C. The escort woman's init calls it.
-    void fn_80124448();
     // fn_80122834 (escort_base_801213EC): returns true when the word at 0x108 and the
     // byte at 0x333 are both zero. The escort woman's vfunc_0x90 calls it.
     bool fn_80122834();

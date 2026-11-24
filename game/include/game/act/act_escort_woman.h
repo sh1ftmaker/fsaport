@@ -16,7 +16,7 @@ public:
     // then clears field_0x3c4, field_0x3c8 and field_0x3cc.
     EscortWoman_8049E1D0();
     /* 0x08 */ virtual ~EscortWoman_8049E1D0();
-    // fn_80125858: the vtable's init slot (ActorBase's 0x0C); calls the base's fn_80124448.
+    // fn_80125858: the vtable's init slot (ActorBase's 0x0C); calls the base's init.
     /* 0x0C */ virtual void init();
     /* 0x54 */ virtual bool vfunc_0x54();
     /* 0x58 */ virtual bool vfunc_0x58();

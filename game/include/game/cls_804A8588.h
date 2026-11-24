@@ -14,12 +14,17 @@ public:
 
     // Calls isBlocked_0x4C(layer, pos); clears field_0x27c when it returns false.
     u8 fn_802B21AC(s32 layer, const JGeometry::TVec3f* pos);
+#ifdef FSA_PORT
+    // Port: the original vtable has this function in the base slot (the decomp
+    // keeps it a plain member for matching); forward so the slot runs it.
+    virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos) { return fn_802B21AC(layer, pos); }
+#endif
 
     /* 0x14 */ virtual void update();
 
     // Gated by field_0x25c: drawSprite_801F06F0 on "enemy_both2_sob.bin", the shadow,
     // then showGbaSprite_803075AC.
-    /* 0x20 */ virtual void fn_802B2728();
+    /* 0x20 */ virtual void draw(); // 0x802B2728
 
     // 0x802B21EC (a plain `fn_802B21EC` symbol): moves by mVel_0x3c and field_0x270, bouncing
     // off walls (field_0x27c = 1 while field_0x270 is in use).
@@ -34,7 +39,7 @@ public:
     /* 0x250 */ s32 field_0x250; // 4 after init
     /* 0x254 */ s32 field_0x254; // 0 after init
     /* 0x258 */ s32 field_0x258; // sprite id base: 0x78 is added to it
-    /* 0x25C */ s32 field_0x25c; // gate for fn_802B2728; 1 when field_0x240 != 0
+    /* 0x25C */ s32 field_0x25c; // gate for draw; 1 when field_0x240 != 0
     /* 0x260 */ JGeometry::TVec3f field_0x260; // update: the velocity mVel_0x3c eases toward (kind 1)
     /* 0x26C */ f32 field_0x26c;
     /* 0x270 */ JGeometry::TVec3f field_0x270; // zero after init; the second velocity of fn_802B21EC

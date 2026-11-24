@@ -3,6 +3,7 @@
 #include "JSystem/JMath/JMath.h"
 #include "game/Player.h"
 #include "game/act/act_vaati_boss.h"
+#include "game/GameMath.h"
 #include "game/cls_801EB8CC.h"
 
 static inline bool hasBombEntry4(const VaatiBoss_804A4958* boss, const ActorBase_804A5770* actor) {
@@ -31,12 +32,12 @@ static inline bool hasBombEntry5(const VaatiBoss_804A4958* boss, const ActorBase
     return found;
 }
 
-void VaatiBoss_804A4958::fn_801E5BA8(const ActorBase_804A5770* actor, const JGeometry::TVec2f* dir, bool flag) {
+void VaatiBoss_804A4958::fn_801E5BA8(const ActorBase_804A5770* actor, const JGeometry::TVec3f* dir, bool flag) {
     for (s32 i = 0; i < 0x10; i++) {
         if (field_0x308[i].field_0x4 != 0 && field_0x308[i].field_0x0 == actor->mSerial) {
             JGeometry::TVec2f v;
             if (!flag) {
-                v = *dir;
+                v.set(dir->x, dir->y);
                 v.normalize();
                 v.scale(2.0f);
                 field_0x308[i].vel.x = v.x;
@@ -51,7 +52,7 @@ void VaatiBoss_804A4958::fn_801E5BA8(const ActorBase_804A5770* actor, const JGeo
                     v.x = JMath::sincosTable_.mTable[static_cast<u16>(angle) >> 5].first;
                     v.y = JMath::sincosTable_.mTable[static_cast<u16>(angle) >> 5].second;
                 } else {
-                    v = *dir;
+                    v.set(dir->x, dir->y);
                     v.normalize();
                 }
                 v.scale(4.0f);
@@ -65,12 +66,8 @@ void VaatiBoss_804A4958::fn_801E5BA8(const ActorBase_804A5770* actor, const JGeo
     }
 }
 
-// FIXME(shotgun): 98.83 %, missing/extra; behaviour near.
-// The loop counter and element pointer take other registers (the
-// original: counter r30, element r28; the layer is read through getField_0x4(),
-// before getPlayerLayer_8023DE58, as the original), and the original tests the countdown twice (a second ble
-// to the loop end before its decrement), which no natural form here produces; dx and dy also take each other's
-// FPRs (the original computes dy first).
+// FIXME(shotgun): 99.53 %, regalloc-only; behaviour clean.
+// Registers only: the first loop's counter and element pointer and the dx/dy FPRs take other registers.
 void VaatiBoss_804A4958::fn_801E5754() {
     for (s32 i = 0; i < 4; i++) {
         if (field_0x2a8[i].field_0x0 != 0) {
@@ -89,8 +86,8 @@ void VaatiBoss_804A4958::fn_801E5754() {
     }
 
     for (s32 i = 0; i < 4; i++) {
-        if (field_0x2a8[i].field_0x4 > 0) {
-            field_0x2a8[i].field_0x4 = field_0x2a8[i].field_0x4 - 1;
+        if (field_0x2a8[i].isField_0x4Positive()) {
+            field_0x2a8[i].decField_0x4();
             continue;
         }
         if (field_0x2a8[i].field_0x0 == 0 && !fn_801D08B4(i, &mPos, field_0x464.field_0xc.field_0xc)) {
@@ -101,8 +98,8 @@ void VaatiBoss_804A4958::fn_801E5754() {
         JGeometry::TVec3f sum;
         JGeometry::TVec3f out;
         JGeometry::TVec2f v;
-        f32 dx = mPos.x - mPrevPos.x;
         f32 dy = mPos.y - mPrevPos.y;
+        f32 dx = mPos.x - mPrevPos.x;
         // Copied field by field, as the original loads three scalars.
         JGeometry::TVec3f* pos = getPlayerPos_8023E724(i);
         playerPos.x = pos->x;
@@ -179,27 +176,24 @@ void VaatiBoss_804A4958::fn_801E5754() {
     }
 }
 
-// FIXME: 93.97 %, missing/extra; behaviour drift.
+// FIXME: 98.80 %, missing/extra; behaviour near.
+// The original materialises the isZero() result (mfcr, extrwi.) before testing it; ours branches on the compare.
 // FIXME(shotgun): written from asm
 void VaatiBoss_804A4958::fn_801E4D88() {
     ActorBase_804A5770* actors[ACTOR_MANAGER_MAX_ACTORS];
     s32 count = getActorManager_801F856C()->collectActorsById_801F7818('HBMB', mLayer_0x4, actors, -1);
 
     for (s32 i = 0; i < 0x10; i++) {
-        cls_801D6A58* e = &field_0x308[i];
-        if (e->field_0x4 != 0) {
-            s32 serial = e->field_0x0;
+        if (field_0x308[i].field_0x4 != 0) {
+            s32 serial = field_0x308[i].field_0x0;
             if (serial < 0) {
-                e->fn_801D7874();
-                e->field_0x4 = 0;
+                clearEntry(i);
             } else {
                 ActorBase_804A5770* act = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
                 if (act == NULL) {
-                    e->fn_801D7874();
-                    e->field_0x4 = 0;
+                    clearEntry(i);
                 } else if (!act->mAlive || act->mLayer_0x4 != mLayer_0x4 || act->field_0x94 == 1 || act->mSpawnParam_0x90 != 0) {
-                    e->fn_801D7874();
-                    e->field_0x4 = 0;
+                    clearEntry(i);
                 } else {
                     s32 j;
                     for (j = 0; j < count; j++) {
@@ -208,8 +202,7 @@ void VaatiBoss_804A4958::fn_801E4D88() {
                         }
                     }
                     if (j >= count) {
-                        e->fn_801D7874();
-                        e->field_0x4 = 0;
+                        clearEntry(i);
                     }
                 }
             }
@@ -243,7 +236,8 @@ void VaatiBoss_804A4958::fn_801E4D88() {
         } else {
             f32 dy = mPos.y - mPrevPos.y;
             f32 dx = mPos.x - mPrevPos.x;
-            JGeometry::TVec3f pos(actor->mPos.x, actor->mPos.y, actor->mPos.z);
+            JGeometry::TVec3f pos;
+            pos.set(actor->mPos);
             if (hasBombEntry4(this, actor) && !hasBombEntry5(this, actor)) {
                 pos.x += dx;
                 pos.y += dy;
@@ -251,34 +245,33 @@ void VaatiBoss_804A4958::fn_801E4D88() {
             f32 distX = pos.x - mPos.x;
             f32 distY = pos.y - mPos.y;
             f32 maxDist = field_0x464.field_0xc.field_0xc;
-            if (distX * distX + distY * distY > maxDist * maxDist) {
+            if (!(square(distX) + square(distY) <= square(maxDist))) {
                 continue;
             }
             JGeometry::TVec3f out;
             field_0x464.fn_801EB00C(&pos, &out);
-            if (!(mFlags & 0x4000)) {
-                if (hasBombEntry4(this, actor) && !hasBombEntry5(this, actor)) {
-                    JGeometry::TVec2f dir(out.x, out.y);
-                    fn_801E5BA8(actor, &dir, false);
-                }
-            } else if (!out.isZero()) {
+            u32 pulling = mFlags & 0x4000;
+            if (!pulling && hasBombEntry4(this, actor) && !hasBombEntry5(this, actor)) {
+                fn_801E5BA8(actor, &out, false);
+            } else if (pulling && !out.isZero()) {
                 if (out.z > 0.0f) {
                     actor->mVel_0x3c = JGeometry::TVec3f(0.0f, 0.0f, 0.0f);
                     if (!hasBombEntry4(this, actor)) {
                         for (s32 j = 0; j < 0x10; j++) {
                             if (field_0x308[j].field_0x4 == 0) {
-                                field_0x308[j].field_0x0 = actor->mSerial;
-                                field_0x308[j].field_0x4 = 1;
+                                cls_801D6A58* entry = &field_0x308[j];
+                                entry->field_0x0 = actor->mSerial;
+                                entry->field_0x4 = 1;
                                 break;
                             }
                         }
                     }
                 }
-                JGeometry::TVec3f newPos(pos.x, pos.y, pos.z);
+                JGeometry::TVec3f newPos;
+                newPos.set(pos);
                 newPos += out;
                 if (newPos.z > field_0x464.field_0xc.field_0x8) {
-                    JGeometry::TVec2f dir(out.x, out.y);
-                    fn_801E5BA8(actor, &dir, true);
+                    fn_801E5BA8(actor, &out, true);
                 }
                 actor->mPos = newPos;
             }

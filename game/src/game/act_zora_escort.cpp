@@ -45,7 +45,7 @@ ZoraEscort_8049DF78::ZoraEscort_8049DF78() : EscortBase_8049E0C8("enemy_both2_so
 ZoraEscort_8049DF78::~ZoraEscort_8049DF78() {}
 
 void ZoraEscort_8049DF78::init() {
-    fn_80124448();
+    EscortBase_8049E0C8::init();
     if ((mSpawnParam_0x90 >> 2) & 1) {
         field_0x344 = (mSpawnParam_0x90 >> 3) & 0xF;
         getEscortActorList_80131F0C()->fn_80131EC0(this);

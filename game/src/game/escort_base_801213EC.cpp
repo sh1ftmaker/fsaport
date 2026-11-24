@@ -108,7 +108,7 @@ s32 fn_80124600(const JGeometry::TVec2<s32>* dir) {
 }
 
 // FIXME(shotgun): 99.64 %, regalloc-only; behaviour clean.
-void EscortBase_8049E0C8::fn_80124448() {
+void EscortBase_8049E0C8::init() {
     ActorBase_804A5770::init();
     lbl_80539F30 = mSerial;
     vfunc_0x64();
@@ -436,7 +436,7 @@ void EscortBase_8049E0C8::vfunc_0x9C(s32 player, f32 arg2, f32 arg3, f32 arg4, f
 }
 
 // FIXME(shotgun): 98.87 %, scheduling+regalloc; behaviour clean.
-void EscortBase_8049E0C8::fn_8012309C(u16* outAngle, s32* outDir, f32* outDist, s32* outPlayer, s32 player) {
+void EscortBase_8049E0C8::vfunc_0xA0(u16* outAngle, s32* outDir, f32* outDist, s32* outPlayer, s32 player) {
     if (field_0x334) {
         findTargetPlayer_801EEC98(mSerial, outAngle, outDir, outDist, outPlayer, player, 2);
         field_0x334 = 0;
@@ -473,7 +473,7 @@ void EscortBase_8049E0C8::fn_8012309C(u16* outAngle, s32* outDir, f32* outDist, 
     }
 }
 
-void EscortBase_8049E0C8::fn_80122F6C(f32* x, f32* y, s32* player) {
+void EscortBase_8049E0C8::vfunc_0xA4(f32* x, f32* y, s32* player) {
     f32 v = 0.0f;
     if (vfunc_0xC4()) {
         v = 16.0f;
@@ -977,7 +977,7 @@ void EscortBase_8049E0C8::fn_80121ABC() {
     inl_80121ABC();
 }
 
-// Dead-stripped helper inlined into fn_80124448 and fn_80121ABC: when field_0x332 is set, spawns
+// Dead-stripped helper inlined into init and fn_80121ABC: when field_0x332 is set, spawns
 // field_0x360 life-meter actors ('LIMT') in a row at the escort, hidden.
 // R2 pool helper (inlined at 2 call sites); was spawnLifeMeters.
 void EscortBase_8049E0C8::inl_80121ABC() {
@@ -1159,7 +1159,7 @@ bool EscortBase_8049E0C8::fn_80121438(JGeometry::TVec3f* dir) {
     return false;
 }
 
-// A plain function that fn_80124448 and fn_80121ABC inline and whose own copy the linker dropped:
+// A plain function that init and fn_80121ABC inline and whose own copy the linker dropped:
 // the original's .sdata2 starts with 8.0f alone, ahead of fn_80121438's literals, so it was
 // generated before it (tools/pool.py). The x distance between two life meters.
 // R2 pool helper (one-statement body); was lifeMeterSpacing.

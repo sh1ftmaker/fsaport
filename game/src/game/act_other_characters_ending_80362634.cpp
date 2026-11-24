@@ -514,7 +514,7 @@ void OtherCharactersEnding_804ADF28::init() {
     }
 }
 
-void OtherCharactersEnding_804ADF28::fn_80365AF0() {
+void OtherCharactersEnding_804ADF28::update() {
     if (field_0x230 == 0) {
         if (field_0x248 != 0) {
             field_0x248--;
@@ -526,7 +526,7 @@ void OtherCharactersEnding_804ADF28::fn_80365AF0() {
     }
 }
 
-void OtherCharactersEnding_804ADF28::fn_80365AB8() {
+void OtherCharactersEnding_804ADF28::draw() {
     (this->*lbl_804ADDE8[field_0x234])();
 }
 

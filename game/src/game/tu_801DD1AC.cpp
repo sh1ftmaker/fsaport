@@ -182,7 +182,7 @@ void Frostare_804A4C58::fn_801DE12C() {
     mBox2.f.y = mBox.f.y;
 }
 
-bool Frostare_804A4C58::fn_801DE018() {
+bool Frostare_804A4C58::vfunc_0x58() {
     bool result = false;
     bool inRange = false;
     switch (mState) {
@@ -217,8 +217,8 @@ bool Frostare_804A4C58::fn_801DE018() {
 extern const u8 lbl_8053F1C8; // hits before the knock-back state (tu_801D8400's .sdata)
 
 // FIXME(shotgun): 92.43 %, missing/extra; behaviour near.
-bool Frostare_804A4C58::fn_801DDBE4() {
-    bool hit = false;
+u8 Frostare_804A4C58::checkHitByActor_0x60() {
+    u8 hit = false;
     bool active = false;
     if (mState != 5 && mState >= 4 && mState < 8) {
         active = true;
@@ -345,8 +345,8 @@ static inline bool playerTouches(Frostare_804A4C58* boss, s32 i) {
 }
 
 // FIXME(shotgun): 96.60 %, different; behaviour near.
-bool Frostare_804A4C58::fn_801DD410() {
-    bool hit = false;
+u8 Frostare_804A4C58::checkHitByPlayer_0x5C() {
+    u8 hit = false;
     bool active = false;
     if (mState == 5 || (mState >= 4 && mState < 8)) {
         active = true;
@@ -473,7 +473,7 @@ bool Frostare_804A4C58::fn_801DD410() {
     return hit;
 }
 
-u8 Frostare_804A4C58::fn_801DD28C() {
+u8 Frostare_804A4C58::attackPlayers_0x68() {
     u8 hit = 0;
     f32 x0 = 1.0f;
     f32 y0 = x0;
@@ -510,8 +510,8 @@ u8 Frostare_804A4C58::fn_801DD28C() {
     return hit;
 }
 
-bool Frostare_804A4C58::fn_801DD1AC() {
-    bool clamped = false;
+u8 Frostare_804A4C58::sweepMap_0x64() {
+    u8 clamped = false;
     if (!(mFlags & ENEMY_FLAG_NO_MAP_HIT)) {
         if (mPos.x < field_0x2d4[0].x) {
             mPos.x = field_0x2d4[0].x;

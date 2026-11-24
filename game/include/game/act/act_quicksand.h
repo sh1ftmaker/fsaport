@@ -47,8 +47,8 @@ public:
     void fn_80210D90();
     // 0x802110A8, direct call from calcVelocity_0x88 (not virtual).
     void fn_802110A8();
-    // 0x802121C8 / 0x80211EB0 (plain symbols): the quicksand's warp-partner search and the push on the players.
-    void fn_802121C8();
+    // 0x802121C8 (vtable slot 0x10) / 0x80211EB0 (plain): the quicksand's warp-partner search and the push on the players.
+    /* 0x10 */ virtual void vfunc_0x10();
     void fn_80211EB0();
     // Called by the quicksand list (cls_80212AC0::fn_80212AF0, tu_80212AC0)
     // on each listed actor: whether *pos lies in this quicksand's area, and

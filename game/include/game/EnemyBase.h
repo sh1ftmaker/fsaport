@@ -447,7 +447,7 @@ bool fn_801CC538(s32 player, const JGeometry::TVec2f* pos, JGeometry::TVec3f* ou
 // it was found.
 bool fn_801CC640(s32 player, s32* outPlayer, JGeometry::TVec3f* outVel);
 // game/tu_801CB270.cpp (owner unit, not written yet; 0x801CC730, 0xF0 bytes;
-// 1 caller unit, act_vaati_boss_801E3618 fn_801E4348). Like fn_801CC640 with NULL
+// 1 caller unit, act_vaati_boss_801E3618 vfunc_0x58). Like fn_801CC640 with NULL
 // outputs: *outPlayer = -1 and *outVel zeroed when given; returns whether it
 // was found.
 bool fn_801CC730(s32 player, s32* outPlayer, JGeometry::TVec3f* outVel);

@@ -15,7 +15,7 @@ public:
     ZoraEscort_8049DF78();
     // fn_80121104: the destructor (calls the base's).
     /* 0x08 */ virtual ~ZoraEscort_8049DF78();
-    // fn_801210A0: the base's fn_80124448; when mSpawnParam_0x90 bit 2 (mask 4) is set, takes bits 3-6
+    // fn_801210A0: the base's init; when mSpawnParam_0x90 bit 2 (mask 4) is set, takes bits 3-6
     // of mSpawnParam_0x90 as the state word field_0x344, registers itself with the escort list
     // (getEscortActorList_80131F0C) and enters state 7.
     /* 0x0C */ virtual void init();

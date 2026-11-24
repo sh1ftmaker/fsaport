@@ -89,7 +89,7 @@ public:
     TowerAppearanceDemo_8049E770() {}
     /* 0x08 */ virtual ~TowerAppearanceDemo_8049E770();
     /* 0x0C */ virtual void init();
-    /* 0x10 */ virtual void reset();
+    /* 0x10 */ virtual void vfunc_0x10(); // 0x8012C910, empty
     /* 0x14 */ virtual void update();
     /* 0x20 */ virtual void draw();
 

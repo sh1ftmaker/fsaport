@@ -182,7 +182,7 @@ void RotatingSkull_804A8588::update() {
     }
 }
 
-void RotatingSkull_804A8588::fn_802B2728() {
+void RotatingSkull_804A8588::draw() {
     if (field_0x25c != 0) {
         SpriteParams_801F5AE0 params;
         params.field_0x1d = 0;

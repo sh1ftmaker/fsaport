@@ -93,7 +93,7 @@ void TowerAppearanceDemo_8049E770::init() {
     }
 }
 
-void TowerAppearanceDemo_8049E770::reset() {}
+void TowerAppearanceDemo_8049E770::vfunc_0x10() {}
 
 void TowerAppearanceDemo_8049E770::update() {
     if (field_0x258 != 0) {

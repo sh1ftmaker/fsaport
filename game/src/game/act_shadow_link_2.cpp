@@ -132,7 +132,7 @@ void ShadowLink2_804A43E8::init() {
 
 // Member: calls fn_801C12B8 on the getShadowLinkFight_801C0D70 object when that object's
 // word at 0x50 has its top bit set and mFlags has bit 0x2000.
-void ShadowLink2_804A43E8::fn_801C53F8() {
+void ShadowLink2_804A43E8::vfunc_0x10() {
     bool clear = (getShadowLinkFight_801C0D70()->field_0x50 >> 31) == 0;
     if (clear) {
         return;
@@ -1108,7 +1108,7 @@ void ShadowLink2_804A43E8::updateState_0x90(u8 mapHit) {
 // Member: copies mDir_0x98 into the sequencer's direction, advances the
 // sequencer unless it is in state 0x13 past its first tick or mFlags has bit
 // 0x80000, then updates the attack hit box.
-void ShadowLink2_804A43E8::fn_801C2E70() {
+void ShadowLink2_804A43E8::updateAnim_0x94() {
     field_0x340.mDir = mDir_0x98;
     if (mState != 0x13 || mStateTimer <= 1) {
         if (!(mFlags & 0x80000)) {
@@ -1322,7 +1322,7 @@ void ShadowLink2_804A43E8::vfunc_0xA0() {
     lbl_8053AED0->fn_8043E7CC(pos);
 }
 
-void ShadowLink2_804A43E8::fn_801C27F0() {
+void ShadowLink2_804A43E8::die_0x24() {
     bool flag = (mFlags & 0x08000000) != 0;
     ShadowLinkFight_801C0D70* tracker = getShadowLinkFight_801C0D70();
     tracker->fn_801C1374(flag);

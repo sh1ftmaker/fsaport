@@ -45,7 +45,7 @@ static inline void normalize(f32& x, f32& y) {
 // wall states) knocks the player back and starts the matching reaction state; a player touching
 // the body box when the actor is not locked starts state 0x21.
 // FIXME(shotgun): 99.63 %, regalloc-only; behaviour drift.
-bool ShadowLink2_804A43E8::fn_801CA564() {
+u8 ShadowLink2_804A43E8::checkHitByPlayer_0x5C() {
     switch (mState) {
     case 0x0:
     case 0x1:
@@ -223,7 +223,7 @@ bool ShadowLink2_804A43E8::fn_801CA564() {
             return false;
         }
     }
-    bool result = false;
+    u8 result = false;
     if (mBox.f.x - mBox.i.x > 0.0f && mBox.f.y - mBox.i.y > 0.0f) {
         bool touched = false;
         for (p = 0; p < 4; p++) {
@@ -286,7 +286,7 @@ bool ShadowLink2_804A43E8::fn_801CA564() {
 // Whether something hurts the actor through its hit box: the hit box of player attacks.
 // FIXME: 97.05 %, scheduling+regalloc; behaviour clean.
 // FIXME(shotgun): register allocation and stack slots differ; early returns are laid out differently.
-u8 ShadowLink2_804A43E8::fn_801CA274() {
+u8 ShadowLink2_804A43E8::attackPlayers_0x68() {
     u8 ret = 0;
     if (field_0x564 != 3) {
         u8 mask = 0xF;
@@ -400,7 +400,7 @@ bool ShadowLink2_804A43E8::fn_801CA0F8() {
 }
 
 // Whether something hit by the actor's second box counts as a hit on the player/arrow/bomb.
-bool ShadowLink2_804A43E8::fn_801C9EB8() {
+bool ShadowLink2_804A43E8::vfunc_0x58() {
     if (mBox2.f.x - mBox2.i.x <= 0.0f || mBox2.f.y - mBox2.i.y <= 0.0f || fn_801C53C4()) {
         return false;
     }
@@ -462,7 +462,7 @@ bool ShadowLink2_804A43E8::fn_801C9EB8() {
 // Moves the actor along the map; lifts the z-offset into the ground plane for the sweep when the
 // actor is in the air (state 0x1C) and lands it when it touches ground.
 // FIXME: 98.35 %, missing/extra; behaviour near.
-u8 ShadowLink2_804A43E8::fn_801C9CB0() {
+u8 ShadowLink2_804A43E8::sweepMap_0x64() {
     u8 hit = 0;
     if (!(mFlags & ENEMY_FLAG_NO_MAP_HIT) && mMapBox_0x80.f.x - mMapBox_0x80.i.x > 0.0f && mMapBox_0x80.f.y - mMapBox_0x80.i.y > 0.0f) {
         JGeometry::TVec3f savedPrev = mPrevPos;
@@ -500,7 +500,7 @@ u8 ShadowLink2_804A43E8::fn_801C9CB0() {
     return hit;
 }
 
-bool ShadowLink2_804A43E8::fn_801C9AF8(s32 layer, const JGeometry::TVec3f* pos) {
+bool ShadowLink2_804A43E8::isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos) {
     JGeometry::TVec3f p = *pos;
     if (viewLayerFlag(layer)) {
         p.y = p.y - p.z;

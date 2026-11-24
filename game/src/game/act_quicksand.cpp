@@ -228,7 +228,7 @@ void Quicksand_804A6270::init() {
     }
 }
 
-void Quicksand_804A6270::fn_802121C8() {
+void Quicksand_804A6270::vfunc_0x10() {
     if (!(mFlags & 0x2000)) {
         field_0x38c = getActorManager_801F856C()->fn_801F76F0('WARP', mLayer_0x4, &mPos, -1);
         s32 serial = field_0x38c;

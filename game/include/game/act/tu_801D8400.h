@@ -88,18 +88,18 @@ public:
     void fn_801DE12C();
     // 0x801DDBE4 (game/tu_801DD1AC.cpp): the contact check against the actor findOverlappingActor_801F82CC finds in the
     // box; true when a hit landed.
-    bool fn_801DDBE4();
+    /* 0x60 */ virtual u8 checkHitByActor_0x60();
     // 0x801DD410 (game/tu_801DD1AC.cpp): the player contact check; true when a hit landed.
-    bool fn_801DD410();
+    /* 0x5C */ virtual u8 checkHitByPlayer_0x5C();
     // 0x801DE018 (game/tu_801DD1AC.cpp): in states 4-7, if a player is inside the box around mPos
     // (-40..40, -16..50), switches to state 5; true when it did.
-    bool fn_801DE018();
+    /* 0x58 */ virtual bool vfunc_0x58();
     // 0x801DD1AC (game/tu_801DD1AC.cpp): keeps mPos inside the arena (field_0x2d4 columns, field_0x2d0
     // ceiling) and sets mMapHitDir; true when it clamped.
-    bool fn_801DD1AC();
+    /* 0x64 */ virtual u8 sweepMap_0x64();
     // 0x801DD28C (game/tu_801DD1AC.cpp): tests the players against a box (state 9 uses a wide
     // one, mirrored when the sequencer flips) with damagePlayersInBox_801F2B7C; the hit mask.
-    u8 fn_801DD28C();
+    /* 0x68 */ virtual u8 attackPlayers_0x68();
     // 0x801E61C4 (tu_801D8400's code calls it): moves the pair at 0x2C8 to
     // 40 units below mPos (in y).
     void fn_801E61C4();

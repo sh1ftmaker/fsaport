@@ -67,12 +67,12 @@ public:
     // act_shadow_link_2.cpp: copies mDir_0x98 (direction) into the animation
     // sequencer's mDir, advances the sequencer unless it is in state 0x13 past
     // its first tick or mFlags has bit 0x80000, then updates the hit box.
-    void fn_801C2E70();
+    /* 0x94 */ virtual void updateAnim_0x94();
     // act_shadow_link_2.cpp: switches to state 0xD (setState_801C3B7C only).
     void fn_801C26D8();
     // act_shadow_link_2.cpp (0x801C27F0): passes mFlags bit 0x08000000 to the getShadowLinkFight_801C0D70 object's
     // fn_801C1374, then die_0x24.
-    void fn_801C27F0();
+    /* 0x24 */ virtual void die_0x24();
     // act_shadow_link_2.cpp: switches to state 0xE unless mState is 0xE.
     void fn_801C26FC();
     // act_shadow_link_2.cpp (0x801C272C, not written yet): sets the byte at
@@ -81,7 +81,7 @@ public:
     void fn_801C272C();
     // act_shadow_link_2.cpp: if the object from getShadowLinkFight_801C0D70 has bit 0x80000000
     // at 0x50 and mFlags has bit 0x2000, calls its fn_801C12B8.
-    void fn_801C53F8();
+    /* 0x10 */ virtual void vfunc_0x10();
     // act_shadow_link_2.cpp: if mFlags has bit 0x4000 and mState is 0 or 1,
     // switches to state 2 (setState_801C3B7C).
     void fn_801C27A8();
@@ -160,19 +160,24 @@ public:
     // game/act_shadow_link_2_801C9AF8.cpp (0x801CA0F8): hits the actor overlapping this one
     // (findOverlappingActor_801F82CC) with takeHit_801F37AC unless it is 'SWBM' or 'FLME'; true if it hit.
     bool fn_801CA0F8();
-    bool fn_801CA564();
-    u8 fn_801CA274();
-    bool fn_801C9EB8();
-    u8 fn_801C9CB0();
+#ifdef FSA_PORT
+    // Port: the original vtable has this function in the base slot (the decomp
+    // keeps it a plain member for matching); forward so the slot runs it.
+    virtual u8 checkHitByActor_0x60() { return fn_801CA0F8(); }
+#endif
+    /* 0x5C */ virtual u8 checkHitByPlayer_0x5C();
+    /* 0x68 */ virtual u8 attackPlayers_0x68();
+    /* 0x58 */ virtual bool vfunc_0x58();
+    /* 0x64 */ virtual u8 sweepMap_0x64();
     // game/act_shadow_link_2_801C9AF8.cpp (0x801C9AF8): whether the tile/box at `pos` on `layer` blocks
     // this actor (states 0x11 and 0x17 pass through some tile codes).
-    bool fn_801C9AF8(s32 layer, const JGeometry::TVec3f* pos);
+    /* 0x4C */ virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos);
     // game/act_shadow_link_2_801D3320.cpp: picks the next waypoint of the rail in
     // field_0x358 and moves field_0x32c toward it.
     void fn_801D3320();
     // game/act_shadow_link_2_801D3CBC.cpp: per-tick draw by state (mState 0-3, 0xD: none;
     // 0x17 calls fn_801D41B8 while field_0x524 has bit 0x200).
-    void fn_801D3CBC();
+    /* 0x20 */ virtual void draw();
     // game/act_shadow_link_2_801D3CBC.cpp: draws the player sprite (player_sob.bin) at mPos,
     // frame `frame`, faded in states 8 and 9, then the shadow sprite.
     void fn_801D3DAC(s32 frame) const;

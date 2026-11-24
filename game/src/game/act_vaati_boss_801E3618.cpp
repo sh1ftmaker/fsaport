@@ -68,7 +68,7 @@ u8 VaatiBoss_804A4958::fn_801E44CC(const JGeometry::TBox2f* area, JGeometry::TVe
 
 // Vaati's per-frame player check: when the boss is in one of its states and
 // a player is in its box, the attack states answer with a sound or effect.
-bool VaatiBoss_804A4958::fn_801E4348() {
+bool VaatiBoss_804A4958::vfunc_0x58() {
     bool result = false;
     bool stateOk = true;
     switch (mState) {
@@ -128,9 +128,8 @@ bool VaatiBoss_804A4958::fn_801E4348() {
     return result;
 }
 
-// FIXME(shotgun): 98.09 %, missing/extra; behaviour near.
-u8 VaatiBoss_804A4958::fn_801E4094() {
-    u8 result = 0;
+bool VaatiBoss_804A4958::fn_801E4094() {
+    bool result = false;
     bool stateOk = true;
     switch (mState) {
     case 0:
@@ -150,14 +149,13 @@ u8 VaatiBoss_804A4958::fn_801E4094() {
         stateOk = false;
         break;
     }
-    if (stateOk && !(mFlags & 0x2000) && mBox.f.x - mBox.i.x > 0.0f && mBox.f.y - mBox.i.y > 0.0f) {
-        JGeometry::TVec2f savedI(mBox.i);
-        JGeometry::TVec2f savedF(mBox.f);
+    if (stateOk && !(mFlags & 0x2000) && mBox.getWidth() > 0.0f && mBox.getHeight() > 0.0f) {
+        JGeometry::TBox2f saved;
+        saved.set(mBox);
         mBox.i.scale(1.5f);
         mBox.f.scale(1.5f);
         s32 serial = getActorManager_801F856C()->findOverlappingActor_801F82CC(this, field_0x195, 48.0f);
-        mBox.i = savedI;
-        mBox.f = savedF;
+        mBox.set(saved);
         if (serial >= 0 && serial != mSerial) {
             ActorBase_804A5770* bomb = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
             if (bomb != NULL && bomb->mActorId == 'HBMB' && bomb->field_0x94 == 1) {
@@ -180,7 +178,7 @@ u8 VaatiBoss_804A4958::fn_801E4094() {
                     JGeometry::TVec2f shake(center.x - bomb->mPos.x, center.y - (bomb->mPos.y - bomb->mPos.z));
                     field_0x52c.fn_801D6D38(&shake);
                     field_0x5cd++;
-                    if (field_0x5cd >= field_0x5cc) {
+                    if ((s32)field_0x5cd >= field_0x5cc) {
                         setState_801D5D84(6);
                     }
                 }
@@ -193,11 +191,12 @@ u8 VaatiBoss_804A4958::fn_801E4094() {
 // vtable slot 0x5C. The bomb/player hit test: a player on the boss's layer that is inside its
 // area (and below its head) turns it towards that player; otherwise each player that hit it
 // this frame is run through takeHit_801F37AC.
-// FIXME(shotgun): 99.32 %, missing/extra; behaviour near.
-u8 VaatiBoss_804A4958::fn_801E3B2C() {
+// FIXME(shotgun): 99.75 %, regalloc-only; behaviour clean.
+u8 VaatiBoss_804A4958::checkHitByPlayer_0x5C() {
     u8 result = 0;
+    s32 state = mState;
     bool stateOk = true;
-    switch (mState) {
+    switch (state) {
     case 0:
     case 1:
     case 2:
@@ -215,7 +214,7 @@ u8 VaatiBoss_804A4958::fn_801E3B2C() {
         stateOk = false;
         break;
     }
-    if (stateOk && mState != 0x13 && (mFlags & 0x2000) && mBox.f.x - mBox.i.x > 0.0f &&
+    if (stateOk && state != 0x13 && (mFlags & 0x2000) && mBox.f.x - mBox.i.x > 0.0f &&
         mBox.f.y - mBox.i.y > 0.0f) {
         // one hit type for both loops below: the original keeps it in a single stack slot (0x8)
         s32 type;
@@ -319,7 +318,7 @@ u8 VaatiBoss_804A4958::fn_801E3B2C() {
     return result;
 }
 
-u8 VaatiBoss_804A4958::fn_801E3A4C() {
+u8 VaatiBoss_804A4958::attackPlayers_0x68() {
     u8 result = 0;
     bool stateOk = true;
     switch (mState) {
@@ -348,7 +347,7 @@ u8 VaatiBoss_804A4958::fn_801E3A4C() {
 }
 
 // vtable slot 0x64. Pushes Vaati out of the map-free area when a player-sized box is inside.
-u8 VaatiBoss_804A4958::fn_801E376C() {
+u8 VaatiBoss_804A4958::sweepMap_0x64() {
     u8 result = 0;
     bool stateOk = true;
     switch (mState) {

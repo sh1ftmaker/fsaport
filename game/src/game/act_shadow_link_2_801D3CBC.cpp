@@ -100,7 +100,7 @@ void ShadowLink2_804A43E8::fn_801D3DAC(s32 frame) const {
     fn_80307830(mSerial, mLayer_0x4, &mPos, frame, false, 1, 0, player);
 }
 
-void ShadowLink2_804A43E8::fn_801D3CBC() {
+void ShadowLink2_804A43E8::draw() {
     switch (mState) {
     case 0:
     case 1:
