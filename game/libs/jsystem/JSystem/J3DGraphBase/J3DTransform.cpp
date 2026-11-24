@@ -140,6 +140,12 @@ lbl_8005F118:
 	li       r3, 1
 	psq_st   f8, 32(r4), 1, 0
 	blr
+#else // clang-format on
+	// Port (body from Dusklight, CC0).
+	Mtx invX;
+	if (C_MTXInvXpose(src, invX) == 0)
+		return;
+	J3DPSMtx33CopyFrom34(invX, dst);
 #endif // clang-format on
 }
 
@@ -353,6 +359,14 @@ ASM void J3DScaleNrmMtx(register Mtx mtx, const register Vec& scl)
 	fmuls  f4, fp1, fp3
 	stfs   f4, 40(mtx)
 	blr
+#else // clang-format on
+	// Port (body from Dusklight, CC0): scale the 3x3 part's columns.
+	f32 sx = scl.x, sy = scl.y, sz = scl.z;
+	for (int r = 0; r < 3; r++) {
+		mtx[r][0] *= sx;
+		mtx[r][1] *= sy;
+		mtx[r][2] *= sz;
+	}
 #endif // clang-format on
 }
 
@@ -383,6 +397,14 @@ ASM void J3DScaleNrmMtx33(register Mtx33 mtx, const register Vec& scale) {
 	psq_st   f4, 24(mtx), 0, 0
 	stfs     f5, 0x20(mtx)
 	blr
+#else // clang-format on
+	// Port (body from Dusklight, CC0): scale the 3x3 part's columns.
+	f32 sx = scale.x, sy = scale.y, sz = scale.z;
+	for (int r = 0; r < 3; r++) {
+		mtx[r][0] *= sx;
+		mtx[r][1] *= sy;
+		mtx[r][2] *= sz;
+	}
 #endif // clang-format on
 }
 
@@ -466,6 +488,17 @@ ASM void J3DMtxProjConcat(register Mtx mtx1, register Mtx mtx2, register Mtx dst
 	ps_madd  f0, f9, f13, f0
 	psq_st   f0, 40(dst), 0, 0
 	blr
+#else // clang-format on
+	// Port (body from Dusklight, CC0): mtx1 (3x4) times mtx2 (4x4), into dst.
+	Mtx tmp;
+	for (int i = 0; i < 3; i++) {
+		f32 a0 = mtx1[i][0], a1 = mtx1[i][1], a2 = mtx1[i][2], a3 = mtx1[i][3];
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = a0 * mtx2[0][j] + a1 * mtx2[1][j] + a2 * mtx2[2][j] + a3 * mtx2[3][j];
+	}
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 4; j++)
+			dst[i][j] = tmp[i][j];
 #endif // clang-format on
 }
 
