@@ -203,9 +203,11 @@ def skip_memarg(d, i):
 
 LOADS = {0x28: 'i32', 0x29: 'i64', 0x2A: 'f32', 0x2E: 's16', 0x2F: 'u16'}
 
-def scan_body(d, i, end, on_load, on_call):
+def scan_body(d, i, end, on_load, on_call, on_indirect=None):
     """Walk one function body's instructions. on_load(pos, op, memarg_end,
-    align, offset); on_call(pos, op, target, after)."""
+    align, offset); on_call(pos, op, target, after); on_indirect(pos, op,
+    after) for call_indirect / return_call_indirect (also used by
+    tools/vdispatch_instrument.py)."""
     while i < end:
         op = d[i]; p = i; i += 1
         if op <= 0x01 or op in (0x05, 0x0B, 0x0F, 0x19, 0x0A, 0xD1, 0xD3, 0xD4, 0x1A, 0x1B) or 0x45 <= op <= 0xC4:
@@ -224,6 +226,8 @@ def scan_body(d, i, end, on_load, on_call):
             i = j
         elif op in (0x11, 0x13):
             i = skip_leb(d, i); i = skip_leb(d, i)
+            if on_indirect:
+                on_indirect(p, op, i)
         elif op == 0x1C:
             n, i = uleb(d, i)
             i += n

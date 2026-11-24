@@ -336,7 +336,7 @@ extern "C" void fsa_debug_state() {
 
 // Diagnostics (platform/diag_uninit.cpp, ...): where the game is, as a JSON
 // object, for the decomp's diagnostics streams. Not game code.
-extern "C" int fsa_diag_scene(char* buf, int n) {
+extern "C" int fsa_uninit_scene(char* buf, int n) {
     GameRoot_8049EF20* root = gGameRoot_8053AAF8;
     return snprintf(buf, n, "{\"mode\":%d,\"stage\":%d,\"level\":%d,\"in_stage\":%d}",
                     root != NULL ? (int)root->field_0x4c : -1, (int)lbl_80529DEC.mStage_0x118,

@@ -5,8 +5,8 @@ Runtime diagnostics for the decomp. Game code writes JSON lines with
 `tools/serve.py --diag DIR` stores them in `DIR/<run>/<name>.jsonl`, one run
 per page load.
 
-Two diagnostics builds exist: coverage and stub hits (`-DFSA_DIAG=ON`) and
-uninitialised reads (`-DFSA_DIAG_UNINIT=ON`). Use a separate build directory for
+Two diagnostics builds exist: coverage, stub hits and the virtual dispatch
+audit (`-DFSA_DIAG=ON`) and uninitialised reads (`-DFSA_DIAG_UNINIT=ON`). Use a separate build directory for
 each; the normal build is unchanged when they are off.
 
 ## Coverage and stub hits (`coverage`, `scenes`, `stubs`)
@@ -242,35 +242,188 @@ include it as `"../port/fsa_diag.h"`, the platform layer as
   (interrupt context: must not block or switch threads); write your own
   stream there with `fsa_diag("<name>", json)`, cumulative like these.
 
-#### A vtable-dispatch audit on top of this
+Keep an enter hook cheap: it runs on every call of every instrumented
+function (hundreds of thousands per frame on stage 1). The virtual dispatch
+audit below is built on these hooks.
 
-The entry hook sees every call but not whether it was virtual. Clang can mark
-the indirect calls: add `-fsanitize-coverage=func,trace-pc,indirect-calls` to
-`FSA_DIAG_INSTRUMENT` (or to the units of interest). Before each
-`call_indirect` clang then calls `__sanitizer_cov_trace_pc_indir(callee)` with
-the callee's table index (checked on emscripten 5.0.6), and
-`__sanitizer_cov_trace_pc()` once per function entry (define it empty). So:
 
-1. Define `__sanitizer_cov_trace_pc_indir(void* callee)` (NOINST) to store
-   `callee` and the current caller (`fsa_diag_caller(0)`) in a pending slot.
-2. In an enter hook: when `callee` equals the pending callee, this entry is an
-   indirect call from `caller`; record the edge (caller id, callee id, count,
-   first scene) in a hash table and clear the slot. (A callee entered without
-   a pending slot came from a direct call or from outside instrumented code,
-   e.g. a JS callback or an Aurora callback.)
-3. `__sanitizer_cov_trace_pc_indir` only gives the callee, not the object or
-   the slot. To tell virtual calls from other function pointers, either look
-   the callee up in the vtables (vtables are data whose entries are table
-   indices, which `fsa_diag_fn_sym` names; the port's `_ZTV*` symbols are in
-   `fsa.map`), or match the edges offline against the decomp's expected
-   targets (the `__vt__<class>` objects in symbols.txt and the methods in each
-   slot).
-4. Write a stream (for example `vdispatch`) from a flush hook with
-   `{"caller_sym","callee_sym","calls","first_scene"}` plus ids, cumulative, and
-   extend `tools/diag_summary.py` to collapse it like `coverage`.
+## Virtual dispatch audit (`vdispatch`)
 
-Keep the hook cheap: the entry hook runs on every call of every instrumented
-function (hundreds of thousands per frame on stage 1).
+The decomp found about 40 functions that sat in the original's vtable slots but
+were declared as plain members, so the base class's implementation ran instead
+(fixed in the port in ee31197; the decomp's `tools/vtable_check.py` compares
+its objects' vtables with the original's statically). This audit is the
+runtime side: which function each virtual call in the port actually reached,
+on which object's class, compared with what the original's vtable for that
+class holds in that slot. It is part of the `FSA_DIAG=ON` build (no extra
+flag; `-DFSA_DIAG_VDISPATCH=OFF` leaves it out).
+
+### How it works
+
+The entry hook sees every call but neither whether it was indirect nor the
+object. Clang's `-fsanitize-coverage=indirect-calls` would mark indirect calls
+(`__sanitizer_cov_trace_pc_indir(callee)`) but gives no access to `this`, and
+`-finstrument-functions` passes nothing but the function (wasm-opt even drops
+its second argument). So the call sites and prologues are rewritten after the
+link instead; no compile flag changes.
+
+1. **Rewrite** (`tools/vdispatch_instrument.py`, a POST_BUILD step after
+   `diag_symtab.py`; keeps the input as `fsa.wasm.novd`). In every
+   instrumented function (one whose body calls `__cyg_profile_func_enter` with
+   its own table index; the `NOINST` diagnostics code is not):
+   - each `call_indirect` gets `call $fsa_vd_mark` in front (it takes the
+     table index from the top of the stack and returns it) and a store of 0 to
+     the pending word after it;
+   - when the function's first parameter is an i32, its prologue stores that
+     parameter to the `this` word just before its own enter call.
+   Current build: 15590 functions rewritten (14901 pass their first
+   parameter), 12103 `call_indirect`s marked, no `return_call_indirect`.
+2. **Pairing** (`platform/diag_vdispatch.cpp`, an enter hook installed at the
+   first retrace). `fsa_vd_mark` records the target, the calling function
+   (`fsa_diag_caller(0)`) and the context, and clears the `this` word. The
+   next entry of an instrumented function from that caller in that context is
+   the call's callee. If it is not the target, the target was an
+   uninstrumented thunk or function and the record carries both (`entered`).
+3. **Receiver.** The `this` word is the callee's first argument. If it points
+   into memory and the word there is an address inside one of the port's
+   vtable groups, that is the receiver's vtable pointer: the group names the
+   class, and the target's position after the vtable pointer is the slot. The
+   group table is `fsa.diag.vt.tsv`, written by the instrumenter from the
+   `_ZTV*` symbols in `fsa.map` and the data section (one line per group:
+   address, size, demangled class, CodeWarrior `__vt__` name, `_ZTV` name, its
+   words); the page fetches it at the first retrace.
+4. Edges (caller, target, entered function, vtable pointer) are counted in a
+   hash table (64K entries, 3/4 usable) and written by a flush hook.
+
+### Records
+
+`vdispatch`, one record per edge, cumulative like `coverage` (the last record
+per edge is its total):
+
+```json
+{"caller":9163,"caller_sym":"fn_80118E20__12cls_801192ACFv","caller_name":"cls_801192AC::fn_80118E20()",
+ "target":12136,"target_sym":"vfunc_0x5C__26PrincessZeldaDemo_8049D208Fv",
+ "target_name":"PrincessZeldaDemo_8049D208::vfunc_0x5C()","kind":"virtual",
+ "class":"PrincessZeldaDemo_8049D208","vt":"__vt__26PrincessZeldaDemo_8049D208","vt_addr":426920,
+ "vptr_off":8,"slot":88,"calls":958,"first_scene":{"id":8,"mode":7,"stage":8,"level":3,"loaded":1},
+ "first_frame":11107,"frame":13200}
+```
+
+- `caller` / `target` (+ `_sym`, `_name`): the function making the indirect
+  call and the table entry it called (ids as in `coverage`). `entered` /
+  `entered_name` only when the instrumented function entered differs from
+  the target (the target is an uninstrumented thunk or wrapper).
+- `kind`: `virtual` (the receiver has a vtable and the target is in it),
+  `not-in-vtable` (the receiver has a vtable but the target is not in it: a
+  pointer to a non-virtual member function, e.g. `JASSeqParser`'s command
+  table), `fnptr` (no object with a vtable as the first argument: plain
+  function pointers, callbacks).
+- `class`, `vt`, `vt_addr`: the receiver's dynamic class (the vtable group
+  its vtable pointer is in), its CodeWarrior `__vt__` name, the group's
+  address. `vptr_off`: where the vtable pointer points in the group (8 for
+  the primary vtable; more for a secondary base's). `slot`: byte offset of the
+  target from the vtable pointer, in the port's (Itanium) layout; `slots` when
+  the target occurs more than once.
+
+`vdispatch_meta`, per flush: `marks` (indirect calls), `matched` (paired with
+an entry), `other_entry` (an entry from another function came first),
+`edges`, `edge_overflow`, `vtables`.
+
+`tools/diag_summary.py` also writes `vdispatch_final.jsonl` (last record per
+edge, summed over the runs given).
+
+### The audit
+
+```sh
+python3 tools/vdispatch_audit.py logs/diag/<run> [more runs] --build build/diag \
+    --decomp ../fsadecomp/fsa-decomp [--static] [--all] [--json out.json]
+```
+
+It reads the original's vtables from the decomp: the `__vt__*` objects in
+`config/G4SE01/symbols.txt` (address, size) and their words in
+`orig/sys/main.dol` (each slot the address of a function, named through
+symbols.txt), the same data `vtable_check.py` gets from dtk's split objects.
+The port's vtables come from `fsa.diag.vt.tsv`, their words named with
+`fsa.diag.tsv` and the wasm name section.
+
+Slots are matched by position after normalising the two layouts:
+
+- clang's destructor pair (complete D1 + deleting D0) is CodeWarrior's single
+  `__dt__` slot. Either half may stand for the class: when the derived
+  destructor adds nothing, clang emits D1 as an alias of the base's
+  destructor, and for an abstract class D0 is a trap that is not
+  instrumented (the audit then mangles its clang name itself);
+- CodeWarrior's pure virtual slots are null, clang's are `__cxa_pure_virtual`;
+- secondary vtables: the port's start with (negative offset, 0), the
+  original's with two null words, indistinguishable from pure slots, so the
+  original is split by the port's slot counts and that split is only used when
+  the original's header words are where it puts them;
+- the original's `@N@name` this-adjusting thunks match the port's
+  `non-virtual thunk to name` or `name` itself;
+- dtk's sizes include alignment padding (trailing null words).
+
+When the slot counts still differ, the port's function is looked up by name
+in the original's vtable (`OK-BYNAME`), or a function with the same name and
+parameters (a `?` status). Per (class, slot, target):
+
+| status | meaning |
+|---|---|
+| `OK` | same function as the original (`OK-LAYOUT`, `OK-BYNAME`: matched with less certainty) |
+| `MISSING-OVERRIDE` | the original's slot holds the class's own function, the port called another class's (a base implementation): the decomp declares the override without `virtual` or under another name |
+| `PORT-OVERRIDE` | the reverse: the port called the class's own function where the original has a base's |
+| `DIFFERENT` | some other function |
+| `UNMAPPED` | the port's function has no decomp symbol (port-written) |
+| `NO-ORIGINAL` | the original has no `__vt__` for the class (port-only classes: Aurora, libc++) |
+
+A trailing `?` means the layouts did not line up, so the slot match is a
+guess. `--static` compares every port vtable that has an original, reached or
+not, and marks the reached slots. The exit status is 1 when a reached slot is
+`MISSING-OVERRIDE`, `PORT-OVERRIDE` or `DIFFERENT`.
+
+### Results
+
+Sessions as in "What two sessions show": the adventure opening (225 s, to
+mode 7 stage 8 level 3) and `?stage=1` with the stick held (150 s):
+
+- 268 M and 43 M indirect calls (about 20 k and 5 k per frame), all but a few
+  (calls still pending at the last flush) paired with their callee; 2001 edges: 1748 `virtual`, 79 `not-in-vtable`,
+  174 `fnptr`.
+- 704 reached (class, slot, target): 687 `OK`, 15 `OK-BYNAME` (the sound
+  classes with two bases, `JAISe`, `GameAudio::CustomSoundTable`,
+  `Actor/PlayerSoundObj`, `JAUSectionHeap`, whose secondary tables are laid
+  out differently), 2 `NO-ORIGINAL` (libc++ inside Aurora). **No reached slot
+  dispatches differently from the original.**
+- `--static`: 702 port vtables, 11155 slots; all match except the 4 slots
+  where ee31197 put port forwarders (`UNMAPPED`: VaatiBoss 0x4C / 0x60,
+  ShadowLink2 0x60, RotatingSkull 0x4C, which forward to the decomp's plain
+  `fn_*` members).
+
+Verification: with ee31197 undone for PrincessZeldaDemo 0x5C and Hinox 0x44
+in a scratch build (the overrides renamed back to plain `fn_8010FA54` /
+`fn_8014F76C`), the opening reports
+
+```
+MISSING-OVERRIDE  __vt__26PrincessZeldaDemo_8049D208 +0x5C (port +0x60)  calls 1131  first: mode 7 stage 8 level 3
+    original vfunc_0x5C__26PrincessZeldaDemo_8049D208Fv
+    port     vfunc_0x5C__22DemoActorBase_8049D140Fv
+    via      cls_801192AC::fn_80118E20() x1131
+```
+
+(Princess Zelda appears about 185 s into the opening), and `--static` lists
+both slots. Hinox is not reached by either session.
+
+Caveat when switching one port between build directories: the browser
+revalidates `fsa.wasm` and the name tables by modification time, so a page can
+keep the newer files of the previous build (ids then name the wrong
+functions). Use a fresh browser profile, or one build directory per port.
+
+### Cost
+
+Same build with and without the rewrite (`fsa.wasm.novd` served instead),
+game CPU per frame after the first 60 s: opening 2.01 -> 2.16 ms, stage 1
+5.10 -> 4.47 ms: within the run-to-run noise of the coverage build on a shared
+machine. fsa.wasm grows from 9.09 to 9.40 MB; the edge table is 2.6 MB of
+static memory; a flush posts at most a few hundred KB (3 MB per 225 s run).
 
 
 ## Uninitialised reads (`uninit`)
