@@ -65,3 +65,9 @@ extern "C" void fsa_pad_after_read(PADStatus* status) {
     lastZone = zone;
   }
 }
+
+// Debugging: prints the current C call stack (function names from the wasm
+// name section) to the console, for game code that cannot include emscripten.h.
+extern "C" void fsa_print_stack() {
+  emscripten_log(EM_LOG_CONSOLE | EM_LOG_C_STACK, "[stack]");
+}
