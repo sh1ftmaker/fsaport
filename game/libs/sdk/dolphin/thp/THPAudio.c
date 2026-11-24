@@ -16,7 +16,22 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 		return 0;
 	}
 
+#ifdef FSA_PORT
+	// Port: the record header is big-endian; decode from a swapped copy.
+	THPAudioRecordHeader swapped;
+	{
+		const u8* b = audioFrame;
+		swapped.offsetNextChannel = (u32)b[0] << 24 | (u32)b[1] << 16 | (u32)b[2] << 8 | b[3];
+		swapped.sampleSize        = (u32)b[4] << 24 | (u32)b[5] << 16 | (u32)b[6] << 8 | b[7];
+		s16* h = &swapped.lCoef[0][0];
+		for (int k = 0; k < 36; k++) {
+			h[k] = (s16)(b[8 + k * 2] << 8 | b[9 + k * 2]);
+		}
+	}
+	header = &swapped;
+#else
 	header = (THPAudioRecordHeader*)audioFrame;
+#endif
 	left   = audioFrame + sizeof(THPAudioRecordHeader);
 	right  = left + header->offsetNextChannel;
 

@@ -1104,9 +1104,21 @@ static void handle_bp(u32 value, bool bigEndian) {
         slot.mHeight = 0;
         slot.mFormat = gfx::InvalidTextureFormat;
         break;
-      case TexBpRegMapping::Kind::Image3:
+      case TexBpRegMapping::Kind::Image3: {
         slot.image3 = value;
+        // A display list (J3D's patched material lists, GD) sets the image by
+        // its physical address >> 5 (OSCachedToPhysical: pointer - 0x80000000,
+        // 24 bits kept). Point the slot at that memory too, or the draw used
+        // the previous GXInitTexObj's data with this list's size and format.
+        // Exact while the heap stays below 512 MB of wasm memory.
+        const void* ptr = reinterpret_cast<const void*>(static_cast<uintptr_t>(value & 0xFFFFFF) << 5);
+        if (ptr != slot.data) {
+          slot.data = ptr;
+          slot.texObjId = 0;  // not one GXInitTexObj made: no cache entry
+          ++slot.texDataVersion;
+        }
         break;
+      }
       case TexBpRegMapping::Kind::Tlut:
         // TLUT region's TMEM offset
         break;
