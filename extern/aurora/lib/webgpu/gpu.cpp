@@ -762,6 +762,19 @@ void resize_swapchain(uint32_t width, uint32_t height, uint32_t native_width, ui
     gx::clear_copy_texture_cache();
     gfx::clear_caches();
   }
+  // A resize can arrive mid-frame (the browser resizes the canvas when a
+  // hidden tab comes back): passes already recorded this frame still name the
+  // old frame / depth buffers, and on the web a released view is gone from the
+  // handle table, so submitting them failed ("depthStencilAttachment.view is
+  // undefined"). Keep the previous set alive until the next resize.
+  {
+    static TextureWithSampler s_retiredFrame, s_retiredResolved, s_retiredDepth;
+    static wgpu::BindGroup s_retiredCopy;
+    s_retiredFrame = g_frameBuffer;
+    s_retiredResolved = g_frameBufferResolved;
+    s_retiredDepth = g_depthBuffer;
+    s_retiredCopy = g_CopyBindGroup;
+  }
   g_graphicsConfig.surfaceConfiguration.width = native_width;
   g_graphicsConfig.surfaceConfiguration.height = native_height;
   auto surfaceConfiguration = g_graphicsConfig.surfaceConfiguration;
