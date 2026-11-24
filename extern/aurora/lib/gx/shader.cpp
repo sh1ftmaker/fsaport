@@ -530,12 +530,14 @@ auto attr_load(const ShaderConfig& config, GXAttr attr, std::string_view vidx) -
   auto offs = fmt::format("ubuf.vtx_start + {} * {}u + {}u", vidx, config.vtxStride, mapping.offset);
   auto le = false; // Vertex buffer is always big endian (for now)
   if (mapping.attrType == GX_INDEX8) {
-    offs = fmt::format("ubuf.array_start[{}] + raw_fetch_u8_1(&{}, {}) * {}u", attr - GX_VA_POS, buf, offs,
+    offs = fmt::format("ubuf.array_start[{}][{}] + raw_fetch_u8_1(&{}, {}) * {}u", (attr - GX_VA_POS) / 4,
+                       (attr - GX_VA_POS) % 4, buf, offs,
                        mapping.stride);
     buf = "abuf"sv;
     le = mapping.le;
   } else if (mapping.attrType == GX_INDEX16) {
-    offs = fmt::format("ubuf.array_start[{}] + raw_fetch_u16_1(&{}, {}, {}) * {}u", attr - GX_VA_POS, buf, offs, le,
+    offs = fmt::format("ubuf.array_start[{}][{}] + raw_fetch_u16_1(&{}, {}, {}) * {}u", (attr - GX_VA_POS) / 4,
+                       (attr - GX_VA_POS) % 4, buf, offs, le,
                        mapping.stride);
     buf = "abuf"sv;
     le = mapping.le;
@@ -1686,7 +1688,9 @@ struct Uniform {{
     render_viewport_size: vec2f,
     logical_viewport_size: vec2f,
     pad: vec2u,
-    array_start: array<u32, 12>,{0}
+    // 12 u32s as vec4s: uniform arrays need a 16-byte stride without the
+    // uniform_buffer_standard_layout language feature (Safari / iOS lacks it).
+    array_start: array<vec4u, 3>,{0}
 }};
 @group(0) @binding(0)
 var<storage, read> vbuf: array<u32>;
