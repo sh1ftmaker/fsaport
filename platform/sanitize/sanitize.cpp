@@ -28,7 +28,7 @@
 extern "C" void fsa_diag(const char* name, const char* json);
 // {"mode","stage","level","in_stage"} (game_root_sub_04_80139BE8.cpp; shared
 // with the other diagnostics streams).
-extern "C" int fsa_diag_scene(char* buf, int n);
+extern "C" int fsa_uninit_scene(char* buf, int n);
 
 // --- JS side: who called, and its unit ---------------------------------------------
 // The wasm frame calling the outermost sanitizer entry point on the JS stack
@@ -89,7 +89,7 @@ struct Site {
 constexpr int kSlots = 1 << 15;
 Site gSites[kSlots];
 int gUsed = 0;
-int gBusy = 0;  // reentrancy: a check hit while reporting (e.g. in fsa_diag_scene)
+int gBusy = 0;  // reentrancy: a check hit while reporting (e.g. in fsa_uninit_scene)
 bool gTimer = false;
 
 Site* lookup(const void* id, int sub) {
@@ -185,7 +185,7 @@ static void fsa_san_new(Site* s, const char* kind, const char* file, unsigned li
     }
   }
   char scene[128];
-  if (fsa_diag_scene(scene, sizeof(scene)) <= 0) snprintf(scene, sizeof(scene), "null");
+  if (fsa_uninit_scene(scene, sizeof(scene)) <= 0) snprintf(scene, sizeof(scene), "null");
   Buf b;
   b.raw("{");
   char keybuf[600];

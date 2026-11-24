@@ -775,7 +775,7 @@ One line per distinct site in stream `sanitizer`:
   compiled in.
 - `detail`: the first hit's values. ASan: the access, ASan's own description
   of the address, and the JKR block, plus `stack` (the first frames).
-- `first_scene`: the game's `fsa_diag_scene` (`mode` = `GameRoot`
+- `first_scene`: the game's `fsa_uninit_scene` (`mode` = `GameRoot`
   `field_0x4c`, save `stage`/`level`, `in_stage`) at the first hit.
 - `count`: hits so far (UBSan), or ASan reports at that line (ASan reports a
   given pc once). A record is posted at the first hit and again every 10 s
