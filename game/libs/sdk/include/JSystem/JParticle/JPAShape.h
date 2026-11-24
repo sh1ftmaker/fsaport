@@ -117,16 +117,22 @@ struct JPABaseShape
     u32 getTexLoopOfst(u8 param_1) const { return getTexLoopOfstMask() & param_1; }
     u8 getLoopOfstValue() const { return pBsd->mAnmRndm; }
 
-    f32 getIncTransX() const { return ((f32 *)mTexCrdMtxAnmTbl)[5]; }
-    f32 getInitTransX() const { return ((f32 *)mTexCrdMtxAnmTbl)[0]; }
-    f32 getIncTransY() const { return ((f32 *)mTexCrdMtxAnmTbl)[6]; }
-    f32 getInitTransY() const { return ((f32 *)mTexCrdMtxAnmTbl)[1]; }
-    f32 getIncScaleX() const { return ((f32 *)mTexCrdMtxAnmTbl)[7]; }
-    f32 getInitScaleX() const { return ((f32 *)mTexCrdMtxAnmTbl)[2]; }
-    f32 getIncScaleY() const { return ((f32 *)mTexCrdMtxAnmTbl)[8]; }
-    f32 getInitScaleY() const { return ((f32 *)mTexCrdMtxAnmTbl)[3]; }
-    f32 getIncRot() const { return ((f32 *)mTexCrdMtxAnmTbl)[9]; }
-    f32 getInitRot() const { return ((f32 *)mTexCrdMtxAnmTbl)[4]; }
+#ifdef FSA_PORT
+    // Port: the texture-coordinate animation table (10 floats after the BSP1 data) is big-endian.
+    f32 getTexCrdMtxAnm(int i) const { return ((const BE<f32> *)mTexCrdMtxAnmTbl)[i]; }
+#else
+    f32 getTexCrdMtxAnm(int i) const { return ((f32 *)mTexCrdMtxAnmTbl)[i]; }
+#endif
+    f32 getIncTransX() const { return getTexCrdMtxAnm(5); }
+    f32 getInitTransX() const { return getTexCrdMtxAnm(0); }
+    f32 getIncTransY() const { return getTexCrdMtxAnm(6); }
+    f32 getInitTransY() const { return getTexCrdMtxAnm(1); }
+    f32 getIncScaleX() const { return getTexCrdMtxAnm(7); }
+    f32 getInitScaleX() const { return getTexCrdMtxAnm(2); }
+    f32 getIncScaleY() const { return getTexCrdMtxAnm(8); }
+    f32 getInitScaleY() const { return getTexCrdMtxAnm(3); }
+    f32 getIncRot() const { return getTexCrdMtxAnm(9); }
+    f32 getInitRot() const { return getTexCrdMtxAnm(4); }
     int getTexAnmKeyNum() const { return pBsd->texAnmKeyNum; }
 
     // Unused/inlined:
