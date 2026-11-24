@@ -34,13 +34,6 @@ void fn_8013A884(u32* color) {
 // FIXME(shotgun): 95.97 %, missing/extra + reloc-name; behaviour drift.
 // 0x8013A538
 GameRootSub04_801F856C::GameRootSub04_801F856C(JKRHeap* heap) {
-#ifdef FSA_PORT
-    // Port: only the staff-roll stages set these, and the destructor deletes
-    // field_0x2c / frees field_0x30 when nonzero; the port's heap memory is
-    // not zero, so leaving any other stage deleted a junk pointer.
-    field_0x2c = NULL;
-    field_0x30 = NULL;
-#endif
     lbl_8053AB00 = heap;
     heap->getTotalFreeSize();
     mView = new (heap, 0) GameView_804A9950();
@@ -76,6 +69,10 @@ GameRootSub04_801F856C::GameRootSub04_801F856C(JKRHeap* heap) {
         }
         heap->becomeCurrentHeap();
         field_0x2c = new (heap, 0) StaffRollLoader_804B1D10();
+    } else {
+        // The original's branch for every other stage (fsa-decomp 230d815dd).
+        field_0x30 = NULL;
+        field_0x2c = NULL;
     }
 }
 
