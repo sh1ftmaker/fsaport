@@ -85,7 +85,10 @@ struct SpriteObj_802F86CC {
 
 // A 6-byte entry of a "SOB " frame: the GBA OAM attributes 0-2 as stored
 // (little-endian halfwords, so each byte's fields from the high bits down).
+// Port: MWCC allocates bit fields from a byte's high bits, clang from its low
+// bits, so each byte's fields are declared in reverse order here.
 struct SobObj_802F86CC {
+#ifndef FSA_PORT
     /* 0x0 */ u8 mY;
     /* 0x1 */ u8 mShape : 2;
     u8 mColor256 : 1;
@@ -102,6 +105,24 @@ struct SobObj_802F86CC {
     /* 0x5 */ u8 mPalette : 4;
     u8 mPriority : 2;
     u8 mTileHigh : 2;
+#else
+    /* 0x0 */ u8 mY;
+    /* 0x1 */ u8 mAffine : 2;
+    u8 mMode : 2;
+    u8 mMosaic : 1;
+    u8 mColor256 : 1;
+    u8 mShape : 2;
+    /* 0x2 */ u8 mX;
+    /* 0x3 */ u8 : 1;
+    u8 mAffineIndex : 3;
+    u8 mHFlip : 1;
+    u8 mVFlip : 1;
+    u8 mSize : 2;
+    /* 0x4 */ u8 mTileLow;
+    /* 0x5 */ u8 mTileHigh : 2;
+    u8 mPriority : 2;
+    u8 mPalette : 4;
+#endif
 }; // Size: 0x6
 
 // One 5-bit colour channel times scale plus offset, clamped to 0-31
