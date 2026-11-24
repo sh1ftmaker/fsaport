@@ -717,7 +717,9 @@ void EnvironmentSwitchControl_804A8638::update() {
                         field_0x2c0[1] = 30.0f;
                     }
                 }
+                field_0x234->setRate(field_0x2c0[0]);
                 setEmitterPos_8013CB44(field_0x234, &field_0x254, 1, 1, true);
+                field_0x238->setRate(field_0x2c0[1]);
                 setEmitterPos_8013CB44(field_0x238, &field_0x254, 1, 1, true);
             }
         } else if (field_0x250 != 0) {
@@ -798,7 +800,9 @@ void EnvironmentSwitchControl_804A8638::update() {
                     field_0x2c0[1] = 1.0f;
                 }
             }
+            field_0x234->setRate(field_0x2c0[0]);
             setEmitterPos_8013CB44(field_0x234, &field_0x254, 1, 1, true);
+            field_0x238->setRate(field_0x2c0[1]);
             setEmitterPos_8013CB44(field_0x238, &field_0x254, 1, 1, true);
         } else if (field_0x250 != 0) {
             field_0x250--;
@@ -877,7 +881,9 @@ void EnvironmentSwitchControl_804A8638::update() {
         if (gGameRoot_8053AAF8->field_0x4c != 0xB) {
             mSoundObj->startSound(0x30030);
         }
+        field_0x234->setRate(field_0x2c0[0]);
         setEmitterPos_8013CB44(field_0x234, &field_0x254, 1, 1, true);
+        field_0x238->setRate(field_0x2c0[1]);
         setEmitterPos_8013CB44(field_0x238, &field_0x254, 1, 1, true);
         u32 color = (field_0x2e0 << 24) | (field_0x2e4 << 16) | (field_0x2e8 << 8) | field_0x2ec;
         fn_8013A884(&color);
