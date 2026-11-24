@@ -238,7 +238,19 @@ int JKRHeap::resize(void *memoryBlock, u32 newSize)
 {
 #line 491
     JUT_WARNING_F(!mInitFlag, "resize block %x into %x in heap %x", memoryBlock, newSize, this);
+#ifdef FSA_PORT_ASAN
+    // Port (fsa_asan.h): the block's addressable bytes follow the new size.
+    int oldSize = do_getSize(memoryBlock);
+    int result = do_resize(memoryBlock, newSize);
+    if (result >= 0 && oldSize >= 0)
+    {
+        FSA_ASAN_POISON(memoryBlock, oldSize > result ? oldSize : result);
+        FSA_ASAN_UNPOISON(memoryBlock, newSize);
+    }
+    return result;
+#else
     return do_resize(memoryBlock, newSize);
+#endif
 }
 s32 JKRHeap::getSize(void *ptr) { return do_getSize(ptr); }
 s32 JKRHeap::getFreeSize() { return do_getFreeSize(); }

@@ -96,6 +96,11 @@ void JKRExpHeap::do_destroy()
     else
     {
         this->~JKRExpHeap();
+#ifdef FSA_PORT_ASAN
+        // Created on memory the caller owns: hand it back addressable.
+        if (_70)
+            FSA_ASAN_UNPOISON(_70, _74);
+#endif
     }
 }
 
@@ -109,6 +114,7 @@ JKRExpHeap::JKRExpHeap(void *p1, u32 p2, JKRHeap *p3, bool p4)
     mHead->initiate(nullptr, nullptr, p2 - 0x10, 0, 0);
     mHeadUsedList = nullptr;
     mTailUsedList = nullptr;
+    FSA_ASAN_POISON(p1, p2);
 }
 
 JKRExpHeap::~JKRExpHeap() { dispose(); }
@@ -116,6 +122,9 @@ JKRExpHeap::~JKRExpHeap() { dispose(); }
 void *JKRExpHeap::do_alloc(u32 size, int alignment)
 {
     lock();
+#ifdef FSA_PORT_ASAN
+    u32 requested = size;
+#endif
     if (size < 4)
         size = 4;
 
@@ -140,6 +149,10 @@ void *JKRExpHeap::do_alloc(u32 size, int alignment)
         if (mErrorFlag == true)
             callErrorHandler(this, size, alignment);
     }
+#ifdef FSA_PORT_ASAN
+    if (ptr)
+        FSA_ASAN_UNPOISON(ptr, requested);
+#endif
     unlock();
 
     return ptr;
@@ -441,6 +454,7 @@ void JKRExpHeap::do_freeAll()
     mHead->initiate(nullptr, nullptr, mHeapSize - sizeof(CMemBlock), 0, 0);
     mHeadUsedList = nullptr;
     mTailUsedList = nullptr;
+    FSA_ASAN_POISON(mStartAddress, mHeapSize);
     unlock();
 }
 
@@ -1047,6 +1061,7 @@ JKRExpHeap::CMemBlock *JKRExpHeap::CMemBlock::allocBack(unsigned long size, unsi
 
 void *JKRExpHeap::CMemBlock::free(JKRExpHeap *heap)
 {
+    FSA_ASAN_POISON(this + 1, mAllocatedSpace);
     heap->removeUsedBlock(this);
     heap->recycleFreeBlock(this);
     return nullptr;
@@ -1110,3 +1125,61 @@ bool JKRExpHeap::state_compare(const JKRHeap::TState &r1, const JKRHeap::TState 
     }
     return result;
 }
+#ifdef FSA_PORT_ASAN
+// Port (fsa_asan.h): what a poisoned address is, for the sanitizer report
+// (platform/sanitize/sanitize.cpp). Built without ASan like the rest of this unit.
+extern "C" int sprintf(char *, const char *, ...);
+extern "C" void *__asan_region_is_poisoned(void *beg, unsigned long size);
+static u32 fsa_requested(u8 *content, u32 size)
+{
+    u8 *first = (u8 *)__asan_region_is_poisoned(content, size);
+    return first ? (u32)(first - content) : size;
+}
+extern "C" int fsa_jkr_describe(const void *addr, char *out)
+{
+    JKRHeap *root = JKRHeap::getRootHeap();
+    JKRHeap *heap = root ? root->find((void *)addr) : nullptr;
+    if (heap == nullptr)
+        return 0;
+    u8 *a = (u8 *)addr;
+    u32 type = heap->getHeapType();
+    if (type == 'EXPH')
+    {
+        JKRExpHeap *e = (JKRExpHeap *)heap;
+        JKRExpHeap::CMemBlock *before = nullptr;
+        for (JKRExpHeap::CMemBlock *b = e->getHeadUsedList(); b; b = b->getNextBlock())
+        {
+            u8 *c = (u8 *)b->getContent();
+            u8 *end = c + b->getSize();
+            if (a >= (u8 *)b && a < end)
+            {
+                if (a < c)
+                    return sprintf(out, "JKRExpHeap %p: in the header of block %p (0x%x bytes), %d bytes before it", heap, c,
+                                   b->getSize(), (int)(c - a));
+                return sprintf(out, "JKRExpHeap %p: block %p asked for 0x%x bytes (0x%x reserved); access at +0x%x", heap, c,
+                               fsa_requested(c, b->getSize()), b->getSize(), (u32)(a - c));
+            }
+            if (end <= a && (before == nullptr || (u8 *)before->getContent() + before->getSize() < end))
+                before = b;
+        }
+        if (before)
+        {
+            u8 *c = (u8 *)before->getContent();
+            return sprintf(out, "JKRExpHeap %p: free memory (freed block or never allocated); nearest live block below: %p "
+                                "(asked 0x%x), ends 0x%x bytes before",
+                           heap, c, fsa_requested(c, before->getSize()), (u32)(a - (c + before->getSize())));
+        }
+        return sprintf(out, "JKRExpHeap %p: free memory (freed block or never allocated)", heap);
+    }
+    if (type == 'SLID')
+    {
+        u8 *head = (u8 *)heap->do_getMaxFreeBlock();
+        if (a >= head && a < head + heap->getFreeSize())
+            return sprintf(out, "JKRSolidHeap %p: unallocated (past the last allocation, or freed by freeAll/freeTail)", heap);
+        return sprintf(out, "JKRSolidHeap %p: allocated area, past the bytes a block asked for", heap);
+    }
+    if (type == 'UNIT')
+        return sprintf(out, "JKRUnitHeap %p: free unit or past a unit's request", heap);
+    return sprintf(out, "heap %p type %c%c%c%c", heap, (char)(type >> 24), (char)(type >> 16), (char)(type >> 8), (char)type);
+}
+#endif

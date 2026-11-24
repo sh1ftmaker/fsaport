@@ -76,6 +76,7 @@ JKRUnitHeap::JKRUnitHeap(u8 *bat, u8 *units, u32 unitSize, u32 unitCount, u32 av
     mAllocMode = 1;
     clearBatArea();
     mTotalFreeSize = mUnitSize * mUnitCount;
+    FSA_ASAN_POISON(mUnits, mUnitSize * mUnitCount);
 }
 
 JKRUnitHeap::~JKRUnitHeap()
@@ -110,6 +111,7 @@ void *JKRUnitHeap::do_alloc(u32 size, int direction)
             return nullptr;
         setUnitUsed(index);
         mTotalFreeSize -= mUnitSize;
+        FSA_ASAN_UNPOISON(indexToAddress(index), size);
         return indexToAddress(index);
     }
 
@@ -126,6 +128,7 @@ void *JKRUnitHeap::do_alloc(u32 size, int direction)
         *bat |= bitTable[i & 7];
     }
     mTotalFreeSize -= mUnitSize * count;
+    FSA_ASAN_UNPOISON(indexToAddress(index), size);
     return indexToAddress(index);
 }
 
@@ -319,6 +322,7 @@ void JKRUnitHeap::do_free(void *ptr)
         *bat = old & (bitTable[index & 7] ^ 0xff);
         if (old != *bat)
             mTotalFreeSize += mUnitSize;
+        FSA_ASAN_POISON(indexToAddress(index), mUnitSize);
     }
 }
 
@@ -326,6 +330,7 @@ void JKRUnitHeap::do_freeAll()
 {
     clearBatArea();
     mTotalFreeSize = mUnitSize * mUnitCount;
+    FSA_ASAN_POISON(mUnits, mUnitSize * mUnitCount);
 }
 
 void JKRUnitHeap::do_freeTail() {}

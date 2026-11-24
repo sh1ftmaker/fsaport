@@ -43,6 +43,30 @@ target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1 $<$<BOOL:${FSA_TR
 option(FSA_NO_AUDIO "skip JAudio initialisation (boot without sound)" OFF)
 option(FSA_TRACE "[trace] reports and checks in the game code" OFF)
 
+# --- Sanitizer diagnostics build (docs/DIAGNOSTICS.md "Sanitizer run") ---------
+# undefined: UBSan over the game units, recovering; platform/sanitize/sanitize.cpp
+#   is the handler runtime. address: ASan over the game units, the JKR heaps
+#   poisoning their blocks (game/port/fsa_asan.h). Use a separate build dir.
+set(FSA_SANITIZE "" CACHE STRING "diagnostics build: undefined | address (empty: normal build)")
+set_property(CACHE FSA_SANITIZE PROPERTY STRINGS "" undefined address)
+if(FSA_SANITIZE STREQUAL "undefined")
+  # vptr/function need RTTI; return would trap where the game falls off the end
+  # of a function (that is why the build has -fno-strict-return), so missing
+  # returns are reported at compile time instead (-Wreturn-type, see the doc).
+  target_compile_options(fsa_game_flags INTERFACE -fsanitize=undefined -fno-sanitize=vptr,function,return
+    -fsanitize-recover=all -Wreturn-type)
+elseif(FSA_SANITIZE STREQUAL "address")
+  target_compile_options(fsa_game_flags INTERFACE -fsanitize=address -fsanitize-recover=address)
+  target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT_ASAN=1)
+  # The heap implementations manage the poisoned memory themselves.
+  set_source_files_properties(
+    ${FSA_GAME}/libs/jsystem/JSystem/JKernel/JKRHeap.cpp ${FSA_GAME}/libs/jsystem/JSystem/JKernel/JKRExpHeap.cpp
+    ${FSA_GAME}/libs/jsystem/JSystem/JKernel/JKRSolidHeap.cpp ${FSA_GAME}/libs/jsystem/JSystem/JKernel/JKRUnitHeap.cpp
+    PROPERTIES COMPILE_OPTIONS -fno-sanitize=address)
+elseif(NOT FSA_SANITIZE STREQUAL "")
+  message(FATAL_ERROR "FSA_SANITIZE must be undefined, address or empty")
+endif()
+
 execute_process(COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/gen_units_cmake.py
                 ${FSA_GAME}/units.txt ${CMAKE_BINARY_DIR}/fsa_units.cmake)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${FSA_GAME}/units.txt)
@@ -90,10 +114,27 @@ target_link_libraries(fsa PRIVATE
   -Wl,--start-group ${FSA_UNIT_LIBS} fsa_platform fsa_glue -Wl,--end-group
   aurora::core aurora::gx aurora::gd aurora::si aurora::vi aurora::pad aurora::mtx aurora::os aurora::card)
 set_target_properties(fsa PROPERTIES SUFFIX ".js")
+set(FSA_INITIAL_MEMORY 268435456)
+if(FSA_SANITIZE)
+  target_sources(fsa PRIVATE platform/sanitize/sanitize.cpp)
+  string(TOUPPER ${FSA_SANITIZE} _san)
+  set_source_files_properties(platform/sanitize/sanitize.cpp PROPERTIES COMPILE_DEFINITIONS FSA_SAN_${_san}=1
+    COMPILE_OPTIONS "-Wno-everything")
+  add_custom_command(TARGET fsa POST_BUILD
+    COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/san_symtab.py ${CMAKE_BINARY_DIR}/fsa.map ${FSA_GAME}/units.txt
+            ${CMAKE_BINARY_DIR}/fsa_symtab.json)
+endif()
+if(FSA_SANITIZE STREQUAL "address")
+  # Shadow memory is 1/8 of the address space; the redzones grow every block.
+  set(FSA_INITIAL_MEMORY 1073741824)
+  target_link_options(fsa PRIVATE -fsanitize=address -fsanitize-recover=address -gsource-map
+    "SHELL:--js-library ${CMAKE_SOURCE_DIR}/platform/sanitize/san_lib.js")
+  set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS ${CMAKE_SOURCE_DIR}/platform/sanitize/san_lib.js)
+endif()
 target_link_options(fsa PRIVATE
   -sJSPI=1
   "-sJSPI_EXPORTS=['fsa_thread_entry']"
-  -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=268435456 -sMAXIMUM_MEMORY=2147483648
+  -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=${FSA_INITIAL_MEMORY} -sMAXIMUM_MEMORY=2147483648
   -sSTACK_SIZE=4194304
   -sEXIT_RUNTIME=0 -sFORCE_FILESYSTEM=1 -sINVOKE_RUN=0 -sENVIRONMENT=web
   "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8','UTF8ToString']"

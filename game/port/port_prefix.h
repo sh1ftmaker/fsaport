@@ -4,6 +4,7 @@
 #define FSA_PORT_PREFIX_H
 
 #include "ppc_intrinsics.h"
+#include "fsa_asan.h" /* FSA_ASAN_POISON/UNPOISON: no-ops unless FSA_PORT_ASAN */
 
 /* __declspec(weak) and __declspec(section "...") only steer the Metrowerks linker. */
 #define __declspec(x)

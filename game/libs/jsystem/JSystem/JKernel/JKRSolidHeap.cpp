@@ -46,6 +46,7 @@ JKRSolidHeap::JKRSolidHeap(void *start, u32 size, JKRHeap *parent, bool useError
     mSolidHead = (u8 *)mStartAddress;
     mSolidTail = (u8 *)mEndAddress;
     _78 = nullptr;
+    FSA_ASAN_POISON(mStartAddress, mHeapSize);
 }
 
 JKRSolidHeap::~JKRSolidHeap()
@@ -86,7 +87,14 @@ void *JKRSolidHeap::do_alloc(u32 size, int alignment)
         size = 4;
 
     // might not be a ternary, use TP Debug to confirm
+#ifdef FSA_PORT_ASAN
+    u32 requested = size;
+#endif
     void *ptr = alignment >= 0 ? allocFromHead(size, alignment < 4 ? 4 : alignment) : allocFromTail(size, -alignment < 4 ? 4 : -alignment);
+#ifdef FSA_PORT_ASAN
+    if (ptr)
+        FSA_ASAN_UNPOISON(ptr, requested);
+#endif
 
     unlock();
     return ptr;
@@ -154,6 +162,7 @@ void JKRSolidHeap::do_freeAll(void)
     mSolidHead = (u8 *)mStartAddress;
     mSolidTail = (u8 *)mEndAddress;
     _78 = nullptr;
+    FSA_ASAN_POISON(mStartAddress, mHeapSize);
 
     unlock();
 }
@@ -167,6 +176,7 @@ void JKRSolidHeap::do_freeTail(void)
         dispose(mSolidTail, mEndAddress);
     }
 
+    FSA_ASAN_POISON(mSolidTail, (u32)mEndAddress - (u32)mSolidTail);
     mFreeSize = ((u32)mEndAddress - (u32)mSolidTail + mFreeSize);
     mSolidTail = (u8*)mEndAddress;
 
