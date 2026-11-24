@@ -17,6 +17,9 @@ class JAIStreamMgr;
 class JAISeqMgr;
 class JASDefaultBankTable;
 class JAISoundStarter;
+class JAUSectionHeap;
+class JAUSoundNameTable;
+class JAUSoundTable;
 template <> JAISoundInfo* JASGlobalInstance<JAISoundInfo>::sInstance = nullptr;
 template <> JAISeMgr* JASGlobalInstance<JAISeMgr>::sInstance = nullptr;
 template <> JAUSoundInfo* JASGlobalInstance<JAUSoundInfo>::sInstance = nullptr;
@@ -25,6 +28,14 @@ template <> JAIStreamMgr* JASGlobalInstance<JAIStreamMgr>::sInstance = nullptr;
 template <> JAISeqMgr* JASGlobalInstance<JAISeqMgr>::sInstance = nullptr;
 template <> JASDefaultBankTable* JASGlobalInstance<JASDefaultBankTable>::sInstance = nullptr;
 template <> JAISoundStarter* JASGlobalInstance<JAISoundStarter>::sInstance = nullptr;
+// JAUSectionHeap.h declares these three (createJASInstance) weak and never
+// defines them: undefined weak data links to address 0, so all three shared
+// the word at address 0 (each constructor wrote `this` there, every
+// getInstance() read whichever came last). Found by the ASan build (a 4-byte
+// write to address 0 in AudioMgr_8045A080::init_80459AE4).
+template <> JAUSectionHeap* JASGlobalInstance<JAUSectionHeap>::sInstance = nullptr;
+template <> JAUSoundNameTable* JASGlobalInstance<JAUSoundNameTable>::sInstance = nullptr;
+template <> JAUSoundTable* JASGlobalInstance<JAUSoundTable>::sInstance = nullptr;
 
 #include "JSystem/JAudio/Interface/JAISound.h"
 #include "JSystem/JAudio/Interface/JAISeMgr.h"
