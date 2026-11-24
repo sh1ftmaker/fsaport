@@ -1,5 +1,5 @@
 // Hardware the port does not have yet, made to look present and idle:
-// audio (AI/DSP), the GBA link, and GX calls Aurora does not implement.
+// the DSP's mailbox, the GBA link, and GX calls Aurora does not implement.
 // Each is a placeholder until its real replacement exists.
 #include "platform.h"
 
@@ -14,17 +14,8 @@ extern "C" {
 u32 __OSBusClock = 162000000;
 u32 __OSCoreClock = 486000000;
 
-// --- Audio: no output yet. DMA callbacks never fire, so the audio thread idles.
-typedef void (*AIDCallback)(void);
-static u32 g_dspRate = 1;  // AI_SAMPLERATE_48KHZ
-void AIInit(u8*) {}
-void AIInitDMA(u32, u32) {}
-void AIStartDMA() {}
-void AIStopDMA() {}
-AIDCallback AIRegisterDMACallback(AIDCallback cb) { return nullptr; }
-u32 AIGetDSPSampleRate() { return g_dspRate; }
-void AISetDSPSampleRate(u32 rate) { g_dspRate = rate; }
-
+// --- DSP: its mixing is done on the CPU (audio_dsp.cpp; the AI is audio.cpp),
+// so the DSP itself is never booted or mailed.
 void DSPInit() {}
 u32 DSPCheckMailToDSP() { return 0; }
 u32 DSPCheckMailFromDSP() { return 0; }

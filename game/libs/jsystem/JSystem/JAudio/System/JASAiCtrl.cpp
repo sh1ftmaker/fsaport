@@ -12,6 +12,10 @@
 #include "JSystem/JAudio/System/JASReport.h"
 #include "JSystem/JUtility/JUTAssert.h"
 
+#ifdef FSA_PORT
+extern "C" void fsa_dsp_render_subframe(u32 index);  // platform/audio_dsp.cpp
+#endif
+
 namespace JASDriver {
 
 static void mixMonoTrack(s16 *, u32, JASMixCallBack);
@@ -201,6 +205,22 @@ void finishDSPFrame() {
     JASDsp::syncFrame(getSubFrames(), (u32)sDspDacBuffer[sDspDacWriteBuffer], (u32)(sDspDacBuffer[sDspDacWriteBuffer] + frameSamples));
     sDspStatus = 1;
     updateDSP();
+#ifdef FSA_PORT
+    // Port: the DSP's part runs on the CPU (platform/audio_dsp.cpp), here and
+    // now: it renders a subframe after each voice update, where the DSP would
+    // mail the audio thread (JASAudioThread::DSPCallback -> AUDIOMSG_DSP) to
+    // run the next updateDSP. The frame is done at once, so the next starts
+    // from updateDac (sDspStatus 0), one per AI DMA.
+    for (u32 i = 0; i < getSubFrames(); i++) {
+        if (i != 0) {
+            JASAudioThread::setDSPSyncCount(getSubFrames() - i);
+            updateDSP();
+        }
+        fsa_dsp_render_subframe(i);
+    }
+    JASAudioThread::setDSPSyncCount(0);
+    sDspStatus = 0;
+#endif
     if (sDspDacCallback) {
         (*sDspDacCallback)(sDspDacBuffer[sDspDacWriteBuffer], frameSamples);
     }

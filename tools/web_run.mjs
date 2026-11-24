@@ -6,6 +6,7 @@
 //   node tools/web_run.mjs --cdp 9334 --url 'http://127.0.0.1:8790/?iso=local.iso' \
 //        --seconds 60 --every 10 --out build/web-run [--keys 'Enter@30,KeyX@40'] [--freeze 40:20]
 //        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
+//        [--wav FILE]  (with ?audiorec=S in the URL: save the game's sound as a WAV)
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -113,6 +114,23 @@ while (Date.now() - t0 < seconds * 1000) {
     const stats = await evalJs('JSON.stringify(window.fsaStats ? window.fsaStats() : null)');
     if (stats && stats !== 'null') log(`[stats @${Math.round(t)}s] ${stats}`);
   }
+}
+// --wav FILE: save the sound the game sent (open the page with ?audiorec=S).
+if (args.wav && args.wav !== 'true') {
+  const parts = [];
+  for (let off = 0; ; off += 1 << 20) {
+    const b64 = await evalJs(`Module.fsaAudio.recChunk ? Module.fsaAudio.recChunk(${off}, ${1 << 20}) : ''`);
+    if (!b64) break;
+    parts.push(Buffer.from(b64, 'base64'));
+  }
+  const pcm = Buffer.concat(parts);
+  const h = Buffer.alloc(44);
+  h.write('RIFF', 0); h.writeUInt32LE(36 + pcm.length, 4); h.write('WAVEfmt ', 8);
+  h.writeUInt32LE(16, 16); h.writeUInt16LE(1, 20); h.writeUInt16LE(2, 22); h.writeUInt32LE(32000, 24);
+  h.writeUInt32LE(32000 * 4, 28); h.writeUInt16LE(4, 32); h.writeUInt16LE(16, 34);
+  h.write('data', 36); h.writeUInt32LE(pcm.length, 40);
+  fs.writeFileSync(args.wav, Buffer.concat([h, pcm]));
+  log(`[wav] ${args.wav}: ${(pcm.length / 128000).toFixed(1)} s`);
 }
 await fetch(`http://127.0.0.1:${cdp}/json/close/${tab.id}`);
 ws.close();
