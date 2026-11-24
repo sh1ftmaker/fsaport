@@ -104,6 +104,10 @@
     white-space: pre-wrap; display: none; -webkit-user-select: text; user-select: text; touch-action: pan-y;
   }
   body.log-open #log { display: block; }
+  #logfirst:empty { display: none; }
+  #logfirst {
+    margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--hair); color: #f0b45a;
+  }
 
   /*====================================================================
     On-screen controller (platform/web/touch.js)
@@ -249,7 +253,7 @@
   <button id="fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9"/></svg></button>
   <button id="logtoggle" type="button" aria-pressed="false" title="Log">Log</button>
 </div>
-<pre id="log"></pre>
+<div id="log"><div id="logfirst"></div><div id="logbody"></div></div>
 
 <!-- On-screen controller. Not focusable and not announced: it duplicates the
      keyboard and gamepad, and every element is hit-tested by coordinate. -->
@@ -267,13 +271,39 @@
 
 <script>
   const logEl = document.getElementById('log');
+  const logBody = document.getElementById('logbody');
+  const logFirst = document.getElementById('logfirst');
   const statusEl = document.getElementById('status');
+  // The log keeps the first few distinct errors pinned at the top (a later
+  // error is often only a consequence of the first), and folds runs of the
+  // same line into one with a count.
+  const firstErrors = new Map();
+  let lastLine = null, repeats = 0;
+  function pinError(line) {
+    if (!/error|abort|exception/i.test(line)) return;
+    const key = line.replace(/\d+/g, '#');
+    if (firstErrors.has(key)) { firstErrors.get(key).n++; }
+    else if (firstErrors.size < 8) firstErrors.set(key, { line, n: 1 });
+    else return;
+    logFirst.textContent = 'First errors:\n' + [...firstErrors.values()]
+      .map((e) => e.line + (e.n > 1 ? `  (x${e.n})` : '')).join('\n');
+  }
   function log(line) {
     console.log(line);
-    logEl.textContent += line + '\n';
-    if (logEl.textContent.length > 200000) logEl.textContent = logEl.textContent.slice(-100000);
+    pinError(line);
+    if (line === lastLine) {
+      repeats++;
+      if (repeats === 1 || repeats % 60 === 0) {
+        logBody.textContent = logBody.textContent.replace(/(  \(repeated \d+x\))?\n$/, `  (repeated ${repeats}x)\n`);
+      }
+      return;
+    }
+    lastLine = line; repeats = 0;
+    logBody.textContent += line + '\n';
+    if (logBody.textContent.length > 200000) logBody.textContent = logBody.textContent.slice(-100000);
     if (document.body.classList.contains('log-open')) logEl.scrollTop = logEl.scrollHeight;
   }
+  log('[page] ' + navigator.userAgent + (navigator.gpu ? '' : '  (no navigator.gpu: WebGPU unavailable)'));
   var Module = {
     canvas: document.getElementById('canvas'),
     print: log,
