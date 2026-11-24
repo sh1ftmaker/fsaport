@@ -1,3 +1,4 @@
+#include "port/be.h"
 #include "game/PlayerBit.h"
 #include "game/GameAudio.h"
 #include "game/GameGlobals.h"
@@ -45,8 +46,14 @@ f32 fn_8037F580(u8 command, s32 value, char* out, s32* len, f32 scale);
 u8 getMessageWindowState_8037F1E4(s32 player);
 bool fn_8037EC98(s32 player, u16 flags);
 
+// BMG control-code operands are big-endian and unaligned (as the tag
+// readers in tu_803944C8.cpp, c960d38): next-message indices for branches.
 static inline s32 operand(const char* p, s32 offset) {
+#ifdef FSA_PORT
+    return be32s(p + offset);
+#else
     return *(const s32*)(p + offset);
+#endif
 }
 
 // The text of INF1 entry `msg`: the DAT1 block starts after the INF1 block and its 8-byte header.
@@ -1280,7 +1287,11 @@ u32 fn_80383EB0(s32 window, u32 msg) {
         }
         case 0x23: {
             u32 kind = (u8)p[5];
+#ifdef FSA_PORT
+            s32 bit = be16(p + 6);
+#else
             s32 bit = *(const u16*)(p + 6);
+#endif
             u32 yes = operand(p, 8);
             u32 no = operand(p, 12);
             u8 which;

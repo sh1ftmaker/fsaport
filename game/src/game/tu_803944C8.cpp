@@ -865,17 +865,17 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20018: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
-            work[2] = ((const s32*)data)[2];
-            work[3] = ((const s32*)data)[3];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
+            work[2] = TAG_S32((const s32*)data + (2));
+            work[3] = TAG_S32((const s32*)data + (3));
             field_0x60->fn_803A30DC(work[fn_8018E89C() - 1]);
             return true;
         }
         case 0x2001D: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
-            work[2] = ((const s32*)data)[2];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
+            work[2] = TAG_S32((const s32*)data + (2));
             if (fn_80236100(field_0x60->fn_803A30BC()) >= work[0]) {
                 field_0x60->fn_803A30DC(work[1]);
             } else {
@@ -888,7 +888,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2001F:
             return true;
         case 0x20020:
-            work[0] = ((const s32*)data)[field_0x60->fn_803A30BC()];
+            work[0] = TAG_S32((const s32*)data + (field_0x60->fn_803A30BC()));
             field_0x60->fn_803A30DC(work[0]);
             return true;
         case 0x20021: {
@@ -1012,8 +1012,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A3070(p[0]);
             return true;
         case 0x2002C: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_8013997C(field_0x60->fn_803A30BC()) == 2) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1034,8 +1034,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2002F:
             return true;
         case 0x20030: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_8022CAF8(field_0x60->fn_803A30BC()) != 4) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1063,8 +1063,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20033: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_802373EC(getRepresentativePlayer_8022EA0C(field_0x60->fn_803A30BC())) == 1) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1447,17 +1447,17 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20018: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
-            work[2] = ((const s32*)data)[2];
-            work[3] = ((const s32*)data)[3];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
+            work[2] = TAG_S32((const s32*)data + (2));
+            work[3] = TAG_S32((const s32*)data + (3));
             field_0x60->fn_803A30DC(work[fn_8018E89C() - 1]);
             return true;
         }
         case 0x2001D: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
-            work[2] = ((const s32*)data)[2];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
+            work[2] = TAG_S32((const s32*)data + (2));
             if (fn_80236100(field_0x60->fn_803A30BC()) >= work[0]) {
                 field_0x60->fn_803A30DC(work[1]);
             } else {
@@ -1470,7 +1470,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2001F:
             return true;
         case 0x20020:
-            work[0] = ((const s32*)data)[field_0x60->fn_803A30BC()];
+            work[0] = TAG_S32((const s32*)data + (field_0x60->fn_803A30BC()));
             field_0x60->fn_803A30DC(work[0]);
             return true;
         case 0x20021: {
@@ -1594,8 +1594,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A3070(p[0]);
             return true;
         case 0x2002C: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_8013997C(field_0x60->fn_803A30BC()) == 2) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1616,8 +1616,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2002F:
             return true;
         case 0x20030: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_8022CAF8(field_0x60->fn_803A30BC()) != 4) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1645,8 +1645,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20033: {
-            work[0] = ((const s32*)data)[0];
-            work[1] = ((const s32*)data)[1];
+            work[0] = TAG_S32((const s32*)data + (0));
+            work[1] = TAG_S32((const s32*)data + (1));
             if (fn_802373EC(getRepresentativePlayer_8022EA0C(field_0x60->fn_803A30BC())) == 1) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
