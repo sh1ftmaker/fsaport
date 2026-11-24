@@ -111,9 +111,16 @@ void portSwapStruct(u8* p, const unsigned short* table, u32 count)
 		portSwap(p + table[2 * i], table[2 * i + 1]);
 }
 
-void portSwapAnmBlock(u8* blk, const unsigned short* header, u32 headerCount, const PortAnmTable* tables, u32 tableCount)
+void portSwapAnmBlock(u8* blk, const unsigned short* header, u32 headerCount, const PortAnmTable* tables, u32 tableCount,
+                      const u8* fileEnd)
 {
 	u32 size = (u32)((J3DFileBlockBase*)blk)->mSize;
+	// A block's mSize can run past the end of the file (the last table then
+	// swapped the first bytes of whatever follows the file in memory: in an
+	// archive, the next file's header, e.g. yami_yougan.bmd's 'J3D2', which
+	// then failed to load).
+	if (blk + size > fileEnd)
+		size = fileEnd > blk ? (u32)(fileEnd - blk) : 0;
 	portSwapStruct(blk, header, headerCount); // now the offsets are host order
 	for (u32 t = 0; t < tableCount; t++) {
 		u32 off = *(u32*)(blk + tables[t].mField);
@@ -150,7 +157,7 @@ void portSwapAnmBlock(u8* blk, const unsigned short* header, u32 headerCount, co
 } // namespace
 
 #define PORT_ANM(T, tables) \
-	portSwapAnmBlock(blk, kPortSwap_##T, kPortSwapCount_##T, tables, sizeof(tables) / sizeof(tables[0]))
+	portSwapAnmBlock(blk, kPortSwap_##T, kPortSwapCount_##T, tables, sizeof(tables) / sizeof(tables[0]), fileEnd)
 
 void J3DPortSwapAnmFile(const void* stream)
 {
@@ -162,6 +169,8 @@ void J3DPortSwapAnmFile(const void* stream)
 	u8* mark = header->_10;
 	if (mark[0] == 'P' && mark[1] == 'O' && mark[2] == 'R' && mark[3] == 'T')
 		return; // already in host order
+	const u8* fileEnd = (const u8*)stream + ((u32)header->_08[0] << 24 | (u32)header->_08[1] << 16 |
+	                                         (u32)header->_08[2] << 8 | header->_08[3]); // file size, big-endian
 	const J3DFileBlockBase* next = header->getFirstBlock();
 	for (u32 i = 0; i < header->mBlockCount; i++) {
 		u8* blk = (u8*)next;
