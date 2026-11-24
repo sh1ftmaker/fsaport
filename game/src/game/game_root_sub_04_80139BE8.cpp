@@ -14,6 +14,7 @@
 #include "game/cls_804AE9B0.h"
 #include "game/BgRewrite.h"
 #include "game/act_light_environment_control_802EF76C.h"
+#include "game/Camera.h"
 #include "JSystem/JKernel/JKRExpHeap.h"
 
 // Shift-JIS report strings (.rodata of this unit); not written as source because the bytes are escaped.
@@ -33,6 +34,13 @@ void fn_8013A884(u32* color) {
 // FIXME(shotgun): 95.97 %, missing/extra + reloc-name; behaviour drift.
 // 0x8013A538
 GameRootSub04_801F856C::GameRootSub04_801F856C(JKRHeap* heap) {
+#ifdef FSA_PORT
+    // Port: only the staff-roll stages set these, and the destructor deletes
+    // field_0x2c / frees field_0x30 when nonzero; the port's heap memory is
+    // not zero, so leaving any other stage deleted a junk pointer.
+    field_0x2c = NULL;
+    field_0x30 = NULL;
+#endif
     lbl_8053AB00 = heap;
     heap->getTotalFreeSize();
     mView = new (heap, 0) GameView_804A9950();
@@ -289,6 +297,17 @@ extern "C" void fsa_debug_state() {
         ShadowCircle_804A0160* sc = gGameRoot2_8053AB10->field_0x2c;
         OSReport("[state] darkness %d colour %08x flags %d %d\n", (int)sc->field_0xc, (unsigned)sc->field_0x4.toUInt32(),
                  (int)sc->field_0xd[0], (int)sc->field_0xd[1]);
+    }
+    if (gGameRoot2_8053AB10 != NULL && gGameRoot2_8053AB10->field_0x24 != NULL) {
+        Camera_804AA9E4* cam = gGameRoot2_8053AB10->field_0x24;
+        const JGeometry::TBox2f& b = cam->mViewBox_0x164;
+        OSReport("[state] camera box %.1f,%.1f - %.1f,%.1f\n", b.i.x, b.i.y, b.f.x, b.f.y);
+        for (int r = 0; r < 3; r++)
+            OSReport("[state]   view %8.3f %8.3f %8.3f %10.3f\n", cam->mLoadedViewMtx_0x74[r][0], cam->mLoadedViewMtx_0x74[r][1],
+                     cam->mLoadedViewMtx_0x74[r][2], cam->mLoadedViewMtx_0x74[r][3]);
+        for (int r = 0; r < 4; r++)
+            OSReport("[state]   proj %10.6f %10.6f %10.6f %10.6f\n", cam->mLoadedProjMtx_0xa4[r][0], cam->mLoadedProjMtx_0xa4[r][1],
+                     cam->mLoadedProjMtx_0xa4[r][2], cam->mLoadedProjMtx_0xa4[r][3]);
     }
     GameRootSub04_801F856C* sub = root->field_0x4;
     if (sub == NULL) {
