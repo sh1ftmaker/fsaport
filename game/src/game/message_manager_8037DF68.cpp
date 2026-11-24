@@ -2630,6 +2630,10 @@ extern "C" void fsa_debug_messages() {
         if (w != NULL)
             OSReport("[state]   window %d state %d opt %04x more %d msg %d ready %d\n", i, (int)w->field_0x24,
                      (int)w->field_0x28, (int)w->field_0x40, (int)w->field_0x20, (int)w->fn_803908D0());
+        if (w != NULL && w->field_0x48 != NULL)
+            OSReport("[state]     proc48 page %d count %d next %d  proc4c page %d count %d\n", (int)w->field_0x48->field_0x19e,
+                     (int)w->field_0x48->field_0x150, (int)w->field_0x48->field_0x148,
+                     w->field_0x4c ? (int)w->field_0x4c->field_0x19e : -1, w->field_0x4c ? (int)w->field_0x4c->field_0x150 : -1);
     }
 }
 #endif

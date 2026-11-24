@@ -285,6 +285,11 @@ extern "C" void fsa_debug_state() {
              (int)root->field_0x50, (int)root->field_0x58, (int)root->field_0x60, (int)root->field_0xfd,
              (int)root->field_0x7f, (int)root->mPlayerMask);
     OSReport("[state] save stage %d level %d\n", lbl_80529DEC.mStage_0x118, lbl_80529DEC.mLevel_0x11c);
+    if (gGameRoot2_8053AB10 != NULL && gGameRoot2_8053AB10->field_0x2c != NULL) {
+        ShadowCircle_804A0160* sc = gGameRoot2_8053AB10->field_0x2c;
+        OSReport("[state] darkness %d colour %08x flags %d %d\n", (int)sc->field_0xc, (unsigned)sc->field_0x4.toUInt32(),
+                 (int)sc->field_0xd[0], (int)sc->field_0xd[1]);
+    }
     GameRootSub04_801F856C* sub = root->field_0x4;
     if (sub == NULL) {
         OSReport("[state] no stage\n");

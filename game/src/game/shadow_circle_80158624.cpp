@@ -42,10 +42,21 @@ void ShadowCircle_804A0160::fn_80159330() {
 // FIXME: 99.98 %. The tev colour's stack slot is 0xC where the original has
 // 0x10. The u16 sizes are
 // converted with the signed (xoris 0x8000) form: an explicit (s32).
+#ifdef FSA_PORT
+// Debugging: Module._fsa_debug_nodark(1) skips the full-screen darkness pass.
+static int sFsaNoDark = 0;
+extern "C" void fsa_debug_nodark(int on) { sFsaNoDark = on; }
+#endif
+
 void ShadowCircle_804A0160::fn_80158F70() {
     if (field_0x4.toUInt32() == 0xFFFFFF00 && field_0xc >= 0xFF) {
         return;
     }
+#ifdef FSA_PORT
+    if (sFsaNoDark) {
+        return;
+    }
+#endif
     GXRenderModeObj* renderMode = JUTVideo::sManager->getRenderMode();
     f32 fbWidth = (s32)renderMode->fbWidth;
     f32 efbHeight = (s32)renderMode->efbHeight;
