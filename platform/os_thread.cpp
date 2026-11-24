@@ -129,7 +129,10 @@ void reschedule() {
 }
 
 // The current thread can no longer run (blocked, suspended, exited).
+u32 g_blocks = 0;  // times a thread blocked (platform_poll_point's lockstep count)
+
 void block_current() {
+  g_blocks++;
   while (!runnable(g_current)) {
     platform_service_interrupts();
     Coroutine* next = pick();
@@ -607,6 +610,22 @@ void platform_poll_point() {
   static double lastYield = 0;
   if (!g_current || g_interruptDepth)
     return;
+  if (platform_lockstep()) {
+    // Lockstep (docs/HARNESS.md): the same decision by call count, so that a
+    // replay yields at the same points. 1000 polls with no thread blocking in
+    // between is a spin loop; it sleeps until virtual time moves (a retrace).
+    static u32 polls = 0, blocks = 0;
+    if (blocks != g_blocks) {
+      blocks = g_blocks;
+      polls = 0;
+    }
+    if (++polls < 1000)
+      return;
+    polls = 0;
+    platform_sleep_ticks(OS_TIMER_CLOCK / 1000);
+    blocks = g_blocks;
+    return;
+  }
   double now = emscripten_get_now();
   if (lastYield == 0)
     lastYield = now;

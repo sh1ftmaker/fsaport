@@ -83,11 +83,13 @@ target_link_options(fsa PRIVATE
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_save.js"
+  "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js"
   -lidbfs.js
   --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map
   $<$<BOOL:${FSA_DEBUG_LINES}>:-g -O1>)
 set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
-  ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js)
+  ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js
+  ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js)
 add_custom_command(TARGET fsa POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js

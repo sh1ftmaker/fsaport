@@ -460,6 +460,7 @@
       log('[stage] jump to stage ' + stageArg[1] + ' level ' + (stageArg[2] || 0));
       Module._fsa_debug_set_stage(Number(stageArg[1]), Number(stageArg[2] || 0));
     }
+    await Module.fsaHarnessInit();  // ?record=1 / ?inputs=URL (docs/HARNESS.md)
     Module.fsaClock.start();
     try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
   }

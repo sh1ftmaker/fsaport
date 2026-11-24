@@ -52,7 +52,14 @@ OSTick OSGetTick() {
     return OSGetTime() & 0xFFFFFFFF;
 }
 
+// fsaport: when set, OSGetTime (and OSGetTick) come from this instead of the
+// wall clock (the behaviour harness's virtual clock, platform/harness.cpp).
+extern "C" OSTime (*aurora_os_time_hook)(void);
+OSTime (*aurora_os_time_hook)(void) = nullptr;
+
 OSTime OSGetTime() {
+    if (aurora_os_time_hook)
+        return aurora_os_time_hook();
     // System time is provided in the number of timer ticks since 2000-01-01 00:00:00
     // Use time_t arithmetic to avoid chrono duration_cast overflow issues on some platforms.
 
