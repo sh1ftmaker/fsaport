@@ -1,3 +1,4 @@
+#include <dolphin/os.h>
 #include "command_processor.hpp"
 
 #include "../gfx/common.hpp"
@@ -1107,11 +1108,12 @@ static void handle_bp(u32 value, bool bigEndian) {
       case TexBpRegMapping::Kind::Image3: {
         slot.image3 = value;
         // A display list (J3D's patched material lists, GD) sets the image by
-        // its physical address >> 5 (OSCachedToPhysical: pointer - 0x80000000,
-        // 24 bits kept). Point the slot at that memory too, or the draw used
-        // the previous GXInitTexObj's data with this list's size and format.
-        // Exact while the heap stays below 512 MB of wasm memory.
-        const void* ptr = reinterpret_cast<const void*>(static_cast<uintptr_t>(value & 0xFFFFFF) << 5);
+        // its physical address >> 5: OSCachedToPhysical subtracts
+        // OSBaseAddress (the emulated MEM1 base), so add it back. Point the
+        // slot at that memory too, or the draw used the previous
+        // GXInitTexObj's data with this list's size and format.
+        const void* ptr =
+            reinterpret_cast<const void*>(OSBaseAddress + (static_cast<uintptr_t>(value & 0xFFFFFF) << 5));
         if (ptr != slot.data) {
           slot.data = ptr;
           slot.texObjId = 0;  // not one GXInitTexObj made: no cache entry
