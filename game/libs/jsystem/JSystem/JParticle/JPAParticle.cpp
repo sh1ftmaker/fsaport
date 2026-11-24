@@ -95,8 +95,16 @@ void JPABaseParticle::init_p(JPAEmitterWorkData *workData)
 
     if (extraShape) {
         if (extraShape->isEnableRotateAnm()) {
+#ifdef FSA_PORT
+            // Port: float -> u16/s16 through s32, as the GameCube's fctiwz does:
+            // wasm saturates a negative float to 0 for unsigned targets, so every
+            // particle started unrotated.
+            mRotateAngle = (u16)(s32)(extraShape->getRotateInitAngle() + (extraShape->getRotateRndmAngle() * emitter->getRandZH()));
+            mRotateSpeed = (s16)(s32)(extraShape->getRotateInitSpeed() * (1.0f + extraShape->getRotateRndmSpeed() * emitter->getRandZP()));
+#else
             mRotateAngle = extraShape->getRotateInitAngle() + (extraShape->getRotateRndmAngle() * emitter->getRandZH());
             mRotateSpeed = extraShape->getRotateInitSpeed() * (1.0f + extraShape->getRotateRndmSpeed() * emitter->getRandZP());
+#endif
 
             mRotateSpeed = (emitter->getRandZP() < extraShape->getRotateDirection()) ? mRotateSpeed : (s16)-mRotateSpeed;
 
