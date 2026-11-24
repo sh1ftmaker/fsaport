@@ -7,6 +7,8 @@
 #include "fmt/base.h"
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 #include "internal.hpp"
 #include <dolphin/os.h>
@@ -138,7 +140,17 @@ static void* AllocMEM1(u32 size) {
 }
 #else
 static void* AllocMEM1(u32 size) {
-  return calloc(1, size);
+  // MEM1 starts at physical 0 on the console, so every address the game
+  // aligns is aligned physically too. Hardware takes many addresses as
+  // physical >> 5 (GX texture and TLUT images in display lists, DMA), so the
+  // base must be at least 32-byte aligned: calloc's 8- or 16-byte alignment
+  // made OSCachedToPhysical(p) >> 5 point up to 24 bytes before the data.
+  constexpr size_t kAlign = 4096;
+  void* mem = std::aligned_alloc(kAlign, (size + kAlign - 1) & ~(kAlign - 1));
+  if (mem != nullptr) {
+    std::memset(mem, 0, size);
+  }
+  return mem;
 }
 #endif
 
