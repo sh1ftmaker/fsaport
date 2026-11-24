@@ -480,7 +480,8 @@ records with `file`, `line`, `unit`, `symbol`, `source` (the line's text),
 
 ### What it found
 
-Title, menus, opening narration and `?stage=1` (fairy dialogue, walking):
+Title, menus, opening narration, the Hyrule Castle opening up to Zelda's first
+lines, and `?stage=1` (fairy dialogue, walking):
 **no raw load from file data in `game/src/game`** (the game's GBA-derived
 formats are little-endian and read byte by byte). In JSystem it found the JPA
 texture-coordinate animation table read as host floats (fixed, 38ec291). The

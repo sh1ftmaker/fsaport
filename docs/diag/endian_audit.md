@@ -14,8 +14,8 @@ How the list was made:
   read of every consumer of the game's own resource types ('SOB ', 'SCH ',
   'SCL ', 'SMP ', 'SPL ', 'ENM ', BMG, BTI, THP).
 - **runtime**: the endian trap (`-DFSA_ENDIAN_DIAG=ON`, docs/DIAGNOSTICS.md,
-  "Endian trap") over the title, the menus up to the file select, the opening
-  narration and `?stage=1` (fairy dialogue, ~100 s of walking), all game, JSystem
+  "Endian trap") over the title, the menus, the opening narration, the Hyrule
+  Castle opening up to Zelda's first lines and `?stage=1` (fairy dialogue, ~100 s of walking), all game, JSystem
   and SDK units instrumented.
 
 Main results:
