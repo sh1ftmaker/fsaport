@@ -456,6 +456,52 @@
     };
   }
 
+  // Disc cache: every 1 MiB block fetched from the server is kept in Cache
+  // Storage (works in Safari too), so a later visit reads it locally. Keyed by
+  // the image's URL, size and Last-Modified; caches of other images are
+  // dropped. ?disccache=0 turns it off; window.fsaDiscCacheClear() empties it.
+  const CACHE_BLOCK = 1 << 20;
+  const discCache = {
+    cache: null, tag: '', hits: 0, stored: 0,
+    async open(url, size, lastMod) {
+      if (discQuery.get('disccache') === '0' || !window.caches || !window.isSecureContext && location.hostname !== '127.0.0.1') return;
+      try {
+        let h = 0;
+        for (const ch of `${new URL(url, location.href).pathname}|${size}|${lastMod}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+        this.tag = h.toString(36);
+        const name = 'fsa-disc-' + this.tag;
+        for (const k of await caches.keys()) if (k.startsWith('fsa-disc-') && k !== name) await caches.delete(k);
+        this.cache = await caches.open(name);
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+        const n = (await this.cache.keys()).length;
+        log(`[disc] browser cache: ${n} MB of this image stored`);
+      } catch (e) { this.cache = null; log(`[disc] browser cache unavailable (${e})`); }
+    },
+    key(b) { return `${location.origin}/__fsa_disc/${this.tag}/${b}`; },
+    async get(b) {
+      if (!this.cache) return null;
+      try {
+        const r = await this.cache.match(this.key(b));
+        if (!r) return null;
+        this.hits++;
+        return new Uint8Array(await r.arrayBuffer());
+      } catch (e) { return null; }
+    },
+    put(b, bytes) {
+      if (!this.cache) return;
+      this.cache.put(this.key(b), new Response(bytes.slice())).then(() => { this.stored++; },
+        (e) => { if (this.cache) { log(`[disc] browser cache full or failed (${e}); not caching more`); this.cache = null; } });
+    },
+    // Stores the 1 MiB blocks of a fetched range that starts at a block boundary.
+    putRange(off, bytes) {
+      for (let at = 0; at < bytes.length; at += CACHE_BLOCK) this.put((off + at) / CACHE_BLOCK, bytes.subarray(at, at + CACHE_BLOCK));
+    },
+  };
+  window.fsaDiscCacheClear = async () => {
+    for (const k of await caches.keys()) if (k.startsWith('fsa-disc-')) await caches.delete(k);
+    log('[disc] browser cache cleared');
+  };
+
   function discLazy(url, size) {
     const BLOCK = 4 << 20, KEEP = 32, AHEAD = 2;  // 128 MiB of cache at most
     const cache = new Map();  // block -> Promise<Uint8Array>, in LRU order
@@ -464,9 +510,23 @@
       let p = cache.get(i);
       if (p) { cache.delete(i); cache.set(i, p); return p; }
       const off = i * BLOCK, end = Math.min(size, off + BLOCK) - 1;
-      p = fetch(url, { headers: { Range: `bytes=${off}-${end}` } })
+      const fromNet = () => fetch(url, { headers: { Range: `bytes=${off}-${end}` } })
         .then((r) => { if (!r.ok) throw new Error(`disc read ${off}: HTTP ${r.status}`); return r.arrayBuffer(); })
-        .then((b) => { fetched += b.byteLength; return new Uint8Array(b); });
+        .then((b) => { fetched += b.byteLength; const u = new Uint8Array(b); discCache.putRange(off, u); return u; });
+      p = (async () => {
+        if (discCache.cache) {
+          const n = Math.ceil((end + 1 - off) / CACHE_BLOCK), parts = [];
+          for (let k = 0; k < n; k++) {
+            const part = await discCache.get(off / CACHE_BLOCK + k);
+            if (!part) return fromNet();
+            parts.push(part);
+          }
+          const out = new Uint8Array(end + 1 - off);
+          parts.forEach((part, k) => out.set(part, k * CACHE_BLOCK));
+          return out;
+        }
+        return fromNet();
+      })();
       p.catch(() => cache.delete(i));
       cache.set(i, p);
       while (cache.size > KEEP) cache.delete(cache.keys().next().value);
@@ -588,6 +648,14 @@
   // Fetches the manifest's blocks (adjacent ones merged into requests of at
   // most 8 MiB, six at a time) with the progress bar; returns block -> bytes.
   async function discPrefetch(url, size, blocks, ctl) {
+    const pinned = new Map();
+    let fromCache = 0;
+    for (const b of blocks) {
+      const bytes = await discCache.get(b);
+      if (bytes) { pinned.set(b, bytes); fromCache += bytes.length; }
+    }
+    if (fromCache) log(`[disc] ${MB(fromCache)} MB of the prefetch came from the browser cache`);
+    blocks = blocks.filter((b) => !pinned.has(b));
     const runs = [];
     for (const b of blocks) {
       const r = runs[runs.length - 1];
@@ -595,7 +663,7 @@
       else runs.push({ start: b, end: b + 1 });
     }
     const total = runs.reduce((n, r) => n + Math.min(size, r.end * MANI_BLOCK) - r.start * MANI_BLOCK, 0);
-    const pinned = new Map();
+    if (!runs.length) return pinned;
     let got = 0, next = 0;
     document.body.classList.add('downloading');
     statusEl.textContent = 'Loading disc image…';
@@ -607,6 +675,7 @@
         const res = await fetch(url, { headers: { Range: `bytes=${off}-${end}` }, signal: ctl.signal });
         if (res.status !== 206) throw new Error(`HTTP ${res.status} for bytes ${off}-${end}`);
         const buf = new Uint8Array(await res.arrayBuffer());
+        discCache.putRange(off, buf);
         for (let b = r.start; b < r.end; b++) pinned.set(b, buf.subarray((b - r.start) * MANI_BLOCK, (b - r.start + 1) * MANI_BLOCK));
         got += buf.length;
         dl.show(got, total);
@@ -645,6 +714,7 @@
   async function discSmartFromUrl(url) {
     const h = await fetch(url, { method: 'HEAD' });
     const size = Number(h.headers.get('Content-Length'));
+    await discCache.open(url, size, h.headers.get('Last-Modified') || h.headers.get('ETag') || '');
     const lazy = discLazy(url, size);
     let mani = null;
     try {
@@ -688,6 +758,7 @@
     if (started) return null;  // a file was chosen meanwhile
     if (!disc) {
       const h = await fetch(iso, { method: 'HEAD' });
+      await discCache.open(iso, Number(h.headers.get('Content-Length')), h.headers.get('Last-Modified') || h.headers.get('ETag') || '');
       disc = discLazy(iso, Number(h.headers.get('Content-Length')));
       log(`[disc] reading ${iso} on demand (${MB(disc.size)} MB)`);
     }

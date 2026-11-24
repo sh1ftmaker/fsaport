@@ -53,6 +53,9 @@ everything else on demand; `?disc=lazy` reads everything on demand and
 run `tools/serve.py` with `--record-manifest` and open the page with
 `?discrecord=1`: the blocks the game reads are merged into the manifest as you
 play. It lists block numbers only (no disc data) and stays in `build/`.
+Every block fetched is also kept in the browser's Cache Storage, so later
+visits read it locally (`?disccache=0` turns that off; `fsaDiscCacheClear()` in
+the console empties it).
 `main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
 
 ## Compile check only
