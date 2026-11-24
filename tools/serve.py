@@ -13,7 +13,11 @@ http://127.0.0.1:8790/?iso=local.iso. Local testing only: never expose a disc.
 With --record-manifest a page opened with ?discrecord=1 POSTs the disc blocks
 the game read to /disc-manifest, merged into disc-manifest.json in --dir; pages
 then fetch those blocks up front and read the rest on demand. The manifest is
-block numbers only, no disc data."""
+block numbers only, no disc data.
+
+With --diag DIR the page's diagnostics streams (platform/diag.cpp) are kept:
+each POST to /diag is "<run>\t<name>\n" then JSON lines, appended to
+DIR/<run>/<name>.jsonl."""
 import argparse, datetime, http.server, json, os, re, threading
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -93,7 +97,29 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_response(204)
         self.end_headers()
 
+    diag = None
+    def post_diag(self):
+        n = int(self.headers.get('Content-Length') or 0)
+        if n <= 0 or n > 8 << 20:
+            self.send_error(413)
+            return
+        body = self.rfile.read(n).decode('utf-8', 'replace')
+        head, _, lines = body.partition('\n')
+        run, _, name = head.partition('\t')
+        run = re.sub(r'[^A-Za-z0-9-]', '', run)[:48] or 'anon'
+        name = re.sub(r'[^A-Za-z0-9_-]', '', name)[:48] or 'misc'
+        with self.lock:
+            d = os.path.join(self.diag, run)
+            os.makedirs(d, exist_ok=True)
+            with open(os.path.join(d, name + '.jsonl'), 'a') as f:
+                f.write(lines if lines.endswith('\n') else lines + '\n')
+        self.send_response(204)
+        self.end_headers()
+
     def do_POST(self):
+        if self.path.split('?')[0] == '/diag' and self.diag:
+            self.post_diag()
+            return
         if self.path.split('?')[0] == '/disc-manifest' and self.record_manifest:
             self.post_manifest()
             return
@@ -129,7 +155,11 @@ ap.add_argument('--dir', default='build/web')
 ap.add_argument('--iso')
 ap.add_argument('--logs')
 ap.add_argument('--record-manifest', action='store_true')
+ap.add_argument('--diag')
 a = ap.parse_args()
+if a.diag:
+    Handler.diag = os.path.abspath(a.diag)
+    os.makedirs(Handler.diag, exist_ok=True)
 Handler.record_manifest = a.record_manifest
 Handler.iso = os.path.abspath(a.iso) if a.iso else None
 if a.logs:

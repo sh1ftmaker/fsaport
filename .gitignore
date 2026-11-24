@@ -4,3 +4,6 @@
 *.o
 /extern/aurora/build/
 /.claude/
+
+# Port diagnostics output (tools/serve.py --diag logs/diag)
+/logs/

@@ -79,7 +79,7 @@ target_link_options(fsa PRIVATE
   -sSTACK_SIZE=4194304
   -sEXIT_RUNTIME=0 -sFORCE_FILESYSTEM=1 -sINVOKE_RUN=0 -sENVIRONMENT=web
   "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8','UTF8ToString']"
-  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms','_fsa_dump_threads','_fsa_set_dvd_log','_fsa_debug_state','_fsa_touch_set','_fsa_debug_nodark','_fsa_print_stack','_fsa_debug_set_stage','_fsa_debug_thp']"
+  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms','_fsa_dump_threads','_fsa_set_dvd_log','_fsa_debug_state','_fsa_touch_set','_fsa_debug_nodark','_fsa_print_stack','_fsa_debug_set_stage','_fsa_debug_thp','_fsa_diag']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_save.js"

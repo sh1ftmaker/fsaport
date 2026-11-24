@@ -340,6 +340,32 @@
       .then((r) => { if (r.status === 404 || r.status === 501) remote.on = false; })
       .catch(() => {});
   }
+  // Diagnostics streams (platform/diag.cpp): JSON lines per stream name,
+  // posted to tools/serve.py --diag as "<run>\t<name>\n<lines>". One run per
+  // page load: <date>-<time>-<session id>.
+  const diag = { run: new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15) + '-' + remote.id,
+                 bufs: new Map(), timer: 0, on: true };
+  function diagFlush(beacon) {
+    clearTimeout(diag.timer); diag.timer = 0;
+    if (!diag.on) return;
+    for (const [name, lines] of diag.bufs) {
+      if (!lines.length) continue;
+      const body = `${diag.run}\t${name}\n${lines.join('\n')}\n`;
+      diag.bufs.set(name, []);
+      if (beacon && navigator.sendBeacon) { navigator.sendBeacon('diag', body); continue; }
+      fetch('diag', { method: 'POST', body })
+        .then((r) => { if (r.status === 404 || r.status === 501) diag.on = false; }).catch(() => {});
+    }
+  }
+  Module.fsaDiag = window.fsaDiag = (name, line) => {
+    if (!diag.on) return;
+    if (!diag.bufs.has(name)) diag.bufs.set(name, []);
+    diag.bufs.get(name).push(line);
+    if (!diag.timer) diag.timer = setTimeout(diagFlush, 2000);
+  };
+  window.fsaDiagFlush = () => diagFlush(false);
+  addEventListener('pagehide', () => diagFlush(true));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) diagFlush(true); });
   addEventListener('pagehide', () => remoteFlush(true));
   document.addEventListener('visibilitychange', () => {
     log(`[page] ${document.hidden ? 'hidden' : 'visible'}`);
