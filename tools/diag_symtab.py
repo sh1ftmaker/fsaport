@@ -26,7 +26,7 @@ decomp's symbols.txt, and writes one line per instrumented function:
          way, found verbatim), "c" (unmangled C name), "name" (same qualified
          name, parameters differ: unique in symbols.txt), "addr" (the name
          carries the original's address, e.g. fn_8023FBF0, and symbols.txt has
-         a function there), "ambiguous" (several candidates: sym is the first),
+         a function there), "ambiguous" (several candidates: sym left empty),
          "none"
   unit   the source file that defines the function (strong definition), or
          "inline:<file>" for an inline / template function kept from <file>
@@ -636,7 +636,6 @@ def functions_in(text):
                             depth -= 1
                         j += 1
                     hh = re.sub(r'\)\s*:[^{]*$', ')', h, flags=re.S)  # ctor initialiser list
-                    m = re.search(r'([A-Za-z_~][\w:~]*(?:<[^()]*>)?(?:::[~\w]+)?|operator\s*[^\s(]+)\s*\(', hh)
                     # the declarator name is the last identifier before the parameter list
                     names = re.findall(r'((?:[A-Za-z_]\w*::)*~?[A-Za-z_]\w*|operator\s*\S+?)\s*\(', hh)
                     if names:
@@ -788,7 +787,6 @@ def main():
         d = d.strip() or nm
         q = short(qualname(d))
         file = unit.split(':')[-1]
-        base_q = re.sub(r'<.*>', '', q)
         # --- join key
         sym, match, mw = '', 'none', None
         if not nm.startswith('_Z'):

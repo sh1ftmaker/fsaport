@@ -27,6 +27,9 @@ typedef union {
 #elif defined(FSA_PORT) && defined(__cplusplus)
 // Port: the write-gather pipe is Aurora's command FIFO. Each store appends the
 // value big-endian, as the hardware pipe did (platform/gx_pipe.cpp).
+#ifdef FSA_DIAG  // port-only and hot: not counted (docs/DIAGNOSTICS.md)
+#pragma clang attribute push(__attribute__((no_instrument_function)), apply_to = function)
+#endif
 void fsa_gxpipe_u8(unsigned char v);
 void fsa_gxpipe_u16(unsigned short v);
 void fsa_gxpipe_u32(unsigned int v);
@@ -45,6 +48,9 @@ struct FsaGXPipe {
   FsaGXPipeF32 f32;
 };
 extern volatile FsaGXPipe fsa_gx_pipe;
+#ifdef FSA_DIAG
+#pragma clang attribute pop
+#endif
 #define GXWGFifo fsa_gx_pipe
 #else
 #define GXWGFifo (*(volatile PPCWGPipe*)GXFIFO_ADDR)

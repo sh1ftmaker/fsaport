@@ -75,6 +75,7 @@ python3 tools/compile_check.py                         # build/obj/*.o + build/c
 | `extern/aurora/` | Aurora (MIT): GX -> WebGPU, PAD, CARD, OS memory. |
 | `tools/` | Build and porting scripts. |
 | `docs/PORTING.md` | Every kind of change made to the sources and why, and what comes next. |
+| `docs/DIAGNOSTICS.md` | The diagnostics build (`-DFSA_DIAG=ON`): function coverage and stub hits for the decomp, and its hooks. |
 
 ## Licenses
 

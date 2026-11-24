@@ -48,7 +48,9 @@ struct ShadowStack {
   unsigned ids[kStackDepth];
 };
 ShadowStack g_stacks[kMaxContexts];
-unsigned g_ctx;  // index into g_stacks; set by os_thread.cpp
+// Index into g_stacks, set by os_thread.cpp. Starts as 1: the code before the
+// scheduler exists runs on what becomes the main thread (coroutine 0).
+unsigned g_ctx = 1;
 
 fsa_diag_enter_hook g_enterHook;
 int g_inHook;
@@ -338,6 +340,46 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_diag_flush_all(void) {
   flush_counts();
   for (int i = 0; i < g_flushHookCount; i++)
     g_flushHooks[i]();
+}
+
+// Debugging: Module._fsa_diag_dump_stacks() logs each context's shadow stack
+// (depth and the innermost frames). Depths that keep growing between calls
+// mean enters and exits are not pairing up.
+extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_diag_dump_stacks(void) {
+  load_names();
+  for (unsigned c = 0; c < kMaxContexts; c++) {
+    const ShadowStack& s = g_stacks[c];
+    if (!s.depth)
+      continue;
+    platform_log("[diag] context %u depth %u%s\n", c, s.depth, c == g_ctx ? " (current)" : "");
+    unsigned n = s.depth < kStackDepth ? s.depth : kStackDepth;
+    for (unsigned k = 0; k < n && k < 6; k++)
+      platform_log("[diag]   %s\n", names_of(s.ids[n - 1 - k])->name);
+  }
+}
+
+// Self-test of the hook API: Module._fsa_diag_test_hook(1) installs a hook
+// that counts entries with and without a caller; (0) removes it and logs the
+// counts.
+namespace {
+uint64_t g_testWithCaller, g_testNoCaller;
+NOINST void test_hook(unsigned callee, unsigned caller) {
+  if (caller)
+    g_testWithCaller++;
+  else
+    g_testNoCaller++;
+  (void)callee;
+}
+}  // namespace
+extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_diag_test_hook(int on) {
+  if (on) {
+    g_testWithCaller = g_testNoCaller = 0;
+    fsa_diag_set_enter_hook(test_hook);
+  } else {
+    fsa_diag_set_enter_hook(nullptr);
+    platform_log("[diag] test hook: %llu entries with a caller, %llu without\n", (unsigned long long)g_testWithCaller,
+                 (unsigned long long)g_testNoCaller);
+  }
 }
 
 extern "C" NOINST void fsa_diag_set_enter_hook(fsa_diag_enter_hook hook) { g_enterHook = hook; }
