@@ -41,7 +41,10 @@ void J3DCalcBBoardMtx(register Mtx mtx)
 
 		psq_st zero, 0x20(mtx), 0, 0
 	}
-#endif // clang-format on
+#else // clang-format on
+	mtx[0][1] = mtx[0][2] = zero;
+	mtx[2][0] = mtx[2][1] = zero;
+#endif
 
 	mtx[0][0] = x;
 	mtx[1][0] = zero;

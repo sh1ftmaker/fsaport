@@ -210,6 +210,36 @@ int J3DMtxBuffer::createBumpMtxArray(J3DModelData* data, u32 viewNum)
  */
 void J3DMtxBuffer::calcWeightEnvelopeMtx()
 {
+#ifndef __MWERKS__
+	// Port: the paired-single body below, portably. Each weighted envelope
+	// matrix is the sum over its joints of weight * (world * inverse bind).
+	{
+		int count     = mJointTree->getWEvlpMtxNum();
+		u16* mix      = mJointTree->getWEvlpMixIndex();
+		f32* mixW     = mJointTree->getWEvlpMixWeight();
+		for (int e = 0; e < count; e++) {
+			u8* flags = &mEnvelopeScaleFlags[e];
+			*flags    = 1;
+			MtxP out  = mWeightEnvelopeMatrices[e];
+			Mtx sum   = { { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f } };
+			int n     = mJointTree->getWEvlpMixMtxNum(e);
+			for (int k = 0; k < n; k++) {
+				u16 joint = *mix++;
+				f32 w     = *mixW++;
+				Mtx prod;
+				PSMTXConcat(mWorldMatrices[joint], mJointTree->getInvJointMtx(joint), prod);
+				for (int r = 0; r < 3; r++)
+					for (int c = 0; c < 4; c++)
+						sum[r][c] += w * prod[r][c];
+				*flags &= mScaleFlags[joint];
+			}
+			for (int r = 0; r < 3; r++)
+				for (int c = 0; c < 4; c++)
+					out[r][c] = sum[r][c];
+		}
+		return;
+	}
+#endif
 	register MtxP weightAnmMtx;
 	register Mtx* worldMtx;
 	register Mtx* invMtx;

@@ -33,6 +33,9 @@ target_compile_options(fsa_game_flags INTERFACE
   # MWCC let functions fall off the end without a return; clang would treat
   # those paths as unreachable (that miscompiled into hangs).
   -fno-strict-return
+  # The decomp reinterprets memory across types everywhere (MWCC never
+  # exploited aliasing rules); with them on, clang dropped stores.
+  -fno-strict-aliasing
   -Wno-everything "SHELL:-include ${FSA_GAME}/port/port_prefix.h"
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
@@ -76,7 +79,7 @@ target_link_options(fsa PRIVATE
   -sSTACK_SIZE=4194304
   -sEXIT_RUNTIME=0 -sFORCE_FILESYSTEM=1 -sINVOKE_RUN=0 -sENVIRONMENT=web
   "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','HEAPU8','UTF8ToString']"
-  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms','_fsa_dump_threads','_fsa_set_dvd_log','_fsa_debug_state','_fsa_touch_set','_fsa_debug_nodark']"
+  "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms','_fsa_dump_threads','_fsa_set_dvd_log','_fsa_debug_state','_fsa_touch_set','_fsa_debug_nodark','_fsa_print_stack']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
   --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map

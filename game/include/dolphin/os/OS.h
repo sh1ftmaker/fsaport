@@ -127,6 +127,10 @@ inline s16 __OSf32tos16(__REGISTER f32 inF) {
         psq_st inF, 0(tmpPtr), 0x1, 5
         lha out, 0(tmpPtr)
     }
+#else
+    // Port: a quantised store truncates and saturates (GQR5: s16, no scale).
+    (void)tmpPtr;
+    out = inF != inF ? 0 : inF >= 32767.0f ? 32767 : inF <= -32768.0f ? -32768 : (s16)inF;
 #endif
     // clang-format on
 
@@ -147,6 +151,9 @@ inline u8 __OSf32tou8(__REGISTER f32 inF) {
         psq_st inF, 0(tmpPtr), 0x1, 2
         lbz out, 0(tmpPtr)
     }
+#else
+    (void)tmpPtr;
+    out = inF != inF ? 0 : inF >= 255.0f ? 255 : inF <= 0.0f ? 0 : (u8)inF;
 #endif
     // clang-format on
 
@@ -168,6 +175,9 @@ inline s8 __OSf32tos8(__REGISTER f32 inF) {
         lbz out, 0(tmpPtr)
         extsb out, out
     }
+#else
+    (void)tmpPtr;
+    out = (u8)(s8)(inF != inF ? 0 : inF >= 127.0f ? 127 : inF <= -128.0f ? -128 : (s8)inF);
 #endif
     // clang-format on
 

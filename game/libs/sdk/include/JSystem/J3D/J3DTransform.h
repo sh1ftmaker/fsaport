@@ -36,7 +36,12 @@ inline void J3DPSMtx33Copy(const register Mtx33 src, register Mtx33 dst)
 		psq_st      fp1, 24(dst),  0, 0
 		stfs        fp0, 32(dst)
 	}
-#endif // clang-format on
+#else // clang-format on
+	// Port: copy the 3x3 matrix.
+	for (int r = 0; r < 3; r++)
+		for (int c = 0; c < 3; c++)
+			dst[r][c] = src[r][c];
+#endif
 }
 
 inline void J3DPSMtx33CopyFrom34(register MtxP src, register Mtx3P dst)
@@ -62,7 +67,12 @@ inline void J3DPSMtx33CopyFrom34(register MtxP src, register Mtx3P dst)
 		psq_st x_y3, 24(dst), 0, 0
 		stfs z3, 0x20(dst)
 	}
-#endif // clang-format on
+#else // clang-format on
+	// Port: the 3x3 part of a 3x4 matrix.
+	for (int r = 0; r < 3; r++)
+		for (int c = 0; c < 3; c++)
+			dst[r][c] = src[r][c];
+#endif
 }
 
 #endif

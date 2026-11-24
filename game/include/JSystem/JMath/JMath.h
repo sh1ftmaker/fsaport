@@ -20,6 +20,8 @@ inline float __frsqrtes(__REGISTER double f) {
     asm {
         frsqrte out, f
     }
+#else
+    out = (float)(1.0 / __builtin_sqrt(f));
 #endif
     // clang-format on
     return out;
@@ -32,6 +34,8 @@ inline f32 JMAFastSqrt(__REGISTER f32 input) {
         asm {
             frsqrte out, input
         }
+#else
+        out = 1.0f / __builtin_sqrtf(input);
 #endif
         return out * input;
     } else {
@@ -55,6 +59,8 @@ inline void gekko_ps_copy3(__REGISTER void* dst, __REGISTER const void* src) {
         psq_st src0, 0(dst), 0, 0
         stfs src1, 8(dst)
     };
+#else
+    __builtin_memcpy(dst, src, 3 * sizeof(f32));
 #endif
 }
 
@@ -71,6 +77,8 @@ inline void gekko_ps_copy6(__REGISTER void* dst, __REGISTER const void* src) {
         psq_st src1, 8(dst), 0, 0
         psq_st src2, 16(dst), 0, 0
     };
+#else
+    __builtin_memcpy(dst, src, 6 * sizeof(f32));
 #endif
 }
 
@@ -96,6 +104,8 @@ inline void gekko_ps_copy12(__REGISTER void* dst, __REGISTER const void* src) {
         psq_st src4, 32(dst), 0, 0
         psq_st src5, 40(dst), 0, 0
     };
+#else
+    __builtin_memcpy(dst, src, 12 * sizeof(f32));
 #endif
 }
 
@@ -127,6 +137,8 @@ inline void gekko_ps_copy16(__REGISTER void* dst, __REGISTER const void* src) {
         psq_st src6, 48(dst), 0, 0
         psq_st src7, 56(dst), 0, 0
     };
+#else
+    __builtin_memcpy(dst, src, 16 * sizeof(f32));
 #endif
 }
 

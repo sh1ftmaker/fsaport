@@ -6,7 +6,9 @@
   'use strict';
   var q = /[?&]gputrace=(\d+)/.exec(location.search);
   if (!q || !window.GPUDevice) return;
-  var budget = Math.max(200, Number(q[1]) > 1 ? Number(q[1]) : 1500);
+  // ?gputrace=0 wraps the API but traces nothing until gpuTrace(n) is called.
+  var budget = q[1] === '0' ? 0 : Math.max(200, Number(q[1]) > 1 ? Number(q[1]) : 1500);
+  window.gpuTrace = function (n) { budget = n; };
   var ids = new WeakMap(), next = 1;
   function id(o, kind) {
     var n = ids.get(o);
@@ -41,6 +43,25 @@
     }
     return t;
   }
+  // What each render pipeline does to the target, remembered from creation
+  // (pipelines are made long before a mid-game trace starts) and printed
+  // with every traced setPipeline.
+  var pipeInfo = new WeakMap();
+  function blendStr(b) {
+    if (!b) return 'noblend';
+    var c = b.color || {}, a = b.alpha || {};
+    return (c.srcFactor || 'one') + '*S ' + (c.operation || 'add') + ' ' + (c.dstFactor || 'zero') + '*D' +
+      ' | a ' + (a.srcFactor || 'one') + ' ' + (a.operation || 'add') + ' ' + (a.dstFactor || 'zero');
+  }
+  function describePipeline(d) {
+    var t = (d.fragment && d.fragment.targets) || [];
+    var parts = t.map(function (x) {
+      return x ? x.format + ' ' + blendStr(x.blend) + ' mask ' + (x.writeMask === undefined ? 15 : x.writeMask) : 'null';
+    });
+    var ds = d.depthStencil;
+    if (ds) parts.push('depth ' + ds.depthCompare + (ds.depthWriteEnabled ? ' write' : ''));
+    return (d.label ? d.label + ': ' : '') + parts.join('; ');
+  }
   function wrap(proto, cls, kind) {
     if (!proto) return;
     Object.getOwnPropertyNames(proto).forEach(function (name) {
@@ -49,12 +70,16 @@
       var orig = d.value;
       proto[name] = function () {
         var r = orig.apply(this, arguments);
+        if (name === 'createRenderPipeline' && r && arguments[0]) {
+          try { pipeInfo.set(r, describePipeline(arguments[0])); } catch (e) { /* best effort */ }
+        }
         if (budget > 0) {
           budget--;
           var args = [];
           for (var i = 0; i < arguments.length; i++) args.push(sum(arguments[i], 0));
           var res = r && typeof r === 'object' && !(r instanceof Promise) ? ' -> ' + sum(r, 3) : '';
           if (r && /Encoder$/.test(r.constructor && r.constructor.name)) res = ' -> ' + id(r, 'enc');
+          if (name === 'setPipeline' && pipeInfo.has(arguments[0])) res += '  {' + pipeInfo.get(arguments[0]) + '}';
           var line = '[gpu] ' + id(this, kind) + '.' + name + '(' + args.join(', ') + ')' + res;
           (window.fsaLog || console.log)(line.length > 900 ? line.slice(0, 900) + '…' : line);
           if (budget === 0) (window.fsaLog || console.log)('[gpu] trace budget used up');

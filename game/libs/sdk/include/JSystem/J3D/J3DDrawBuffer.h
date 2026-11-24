@@ -31,7 +31,11 @@ inline f32 J3DCalcZValue(register Mtx* m, register Vec v)
 		ps_madd out, temp_f2, out, temp_f4
 		ps_sum0 out, out, out, out
 	}
-#endif // clang-format on
+#else // clang-format on
+	// Port: z of the view-space position (row 2 of the matrix, w = 1).
+	out = (*m)[2][0] * v.x + (*m)[2][1] * v.y + (*m)[2][2] * v.z + (*m)[2][3];
+	(void)temp_f4; (void)temp_f0; (void)temp_f2; (void)temp_f1;
+#endif
 
 	return out;
 }

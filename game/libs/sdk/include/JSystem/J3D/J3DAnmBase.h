@@ -135,7 +135,11 @@ inline f32 J3DHermiteInterpolation<s16>(register f32 pp1, register s16* pp2, reg
 		fmadds fout, ff4, ff2, fout
 		fsubs fout, fout, ff0
 	}
-#endif // clang-format on
+#else // clang-format on
+	// Port: GQR5 is OSInitFastCast's s16 with no scale, so the paired loads above
+	// are plain conversions; the curve is the same as the f32 specialisation's.
+	fout = JMAHermiteInterpolation(p1, (f32)*p2, (f32)*p3, (f32)*p4, (f32)*p5, (f32)*p6, (f32)*p7);
+#endif
 	return fout;
 }
 
