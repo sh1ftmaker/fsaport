@@ -249,6 +249,9 @@ Worth checking for in any code that misbehaves:
 - The texture-object cache drops entries unused for 300 frames
   (`sweep_texture_cache`, `lib/gx/gx.cpp`): every `GXInitTexObj` is a new
   identity, so games that re-init per frame grew it without bound.
+- `OSGetTime` takes its time from `aurora_os_time_hook` when it is set: the
+  behaviour harness's virtual clock (`lib/dolphin/os/OSTime.cpp`,
+  docs/HARNESS.md).
 
 ## Current state
 

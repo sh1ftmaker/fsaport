@@ -17,6 +17,8 @@ bool g_inFrame = false;
 OSThreadQueue g_retraceQueue;
 }  // namespace
 
+u32 platform_retrace_count() { return g_retraceCount; }
+
 u32 g_framesBegun = 0, g_framesDrawn = 0;
 double g_frameStart = 0, g_frameMsSum = 0, g_endMsSum = 0, g_beginMsSum = 0;
 
@@ -86,7 +88,7 @@ extern "C" EMSCRIPTEN_KEEPALIVE void fsa_retrace() {
 // Next timer deadline in ms from now (for the page's setTimeout), or -1.
 extern "C" EMSCRIPTEN_KEEPALIVE double fsa_next_timer_ms() {
   OSTime next = platform_next_alarm();
-  if (!next)
+  if (!next || platform_lockstep())  // lockstep: alarms fire at retraces only
     return -1;
   OSTime now = OSGetTime();
   if (next <= now)
@@ -95,6 +97,8 @@ extern "C" EMSCRIPTEN_KEEPALIVE double fsa_next_timer_ms() {
 }
 
 extern "C" EMSCRIPTEN_KEEPALIVE void fsa_timer() {
+  if (platform_lockstep())
+    return;
   platform_interrupt_enter();
   platform_service_interrupts();
   platform_interrupt_leave();

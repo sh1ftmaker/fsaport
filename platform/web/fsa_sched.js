@@ -16,7 +16,7 @@ Module.fsaSched = {
     });
   },
   idle(from) {
-    queueMicrotask(() => Module.fsaClock.armTimer());
+    queueMicrotask(() => { Module.fsaClock.armTimer(); Module.fsaClock.idle(); });
     return new Promise((resolve) => this.waiters.set(from, resolve));
   },
   // Switches run as microtasks, which the browser drains before any task, so
@@ -55,20 +55,45 @@ Module.fsaClock = {
   period: 1000 / 59.94,
   next: 0,
   timer: 0,
+  // Lockstep (the behaviour harness, docs/HARNESS.md): a retrace is only
+  // delivered while every game thread is blocked, so the game never sees one
+  // in the middle of a frame or a disc read; one that falls due while it is
+  // busy is owed and delivered as soon as it goes idle. fast: no wall-clock
+  // pacing, the next retrace as soon as the game is idle.
+  lockstep: false,
+  fast: false,
+  owed: false,
   start() {
     this.next = performance.now() + this.period;
     const tick = (now) => {
-      if (now >= this.next) {
+      if (this.fast) {
+        this.owed = true;
+        this.idle();
+      } else if (now >= this.next) {
         // At most one retrace per animation frame; drop time we cannot catch up.
         this.next += this.period;
         if (now - this.next > this.period * 2) this.next = now + this.period;
-        Module._fsa_retrace();
-        this.armTimer();
+        this.deliver();
       }
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   },
+  deliver() {
+    if (this.lockstep && !Module._fsa_is_idle()) { this.owed = true; return; }
+    this.owed = this.fast;
+    Module._fsa_retrace();
+    this.armTimer();
+    if (this.fast) this.idle();
+  },
+  idle() {
+    if (!this.owed || this.idleTimer) return;
+    this.idleTimer = setTimeout(() => {
+      this.idleTimer = 0;
+      if (this.owed && Module._fsa_is_idle()) this.deliver();
+    }, 0);
+  },
+  idleTimer: 0,
   armTimer() {
     const ms = Module._fsa_next_timer_ms();
     if (ms < 0 || ms > this.period) return;

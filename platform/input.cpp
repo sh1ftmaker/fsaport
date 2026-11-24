@@ -48,6 +48,9 @@ extern "C" void fsa_pad_after_read(PADStatus* status) {
     if (g_touch.triggerR > p.triggerRight)
       p.triggerRight = g_touch.triggerR;
   }
+  // The behaviour harness (platform/harness.cpp): sync points, then replay
+  // replaces or record logs all four pads.
+  platform_harness_pad(status);
 
   // Port 0's buttons in the log whenever they change, so input problems show.
   // The stick counts as changed when it crosses into another of nine zones
