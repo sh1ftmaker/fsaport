@@ -107,6 +107,10 @@ void JKRHeap::destroy() { do_destroy(); }
 extern "C" int fsa_host_alloc_depth;
 extern "C" void fsa_debug_stack(const char *);
 #endif
+#ifdef FSA_DIAG_UNINIT
+extern "C" void fsa_uninit_alloc(void *p, u32 size);
+extern "C" void fsa_uninit_free(void *p);
+#endif
 void *JKRHeap::alloc(u32 byteCount, int alignment, JKRHeap *heap)
 {
     void *memory;
@@ -132,6 +136,10 @@ void *JKRHeap::alloc(u32 byteCount, int alignment)
     u32 freeBefore = (u32)getFreeSize();
 #endif
     void *p = do_alloc(byteCount, alignment);
+#ifdef FSA_DIAG_UNINIT
+    // Diagnostics build: poison the block (platform/diag_uninit.cpp).
+    fsa_uninit_alloc(p, byteCount);
+#endif
 #ifdef FSA_PORT_TRACE
     static u32 sCount = 0;
     if (this == (JKRHeap *)0x8d40e0 && sCount == 3000 && byteCount == 0x100) {
@@ -172,6 +180,9 @@ void JKRHeap::free(void *memory)
 {
 #line 365
     JUT_WARNING_F(!mInitFlag, "free %x in heap %x", memory, this);
+#ifdef FSA_DIAG_UNINIT
+    fsa_uninit_free(memory);
+#endif
     do_free(memory);
 }
 
