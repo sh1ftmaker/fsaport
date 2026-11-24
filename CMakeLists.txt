@@ -136,6 +136,17 @@ if(FSA_DIAG)
             --source ${CMAKE_SOURCE_DIR} --symbols ${FSA_DECOMP_SYMBOLS}
             --llvm-bin ${FSA_LLVM_BIN}/../bin --out ${CMAKE_BINARY_DIR}/fsa.diag.tsv
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR} VERBATIM)
+  # Virtual dispatch audit (platform/diag_vdispatch.cpp): marks every
+  # call_indirect and passes each function's first argument to the entry hook;
+  # writes fsa.diag.vt.tsv (the port's vtables). Runs after diag_symtab.py,
+  # which reads the unmodified function bodies.
+  option(FSA_DIAG_VDISPATCH "rewrite fsa.wasm for the vdispatch stream (FSA_DIAG builds)" ON)
+  if(FSA_DIAG_VDISPATCH)
+    add_custom_command(TARGET fsa POST_BUILD
+      COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/vdispatch_instrument.py ${CMAKE_BINARY_DIR}/fsa.wasm
+              ${CMAKE_BINARY_DIR}/fsa.map --llvm-bin ${FSA_LLVM_BIN}/../bin
+      VERBATIM)
+  endif()
 endif()
 
 add_custom_command(TARGET fsa POST_BUILD

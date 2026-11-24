@@ -16,6 +16,10 @@ run directory (or into --out for several runs merged):
                          "first_scene", "first_frame", "units", "kinds"}; plus
                          with --structural the decomp's status for the symbol
   stubs_final.jsonl      last record per id of the "stubs" stream
+  vdispatch_final.jsonl  last record per indirect-call edge of the "vdispatch"
+                         stream (caller, target, entered function, receiver
+                         vtable), calls summed over the runs; compare with the
+                         original's vtables with tools/vdispatch_audit.py
 
 and prints a short report.
 """
@@ -129,6 +133,30 @@ def main():
         for i in sorted(st_final, key=lambda i: -st_final[i]['calls']):
             f.write(json.dumps(st_final[i]) + '\n')
 
+    vd = {}
+    for d in a.runs:
+        tag = os.path.basename(os.path.normpath(d))
+        p = os.path.join(d, 'vdispatch.jsonl')
+        if not os.path.exists(p):
+            continue
+        last = {}
+        for line in open(p):
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            last[(r['caller'], r['target'], r.get('entered'), r.get('vt_addr'), r.get('vptr_off'))] = r
+        for k, r in last.items():
+            if k in vd:
+                vd[k]['calls'] += r['calls']
+                vd[k].setdefault('runs', [vd[k]['run']]).append(tag)
+            else:
+                vd[k] = dict(r, run=tag)
+    if vd:
+        with open(os.path.join(out, 'vdispatch_final.jsonl'), 'w') as f:
+            for r in sorted(vd.values(), key=lambda r: -r['calls']):
+                f.write(json.dumps(r) + '\n')
+
     # report
     hit = len(per_id)
     mapped = [r for r in per_id.values() if r['sym']]
@@ -151,6 +179,10 @@ def main():
     print(f'stubs: {len(st_final)} known, {len(hits)} reached')
     for r in sorted(hits, key=lambda r: -r['calls'])[:a.top]:
         print(f"  {r['calls']:>10}  {r['kind']:<11} {r['sym'] or r['name']}")
+    if vd:
+        kinds = collections.Counter(r['kind'] for r in vd.values())
+        print(f'indirect-call edges: {len(vd)} (' + ', '.join(f'{k} {v}' for k, v in sorted(kinds.items())) +
+              '); tools/vdispatch_audit.py compares them with the original')
     if status:
         open_hit = [b for b in by.values() if b.get('decomp') and b['decomp'].get('class') and b['decomp'].get('structural') != 'done']
         print(f'hit symbols the decomp lists as not matching: {len(open_hit)}; most called:')

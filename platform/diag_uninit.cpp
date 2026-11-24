@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <cstring>
 
-extern "C" int fsa_diag_scene(char* buf, int n);  // game code: {"mode":..,"stage":..}
+extern "C" int fsa_uninit_scene(char* buf, int n);  // game code: {"mode":..,"stage":..}
 
 namespace {
 
@@ -135,7 +135,7 @@ void emit(Finding& f, bool withScene) {
   scene[0] = 0;
   if (withScene) {
     g_inHit = true;  // the scene is read by (instrumented) game code
-    fsa_diag_scene(scene, sizeof scene);
+    fsa_uninit_scene(scene, sizeof scene);
     g_inHit = false;
   }
   u32 objects = f.kind == kNever ? *ctor_objects(f.cls) : 0;
