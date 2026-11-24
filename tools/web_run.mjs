@@ -66,6 +66,14 @@ const evals = (args.evals && args.evals !== 'true' ? args.evals.split(';') : [])
   const at = s.lastIndexOf('@');
   return { expr: s.slice(0, at), t: Number(s.slice(at + 1)) };
 });
+// --throttle LATENCY_MS:KBPS emulates a slow link (the proxy, a phone).
+if (args.throttle && args.throttle !== 'true') {
+  const [lat, kbps] = args.throttle.split(':').map(Number);
+  await send('Network.enable', {});
+  await send('Network.emulateNetworkConditions', { offline: false, latency: lat,
+    downloadThroughput: kbps * 128, uploadThroughput: kbps * 128 });
+  log(`[throttle] ${lat} ms, ${kbps} kbit/s`);
+}
 // --freeze T:D freezes the page at T s (as Chrome does to a background tab)
 // and wakes it D s later.
 const freeze = args.freeze && args.freeze !== 'true' ? args.freeze.split(':').map(Number) : null;

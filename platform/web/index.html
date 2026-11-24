@@ -242,6 +242,21 @@
     box-shadow: 0 6px 14px -6px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .3);
   }
   #stick.on #knob { background: radial-gradient(circle at 50% 35%, rgba(190, 220, 255, .95), rgba(90, 130, 190, .92) 70%); }
+  /* Shown while the game waits on the network for disc data. */
+  #discwait {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    display: none; align-items: center; gap: 8px; padding: 6px 12px;
+    border-radius: 999px; background: rgba(0, 0, 0, 0.6); color: #fff;
+    font: 600 13px/1 system-ui, sans-serif; pointer-events: none; z-index: 5;
+  }
+  body.disc-wait #discwait { display: flex; }
+  #discwait::before {
+    content: ""; width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff;
+    animation: discspin 0.8s linear infinite;
+  }
+  @keyframes discspin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { #discwait::before { animation: none; } }
 </style>
 </head>
 <body>
@@ -249,6 +264,7 @@
 
 <div id="stage">
   <canvas id="canvas" tabindex="0"></canvas>
+  <div id="discwait" role="status" aria-live="polite">Loading…</div>
   <div id="curtain">
     <div class="card">
       <h2>The Legend of Zelda: Four Swords Adventures</h2>
@@ -503,7 +519,12 @@
   };
 
   function discLazy(url, size) {
-    const BLOCK = 4 << 20, KEEP = 32, AHEAD = 2;  // 128 MiB of cache at most
+    // 128 MiB of blocks in memory at most. Read-ahead grows while reads move
+    // forward through the image (a movie streaming): up to 8 blocks (32 MiB)
+    // in flight, so a slow link keeps up; a jump elsewhere resets it to 2.
+    const BLOCK = 4 << 20, KEEP = 32, AHEAD_MIN = 2, AHEAD_MAX = 8;
+    let ahead = AHEAD_MIN, lastBlock = -10;
+    let waiting = 0, waitTimer = 0;
     const cache = new Map();  // block -> Promise<Uint8Array>, in LRU order
     let fetched = 0;
     function block(i) {
@@ -538,10 +559,19 @@
       async read(offset, length) {
         length = Math.max(0, Math.min(length, size - offset));
         const first = Math.floor(offset / BLOCK), last = Math.floor((offset + Math.max(length, 1) - 1) / BLOCK);
+        ahead = first >= lastBlock && first <= lastBlock + 1 ? Math.min(AHEAD_MAX, ahead + (first > lastBlock ? 1 : 0)) : AHEAD_MIN;
+        lastBlock = last;
         const want = [];
         for (let i = first; i <= last; i++) want.push(block(i));
-        for (let i = last + 1; i <= last + AHEAD && i * BLOCK < size; i++) if (!cache.has(i)) block(i);
-        const blocks = await Promise.all(want);
+        for (let i = last + 1; i <= last + ahead && i * BLOCK < size; i++) if (!cache.has(i)) block(i);
+        // Say so on screen when the game waits on the network for a while.
+        waiting++;
+        if (!waitTimer) waitTimer = setTimeout(() => { if (waiting) document.body.classList.add('disc-wait'); }, 400);
+        let blocks;
+        try { blocks = await Promise.all(want); }
+        finally {
+          if (--waiting === 0) { clearTimeout(waitTimer); waitTimer = 0; document.body.classList.remove('disc-wait'); }
+        }
         if (first === last) { const s = offset - first * BLOCK; return blocks[0].subarray(s, s + length); }
         const out = new Uint8Array(length);
         for (let done = 0, k = 0; done < length; k++) {
