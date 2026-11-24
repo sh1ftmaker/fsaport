@@ -1,3 +1,4 @@
+#include <string.h>
 #include "JSystem/JUtility/JUTDbg.h"
 #include "JSystem/JKernel/JKRHeap.h"
 
@@ -139,6 +140,15 @@ void *JKRHeap::alloc(u32 byteCount, int alignment)
 #ifdef FSA_DIAG_UNINIT
     // Diagnostics build: poison the block (platform/diag_uninit.cpp).
     fsa_uninit_alloc(p, byteCount);
+#else
+    // Port: hand out zeroed blocks. Many constructors leave fields to the
+    // zeroed memory the GameCube gives them (MEM1 cleared at boot, heaps carved
+    // from it); the decomp checked them against the original (EffectSystem,
+    // MessageManager, ... are byte-identical there). Zeroing every block also
+    // covers memory a heap reuses.
+    if (p != NULL) {
+        memset(p, 0, byteCount);
+    }
 #endif
 #ifdef FSA_PORT_TRACE
     static u32 sCount = 0;
