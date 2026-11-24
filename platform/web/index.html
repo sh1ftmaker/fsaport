@@ -357,7 +357,7 @@
         .then((r) => { if (r.status === 404 || r.status === 501) diag.on = false; }).catch(() => {});
     }
   }
-  Module.fsaDiag = window.fsaDiag = (name, line) => {
+  window.fsaDiag = (name, line) => {
     if (!diag.on) return;
     if (!diag.bufs.has(name)) diag.bufs.set(name, []);
     diag.bufs.get(name).push(line);
@@ -412,6 +412,7 @@
     }).catch((e) => log('[page] WebGPU requestAdapter failed: ' + e));
   }
   var Module = {
+    fsaDiag: window.fsaDiag,  // platform/diag.cpp
     canvas: document.getElementById('canvas'),
     print: log,
     printErr: log,
