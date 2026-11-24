@@ -44,6 +44,9 @@ extern wgpu::Queue g_queue;
 extern wgpu::Surface g_surface;
 extern wgpu::BackendType g_backendType;
 extern GraphicsConfig g_graphicsConfig;
+// WebKit still enforces the old WebGPU rule that a viewport lies inside the
+// render target (Chromium follows the relaxed one); set at startup on the web.
+extern bool g_strictViewport;
 extern TextureWithSampler g_frameBuffer;
 extern TextureWithSampler g_frameBufferResolved;
 extern TextureWithSampler g_depthBuffer;

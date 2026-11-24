@@ -1030,7 +1030,16 @@ void render_pass(const wgpu::RenderPassEncoder& pass, u32 idx) {
       const auto& vp = cmd.data.setViewport;
       const float minDepth = gx::UseReversedZ ? 1.f - vp.zfar : vp.znear;
       const float maxDepth = gx::UseReversedZ ? 1.f - vp.znear : vp.zfar;
-      pass.SetViewport(vp.left, vp.top, vp.width, vp.height, minDepth, maxDepth);
+      float left = vp.left, top = vp.top, width = vp.width, height = vp.height;
+      if (webgpu::g_strictViewport) {
+        const auto& size = g_renderPasses[idx].targetSize;
+        const float tw = static_cast<float>(size.width), th = static_cast<float>(size.height);
+        left = std::clamp(left, 0.f, tw);
+        top = std::clamp(top, 0.f, th);
+        width = std::clamp(width, 0.f, tw - left);
+        height = std::clamp(height, 0.f, th - top);
+      }
+      pass.SetViewport(left, top, width, height, minDepth, maxDepth);
     } break;
     case CommandType::SetScissor: {
       const auto& sc = cmd.data.setScissor;

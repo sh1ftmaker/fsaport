@@ -52,6 +52,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 await send('Runtime.enable');
 await send('Log.enable');
 await send('Page.enable');
+if (args.ua) await send('Emulation.setUserAgentOverride', { userAgent: args.ua });
 await send('Page.navigate', { url });
 const t0 = Date.now();
 let shot = 0;

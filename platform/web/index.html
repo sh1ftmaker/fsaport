@@ -329,6 +329,7 @@
     if (logBody.textContent.length > 200000) logBody.textContent = logBody.textContent.slice(-100000);
     if (document.body.classList.contains('log-open')) logEl.scrollTop = logEl.scrollHeight;
   }
+  window.fsaLog = log;
   log('[page] ' + navigator.userAgent + (navigator.gpu ? '' : '  (no navigator.gpu: WebGPU unavailable)'));
   // Telemetry: what the device is and what its WebGPU adapter can do.
   log(`[page] screen ${screen.width}x${screen.height} dpr ${devicePixelRatio} viewport ${innerWidth}x${innerHeight}` +
@@ -418,6 +419,7 @@
   });
 </script>
 <script src="touch.js"></script>
+<script src="gputrace.js"></script>
 <script src="fsa.js"></script>
 </body>
 </html>

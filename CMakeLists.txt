@@ -85,4 +85,5 @@ set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js)
 add_custom_command(TARGET fsa POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js)
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/gputrace.js ${CMAKE_BINARY_DIR}/gputrace.js)

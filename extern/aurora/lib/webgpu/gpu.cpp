@@ -1,5 +1,9 @@
 #include "gpu.hpp"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include <array>
 #include <algorithm>
 #include <cstdint>
@@ -38,6 +42,7 @@ wgpu::Queue g_queue;
 wgpu::Surface g_surface;
 wgpu::BackendType g_backendType;
 GraphicsConfig g_graphicsConfig;
+bool g_strictViewport = false;
 TextureWithSampler g_frameBuffer;
 TextureWithSampler g_frameBufferResolved;
 TextureWithSampler g_depthBuffer;
@@ -425,6 +430,15 @@ bool initialize(AuroraBackend auroraBackend) {
   }
   const wgpu::BackendType backend = to_wgpu_backend(auroraBackend);
   Log.info("Attempting to initialize {}", magic_enum::enum_name(backend));
+#ifdef __EMSCRIPTEN__
+  g_strictViewport = EM_ASM_INT({
+    var ua = navigator.userAgent;
+    return ua.indexOf("AppleWebKit") >= 0 && ua.indexOf("Chrome/") < 0 && ua.indexOf("Chromium/") < 0 ? 1 : 0;
+  }) != 0;
+  if (g_strictViewport) {
+    Log.info("WebKit WebGPU: clamping viewports to the render target");
+  }
+#endif
 #if 0
   // D3D12's debug layer is very slow
   g_dawnInstance->EnableBackendValidation(backend != WGPUBackendType::D3D12);
