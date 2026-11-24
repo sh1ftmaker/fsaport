@@ -8,8 +8,13 @@ each page load lands in DIR/<time>-<id>.log (DIR/latest.log points at the
 newest). Only for this machine's own test server.
 
 With --iso the image is also served at /local.iso, for testing with
-http://127.0.0.1:8790/?iso=local.iso. Local testing only: never expose a disc."""
-import argparse, datetime, http.server, os, re, threading
+http://127.0.0.1:8790/?iso=local.iso. Local testing only: never expose a disc.
+
+With --record-manifest a page opened with ?discrecord=1 POSTs the disc blocks
+the game read to /disc-manifest, merged into disc-manifest.json in --dir; pages
+then fetch those blocks up front and read the rest on demand. The manifest is
+block numbers only, no disc data."""
+import argparse, datetime, http.server, json, os, re, threading
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     # Keep-alive, so the page's many range reads reuse their connections.
@@ -58,7 +63,40 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     logs = None
     lock = threading.Lock()
     files = {}
+    record_manifest = False
+    def post_manifest(self):
+        n = int(self.headers.get('Content-Length') or 0)
+        if n <= 0 or n > 1 << 20:
+            self.send_error(413)
+            return
+        try:
+            got = json.loads(self.rfile.read(n))
+            size, gid = int(got['size']), str(got['id'])[:16]
+            block = int(got['block'])
+            blocks = {int(b) for b in got['blocks']}
+        except (ValueError, KeyError, TypeError):
+            self.send_error(400)
+            return
+        with self.lock:
+            old = None
+            try:
+                with open('disc-manifest.json') as f:
+                    old = json.load(f)
+            except (OSError, ValueError):
+                pass
+            if old and old.get('size') == size and old.get('id') == gid and old.get('block') == block:
+                blocks |= set(old.get('blocks', []))
+            out = {'id': gid, 'size': size, 'block': block, 'blocks': sorted(blocks)}
+            with open('disc-manifest.json.tmp', 'w') as f:
+                json.dump(out, f)
+            os.replace('disc-manifest.json.tmp', 'disc-manifest.json')
+        self.send_response(204)
+        self.end_headers()
+
     def do_POST(self):
+        if self.path.split('?')[0] == '/disc-manifest' and self.record_manifest:
+            self.post_manifest()
+            return
         if self.path.split('?')[0] != '/log' or not self.logs:
             self.send_error(404)
             return
@@ -90,7 +128,9 @@ ap.add_argument('--port', type=int, default=8790)
 ap.add_argument('--dir', default='build/web')
 ap.add_argument('--iso')
 ap.add_argument('--logs')
+ap.add_argument('--record-manifest', action='store_true')
 a = ap.parse_args()
+Handler.record_manifest = a.record_manifest
 Handler.iso = os.path.abspath(a.iso) if a.iso else None
 if a.logs:
     Handler.logs = os.path.abspath(a.logs)

@@ -45,6 +45,14 @@ device / WebGPU telemetry) to `/log`, written to `DIR/<time>-<id>.log`, with
 `DIR/latest.log` pointing at the newest.
 Memory cards persist in the browser (IndexedDB, per site); `?nosave=1`
 starts with an empty card that is not written back.
+
+Disc loading: by default the page fetches the disc blocks listed in
+`build/web/disc-manifest.json` up front (with a progress bar) and reads
+everything else on demand; `?disc=lazy` reads everything on demand and
+`?disc=full` downloads the whole image first. To make or extend the manifest,
+run `tools/serve.py` with `--record-manifest` and open the page with
+`?discrecord=1`: the blocks the game reads are merged into the manifest as you
+play. It lists block numbers only (no disc data) and stays in `build/`.
 `main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
 
 ## Compile check only

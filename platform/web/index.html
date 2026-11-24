@@ -402,7 +402,8 @@
     document.body.classList.add('running');
     fit();
     statusEl.textContent = 'Running';
-    Module.fsaDisc = disc;
+    Module.fsaDisc = traceDisc(disc);
+    if (discQuery.get('discrecord') === '1') recordDiscBlocks(Module.fsaDisc);
     await Module.fsaSaveInit();
     // ?stage=S or ?stage=S-L: skip the menus and start in stage S, level L.
     const stageArg = /^(\d+)(?:-(\d+))?$/.exec(new URLSearchParams(location.search).get('stage') || '');
@@ -413,7 +414,13 @@
     Module.fsaClock.start();
     try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
   }
-  // ?iso=URL: the disc from a server. By default the whole image is fetched
+  // ?iso=URL: the disc from a server. By default (?disc=smart) the blocks in
+  // disc-manifest.json (the ones the game read to boot, through the menus and
+  // into stages: recorded with ?discrecord=1 and tools/serve.py
+  // --record-manifest) are fetched up front with a progress bar and kept, and
+  // every other read goes to the server on demand. Without a manifest that
+  // fits the image, everything is read on demand.
+  // ?disc=full: the whole image is fetched
   // up front in one streaming GET (as fast as the link goes, with a progress
   // bar) and kept in memory in 16 MiB pieces, so the game's reads never wait
   // on the network. iOS kills a tab that holds ~1.4 GB, so there (or with
@@ -540,12 +547,131 @@
     return discFromPieces(got, pieces);
   }
 
+  const MANI_BLOCK = 1 << 20;  // the manifest's block size
+  const discTrace = new Set();  // manifest blocks the game has read
+
+  // Records which 1 MiB blocks the game reads (for ?discrecord=1).
+  function traceDisc(disc) {
+    const read = disc.read.bind(disc);
+    disc.read = (offset, length) => {
+      const last = Math.floor((offset + Math.max(length, 1) - 1) / MANI_BLOCK);
+      for (let b = Math.floor(offset / MANI_BLOCK); b <= last; b++) discTrace.add(b);
+      return read(offset, length);
+    };
+    return disc;
+  }
+  window.fsaDiscBlocks = () => [...discTrace].sort((a, b) => a - b);
+
+  // ?discrecord=1: send the blocks read so far to the server every 5 s (it
+  // merges them into disc-manifest.json when run with --record-manifest).
+  async function recordDiscBlocks(disc) {
+    const head = await disc.read(0, 6);
+    const id = String.fromCharCode(...head);
+    let sent = 0;
+    log(`[disc] recording the blocks read for disc-manifest.json (${id})`);
+    setInterval(() => {
+      if (discTrace.size === sent) return;
+      sent = discTrace.size;
+      fetch('disc-manifest', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, size: disc.size, block: MANI_BLOCK, blocks: window.fsaDiscBlocks() }) })
+        .then((r) => { if (!r.ok) log(`[disc] manifest not recorded: HTTP ${r.status} (serve.py --record-manifest?)`); })
+        .catch(() => {});
+    }, 5000);
+  }
+
+  // Fetches the manifest's blocks (adjacent ones merged into requests of at
+  // most 8 MiB, six at a time) with the progress bar; returns block -> bytes.
+  async function discPrefetch(url, size, blocks, ctl) {
+    const runs = [];
+    for (const b of blocks) {
+      const r = runs[runs.length - 1];
+      if (r && r.end === b && r.end - r.start < 8) r.end++;
+      else runs.push({ start: b, end: b + 1 });
+    }
+    const total = runs.reduce((n, r) => n + Math.min(size, r.end * MANI_BLOCK) - r.start * MANI_BLOCK, 0);
+    const pinned = new Map();
+    let got = 0, next = 0;
+    document.body.classList.add('downloading');
+    statusEl.textContent = 'Loading disc image…';
+    dl.t0 = performance.now();
+    dl.show(0, total, true);
+    async function worker() {
+      while (next < runs.length) {
+        const r = runs[next++], off = r.start * MANI_BLOCK, end = Math.min(size, r.end * MANI_BLOCK) - 1;
+        const res = await fetch(url, { headers: { Range: `bytes=${off}-${end}` }, signal: ctl.signal });
+        if (res.status !== 206) throw new Error(`HTTP ${res.status} for bytes ${off}-${end}`);
+        const buf = new Uint8Array(await res.arrayBuffer());
+        for (let b = r.start; b < r.end; b++) pinned.set(b, buf.subarray((b - r.start) * MANI_BLOCK, (b - r.start + 1) * MANI_BLOCK));
+        got += buf.length;
+        dl.show(got, total);
+      }
+    }
+    await Promise.all(Array.from({ length: 6 }, worker));
+    dl.show(got, total, true);
+    const secs = (performance.now() - dl.t0) / 1000;
+    log(`[disc] prefetched ${blocks.length} blocks (${MB(got)} MB) in ${secs.toFixed(1)} s (${MB(got / secs)} MB/s); the rest on demand`);
+    return pinned;
+  }
+
+  // Reads from the prefetched blocks when they cover the read, else from the
+  // on-demand reader.
+  function discSmart(lazy, pinned) {
+    return {
+      size: lazy.size,
+      get fetched() { return lazy.fetched; },
+      read(offset, length) {
+        length = Math.max(0, Math.min(length, lazy.size - offset));
+        const first = Math.floor(offset / MANI_BLOCK), last = Math.floor((offset + Math.max(length, 1) - 1) / MANI_BLOCK);
+        for (let b = first; b <= last; b++) if (!pinned.has(b)) return lazy.read(offset, length);
+        const s = offset - first * MANI_BLOCK;
+        if (first === last) return Promise.resolve(pinned.get(first).subarray(s, s + length));
+        const out = new Uint8Array(length);
+        for (let done = 0, b = first; done < length; b++) {
+          const at = b === first ? s : 0, piece = pinned.get(b), n = Math.min(length - done, piece.length - at);
+          out.set(piece.subarray(at, at + n), done);
+          done += n;
+        }
+        return Promise.resolve(out);
+      },
+    };
+  }
+
+  async function discSmartFromUrl(url) {
+    const h = await fetch(url, { method: 'HEAD' });
+    const size = Number(h.headers.get('Content-Length'));
+    const lazy = discLazy(url, size);
+    let mani = null;
+    try {
+      const r = await fetch('disc-manifest.json', { cache: 'no-store' });
+      if (r.ok) mani = await r.json();
+    } catch (e) { /* none */ }
+    if (!mani || mani.size !== size || mani.block !== MANI_BLOCK || !Array.isArray(mani.blocks)) {
+      log(`[disc] ${mani ? 'disc-manifest.json is for another image' : 'no disc-manifest.json'}; reading ${url} on demand (${MB(size)} MB)`);
+      return lazy;
+    }
+    discAbort = new AbortController();
+    let pinned;
+    try { pinned = await discPrefetch(url, size, mani.blocks.filter((b) => b >= 0 && b * MANI_BLOCK < size), discAbort); }
+    catch (e) { if (!started) log(`[disc] prefetch failed (${e}); reading on demand`); return lazy; }
+    finally { discAbort = null; document.body.classList.remove('downloading'); }
+    const id = pinned.has(0) ? String.fromCharCode(...pinned.get(0).subarray(0, 6)) : '';
+    if (id && id !== mani.id) {
+      log(`[disc] disc-manifest.json is for ${mani.id}, this image is ${id}; reading on demand`);
+      return lazy;
+    }
+    statusEl.textContent = 'Starting…';
+    return discSmart(lazy, pinned);
+  }
+
   // Starts with the page, alongside the wasm download; the game starts when
   // both are in.
   async function loadDiscFromUrl(iso, q) {
-    const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
-    const mode = q.get('disc') || (ios ? 'lazy' : 'full');
+    const mode = q.get('disc') || 'smart';
     let disc = null;
+    if (mode === 'smart') {
+      disc = await discSmartFromUrl(iso);
+      return started ? null : disc;
+    }
     if (mode === 'full') {
       discAbort = new AbortController();
       try { disc = await discPreload(iso, discAbort); }
