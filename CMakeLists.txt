@@ -120,9 +120,11 @@ if(FSA_SANITIZE)
   string(TOUPPER ${FSA_SANITIZE} _san)
   set_source_files_properties(platform/sanitize/sanitize.cpp PROPERTIES COMPILE_DEFINITIONS FSA_SAN_${_san}=1
     COMPILE_OPTIONS "-Wno-everything")
+  set(FSA_DECOMP_SYMBOLS "${CMAKE_SOURCE_DIR}/../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt"
+      CACHE FILEPATH "the decomp's config/G4SE01/symbols.txt (join key for the diagnostics)")
   add_custom_command(TARGET fsa POST_BUILD
     COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/san_symtab.py ${CMAKE_BINARY_DIR}/fsa.map ${FSA_GAME}/units.txt
-            ${CMAKE_BINARY_DIR}/fsa_symtab.json)
+            ${CMAKE_BINARY_DIR}/fsa_symtab.json ${FSA_DECOMP_SYMBOLS})
 endif()
 if(FSA_SANITIZE STREQUAL "address")
   # Shadow memory is 1/8 of the address space; the redzones grow every block.

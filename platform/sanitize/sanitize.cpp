@@ -36,7 +36,8 @@ extern "C" int fsa_diag_scene(char* buf, int n);
 // fsa_sanitizer_rt:: helpers when wasm-opt inlined the handler into the game
 // function) is the function the check sits in (for code inlined into it, file:line still names the inlined
 // source). Chrome prints wasm frames as "at fsa.wasm.<demangled name> (url)";
-// fsa_symtab.json maps that name to [mangled, unit]; it is fetched
+// fsa_symtab.json (tools/san_symtab.py) maps that name to [mangled, unit,
+// decomp symbol]; it is fetched
 // synchronously once (sanitizer builds only). No backslashes in EM_JS bodies:
 // emscripten drops them.
 EM_JS_DEPS(fsa_sanitize, "$stringToUTF8,$lengthBytesUTF8");
@@ -68,7 +69,7 @@ EM_JS(void, fsa_san_js_caller, (char* out, int cap), {
   for (let i = last + 1; i < frames.length; i++) {
     if (rt.test(frames[i])) continue;
     const s = Module.fsaSanSym[frames[i]];
-    r = (s ? s[0] : '') + tab + frames[i] + tab + (s ? s[1] : '');
+    r = (s ? s[0] : '') + tab + frames[i] + tab + (s ? s[1] : '') + tab + (s ? s[2] || '' : '');
     break;
   }
   stringToUTF8(r, out, cap);
@@ -173,10 +174,15 @@ static void fsa_san_new(Site* s, const char* kind, const char* file, unsigned li
   char* mangled = caller;
   char* demangled = strchr(caller, '\t');
   char* unit = nullptr;
+  char* dsym = nullptr;
   if (demangled) {
     *demangled++ = 0;
     unit = strchr(demangled, '\t');
-    if (unit) *unit++ = 0;
+    if (unit) {
+      *unit++ = 0;
+      dsym = strchr(unit, '\t');
+      if (dsym) *dsym++ = 0;
+    }
   }
   char scene[128];
   if (fsa_diag_scene(scene, sizeof(scene)) <= 0) snprintf(scene, sizeof(scene), "null");
@@ -194,6 +200,7 @@ static void fsa_san_new(Site* s, const char* kind, const char* file, unsigned li
   b.key("col"), b.raw(num);
   b.key("function"), b.str(demangled ? demangled : "");
   b.key("symbol"), b.str(mangled);
+  b.key("sym"), b.str(dsym ? dsym : "");
   b.key("unit"), b.str(unit ? unit : "");
   b.key("detail"), b.str(detail);
   b.key("first_scene"), b.raw(scene);
@@ -555,12 +562,7 @@ void asan_report(const char* text) {
     if (const char* q = after(p, " on address ")) addr = strtoul(q, nullptr, 16);
     if (const char* q = after(p, " at pc ")) pc = strtoul(q, nullptr, 16);
   }
-  Site* s = lookup((const void*)pc, 0x41);
-  if (!s) return;
-  if (s->json) {
-    s->count++;
-    return;
-  }
+  (void)pc;
   gBusy++;
   // The access line, and the first frames.
   char access[128] = "";
@@ -618,7 +620,21 @@ void asan_report(const char* text) {
   snprintf(extra, sizeof(extra), "%s", eb.d);
   char kind[80];
   snprintf(kind, sizeof(kind), "asan-%s", bug);
-  fsa_san_new(s, kind, file, line, col, detail, extra);
+  // One record per kind and file:line:col (ASan itself reports each pc once;
+  // an unrolled loop has several pcs on one line): count = reports.
+  uint32_t h = 2166136261u;
+  const char* parts[2] = {kind, file};
+  for (const char* k : parts) {
+    for (; *k; k++) h = (h ^ (unsigned char)*k) * 16777619u;
+  }
+  h = (h ^ line) * 16777619u;
+  h = (h ^ col) * 16777619u;
+  Site* s = lookup((const void*)(uintptr_t)h, 0x41);
+  if (s && s->json) {
+    s->count++;
+  } else if (s) {
+    fsa_san_new(s, kind, file, line, col, detail, extra);
+  }
   gBusy--;
 }
 
