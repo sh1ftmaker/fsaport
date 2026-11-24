@@ -6,6 +6,7 @@
 #include "JSystem/JKernel/JKRDecomp.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTException.h"
+#include "port/endian_diag.h"
 
 // yoinked from TP
 
@@ -93,6 +94,8 @@ BOOL JKRAramPiece::orderSync(int direction, u32 source, u32 destination, u32 len
 void JKRAramPiece::startDMA(JKRAMCommand* command) {
     if (command->mTransferDirection == 1) {
         DCInvalidateRange((void*)command->mDst, command->mDataLength);
+        if (command->mDataLength >= 0x40) /* not the header probes into stack buffers */
+            FSA_ENDIAN_RANGE((void*)command->mDst, command->mDataLength, 0, "(from ARAM)");
     } else {
         DCStoreRange((void*)command->mSrc, command->mDataLength);
     }
@@ -106,6 +109,8 @@ void JKRAramPiece::doneDMA(u32 requestAddress) {
 
     if (command->mTransferDirection == 1) {
         DCInvalidateRange((void*)command->mDst, command->mDataLength);
+        if (command->mDataLength >= 0x40) /* not the header probes into stack buffers */
+            FSA_ENDIAN_RANGE((void*)command->mDst, command->mDataLength, 0, "(from ARAM)");
     }
 
     if (command->_60 != 0)

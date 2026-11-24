@@ -1,5 +1,6 @@
 #include "JSystem/JUtility/JUTDbg.h"
 #include "JSystem/JKernel/JKRHeap.h"
+#include "port/endian_diag.h"
 
 JKRHeap *JKRHeap::sSystemHeap;
 JKRHeap *JKRHeap::sCurrentHeap;
@@ -101,7 +102,11 @@ void JKRHeap::destroy(JKRHeap *heap)
     heap->destroy();
 }
 
-void JKRHeap::destroy() { do_destroy(); }
+void JKRHeap::destroy()
+{
+    FSA_ENDIAN_UNRANGE(mStartAddress, (u32)mEndAddress - (u32)mStartAddress);
+    do_destroy();
+}
 
 #ifdef FSA_PORT_TRACE
 extern "C" int fsa_host_alloc_depth;
@@ -172,6 +177,7 @@ void JKRHeap::free(void *memory)
 {
 #line 365
     JUT_WARNING_F(!mInitFlag, "free %x in heap %x", memory, this);
+    FSA_ENDIAN_UNRANGE(memory, memory && getSize(memory) > 0 ? (u32)getSize(memory) : 0);
     do_free(memory);
 }
 
@@ -188,6 +194,7 @@ void JKRHeap::freeAll()
 {
 #line 417
     JUT_WARNING_F(!mInitFlag, "freeAll in heap %x", this);
+    FSA_ENDIAN_UNRANGE(mStartAddress, (u32)mEndAddress - (u32)mStartAddress);
     do_freeAll();
 }
 

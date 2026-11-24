@@ -6,6 +6,7 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JKernel/JKRFileFinder.h"
 #include "types.h"
+#include "port/endian_diag.h"
 
 JKRArchive *JKRArchive::check_mount_already(long entryNum, JKRHeap *pHeap)
 {
@@ -124,10 +125,14 @@ bool JKRArchive::getDirEntry(JKRArchive::SDirEntry *dirEntry, u32 p2) const
 #ifdef FSA_PORT
 extern "C" int fsa_dvd_log;
 #include <dolphin/os.h>
-static void *portLogLookup(void *res, const char *what, const char *name)
+static void *portLogLookup(void *res, const char *what, const char *name, const JKRArchive *arc, u32 type)
 {
     if (fsa_dvd_log >= 2 || (fsa_dvd_log && res == nullptr))
         OSReport("[arc] %s %s -> %p\n", what, name, res);
+#ifdef FSA_ENDIAN_DIAG
+    if (res != nullptr && arc->getResSize(res) > 0)
+        FSA_ENDIAN_RANGE(res, arc->getResSize(res), type, name);
+#endif
     return res;
 }
 #endif
@@ -163,7 +168,7 @@ void *JKRArchive::getResource(const char *path)
         fileEntry = findFsResource(path, sCurrentDirID);
     }
 #ifdef FSA_PORT
-    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "path", path);
+    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "path", path, this, 0);
 #endif
     return (fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr;
 }
@@ -182,7 +187,7 @@ void *JKRArchive::getResource(u32 type, const char *name)
         fileEntry = findTypeResource(type, name);
     }
 #ifdef FSA_PORT
-    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "name", name);
+    return portLogLookup((fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr, "name", name, this, type);
 #endif
     return (fileEntry != nullptr) ? (void *)fetchResource(fileEntry, nullptr) : nullptr;
 }

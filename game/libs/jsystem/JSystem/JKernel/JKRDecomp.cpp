@@ -3,6 +3,7 @@
 #include "JSystem/JKernel/JKRAramPiece.h"
 #include "JSystem/JKernel/JKRArchive.h"
 #include "JSystem/JKernel/JKRDecomp.h"
+#include "port/endian_diag.h"
 
 // most copied from TP Decomp, i did put in some effort myself but since TP already had most matching, i opted to use that instead
 JKRDecomp *JKRDecomp::sDecompObject;
@@ -103,6 +104,8 @@ void JKRDecomp::decode(u8 *src, u8 *dst, u32 srcSize, u32 dstSize) {
         decodeSZP(src, dst, srcSize, dstSize);
     else if (compression == JKRCOMPRESSION_YAZ0)
         decodeSZS(src, dst, srcSize, dstSize);
+    if (compression == JKRCOMPRESSION_YAY0 || compression == JKRCOMPRESSION_YAZ0)
+        FSA_ENDIAN_RANGE(dst, JKRDecompExpandSize(src), 0, "(decompressed)");
 }
 
 void JKRDecomp::decodeSZP(u8 *src, u8 *dst, u32 srcLength, u32 dstLength)

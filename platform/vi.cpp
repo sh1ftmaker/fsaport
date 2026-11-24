@@ -2,6 +2,7 @@
 // (paced to 59.94 Hz in platform/web/fsa_sched.js, whatever the display's
 // refresh rate), and each game frame is one Aurora frame.
 #include "platform.h"
+#include "port/endian_diag.h"
 
 #include <aurora/aurora.h>
 #include <aurora/gfx.h>
@@ -34,6 +35,10 @@ void platform_retrace() {
     lastDrawn = g_framesDrawn;
     g_frameMsSum = g_endMsSum = g_beginMsSum = 0;
   }
+#ifdef FSA_ENDIAN_DIAG
+  if (g_retraceCount % 300 == 0)
+    fsa_endian_report();
+#endif
   if (g_preRetrace)
     g_preRetrace(g_retraceCount);
   g_currentFb = g_nextFb;

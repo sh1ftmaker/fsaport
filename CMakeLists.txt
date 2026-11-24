@@ -59,6 +59,24 @@ target_compile_definitions(fsa_platform PRIVATE FSA_PORT=1 FSA_PLATFORM=1)
 target_compile_options(fsa_platform PRIVATE "SHELL:-include ${FSA_GAME}/port/port_prefix.h" -Wno-everything -gline-tables-only)
 target_link_libraries(fsa_platform PRIVATE aurora::core)
 
+# --- Endian trap (diagnostics; docs/DIAGNOSTICS.md, "Endian trap") -------------
+# The matching units call __sanitizer_cov_load2/4 before every load
+# (platform/endian_diag.cpp checks them against the ranges that hold file bytes).
+option(FSA_ENDIAN_DIAG "endian trap: report raw multi-byte loads from file data (slow; diagnostics only)" OFF)
+set(FSA_ENDIAN_DIAG_UNITS "/game/src/game/" CACHE STRING "regex of the source paths the endian trap instruments")
+if(FSA_ENDIAN_DIAG)
+  target_compile_definitions(fsa_game_flags INTERFACE FSA_ENDIAN_DIAG=1)
+  target_compile_definitions(fsa_platform PRIVATE FSA_ENDIAN_DIAG=1)
+  foreach(lib ${FSA_UNIT_LIBS})
+    get_target_property(srcs ${lib} SOURCES)
+    foreach(s ${srcs})
+      if(s MATCHES "${FSA_ENDIAN_DIAG_UNITS}")
+        set_property(SOURCE ${s} APPEND PROPERTY COMPILE_OPTIONS "-fsanitize-coverage=trace-pc-guard,trace-loads")
+      endif()
+    endforeach()
+  endforeach()
+endif()
+
 # Glue built against Aurora's own headers (not the decomp's SDK headers).
 add_library(fsa_glue STATIC platform/glue/gx_pipe.cpp)
 target_include_directories(fsa_glue PRIVATE extern/aurora/lib)

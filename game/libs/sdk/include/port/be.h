@@ -37,6 +37,24 @@ inline T be_swap_value(T v)
     return __builtin_bit_cast(T, u);
 }
 
+/* Reads the big-endian T stored at p. In the endian-trap build (FSA_ENDIAN_DIAG)
+ * byte by byte, so that the trap's multi-byte load hook does not report the
+ * helpers' own reads; otherwise one load and a swap. */
+template <typename T>
+inline T be_read_raw(const T* p)
+{
+#ifdef FSA_ENDIAN_DIAG
+    typedef typename be_uint_<sizeof(T)>::type U;
+    const volatile unsigned char* b = (const volatile unsigned char*)p;
+    U u = 0;
+    for (unsigned i = 0; i < sizeof(T); i++)
+        u = (U)((u << 8) | b[i]);
+    return __builtin_bit_cast(T, u);
+#else
+    return be_swap_value(*p);
+#endif
+}
+
 template <typename T>
 struct BE {
     T raw; /* the file's bytes, big-endian */
@@ -44,8 +62,8 @@ struct BE {
     BE() = default;
     BE(T v) : raw(be_swap_value(v)) {}
     BE& operator=(T v) { raw = be_swap_value(v); return *this; }
-    operator T() const { return be_swap_value(raw); }
-    T get() const { return be_swap_value(raw); }
+    operator T() const { return be_read_raw(&raw); }
+    T get() const { return be_read_raw(&raw); }
 
     template <typename U> BE& operator+=(U v) { *this = (T)(get() + v); return *this; }
     template <typename U> BE& operator-=(U v) { *this = (T)(get() - v); return *this; }
@@ -68,7 +86,7 @@ struct BEPtr {
         T* ptr;
     };
     BEPtr() = default;
-    unsigned int offset() const { return __builtin_bswap32(rawOffset); }
+    unsigned int offset() const { return be_read_raw(&rawOffset); }
     void relocate(const void* base)
     {
         unsigned int o = offset();
@@ -85,9 +103,9 @@ static_assert(sizeof(void*) == 4, "BEPtr relocates in place: 32-bit pointers onl
  * JSUConvertOffsetToPtr(base, const void* offset) expects. */
 struct BEOffset {
     unsigned int raw;
-    operator void*() const { return (void*)(unsigned long)__builtin_bswap32(raw); }
-    explicit operator unsigned int() const { return __builtin_bswap32(raw); }
-    explicit operator unsigned long() const { return __builtin_bswap32(raw); }
+    operator void*() const { return (void*)(unsigned long)be_read_raw(&raw); }
+    explicit operator unsigned int() const { return be_read_raw(&raw); }
+    explicit operator unsigned long() const { return be_read_raw(&raw); }
 };
 
 /* Reads from unaligned byte pointers. */

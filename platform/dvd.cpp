@@ -5,6 +5,7 @@
 // reads go to a worker thread so they can be issued from callbacks too, and
 // complete with their callback run as a deferred "interrupt".
 #include "platform.h"
+#include "port/endian_diag.h"
 
 #include <emscripten.h>
 
@@ -38,12 +39,35 @@ u32 g_currentDir = 0;
 
 u32 be32(const u8* p) { return (u32)p[0] << 24 | (u32)p[1] << 16 | (u32)p[2] << 8 | p[3]; }
 
+const char* entry_name(u32 i) { return g_names.data() + g_fst[i].nameOffset; }
+
+#ifdef FSA_ENDIAN_DIAG
+// The FST name of the file at disc offset `offset` (labels for the endian trap).
+const char* file_at(u32 offset) {
+  for (u32 i = 1; i < g_fst.size(); i++) {
+    const FstEntry& e = g_fst[i];
+    if (!e.isDir && offset >= e.offsetOrParent && offset < e.offsetOrParent + e.lengthOrNext)
+      return entry_name(i);
+  }
+  static char buf[32];
+  snprintf(buf, sizeof(buf), "(disc 0x%x)", offset);
+  return buf;
+}
+#endif
+
 void read_disc(void* dst, u32 offset, u32 length) {
   if (length)
     fsa_js_disc_read(dst, (double)offset, (int)length);
 }
 
-const char* entry_name(u32 i) { return g_names.data() + g_fst[i].nameOffset; }
+// A read the game asked for (DVDRead*): file bytes in game memory.
+void read_game_data(void* dst, u32 offset, u32 length) {
+  read_disc(dst, offset, length);
+#ifdef FSA_ENDIAN_DIAG
+  if (length >= 0x40)  // not the 32-byte header probes into stack buffers
+    FSA_ENDIAN_RANGE(dst, length, 0, file_at(offset));
+#endif
+}
 
 bool name_eq(const char* a, size_t alen, const char* b) {
   for (size_t i = 0; i < alen; i++, b++)
@@ -129,7 +153,7 @@ void* worker_main(void*) {
     g_requests.pop_front();
     if (req.block->state == DVD_STATE_CANCELED)
       continue;
-    read_disc(req.addr, req.discOffset, req.length);
+    read_game_data(req.addr, req.discOffset, req.length);
     HostAllocScope host;
     platform_post_callback(complete, new Request(req));
   }
@@ -263,7 +287,7 @@ BOOL DVDCloseDir(DVDDir*) { return TRUE; }
 
 s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32) {
   fileInfo->cb.state = DVD_STATE_BUSY;
-  read_disc(addr, fileInfo->startAddr + (u32)offset, (u32)length);
+  read_game_data(addr, fileInfo->startAddr + (u32)offset, (u32)length);
   fileInfo->cb.state = DVD_STATE_END;
   fileInfo->cb.transferredSize = (u32)length;
   return length;

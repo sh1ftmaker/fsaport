@@ -7,6 +7,7 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTDbg.h"
 #include "JSystem/JKernel/JKRDvdRipper.h"
+#include "port/endian_diag.h"
 
 static u8 *firstSrcData();
 static u8 *nextSrcData(u8 *);
@@ -183,6 +184,7 @@ namespace JKRDvdRipper
             else if (compression2 == JKRCOMPRESSION_YAZ0)
             {
                 JKRDecompressFromDVD(jkrDvdFile, file, fileSizeAligned, fileSize, 0, startOffset, p9);
+                FSA_ENDIAN_RANGE(file, fileSize ? fileSize : (u32)fileSizeAligned, 0, "(Yaz0 from disc)");
             }
             else
             {
@@ -226,6 +228,7 @@ namespace JKRDvdRipper
         }
         else if (compression == JKRCOMPRESSION_YAZ0)
         {
+            FSA_ENDIAN_RANGE(file, expandSize, 0, "(Yaz0 from disc)");
             if (JKRDecompressFromDVD(jkrDvdFile, file, fileSizeAligned, expandSize, startOffset, 0, p9) != 0u)
             {
                 if (hasAllocated)

@@ -6,6 +6,7 @@
 #include <JSystem/JKernel/JKRAramPiece.h>
 #include <JSystem/JKernel/JKRExpHeap.h>
 #include <JSystem/JUtility/JUTDbg.h>
+#include "port/endian_diag.h"
 
 JSUList<JKRAMCommand> JKRAram::sAramCommandList;
 JKRAram* JKRAram::sAramObject;
@@ -211,6 +212,7 @@ u8 *JKRAram::aramToMainRam(u32 address, u8 *buf, u32 p3, JKRExpandSwitch expandS
         {
             changeGroupIdIfNeed(buf, id);
             JKRDecompressFromAramToMainRam(address, buf, p3, expandSize, 0, pSize);
+            FSA_ENDIAN_RANGE(buf, expandSize, 0, "(Yaz0 from ARAM)");
             return buf;
         }
     }
