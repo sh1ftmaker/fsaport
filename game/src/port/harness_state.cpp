@@ -12,6 +12,7 @@
 #include "game/GameState.h"
 #include "game/GameView.h"
 #include "game/Player.h"
+#include "game/file_select_803BC6F0.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -152,6 +153,13 @@ const GlobalField kGlobals[] = {
      }},
     {"lbl_80529DEC.mStage_0x118", [](Json& j) { return j.i(lbl_80529DEC.mStage_0x118), true; }},
     {"lbl_80529DEC.mLevel_0x11c", [](Json& j) { return j.i(lbl_80529DEC.mLevel_0x11c), true; }},
+    // The file select screen (mode 3), only while it exists: its state (index
+    // into lbl_804AFD70), the message shown, the message window's phase and
+    // the window's cursor (0 yes, 1 no). Scripts wait on these in the menus.
+    {"lbl_8053ADB0->mState", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->mState), true); }},
+    {"lbl_8053ADB0->field_0x7c", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x7c), true); }},
+    {"lbl_8053ADB0->field_0x114", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x114), true); }},
+    {"lbl_8053ADB0->field_0x116", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x116), true); }},
     // The stage's view (getGameView_802D6A9C), only while a stage is loaded.
     {"getGameView_802D6A9C()->mStage_0x4", [](Json& j) { return stage_sub() && (j.i(getGameView_802D6A9C()->mStage_0x4), true); }},
     {"getGameView_802D6A9C()->mLevel_0x8", [](Json& j) { return stage_sub() && (j.i(getGameView_802D6A9C()->mLevel_0x8), true); }},
@@ -280,4 +288,37 @@ extern "C" int fsa_harness_state(char* buf, int size, u32 n, const char* sync) {
     }
     j.close('}');
     return j.len >= size ? -1 : j.len;
+}
+
+// --- Script conditions (platform/harness.cpp) ------------------------------------
+// The page looks names up by index (fsa_harness_global_name), so a script's
+// condition keys are exactly the kGlobals names.
+extern "C" int fsa_harness_global_count() { return (int)(sizeof(kGlobals) / sizeof(kGlobals[0])); }
+extern "C" const char* fsa_harness_global_name(int k) {
+    return k >= 0 && k < fsa_harness_global_count() ? kGlobals[k].name : NULL;
+}
+
+// The game's libc headers (decomp) have no strtod; the host libc does.
+extern "C" double strtod(const char* s, char** end);
+
+// kGlobals[k] as a number: returns 1 and sets *out for a number or boolean
+// (true = 1), 0 for null (the value does not exist yet) or a non-scalar.
+extern "C" int fsa_harness_global_value(int k, double* out) {
+    if (k < 0 || k >= fsa_harness_global_count())
+        return 0;
+    char t[128];
+    Json j = {t, sizeof(t), 0, false};
+    t[0] = '\0';
+    if (!kGlobals[k].get(j) || j.len >= (int)sizeof(t))
+        return 0;
+    if (strcmp(t, "true") == 0 || strcmp(t, "false") == 0) {
+        *out = t[0] == 't' ? 1 : 0;
+        return 1;
+    }
+    char* end;
+    double v = strtod(t, &end);
+    if (end == t || *end != '\0')
+        return 0;
+    *out = v;
+    return 1;
 }
