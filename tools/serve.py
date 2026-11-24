@@ -12,6 +12,8 @@ http://127.0.0.1:8790/?iso=local.iso. Local testing only: never expose a disc.""
 import argparse, datetime, http.server, os, re, threading
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    # Keep-alive, so the page's many range reads reuse their connections.
+    protocol_version = 'HTTP/1.1'
     iso = None
     def translate_path(self, path):
         if self.iso and path.split('?')[0] == '/local.iso':
@@ -31,14 +33,25 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return super().do_GET()
         size = os.path.getsize(path)
         start = int(m.group(1)); end = min(int(m.group(2) or size - 1), size - 1)
+        if start > end:
+            self.send_response(416)
+            self.send_header('Content-Range', f'bytes */{size}')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return
         self.send_response(206)
         self.send_header('Content-Type', 'application/octet-stream')
         self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
         self.send_header('Content-Length', str(end - start + 1))
         self.end_headers()
         with open(path, 'rb') as f:
-            f.seek(start)
-            self.wfile.write(f.read(end - start + 1))
+            self.wfile.flush()
+            self.connection.sendfile(f, start, end - start + 1)
+    def copyfile(self, source, outputfile):
+        # sendfile: the whole image goes out several times faster than
+        # through copyfileobj's small buffer.
+        outputfile.flush()
+        self.connection.sendfile(source)
     def log_message(self, *a):
         pass
 

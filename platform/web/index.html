@@ -80,6 +80,19 @@
   #file { position: absolute; width: 1px; height: 1px; opacity: 0; }
   body.dragging .card { outline: 2px dashed var(--accent); outline-offset: 6px; }
 
+  /* Disc download progress, in the card, while ?iso= loads. */
+  #dl { display: none; margin-top: 4px; text-align: left; }
+  body.downloading #dl { display: block; }
+  body.downloading .card .pick { display: none; }
+  #dlbar-track {
+    height: 8px; margin: 12px 0 8px; border-radius: 999px; overflow: hidden;
+    background: rgba(255, 255, 255, .08); border: 1px solid var(--hair);
+  }
+  #dlbar { height: 100%; width: 0; border-radius: 999px; background: var(--accent); transition: width .12s linear; }
+  #dl .row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted);
+             font-size: 12px; font-variant-numeric: tabular-nums; }
+  #dl .row b { color: var(--fg); font-weight: 600; }
+
   /* Small controls in the top corner, over the picture. */
   #bar {
     position: fixed; z-index: 8; top: calc(var(--safe-t) + 8px); right: calc(var(--safe-r) + 8px);
@@ -241,8 +254,12 @@
       <h2>The Legend of Zelda: Four Swords Adventures</h2>
       <p>This port ships no game data. Choose your own Four Swords Adventures
         disc image (.iso) to play. It is read in this page only and never uploaded.</p>
-      <label class="filebtn" for="file">Choose disc image…</label>
-      <p><small>…or drop the .iso anywhere on this page</small></p>
+      <label class="filebtn pick" for="file">Choose disc image…</label>
+      <p class="pick"><small>…or drop the .iso anywhere on this page</small></p>
+      <div id="dl" role="progressbar" aria-label="Loading disc image" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="dlbar-track"><div id="dlbar"></div></div>
+        <div class="row"><span><b id="dlpct">0%</b> <span id="dlbytes"></span></span><span id="dlrate"></span></div>
+      </div>
     </div>
   </div>
 </div>
@@ -350,7 +367,10 @@
     canvas: document.getElementById('canvas'),
     print: log,
     printErr: log,
-    onRuntimeInitialized() { statusEl.textContent = 'Ready: choose a disc image.'; maybeAutoStart(); },
+    onRuntimeInitialized() {
+      if (!document.body.classList.contains('downloading')) statusEl.textContent = 'Ready: choose a disc image.';
+      maybeAutoStart();
+    },
     onAbort(what) { statusEl.textContent = 'Stopped: ' + what; },
   };
 
@@ -378,6 +398,7 @@
   async function startWith(disc) {
     if (started) return;
     started = true;
+    if (discAbort) discAbort.abort();
     document.body.classList.add('running');
     fit();
     statusEl.textContent = 'Running';
@@ -392,9 +413,160 @@
     Module.fsaClock.start();
     try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
   }
-  function maybeAutoStart() {
-    const iso = new URLSearchParams(location.search).get('iso');
-    if (iso) Module.fsaDiscFromUrl(iso).then(startWith);
+  // ?iso=URL: the disc from a server. By default the whole image is fetched
+  // up front in one streaming GET (as fast as the link goes, with a progress
+  // bar) and kept in memory in 16 MiB pieces, so the game's reads never wait
+  // on the network. iOS kills a tab that holds ~1.4 GB, so there (or with
+  // ?disc=lazy) it is read on demand instead: each read fetches all the
+  // blocks it spans in parallel, plus a little readahead. ?disc=full forces
+  // the preload.
+  const DISC_PIECE = 16 << 20;
+  const MB = (n) => (n / 1048576).toFixed(n < 100 * 1048576 ? 1 : 0);
+  let discAbort = null;
+
+  function discFromPieces(size, pieces) {
+    return {
+      size,
+      async read(offset, length) {
+        length = Math.max(0, Math.min(length, size - offset));
+        const i = Math.floor(offset / DISC_PIECE), at = offset - i * DISC_PIECE;
+        if (at + length <= DISC_PIECE) return pieces[i].subarray(at, at + length);
+        const out = new Uint8Array(length);
+        for (let done = 0; done < length;) {
+          const pos = offset + done, k = Math.floor(pos / DISC_PIECE), s = pos - k * DISC_PIECE;
+          const n = Math.min(length - done, pieces[k].length - s);
+          out.set(pieces[k].subarray(s, s + n), done);
+          done += n;
+        }
+        return out;
+      },
+    };
+  }
+
+  function discLazy(url, size) {
+    const BLOCK = 4 << 20, KEEP = 32, AHEAD = 2;  // 128 MiB of cache at most
+    const cache = new Map();  // block -> Promise<Uint8Array>, in LRU order
+    let fetched = 0;
+    function block(i) {
+      let p = cache.get(i);
+      if (p) { cache.delete(i); cache.set(i, p); return p; }
+      const off = i * BLOCK, end = Math.min(size, off + BLOCK) - 1;
+      p = fetch(url, { headers: { Range: `bytes=${off}-${end}` } })
+        .then((r) => { if (!r.ok) throw new Error(`disc read ${off}: HTTP ${r.status}`); return r.arrayBuffer(); })
+        .then((b) => { fetched += b.byteLength; return new Uint8Array(b); });
+      p.catch(() => cache.delete(i));
+      cache.set(i, p);
+      while (cache.size > KEEP) cache.delete(cache.keys().next().value);
+      return p;
+    }
+    return {
+      size,
+      get fetched() { return fetched; },
+      async read(offset, length) {
+        length = Math.max(0, Math.min(length, size - offset));
+        const first = Math.floor(offset / BLOCK), last = Math.floor((offset + Math.max(length, 1) - 1) / BLOCK);
+        const want = [];
+        for (let i = first; i <= last; i++) want.push(block(i));
+        for (let i = last + 1; i <= last + AHEAD && i * BLOCK < size; i++) if (!cache.has(i)) block(i);
+        const blocks = await Promise.all(want);
+        if (first === last) { const s = offset - first * BLOCK; return blocks[0].subarray(s, s + length); }
+        const out = new Uint8Array(length);
+        for (let done = 0, k = 0; done < length; k++) {
+          const s = k ? 0 : offset - first * BLOCK, n = Math.min(length - done, blocks[k].length - s);
+          out.set(blocks[k].subarray(s, s + n), done);
+          done += n;
+        }
+        return out;
+      },
+    };
+  }
+
+  const dl = {
+    el: document.getElementById('dl'), bar: document.getElementById('dlbar'),
+    pct: document.getElementById('dlpct'), bytes: document.getElementById('dlbytes'),
+    rate: document.getElementById('dlrate'), t0: 0, last: 0, shown: 0,
+    show(got, total, force) {
+      const now = performance.now();
+      if (!force && now - this.shown < 100) return;
+      this.shown = now;
+      const secs = Math.max(0.001, (now - this.t0) / 1000), bps = got / secs;
+      const f = total ? Math.min(1, got / total) : 0;
+      this.bar.style.width = (f * 100).toFixed(1) + '%';
+      this.el.setAttribute('aria-valuenow', Math.round(f * 100));
+      this.pct.textContent = total ? Math.floor(f * 100) + '%' : MB(got) + ' MB';
+      this.bytes.textContent = total ? `${MB(got)} / ${MB(total)} MB` : '';
+      const left = total && bps > 0 ? Math.ceil((total - got) / bps) : 0;
+      this.rate.textContent = `${MB(bps)} MB/s` + (left && got < total ? ` · ${left} s left` : '');
+    },
+  };
+
+  async function discPreload(url, ctl) {
+    const r = await fetch(url, { signal: ctl.signal });
+    if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
+    // Not Content-Length when the response may arrive compressed.
+    let total = r.headers.get('Content-Encoding') ? 0 : Number(r.headers.get('Content-Length')) || 0;
+    if (!total) {
+      const h = await fetch(url, { method: 'HEAD' }).catch(() => null);
+      total = (h && Number(h.headers.get('Content-Length'))) || 0;
+    }
+    document.body.classList.add('downloading');
+    statusEl.textContent = 'Loading disc image…';
+    dl.t0 = performance.now();
+    const pieces = [];
+    let got = 0, piece = null;
+    const reader = r.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      for (let v = value; v.length;) {
+        const at = got % DISC_PIECE;
+        if (!at) {
+          const left = total ? total - got : DISC_PIECE;
+          piece = new Uint8Array(Math.min(DISC_PIECE, Math.max(left, v.length)));
+          pieces.push(piece);
+        }
+        const n = Math.min(v.length, piece.length - at);
+        piece.set(v.subarray(0, n), at);
+        got += n; v = v.subarray(n);
+      }
+      dl.show(got, total);
+    }
+    if (total && got !== total) throw new Error(`got ${got} of ${total} bytes`);
+    if (!total) pieces[pieces.length - 1] = piece.subarray(0, got - (pieces.length - 1) * DISC_PIECE);
+    dl.show(got, got, true);
+    const secs = (performance.now() - dl.t0) / 1000;
+    statusEl.textContent = 'Starting…';
+    log(`[disc] loaded ${MB(got)} MB in ${secs.toFixed(1)} s (${MB(got / secs)} MB/s)`);
+    return discFromPieces(got, pieces);
+  }
+
+  // Starts with the page, alongside the wasm download; the game starts when
+  // both are in.
+  async function loadDiscFromUrl(iso, q) {
+    const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+    const mode = q.get('disc') || (ios ? 'lazy' : 'full');
+    let disc = null;
+    if (mode === 'full') {
+      discAbort = new AbortController();
+      try { disc = await discPreload(iso, discAbort); }
+      catch (e) { if (!started) log(`[disc] preload failed (${e}); reading on demand instead`); }
+      discAbort = null;
+      document.body.classList.remove('downloading');
+    }
+    if (started) return null;  // a file was chosen meanwhile
+    if (!disc) {
+      const h = await fetch(iso, { method: 'HEAD' });
+      disc = discLazy(iso, Number(h.headers.get('Content-Length')));
+      log(`[disc] reading ${iso} on demand (${MB(disc.size)} MB)`);
+    }
+    return disc;
+  }
+  const discQuery = new URLSearchParams(location.search);
+  const discFromUrl = discQuery.get('iso') ? loadDiscFromUrl(discQuery.get('iso'), discQuery) : null;
+  async function maybeAutoStart() {
+    if (!discFromUrl) return;
+    const disc = await discFromUrl;
+    if (disc) startWith(disc);
   }
   document.getElementById('file').addEventListener('change', (e) => {
     if (e.target.files[0]) startWith(Module.fsaDiscFromFile(e.target.files[0]));
