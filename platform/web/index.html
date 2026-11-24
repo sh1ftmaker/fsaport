@@ -382,6 +382,7 @@
     fit();
     statusEl.textContent = 'Running';
     Module.fsaDisc = disc;
+    await Module.fsaSaveInit();
     Module.fsaClock.start();
     try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
   }

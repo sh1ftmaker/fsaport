@@ -43,6 +43,8 @@ python3 tools/serve.py --port 8811 --dir build/web          # then open it and d
 `--logs DIR` collects the page's log: each page load posts its lines (and
 device / WebGPU telemetry) to `/log`, written to `DIR/<time>-<id>.log`, with
 `DIR/latest.log` pointing at the newest.
+Memory cards persist in the browser (IndexedDB, per site); `?nosave=1`
+starts with an empty card that is not written back.
 `main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
 
 ## Compile check only

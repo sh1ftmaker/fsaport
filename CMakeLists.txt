@@ -82,6 +82,8 @@ target_link_options(fsa PRIVATE
   "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free','_fsa_thread_entry','_fsa_retrace','_fsa_timer','_fsa_next_timer_ms','_fsa_dump_threads','_fsa_set_dvd_log','_fsa_debug_state','_fsa_touch_set','_fsa_debug_nodark','_fsa_print_stack']"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js"
+  "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_save.js"
+  -lidbfs.js
   --profiling-funcs -Wl,--error-limit=0 -Wl,--Map=fsa.map
   $<$<BOOL:${FSA_DEBUG_LINES}>:-g -O1>)
 set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
