@@ -401,3 +401,105 @@ In stage 1, game time is about 1.45x the normal build (4.3 vs 3.0 ms/frame).
 That is the load checks plus `-fno-inline`. Every allocation's poison fill
 adds to load times. The address map and the records take about 100 MB of
 host memory.
+
+## Endian trap (`endian`)
+
+Finds raw multi-byte reads of big-endian file data: loads that bypass the
+byte-order helpers of `port/be.h` (`BE<T>`, `be16`/`be32`/`be32s`/`bef32`).
+The triaged list (static audit plus what this trap found) is
+[docs/diag/endian_audit.md](diag/endian_audit.md).
+
+### Build and run
+
+```sh
+emcmake cmake -S . -B build/web-endian -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DFSA_ENDIAN_DIAG=ON -DFSA_DEBUG_LINES=ON -DFSA_ENDIAN_DIAG_UNITS="/game/(src|libs)/"
+ninja -C build/web-endian fsa
+python3 tools/serve.py --dir build/web-endian --diag logs/diag ...
+# play; the stream is flushed every 300 retraces, or call Module._fsa_endian_report()
+python3 tools/endian_report.py logs/diag/<run>     # -> <run>/endian_resolved.jsonl + ranking
+```
+
+`FSA_ENDIAN_DIAG_UNITS` is a regex over source paths; the default
+`/game/src/game/` instruments the game's own code only, the value above adds
+JSystem and the SDK. `FSA_DEBUG_LINES=ON` keeps the DWARF line tables that
+`tools/endian_report.py` needs for file:line. `Module._fsa_endian_ranges()`
+writes the registered file ranges to the `endian_ranges` stream.
+
+### How it works
+
+- The instrumented units are compiled with
+  `-fsanitize-coverage=trace-pc-guard,trace-loads`: every basic block calls
+  `__sanitizer_cov_trace_pc_guard` (its guard id is kept as the current site) and
+  every load calls `__sanitizer_cov_load1/2/4/8` with its address first.
+  `platform/endian_diag.cpp` implements them; only 2- and 4-byte loads are
+  checked.
+- The loaders register the address ranges that hold file bytes
+  (`port/endian_diag.h`, macros that vanish in a normal build): the game's DVD
+  reads (`platform/dvd.cpp`, not the platform's own FST/header reads, nothing
+  under 64 bytes), Yaz0/Yay0 output (`JKRDecomp::decode`, the streaming
+  decompressors in `JKRDvdRipper` and `JKRAram`), ARAM-to-RAM copies
+  (`JKRAramPiece::startDMA`), and every resource `JKRArchive::getResource`
+  returns, labelled with its type and name. `JKRHeap::free`, `freeAll` and
+  `destroy` forget the ranges inside the freed memory. A page table makes the
+  common "not file data" case one lookup.
+- A load from a range is a raw read of file data. Its value is classified:
+  *swapped-looking* when the byte-swapped value is much more plausible (a
+  small integer, or a sane float where the raw value is denormal or huge),
+  *plain-looking* for the reverse (little-endian GBA data, data swapped once at
+  load, heap pointers), neutral otherwise (zero, palindromes, four ASCII bytes).
+- The first hit of a site captures the JS stack once: the function name and the
+  wasm code offset. `BE<T>`, `BEPtr` and `BEOffset` read byte by byte in this
+  build, so the helpers' own reads are not reported.
+- `tools/endian_report.py` keeps the last record per site, maps the offsets to
+  file:line with llvm-symbolizer (undoing JSystem's `#line` directives), fills
+  `unit` from `game/units.txt` and `symbol` from the decomp's `symbols.txt`
+  (CodeWarrior mangling, when unambiguous), merges sites on the same line, and
+  ranks by swapped-looking share. Lines that already use a helper (`bswap`,
+  `be32`, `portReadBE`, ...) are marked `helper` and ranked last; word copies of
+  byte data (`memcpy`, colours) are marked `copy` and ranked down.
+
+### Records
+
+`endian`, one line per changed site per flush (cumulative; the last one wins):
+
+```json
+{"function": "JPALoadCalcTexCrdMtxAnm(JPAEmitterWorkData*, JPABaseParticle*)",
+ "file": "", "line": 0, "unit": "", "format": "????",
+ "field": "+0x7CBB0 in particle.jpc", "evidence": "runtime",
+ "detail": "u32 raw load: 16611 swapped-looking, 0 plain-looking of 55370; e.g. 0x0AD7A33D (swapped 0x3DA3D70A)",
+ "count": 55370, "size": 4, "swapped": 16611, "plain": 0, "wasm": "0x3c62ca", "site": 1535}
+```
+
+`format` is the resource type (`'TIMG'`, `'J3D '`, `????` for a lookup by
+name) or the file extension of a disc read; `field` is the offset into the
+innermost registered range and its name. `endian_resolved.jsonl` has the same
+records with `file`, `line`, `unit`, `symbol`, `source` (the line's text),
+`helper`, `copy` and `score` filled in. The static audit's entries in
+`docs/diag/endian_audit.md` use the same fields with `"evidence": "static"`.
+
+### What it found
+
+Title, menus, opening narration and `?stage=1` (fairy dialogue, walking):
+**no raw load from file data in `game/src/game`** (the game's GBA-derived
+formats are little-endian and read byte by byte). In JSystem it found the JPA
+texture-coordinate animation table read as host floats (fixed, 38ec291). The
+rest of what it reports is the noise listed in the audit (in-place swapped
+tables, word copies of byte data, `BE<>` structs copied by value).
+
+### Limits
+
+- It sees only code that runs: the message-branch operands (audit #1-#3) were
+  not reached by the scenes above.
+- Memory reused after a free that bypasses `JKRHeap::free` (e.g. `freeTail`,
+  solid heaps reset wholesale) keeps its stale range; such hits look plain or
+  neutral and point at non-file objects.
+- The value classification is a heuristic; a raw read of big-endian zero or of a
+  value that is plausible both ways is neutral. Rank by `swapped` and `plain`
+  together.
+
+### Cost
+
+Stage 1 runs at about 5.3 ms of game time per frame against 3.5 in the normal
+build (all decomp units instrumented); loading is slower, so key scripts need
+their times shifted by ~20 s. Normal builds are unchanged.
