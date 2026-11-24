@@ -4,7 +4,7 @@
 // screenshots, send key presses, then close the tab.
 //
 //   node tools/web_run.mjs --cdp 9334 --url 'http://127.0.0.1:8790/?iso=local.iso' \
-//        --seconds 60 --every 10 --out build/web-run [--keys 'Enter@30,KeyX@40']
+//        --seconds 60 --every 10 --out build/web-run [--keys 'Enter@30,KeyX@40'] [--freeze 40:20]
 //        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -66,6 +66,10 @@ const evals = (args.evals && args.evals !== 'true' ? args.evals.split(';') : [])
   const at = s.lastIndexOf('@');
   return { expr: s.slice(0, at), t: Number(s.slice(at + 1)) };
 });
+// --freeze T:D freezes the page at T s (as Chrome does to a background tab)
+// and wakes it D s later.
+const freeze = args.freeze && args.freeze !== 'true' ? args.freeze.split(':').map(Number) : null;
+let frozen = 0;
 while (Date.now() - t0 < seconds * 1000) {
   await sleep(250);
   const t = (Date.now() - t0) / 1000;
@@ -78,6 +82,15 @@ while (Date.now() - t0 < seconds * 1000) {
       await send('Input.dispatchKeyEvent', { type: 'keyUp', ...keyOf(k.code) });
       log(`[key] ${k.code} at ${t.toFixed(1)} s`);
     }
+  }
+  if (freeze && frozen === 0 && t >= freeze[0]) {
+    frozen = 1;
+    await send('Page.setWebLifecycleState', { state: 'frozen' });
+    log(`[freeze] page frozen at ${t.toFixed(1)} s`);
+  } else if (freeze && frozen === 1 && t >= freeze[0] + freeze[1]) {
+    frozen = 2;
+    await send('Page.setWebLifecycleState', { state: 'active' });
+    log(`[freeze] page woken at ${t.toFixed(1)} s`);
   }
   for (const e of evals) {
     if (!e.done && t >= e.t) {

@@ -325,7 +325,13 @@
       .catch(() => {});
   }
   addEventListener('pagehide', () => remoteFlush(true));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) remoteFlush(true); });
+  document.addEventListener('visibilitychange', () => {
+    log(`[page] ${document.hidden ? 'hidden' : 'visible'}`);
+    if (document.hidden) remoteFlush(true);
+  });
+  // Chrome freezes background tabs after a while (Page Lifecycle).
+  document.addEventListener('freeze', () => { log('[page] frozen'); remoteFlush(true); });
+  document.addEventListener('resume', () => log('[page] resumed'));
   addEventListener('error', (e) => log(`[page error] ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`));
   addEventListener('unhandledrejection', (e) => log(`[page error] unhandled rejection: ${e.reason && (e.reason.stack || e.reason)}`));
 
