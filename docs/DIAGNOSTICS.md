@@ -657,3 +657,236 @@ tables, word copies of byte data, `BE<>` structs copied by value).
 Stage 1 runs at about 5.3 ms of game time per frame against 3.5 in the normal
 build (all decomp units instrumented); loading is slower, so key scripts need
 their times shifted by ~20 s. Normal builds are unchanged.
+
+## Sanitizers (`sanitizer`)
+
+UBSan and ASan over the game code (`game/src`, `game/libs`, `game/port`):
+out-of-bounds indexing, misaligned and null accesses, shifts out of range,
+signed overflow, `bool`/enum loads of values the type does not have,
+out-of-range float-to-int casts, and heap/global out-of-bounds and
+use-after-free, including inside the game's own JKR heaps. Two builds behind
+one option, each in its own build directory; the normal build is unchanged
+when it is empty. Aurora, the platform layer and libc are not instrumented.
+
+### Build and run
+
+```
+cmake -S . -B build/ubsan ... -DFSA_SANITIZE=undefined \
+      -DFSA_DECOMP_SYMBOLS=../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt
+cmake -S . -B build/asan  ... -DFSA_SANITIZE=address  -DFSA_DECOMP_SYMBOLS=...
+ninja -C build/ubsan fsa 2>&1 | tee build/ubsan-build.log    # the log feeds san_return.py
+python3 tools/serve.py --dir build/ubsan --diag logs/diag ...
+node tools/web_run.mjs ... --evals 'Module._fsa_san_flush();fsaDiagFlush()@<end>'
+python3 tools/san_summary.py logs/diag/<run>/sanitizer.jsonl [<run2>/sanitizer.jsonl] --skip alignment-wide
+python3 tools/san_return.py build/ubsan-build.log > missing_return.jsonl
+```
+
+Each build also writes `fsa_symtab.json` next to `fsa.wasm` (post-link,
+`tools/san_symtab.py` from `fsa.map`); the page fetches it on the first
+finding. A run prints every new site to the console as
+`[sanitizer] <kind> <file:line:col> in <function>: <detail>`.
+
+### What each build does
+
+`undefined`: the game units get `-fsanitize=undefined
+-fno-sanitize=vptr,function,return -fsanitize-recover=all -Wreturn-type`.
+`platform/sanitize/sanitize.cpp` is the whole UBSan runtime: it defines the
+`__ubsan_handle_*` entry points clang calls, counts every hit per check site
+and returns, so the game keeps running. No compiler-rt UBSan runtime is
+linked.
+
+- `vptr` and `function` need RTTI (the port has none).
+- `return` cannot run: clang puts `unreachable` (a trap) after the handler,
+  and the game does fall off the end of value-returning functions (the
+  reason the build has `-fno-strict-return`). Missing returns are found at
+  compile time instead: `tools/san_return.py` turns the `-Wreturn-type`
+  warnings of a full build into records of kind `return-static`.
+- `integer-divide-by-zero` and `unreachable` are reported, but the trap that
+  follows them in wasm still happens.
+
+`address`: the game units get `-fsanitize=address -fsanitize-recover=address`,
+the link `-fsanitize=address -gsource-map`, 1 GB initial memory, and
+`platform/sanitize/san_lib.js` (a fixed `emscripten_pc_get_file`: emscripten's
+threw on source-map segments without a file, which killed the report).
+Runtime options are compiled in (`__asan_default_options`):
+`halt_on_error=0` (keep running), `detect_leaks=0`,
+`detect_stack_use_after_return=0` (the fake stack does not survive the JSPI
+coroutine switches), `max_malloc_fill_size=0` (fresh `malloc` memory stays
+zero as in the normal build; Aurora relied on that) and
+`malloc_context_size=0` (no allocation stacks: each costs a JS
+`Error().stack` on wasm, and a stage load then took minutes).
+
+The game carves all its heaps out of one big MEM1 allocation, so ASan alone
+would only see that block. With `FSA_PORT_ASAN` (`game/port/fsa_asan.h`) the
+JKR heaps take part: `JKRExpHeap`, `JKRSolidHeap` and `JKRUnitHeap` poison
+everything they manage when created, unpoison exactly the bytes each
+`alloc()` asked for (not the rounded-up block), poison a block again when it
+is freed (`CMemBlock::free`, `freeAll`, `freeTail`, `JKRUnitHeap::do_free`),
+and `JKRHeap::resize` moves the boundary. Those four units are built without
+ASan so they can touch their own block headers. Game code then gets
+overflow-past-request and use-after-free (or stale pointer into free heap
+memory) checks on every JKR block; ASan reports those as
+`use-after-poison`, and the record says which heap and block the address is
+in (`fsa_jkr_describe` in `JKRExpHeap.cpp`):
+`JKRExpHeap 0x...: block 0x... asked for 0x280 bytes (0x280 reserved); access at +0x284`,
+`... free memory (freed block or never allocated); nearest live block below: ...`,
+`JKRSolidHeap ...: unallocated (past the last allocation, or freed by freeAll/freeTail)`.
+
+Not covered: memory allocated before the root heap exists or by host code
+(plain ASan heap checks still apply there), objects inside one block (a
+struct's array running into the next field: that is what UBSan's `bounds`
+sees), uninitialised reads (the `uninit` stream), and stack use after return.
+
+### Records
+
+One line per distinct site in stream `sanitizer`:
+
+```
+{"key":"array-bounds|game/src/game/tile_map_802F5040.cpp:2115:16","kind":"array-bounds",
+ "file":"game/src/game/tile_map_802F5040.cpp","line":2115,"col":16,
+ "function":"TileMap_804AA858::getTile_802F9908(long, long)",
+ "symbol":"_ZN16TileMap_804AA85816getTile_802F9908Ell",
+ "sym":"getTile_802F9908__16TileMap_804AA858Fll",
+ "unit":"game/src/game/tile_map_802F5040.cpp",
+ "detail":"index 8 out of bounds for type 'u16 *[4]' (aka 'unsigned short *[4]')",
+ "first_scene":{"mode":7,"stage":8,"level":3,"in_stage":1},"count":106559}
+```
+
+- `kind`: the UBSan check (`array-bounds`, `null`, `alignment`,
+  `alignment-wide`, `object-size`, `shift-exponent`, `shift-base`,
+  `signed-integer-overflow`, `integer-divide-by-zero`, `bool`, `enum`,
+  `float-cast-overflow`, `pointer-overflow`, `nonnull-attribute`, `builtin`,
+  `vla-bound`, `unreachable`), `asan-<bug>` (`asan-use-after-poison`,
+  `asan-heap-buffer-overflow`, `asan-global-buffer-overflow`,
+  `asan-null-pointer-dereference`, ...), or `return-static`.
+  `alignment-wide` is a pointer that is 4-aligned where the type wants 8 (a
+  `u64`/`double` member): the GameCube heaps hand out 4-aligned blocks, and
+  on wasm that is harmless, so it is split from real misalignment
+  (`alignment`).
+- `file:line:col`: where the check is (for code inlined from a header, the
+  header). Units with `#line` directives (JSystem assert lines) give those
+  numbers.
+- `function`: the function the check ran in, from the JS stack (the caller
+  of the outermost `__ubsan_handle_*` / `__asan_report_*` frame); for a check
+  inlined into another function, that outer function. `symbol` is its clang
+  symbol, `sym` the decomp's (symbols.txt spelling: re-mangled the CodeWarrior
+  way by `tools/diag_symtab.py`'s code, or the only symbols.txt function with
+  that qualified name; `""` if neither), `unit` the source file it was
+  compiled in.
+- `detail`: the first hit's values. ASan: the access, ASan's own description
+  of the address, and the JKR block, plus `stack` (the first frames).
+- `first_scene`: the game's `fsa_diag_scene` (`mode` = `GameRoot`
+  `field_0x4c`, save `stage`/`level`, `in_stage`) at the first hit.
+- `count`: hits so far (UBSan), or ASan reports at that line (ASan reports a
+  given pc once). A record is posted at the first hit and again every 10 s
+  while its count grows; keep the last line per `key`
+  (`tools/san_summary.py` does, and merges several runs).
+
+### Findings (2026-11-24)
+
+Sessions as in the coverage section: boot -> title (intro movie) -> menus ->
+adventure opening (260 s; ends in mode 7, stage 8 level 3) and `?stage=1`
+with the stick held (200 s), each in both builds. Merged, without the 1695
+`alignment-wide` sites: 39 run-time sites and 37 compile-time missing
+returns. 1530 of the 1734 run-time records carry a decomp `sym`.
+
+Port, platform and Aurora (a). The first four were fixed in the port
+(separate commits); the sanitizer build found them:
+
+- TEV-register animations (BRK; 3D models and 2D layouts): the port's
+  in-place byte swap (`J3DAnmLoader.cpp`) treated the 0x1C-byte
+  `J3DAnmCRegKeyTable`/`KRegKeyTable` entries as u16 arrays, which moved the
+  u8 register id onto its 0xFF pad. Every register animation then used
+  register 255: `J3DMaterialTable::entryTevRegAnimator` wrote past its
+  4-entry arrays into the next `JKRSolidHeap` allocation
+  (`J3DMaterialAnm.h:138-176`, ASan) and `J2DMaterial::setAnimation` past a
+  `u16[4]` (`J2DMaterial.cpp:197`, UBSan index 255).
+- The same swap ran past the end of an anim file when a block's `mSize` did
+  (ASan: reads past a JKR block in `portSwapAnmBlock`; the swap writes there too). In an archive the
+  bytes after the file are the next file's header: `yami_yougan.bmd`'s
+  `'J3D2'` became `'2D3J'`, its model failed to load, and
+  `loadModelWithAnims_8016A3BC` continued through a null `J3DModelData`
+  (12 UBSan `null` sites in `J3DModel.cpp`, `J3DMtxBuffer.cpp`,
+  `J3DAnimation.cpp`, `JUTNameTab.cpp`). Silent in the normal build (reads of
+  address 0), a crash in the ASan build.
+- `JASGlobalInstance<JAUSectionHeap / JAUSoundNameTable / JAUSoundTable>::sInstance`
+  were declared weak (`createJASInstance` in `JAUSectionHeap.h`) and never
+  defined: all three linked to address 0 and overwrote each other
+  (`JASGadget.h:28`, ASan write to 0x0 in `AudioMgr_8045A080::init_80459AE4`).
+  Now defined in `game/src/port/jsystem_statics.cpp`.
+- Aurora's imgui stub never built a font atlas, so `ImGui::NewFrame` read
+  `Fonts[0]` through a null vector every frame (a trap in the ASan build).
+- Not fixed, a portability decision: float-to-unsigned casts of negative or
+  huge values. PowerPC converts to s32 (`fctiwz`) and keeps the low bits;
+  wasm saturates (to 0 for a negative value). `JPAParticle.cpp:98`
+  (`mRotateAngle = <float>`, e.g. -2305.4 -> u16: 21k hits per opening, so
+  particles start unrotated), `JPABaseShape.cpp:422` (-1.07e8 -> s16),
+  `J2DPrint.cpp:536` (-259.5 -> u16). Writing `(u16)(s32)x` gives the
+  GameCube result.
+- `alignment-wide` (1695 sites): `J2DScreen`, `J2DPane`, `J2DPicture`,
+  `J2DTextBox`, `PaneCtrl_804AF86C`, THP threads ... want 8-byte alignment
+  (a `u64` pane tag or a `double`) and live in 4-aligned JKR blocks. Harmless
+  on wasm; the same placement as on the GameCube.
+
+Decomp (b): wrong array sizes, types and initialisers. Each is a
+`file:line` and a `sym` in the merged records.
+
+- `JASDsp::TChannel::_10` is `Mixer[4]` but indexed up to 5
+  (`JASDSPInterface.cpp:387, 403, 457`: `setMixerInitVolume`,
+  `setMixerVolume`, `setBusConnect`, 1.3 M hits per session). TP's has 6
+  mixers. The writes land on the following `TChannel` fields, which the DSP
+  side reads.
+- `JASTrack::setIIR` copies 8 `s16` (`mIIR[8]`) from
+  `JASCalc::CUTOFF_TO_IIR_TABLE[128][4]` rows (`JASTrack.cpp:558`, ASan
+  global-buffer-overflow at row 127; `cmdIIRSet` passes an `s16[4]` too).
+  Either the loop/`mIIR` or the table width is wrong.
+- `JASDsp::setFXLine`: `SEND_TABLE[config->_02]` with `_02 = 0x6000`
+  (`JASDSPInterface.cpp:211, 213`). The `fxConfig[4]` initialisers in
+  `audio_mgr_80457DFC.cpp` (~line 448) do not fit `FxlineConfig_`'s fields:
+  0x6000 looks like a volume in the send-index slot.
+- `TileMap_804AA858::mLayerGrid` is `u16*[4]` but indexed 8+
+  (`tile_map_802F5040.cpp:2089, 2115`, 100 k hits): layers 8 and up run on
+  into `mLayerGrid2` and `field_0x48[16]` (`Map.h:461`). Layout-correct, so
+  the behaviour is right; one 24-entry array would say what the code does.
+- `J2DMaterialFactory.cpp:441`: `mIndTevStageInfo[p2]` with `p2 = 5` on a
+  `J2DIndTevStageInfo[4]` (the material data has more entries than the
+  declared array).
+- `J2DWindowEx.cpp:44-48`: the 4-iteration loop indexes a `u16[2]`
+  (`_158` or `mContentIds`).
+- `gba_window_80432638.cpp:65, 72, 92, 99`: `f32[2]` indexed 2 and 3
+  (`field_0x70` / `field_0x80` want 4).
+- `pane_ctrl_804023D0.cpp:149, 217`: `field_0x249` is `u8[1]`, used as `[2]`.
+- `message_window_80390818.cpp:420`, `pageSound`: index -1 into
+  `field_0x3b2[3]`.
+- Enum ranges: `JUTTransparency` has 2 values but 2 is loaded
+  (`JUTPalette.cpp:50`, `JUTPalette.h:18`); `JASSeqParser::BranchCondition`
+  is declared empty (`JASSeqParser.cpp:124`).
+- Missing returns (`return-static`, 37): among them `J2DPane::getRotate`,
+  `JPABaseParticle::getWidth/getHeight` (f32), `J2DTextBoxEx::setBlack/setWhite`
+  (bool), 11 in `JMessage/processor.cpp`, the empty `JASDSPChannel` getters,
+  `EscortBase_8049E0C8::vfunc_0x84/0x88`, `fn_802340A0` (`tu_8022AD64.cpp:2500`).
+
+Benign or intended (c):
+
+- Left shifts of negative values: `THPAudio.c:93-94, 127-128` (ADPCM decode,
+  500 k hits per movie) and `tile_map_802F5040.cpp:62` (`getDrawOffset`).
+- Signed overflow of tick differences: `JUTVideo.cpp:67`,
+  `JUTProcBar.h:35` (`OSTick` wraparound).
+- `tu_80301CD0.cpp:277, 363`: `lbl_8053AD68->fn_80379F84()` on a null
+  `lbl_8053AD68`; the callee only tests that global and `root`, as in the
+  original.
+- `JASHeapCtrl.cpp:183`: `&next->mTree` with `next == NULL` (`mTree` is at
+  offset 0).
+
+Nothing in these sessions crashes the normal build. Not reached: the
+ConnectScreen 4-row loop over `lbl_80479920[3][4]`
+(`connect_screen_803F0A54.cpp:2640`) needs `field_0x1ac == 3`, a screen
+these sessions do not show.
+
+### Cost
+
+Stage 1: game time 3.2 ms/frame with UBSan and 4.6 ms/frame with ASan, against
+3.0 in the normal build (+7% and +55%); the opening is within noise. Both keep
+60 fps. `fsa.wasm` is 15 MB (UBSan) and 18 MB plus a 4 MB source map (ASan)
+against 8 MB. The ASan build starts with 1 GB of memory (the shadow is 1/8 of
+the 2 GB maximum).

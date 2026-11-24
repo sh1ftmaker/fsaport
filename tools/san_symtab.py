@@ -16,6 +16,7 @@ The sanitizer runtime (platform/sanitize/sanitize.cpp) fetches it to name the
 function a check fired in."""
 import json, os, re, sys
 
+sys.dont_write_bytecode = True  # no tools/__pycache__ from the import below
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import diag_symtab as ds  # noqa: E402  (mwcc_mangle, load_symbols)
 
