@@ -62,7 +62,7 @@
   var PAD_SLOP = 0.30;     // of each control's half-size, added all round
   var STICK_SLOP = 0.20;   // the stick keeps tracking a little past its rim
   var STICK_DEAD = 0.16;   // fraction of the radius that reports centre
-  var STICK_FULL = 0.86;   // full deflection a little inside the rim
+  var STICK_FULL = 0.5;    // full deflection at half the radius: a short thumb drag
 
   var stickGeom = null;    // {cx, cy, r}
   var geomOk = false;
