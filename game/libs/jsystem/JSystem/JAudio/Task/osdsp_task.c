@@ -148,6 +148,11 @@ void __DSPHandler(__OSInterrupt interrupt, OSContext *context)
 
 void DsyncFrame2(u32 p1, u32 p2, u32 p3)
 {
+#ifdef FSA_PORT
+    // Port: no DSP task to yield to; the host DSP takes the frame at once.
+    DsyncFrame(p1, p2, p3);
+    return;
+#endif
     if (DSP_prior_yield != TRUE)
     {
         sync_stack[0] = p1;

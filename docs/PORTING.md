@@ -159,10 +159,43 @@ drives it as an emulated phone over CDP.
 
 ### Audio
 
-Not audible yet. JAudio initialises fully (its file formats read
-big-endian), but there is no DSP: the DSP boot handshake is skipped and DSP
-commands complete at once. Next: a host mixer in place of the DSP (decode the
-ADPCM channels JAudio sets up, mix, output through Web Audio).
+JAudio runs as on the GameCube up to the DSP; the DSP's mixing and the AI's
+DMA are replaced:
+
+- **AI** (`platform/audio.cpp`): an OS alarm stands in for the AI DMA
+  interrupt. Each one hands the block JAudio programmed last (`AIInitDMA`,
+  560 frames of 32 kHz stereo s16, right sample first) to the page and calls
+  JAudio's DMA callback, so the audio thread runs `JASDriver::updateDac` once
+  per block (57.14 per second). The alarm is paced by the page's audio clock
+  to keep ~50 ms queued ahead of playback. It does not fire again until the
+  audio thread has programmed the next block.
+- **DSP** (`platform/audio_dsp.cpp`, ported from Dusklight's CPU DSP, CC0):
+  `JASDriver::finishDSPFrame` (FSA_PORT) renders the frame's 7 subframes at
+  once. After each `updateDSP`, which is where the DSP would have mailed the
+  audio thread, it mixes the 64 `JASDsp::TChannel` voices: ADPCM4/ADPCM2/
+  PCM16/PCM8 from ARAM and the oscillators, linear resampling by pitch, the
+  voice's one-pole and biquad filters, and mixer-volume ramps to the L
+  (0x0D00) and R (0x0D60) buses. It writes back the feedback fields JAudio reads (finished,
+  samples left, ARAM position, reset flag). `DsetupTable` and `DsyncFrame`
+  hand it the voice table and the output buffers. Not done: the FX
+  (reverb/echo) lines and the Dolby surround buses (Dusklight substitutes
+  Freeverb for the former).
+- **Page** (`platform/web/fsa_audio.js`): each block becomes an
+  `AudioBufferSourceNode` scheduled back to back on a 32 kHz AudioContext.
+  The context starts on the first key, touch or click. Until it runs (or with
+  `?audio=0`), blocks are dropped and the clock is wall time, so JAudio and
+  the movie player (which times video by its audio) keep their pace.
+  `fsaAudio.stats()` / `?audiolog=1` give block rate, levels (sent and
+  playing), underruns and lead. With `?audiorec=S`, `tools/web_run.mjs --wav F`
+  saves what the game sent.
+- Movies mix their sound into the DMA block through
+  `JASDriver::registerMixCallback`, as on the GameCube.
+
+Endianness fixes this needed: unions that read a host integer through
+big-endian byte or bit-field views. `JAISoundID` (its section/group bytes and
+short ID choose the sequence: the BGM never loaded), `JASChannel::MixConfig`
+(the bus and pan selectors), `JAUAudibleParam`, and the note flags in
+`JASSeqParser::execNoteOnGate`.
 
 ## Classes of bug found while booting
 
@@ -229,7 +262,7 @@ Worth checking for in any code that misbehaves:
   reaches state 8) but `stepMessageWindow_803865B8` never finishes it, so the
   demo holds at tick 281 on a dark screen (the shadow-circle mask at 0 is
   expected there; the window itself is not visible).
-- Next: that message window; audio output; saves (Aurora's card in MEMFS is
+- Next: that message window; saves (Aurora's card in MEMFS is
   lost on reload; the game offers "continue without saving"); GBA views; THP
   movies (title attract and menu previews are black).
 - Debugging: `FSA_TRACE=ON` enables `[trace]`/`[heap]`/`[blo]` reports;

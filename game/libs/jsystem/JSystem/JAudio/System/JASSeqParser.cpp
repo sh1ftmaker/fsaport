@@ -916,12 +916,24 @@ s32 JASSeqParser::execNoteOnGate(JASTrack *track, u32 pData, u32 p2, u32 p3,
     } tmp;
     tmp.val = p4;
     int r31 = 0;
+#ifdef FSA_PORT
+    // Port: MWCC allocates bit fields from the top bit, clang from the bottom:
+    // bit0 / bit1 are 0x80 / 0x40 of the note's flags (as Dusklight's TP port
+    // found for the same code).
+    if (p4 & 0x40) {
+        r31 |= 2;
+    }
+    if (p4 & 0x80) {
+        r31 |= 1;
+    }
+#else
     if (tmp.bits.bit1) {
         r31 |= 2;
     }
     if (tmp.bits.bit0) {
         r31 |= 1;
     }
+#endif
     if (p3 == 0) {
         r31 |= 4;
     }

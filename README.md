@@ -23,7 +23,8 @@ committed.
 | Input | keyboard (Enter = Start, Space = A, Shift = B, WASD = stick), gamepads, and an on-screen touch controller on phones and tablets |
 | Speed | 60 frames per 60 retraces everywhere tested; <= ~4 ms of CPU per frame |
 | Past the prologue | not yet (a message window does not advance) |
-| Audio output, saves, GBA views, movies | not yet |
+| Audio | yes: music, sound effects and movie sound through Web Audio (starts on the first key, touch or click); no reverb yet |
+| Saves, GBA views | not yet |
 
 ## Build and run (browser)
 
@@ -81,3 +82,6 @@ python3 tools/compile_check.py                         # build/obj/*.o + build/c
 The decompiled SDK and JSystem sources are CC0 (`game/LICENSE.sdk`,
 `game/LICENSE.jsystem`, from doldecomp/mkdd and the other donors listed in the
 decomp). The decomp itself states no license.
+
+The CPU mixer that replaces the DSP (`platform/audio_dsp.cpp`) is adapted from
+Dusklight, the Twilight Princess PC port (CC0).

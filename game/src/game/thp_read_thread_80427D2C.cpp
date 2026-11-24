@@ -1155,13 +1155,6 @@ static bool THPPlayerOpen(const char* fileName, BOOL onMemory) {
         }
     }
 
-#ifdef FSA_PORT
-    // Port: there is no audio output yet (platform/hw_stubs.cpp stubs the AI
-    // DMA callback, so JAudio never pulls the movie's samples), and the player
-    // times video by its audio: with an audio track every movie stopped after
-    // its first frame. Play the video alone, timed by its frame rate.
-    ActivePlayer.audioExist = FALSE;
-#endif
     ActivePlayer.internalState = 0;
     ActivePlayer.state = 0;
     ActivePlayer.playFlag = 0;
