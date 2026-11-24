@@ -24,6 +24,16 @@
 
 extern "C" void _emscripten_stack_restore(uintptr_t sp);
 
+#ifdef FSA_DIAG
+// Diagnostics build: which shadow call stack (diag_cov.cpp) is live. Context
+// n + 1 is coroutine n; 0 is the interrupt / host context.
+extern "C" void fsa_diag_set_context(unsigned ctx);
+extern "C" unsigned fsa_diag_context(void);
+#define DIAG_CONTEXT(c) fsa_diag_set_context((unsigned)(c)->id + 1)
+#else
+#define DIAG_CONTEXT(c) ((void)0)
+#endif
+
 namespace {
 
 constexpr size_t kThreadStackSize = 512 * 1024;
@@ -115,6 +125,7 @@ void switch_from_current(Coroutine* next) {
   }
   // Resumed: our shadow stack again.
   g_current = self;
+  DIAG_CONTEXT(self);
   set_stack(self);
   _emscripten_stack_restore(self->sp);
 }
@@ -184,9 +195,10 @@ Coroutine* make_coroutine(OSThread* t) {
 }  // namespace
 
 // --- Entry for a new coroutine (a JSPI promising export) -----------------------
-extern "C" EMSCRIPTEN_KEEPALIVE void fsa_thread_entry(int id) {
+extern "C" EMSCRIPTEN_KEEPALIVE __attribute__((no_instrument_function)) void fsa_thread_entry(int id) {
   Coroutine* c = g_coroutines[id];
   g_current = c;
+  DIAG_CONTEXT(c);
   set_stack(c);
   _emscripten_stack_restore(c->stackTop);
   void* ret = c->func(c->arg);
@@ -194,8 +206,22 @@ extern "C" EMSCRIPTEN_KEEPALIVE void fsa_thread_entry(int id) {
 }
 
 // --- Interrupt bracket: callbacks run here must not switch -------------------
+#ifdef FSA_DIAG
+static unsigned g_diagSavedContext;
+__attribute__((no_instrument_function)) void platform_interrupt_enter() {
+  if (g_interruptDepth++ == 0) {
+    g_diagSavedContext = fsa_diag_context();
+    fsa_diag_set_context(0);
+  }
+}
+__attribute__((no_instrument_function)) void platform_interrupt_leave() {
+  if (--g_interruptDepth == 0)
+    fsa_diag_set_context(g_diagSavedContext);
+}
+#else
 void platform_interrupt_enter() { g_interruptDepth++; }
 void platform_interrupt_leave() { g_interruptDepth--; }
+#endif
 
 // Called from the browser's event loop (retrace, timers, DVD): if the scheduler
 // is idle and a thread became ready, resume it.
@@ -224,6 +250,7 @@ void platform_threads_init() {
   c->stackBase = emscripten_stack_get_end();
   c->stackTop = emscripten_stack_get_base();
   g_current = c;
+  DIAG_CONTEXT(c);
 }
 
 // Wake timed sleepers whose time has come (called at interrupt points).

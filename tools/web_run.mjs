@@ -114,6 +114,12 @@ while (Date.now() - t0 < seconds * 1000) {
     if (stats && stats !== 'null') log(`[stats @${Math.round(t)}s] ${stats}`);
   }
 }
+// Diagnostics streams (docs/DIAGNOSTICS.md): write out the counters and post
+// what is buffered before the tab goes.
+if (await evalJs('typeof window.fsaDiagFlush') === 'function') {
+  await evalJs('window.fsaDiagFlush()');
+  await sleep(1500);
+}
 await fetch(`http://127.0.0.1:${cdp}/json/close/${tab.id}`);
 ws.close();
 log('[done]');

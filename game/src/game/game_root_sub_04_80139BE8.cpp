@@ -331,3 +331,14 @@ extern "C" void fsa_debug_state() {
     }
 }
 #endif
+#ifdef FSA_DIAG
+// Diagnostics (docs/DIAGNOSTICS.md): the scene the coverage records are tagged
+// with, sampled once per retrace by platform/diag_cov.cpp. Not game code.
+extern "C" __attribute__((no_instrument_function)) void fsa_diag_read_scene(int out[4]) {
+    GameRoot_8049EF20* root = gGameRoot_8053AAF8;
+    out[0] = root != NULL ? (int)root->field_0x4c : -1;
+    out[1] = lbl_80529DEC.mStage_0x118;
+    out[2] = lbl_80529DEC.mLevel_0x11c;
+    out[3] = root != NULL && root->field_0x4 != NULL;
+}
+#endif

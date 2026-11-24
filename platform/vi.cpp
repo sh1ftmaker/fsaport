@@ -76,9 +76,15 @@ void platform_frame_end() {
 // Entry points called by the page are "interrupts": nothing in them may switch
 // threads (that would suspend inside a browser callback); platform_kick then
 // resumes a thread if the scheduler was idle.
+#ifdef FSA_DIAG
+extern "C" void fsa_diag_retrace(void);  // diag_cov.cpp: scene sample, periodic flush
+#endif
 extern "C" EMSCRIPTEN_KEEPALIVE void fsa_retrace() {
   platform_interrupt_enter();
   platform_retrace();
+#ifdef FSA_DIAG
+  fsa_diag_retrace();
+#endif
   platform_interrupt_leave();
   platform_kick();
 }
