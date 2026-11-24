@@ -423,6 +423,36 @@
       maybeAutoStart();
     },
     onAbort(what) { statusEl.textContent = 'Stopped: ' + what; },
+    // Fetch and instantiate fsa.wasm ourselves, retrying: on a phone over the
+    // proxy the download sometimes fails outright ("Load failed"), and
+    // emscripten's own loader then aborts the page.
+    instantiateWasm(imports, receive) {
+      (async () => {
+        for (let attempt = 1; ; attempt++) {
+          try {
+            const r = await fetch('fsa.wasm', { cache: attempt > 1 ? 'reload' : 'default', credentials: 'same-origin' });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            let result;
+            if (WebAssembly.instantiateStreaming && (r.headers.get('Content-Type') || '').includes('application/wasm')) {
+              result = await WebAssembly.instantiateStreaming(r, imports);
+            } else {
+              result = await WebAssembly.instantiate(await r.arrayBuffer(), imports);
+            }
+            receive(result.instance, result.module);
+            return;
+          } catch (e) {
+            if (attempt >= 4) {
+              log(`[page] game code failed to load after ${attempt} tries: ${e}`);
+              statusEl.textContent = 'Could not load the game code; please reload.';
+              return;
+            }
+            log(`[page] game code load failed (${e}); retrying (${attempt}/3)`);
+            await new Promise((res) => setTimeout(res, 1000 * attempt));
+          }
+        }
+      })();
+      return {};
+    },
   };
 
   // The picture: the largest 4:3 box that fits the stage, in whole pixels.
