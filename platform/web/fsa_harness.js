@@ -148,14 +148,15 @@ function compileScript(doc) {
       // {"set": {NAME: number, ...}}: the GameState fields ?stage= writes
       // (platform/harness.cpp kSet, game/src/port/harness_state.cpp fsa_harness_set).
       const SETTABLE = { 'lbl_80529DEC.mStage_0x118': 1, stage: 1, 'lbl_80529DEC.mLevel_0x11c': 2, level: 2,
-                         'lbl_80529DEC.field_0x128': 3, 'lbl_80529DEC.field_0x12c': 4 };
+                         'lbl_80529DEC.field_0x128': 3, 'lbl_80529DEC.field_0x12c': 4,
+                         seed: 5, 'gGameRoot_8053AAF8->mRandom.seed': 5, seed_on_stage: 6 };
       if (!s.set || typeof s.set !== 'object' || Array.isArray(s.set)) fail('step ' + i + ': set is an object');
       const entries = Object.entries(s.set);
       row[7] = conds.length;
       conds.push(entries.length);
       for (const [k, v] of entries) {
         if (!(k in SETTABLE)) fail('step ' + i + ': cannot set ' + k + ' (settable: ' + Object.keys(SETTABLE).join(' ') + ')');
-        if (!Number.isInteger(v)) fail('step ' + i + ': set values are integers');
+        if (!Number.isInteger(v) || v < -(2 ** 31) || v > 2 ** 32 - 1) fail('step ' + i + ': set values are 32-bit integers');
         conds.push(SETTABLE[k], v);
       }
     }

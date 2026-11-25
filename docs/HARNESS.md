@@ -102,6 +102,15 @@ player-count screen. Settable: `lbl_80529DEC.mStage_0x118` (alias `stage`),
 `lbl_80529DEC.mLevel_0x11c` (`level`), `lbl_80529DEC.field_0x128`,
 `lbl_80529DEC.field_0x12c` — the same step as fsa-decomp's Dolphin driver, so
 its `tools/harness_scripts/stage_S_L.json` run unchanged in the port.
+Also settable: `gGameRoot_8053AAF8->mRandom.seed` (alias `seed`, u32), written
+at once, and `seed_on_stage` (u32), kept and applied when the next stage is
+built (`GameRoot::createModeScreen_80135020(7)`, original 0x80135020), before
+the stage's actors spawn. Timing: a step runs inside the pad read of main-loop
+iteration n (`JUTGamePad::read`), so a `set` at read n lands before that
+iteration's game update and before read n's state record; but the scene
+change to a stage shows at the read AFTER the iteration that built it, when its
+actors have already spawned and drawn from the RNG — so to start a stage from a
+pinned seed, use `seed_on_stage` (e.g. in the same step that sets the stage).
 
 - **Exactly one step is active.** A step is checked at each read before it
   gives input: when it is finished (its COND holds; its N reads are used

@@ -1675,7 +1675,23 @@ void GameRoot_8049EF20::deleteModeScreen_801352F4(s32 mode) {
 
 // Creates the screen object of game mode `mode` unless it exists; the menu
 // screens are made in field_0x98 under heap group ID 1.
+#ifdef FSA_PORT
+// Harness `set` key "seed_on_stage" (docs/HARNESS.md): a seed for mRandom applied
+// when the next in-game mode is built (createModeScreen_80135020(7), before the
+// stage's actors spawn), so two runs that reached the stage after menus of
+// different lengths start it from the same RNG state. 0 bit 32 clear = none.
+static u64 sFsaSeedOnStage = 0;
+extern "C" void fsa_harness_seed_on_stage(u32 seed) { sFsaSeedOnStage = (u64)seed | (1ull << 32); }
+#endif
+
 void GameRoot_8049EF20::createModeScreen_80135020(s32 mode) {
+#ifdef FSA_PORT
+    if (mode == 7 && (sFsaSeedOnStage >> 32) != 0) {
+        mRandom.setSeed((u32)sFsaSeedOnStage);
+        OSReport("[harness] seed 0x%08x applied at stage build\n", (u32)sFsaSeedOnStage);
+        sFsaSeedOnStage = 0;
+    }
+#endif
     switch (mode) {
     case 7:
         if (field_0x4 == NULL) {

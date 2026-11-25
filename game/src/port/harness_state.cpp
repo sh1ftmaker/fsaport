@@ -295,14 +295,22 @@ extern "C" int fsa_harness_state(char* buf, int size, u32 n, const char* sync) {
 // condition keys are exactly the kGlobals names.
 // The `set` script step (docs/HARNESS.md): the GameState fields the
 // stage jump writes (?stage=, game_root_80134C04.cpp), by id: 1 mStage_0x118,
-// 2 mLevel_0x11c, 3 field_0x128, 4 field_0x12c. Returns 0 for an unknown id.
+// 2 mLevel_0x11c, 3 field_0x128, 4 field_0x12c, 5 "seed" (GameRoot mRandom,
+// at once), 6 "seed_on_stage" (when the next stage is built). Returns 0 for an
+// unknown id.
+extern "C" void fsa_harness_seed_on_stage(u32 seed);  // game_root_80134C04.cpp
 extern "C" int fsa_harness_set(int id, double value) {
     s32 v = (s32)value;
+    if (id == 5 && gGameRoot_8053AAF8 == NULL) {
+        return 0;
+    }
     switch (id) {
     case 1: lbl_80529DEC.mStage_0x118 = v; return 1;
     case 2: lbl_80529DEC.mLevel_0x11c = v; return 1;
     case 3: lbl_80529DEC.field_0x128 = v; return 1;
     case 4: lbl_80529DEC.field_0x12c = v; return 1;
+    case 5: gGameRoot_8053AAF8->mRandom.setSeed((u32)(s64)value); return 1;  // "seed", immediate
+    case 6: fsa_harness_seed_on_stage((u32)(s64)value); return 1;            // "seed_on_stage"
     }
     return 0;
 }
