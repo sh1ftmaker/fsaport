@@ -199,6 +199,37 @@ def arg_line(i, a, decl, is_this):
     return s
 
 
+ELEM = {'u8': 1, 's8': 1, 'char': 1, '_Bool': 1, 'bool': 1, 'unsigned char': 1, 'signed char': 1,
+        'u16': 2, 's16': 2, 'short': 2, 'unsigned short': 2}
+
+
+def elem_info(f):
+    """(element size or None, [dims]) from a layout field's type: 'u16[8][64]' -> (2, [8, 64])."""
+    t = f.get('type') or ''
+    dims = [int(x) for x in re.findall(r'\[(\d+)\]', t)]
+    base = re.sub(r'\[\d+\]', '', t).strip()
+    if '*' in base:
+        return 4, dims
+    if base in ELEM:
+        return ELEM[base], dims
+    if base in ('s32', 'u32', 'f32', 'int', 'long', 'unsigned long', 'unsigned int', 'float'):
+        return 4, dims
+    return None, dims
+
+
+def pieces(lay, port_off, bytes_):
+    """The changed parts of the word at port_off: [(offset in word, width)], using the
+    field's element size from the layout when known, else the changed bytes."""
+    if lay:
+        f = fntrace_layout.field_at(lay, port_off)
+        if f and f['off'] <= port_off < f['off'] + max(f['size'], 1):
+            es, _ = elem_info(f)
+            if es and (port_off - f['off']) % min(es, 4) == 0:
+                es = min(es, 4)
+                return [(k, es) for k in range(0, 4, es) if any(bytes_[k:k + es])]
+    return width_of(bytes_)
+
+
 def labeler(lay):
     """port offset -> 'decomp offset `field` (type)' text."""
     def lbl(p):
@@ -210,7 +241,15 @@ def labeler(lay):
         if lay.get('size') and p >= lay['size']:
             return f'0x{d:x} (past the port\'s sizeof 0x{lay["size"]:x}: a derived class\'s field?){"" if d == p else f" [port 0x{p:x}]"}'
         inner = p - f['off']
-        name = f['name'] + (f'+0x{inner:x}' if inner else '')
+        es, dims = elem_info(f)
+        if inner and es and dims and inner % es == 0 and inner < f['size']:
+            k, idx = inner // es, []
+            for dim in reversed(dims):
+                idx.append(k % dim)
+                k //= dim
+            name = f['name'] + ''.join(f'[{i}]' for i in reversed(idx))
+        else:
+            name = f['name'] + (f'+0x{inner:x}' if inner else '')
         t = f' ({f["type"]})' if f['type'] and not inner else ''
         port = f' [port 0x{p:x}]' if d != p else ''
         return f'0x{d:x} `{name}`{t}{port}'
@@ -233,7 +272,10 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
     logged = sum(a['logged'] for a in aggs)
     entries = sum(a.get('entries', 0) for a in aggs)
     w(f'- calls traced: **{calls}** ({logged} logged in full, {len(recs)} records here)')
-    if c0.get('kind') == 'primary' and entries > calls:
+    if c0.get('kind') == 'primary' and entries and not calls:
+        w(f'- **no traced call** but {entries} instrumented entries: the function is inlined everywhere, or the '
+          'page ran a fsa.wasm without the fntrace rewrite (a stale browser cache; touch build/diag/fsa.wasm)')
+    elif c0.get('kind') == 'primary' and entries > calls:
         w(f'- instrumented entries: {entries}: {entries - calls} more than traced: inlined copies '
           '(the wrapper only sees out-of-line calls)')
     eip = sum(a.get('entries_in_parent', 0) for a in aggs)
@@ -306,7 +348,7 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
                 wd = l[0]
                 bytes_ = [sum(x.get('bytes', [0] * 4)[i] for x in l) for i in range(4)]
                 ch = sum(x.get('changed', 0) for x in l)
-                for so, width in width_of(bytes_):
+                for so, width in pieces(lay, off, bytes_):
                     ent = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x['entry']})
                     new = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x.get('new', [])})
                     more = any(x.get('entry_more') or x.get('new_more') for x in l)
