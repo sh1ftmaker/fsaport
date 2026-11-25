@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 #include "dolphin/gd/GDGeometry.h"
@@ -155,6 +156,7 @@ static inline void SETVAT(u32* va, u32* vb, u32* vc, GXAttr attr, GXCompCnt cnt,
 extern "C" {
 
 void GXSetVtxDesc(GXAttr attr, GXAttrType type) {
+  AURORA_HOST_ALLOC;
   SETVCDATTR(attr, type);
   if (__gx->hasNrms || __gx->hasBiNrms) {
     SET_REG_FIELD(0, __gx->vcdLo, 2, 11, __gx->nrmType);
@@ -165,6 +167,7 @@ void GXSetVtxDesc(GXAttr attr, GXAttrType type) {
 }
 
 void GXSetVtxDescv(GXVtxDescList* list) {
+  AURORA_HOST_ALLOC;
   while (list->attr != GX_VA_NULL) {
     SETVCDATTR(list->attr, list->type);
     ++list;
@@ -178,6 +181,7 @@ void GXSetVtxDescv(GXVtxDescList* list) {
 }
 
 void GXClearVtxDesc() {
+  AURORA_HOST_ALLOC;
   __gx->vcdLo = 0;
   SET_REG_FIELD(0, __gx->vcdLo, 2, 9, 1); // GX_VA_POS = GX_DIRECT
   __gx->vcdHi = 0;
@@ -187,6 +191,7 @@ void GXClearVtxDesc() {
 }
 
 void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType type, u8 frac) {
+  AURORA_HOST_ALLOC;
   CHECK(vtxfmt >= GX_VTXFMT0 && vtxfmt < GX_MAX_VTXFMT, "invalid vtxfmt {}", underlying(vtxfmt));
   CHECK(attr >= GX_VA_POS && attr < GX_VA_MAX_ATTR, "invalid attr {}", underlying(attr));
 
@@ -199,6 +204,7 @@ void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType typ
 }
 
 void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list) {
+  AURORA_HOST_ALLOC;
   CHECK(vtxfmt >= GX_VTXFMT0 && vtxfmt < GX_MAX_VTXFMT, "invalid vtxfmt {}", underlying(vtxfmt));
   CHECK(list != nullptr, "null vtx attr fmt list");
 
@@ -216,6 +222,7 @@ void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list) {
 }
 
 void GXSetArray(GXAttr attr, const void* data, u32 size, u8 stride, bool le) {
+  AURORA_HOST_ALLOC;
   GXAttr cpAttr = static_cast<GXAttr>(attr);
   if (attr == GX_VA_NBT) {
     cpAttr = GX_VA_NRM;
@@ -235,6 +242,7 @@ void GXSetArray(GXAttr attr, const void* data, u32 size, u8 stride, bool le) {
 }
 
 void GXSetTexCoordGen2(GXTexCoordID dst, GXTexGenType type, GXTexGenSrc src, u32 mtx, GXBool normalize, u32 postMtx) {
+  AURORA_HOST_ALLOC;
   CHECK(dst >= GX_TEXCOORD0 && dst <= GX_TEXCOORD7, "invalid tex coord {}", underlying(dst));
 
   u32 reg = 0;
@@ -367,14 +375,17 @@ void GXSetTexCoordGen2(GXTexCoordID dst, GXTexGenType type, GXTexGenSrc src, u32
 }
 
 void GXSetNumTexGens(u8 num) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->genMode, 4, 0, num);
   GX_WRITE_XF_REG(0x3F, num);
   __gx->dirtyState |= 4;
 }
 
-void GXInvalidateVtxCache() { GX_WRITE_U8(0x48); }
+void GXInvalidateVtxCache() {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(0x48); }
 
 void GXSetLineWidth(u8 width, GXTexOffset offs) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->lpSize, 8, 0, width);
   SET_REG_FIELD(0, __gx->lpSize, 3, 16, offs);
   GX_WRITE_RAS_REG(__gx->lpSize);
@@ -382,6 +393,7 @@ void GXSetLineWidth(u8 width, GXTexOffset offs) {
 }
 
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->lpSize, 8, 8, pointSize);
   SET_REG_FIELD(0, __gx->lpSize, 3, 19, texOffsets);
   GX_WRITE_RAS_REG(__gx->lpSize);
@@ -389,6 +401,7 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets) {
 }
 
 void GXEnableTexOffsets(GXTexCoordID coord, GXBool line_enable, GXBool point_enable) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->suTs0[coord], 1, 18, line_enable);
   SET_REG_FIELD(0, __gx->suTs0[coord], 1, 19, point_enable);
   GX_WRITE_RAS_REG(__gx->suTs0[coord]);

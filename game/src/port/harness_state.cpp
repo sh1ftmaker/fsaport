@@ -587,3 +587,117 @@ extern "C" int fsa_harness_diag_set(int id, double value) {
     return 1;
 }
 #endif  // FSA_DIAG
+
+// --- Netplay (deluxe, docs/NETPLAY.md): which parts of MEM1 a snapshot needs ---
+// The game's memory is the JKR heap tree under the root heap (JFWSystem). Of an
+// expanding heap (JKRExpHeap) only its used blocks matter, plus the free-block
+// header that follows each and the one at its start: free bytes are never read
+// (blocks are zeroed when handed out, JKRHeap::alloc). A used block that holds a
+// child heap is replaced by that heap's own parts; other heap kinds are kept
+// whole. The parts are merged when less than kGap apart. Writes (start, end)
+// pairs and returns their count; 0 when the tree does not look as expected (the
+// caller then saves all of MEM1); *rootStart / *rootEnd = the root heap.
+#include "JSystem/JKernel/JKRExpHeap.h"
+namespace {
+// Coverage at 16 KiB granules of the root heap's range.
+const u32 kGranule = 16 * 1024;
+const int kMaxGranules = 8192;  // 128 MiB
+struct NetParts {
+    u32 base, end;
+    u8 bits[kMaxGranules / 8];
+    bool bad;
+    void add(u32 a, u32 b) {
+        if (bad || b <= a)
+            return;
+        if (a < base || b > end) { bad = true; return; }
+        for (u32 g = (a - base) / kGranule; g <= (b - 1 - base) / kGranule; g++)
+            bits[g >> 3] |= (u8)(1 << (g & 7));
+    }
+};
+void net_heap_parts(JKRHeap* heap, NetParts& parts, int depth) {
+    u32 lo = (u32)(size_t)heap->getStartAddr(), hi = (u32)(size_t)heap->getEndAddr();
+    if (depth > 16 || heap->getHeapType() != 'EXPH') {
+        parts.add(lo, hi);
+        return;
+    }
+    parts.add(lo, lo + 64 < hi ? lo + 64 : hi);
+    JKRExpHeap* exp = (JKRExpHeap*)heap;
+    int guard = 0;
+    for (JKRExpHeap::CMemBlock* b = exp->getHeadUsedList(); b; b = b->getNextBlock()) {
+        u32 bs = (u32)(size_t)b, ds = bs + (u32)sizeof(JKRExpHeap::CMemBlock), de = ds + b->getSize();
+        if (bs < lo || de > hi || ++guard > 1000000) { parts.bad = true; return; }
+        JKRHeap* child = NULL;
+        for (JSUTree<JKRHeap>* t = heap->getHeapTree().getFirstChild(); t; t = t->getNextChild()) {
+            JKRHeap* c = t->getObject();
+            u32 cs = (u32)(size_t)c->getStartAddr(), ce = (u32)(size_t)c->getEndAddr();
+            if (cs >= ds && ce <= de) { child = c; break; }
+        }
+        if (child) {
+            // The heap object and its header sit at the block's start.
+            u32 cs = (u32)(size_t)child->getStartAddr();
+            parts.add(bs, cs);
+            net_heap_parts(child, parts, depth + 1);
+        } else {
+            parts.add(bs, de + 64 < hi ? de + 64 : hi);
+        }
+    }
+}
+}  // namespace
+static NetParts sNetParts;
+extern "C" int fsa_net_heap_ranges(u32* out, int max, u32* rootStart, u32* rootEnd) {
+    JKRHeap* root = JKRHeap::getRootHeap();
+    if (!root)
+        return 0;
+    NetParts& parts = sNetParts;
+    parts.base = (u32)(size_t)root->getStartAddr();
+    parts.end = (u32)(size_t)root->getEndAddr();
+    parts.bad = parts.end - parts.base > (u32)kMaxGranules * kGranule;
+    memset(parts.bits, 0, sizeof(parts.bits));
+    net_heap_parts(root, parts, 0);
+    if (parts.bad)
+        return 0;
+    // Runs of covered granules; gaps of up to 4 granules are bridged.
+    int k = 0;
+    u32 n = (parts.end - parts.base + kGranule - 1) / kGranule;
+    u32 g = 0;
+    while (g < n) {
+        if (!(parts.bits[g >> 3] & (1 << (g & 7)))) { g++; continue; }
+        u32 h = g;
+        for (u32 x = g + 1; x < n && x - h <= 5; x++)
+            if (parts.bits[x >> 3] & (1 << (x & 7)))
+                h = x;
+        if (k >= max)
+            return 0;
+        out[2 * k] = parts.base + g * kGranule;
+        u32 e = parts.base + (h + 1) * kGranule;
+        out[2 * k + 1] = e < parts.end ? e : parts.end;
+        k++;
+        g = h + 1;
+    }
+    *rootStart = parts.base;
+    *rootEnd = parts.end;
+    return k;
+}
+
+// Debugging (netplay): the JKR heap tree, one OSReport line per heap and per
+// used block of 64 KiB or more.
+namespace {
+void net_heap_dump(JKRHeap* heap, int depth) {
+    u32 t = heap->getHeapType();
+    OSReport("[netheap] %*s%c%c%c%c %p-%p\n", depth * 2, "", (char)(t >> 24), (char)(t >> 16), (char)(t >> 8), (char)t,
+             heap->getStartAddr(), heap->getEndAddr());
+    if (t == 'EXPH') {
+        int n = 0;
+        for (JKRExpHeap::CMemBlock* b = ((JKRExpHeap*)heap)->getHeadUsedList(); b && n < 100000; b = b->getNextBlock(), n++)
+            if (b->getSize() >= 0x10000)
+                OSReport("[netheap] %*s  used %p +0x%x\n", depth * 2, "", b, b->getSize());
+        OSReport("[netheap] %*s  %d used blocks\n", depth * 2, "", n);
+    }
+    for (JSUTree<JKRHeap>* c = heap->getHeapTree().getFirstChild(); c; c = c->getNextChild())
+        net_heap_dump(c->getObject(), depth + 1);
+}
+}  // namespace
+extern "C" void fsa_net_heap_dump() {
+    if (JKRHeap::getRootHeap())
+        net_heap_dump(JKRHeap::getRootHeap(), 0);
+}

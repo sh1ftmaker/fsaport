@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "../../input.hpp"
 #include "../../internal.hpp"
 #include <dolphin/pad.h>
@@ -300,12 +301,14 @@ bool is_mouse_button_pressed(s32 scancode) {
 }
 } // namespace
 
-void PADSetSpec(u32 spec) {}
+void PADSetSpec(u32 spec) {
+  AURORA_HOST_ALLOC;}
 
 static void load_keyboard_bindings();
 static void save_keyboard_bindings();
 
 BOOL PADInit() {
+  AURORA_HOST_ALLOC;
   if (g_initialized) {
     return true;
   }
@@ -319,11 +322,14 @@ BOOL PADInit() {
   return true;
 }
 
-BOOL PADRecalibrate(u32 mask) { return true; }
+BOOL PADRecalibrate(u32 mask) {
+  AURORA_HOST_ALLOC; return true; }
 
-BOOL PADReset(u32 mask) { return true; }
+BOOL PADReset(u32 mask) {
+  AURORA_HOST_ALLOC; return true; }
 
-void PADSetAnalogMode(u32 mode) {}
+void PADSetAnalogMode(u32 mode) {
+  AURORA_HOST_ALLOC;}
 
 aurora::input::GameController* __PADGetControllerForIndex(uint32_t idx) {
   if (idx >= aurora::input::g_GameControllers.size()) {
@@ -343,9 +349,11 @@ aurora::input::GameController* __PADGetControllerForIndex(uint32_t idx) {
   return &iter->second;
 }
 
-uint32_t PADCount() { return aurora::input::g_GameControllers.size(); }
+uint32_t PADCount() {
+  AURORA_HOST_ALLOC; return aurora::input::g_GameControllers.size(); }
 
 const char* PADGetNameForControllerIndex(uint32_t idx) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = __PADGetControllerForIndex(idx);
   if (ctrl == nullptr) {
     return nullptr;
@@ -355,6 +363,7 @@ const char* PADGetNameForControllerIndex(uint32_t idx) {
 }
 
 void PADSetPortForIndex(uint32_t idx, int32_t port) {
+  AURORA_HOST_ALLOC;
   auto* ctrl = __PADGetControllerForIndex(idx);
   if (ctrl == nullptr) {
     return;
@@ -373,6 +382,7 @@ void PADSetPortForIndex(uint32_t idx, int32_t port) {
 }
 
 int32_t PADGetIndexForPort(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return -1;
@@ -389,6 +399,7 @@ int32_t PADGetIndexForPort(uint32_t port) {
 }
 
 void PADClearPort(uint32_t port) {
+  AURORA_HOST_ALLOC;
   aurora::input::persist_controller_for_player(port, nullptr);
   auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
@@ -591,6 +602,7 @@ static void apply_unblock_suppression(PADStatus& status, u32 port, bool captureH
 }
 
 uint32_t PADRead(PADStatus* status) {
+  AURORA_HOST_ALLOC;
   if (!g_keyboardBindingsLoaded) {
     g_keyboardBindingsLoaded = true;
     load_keyboard_bindings();
@@ -808,6 +820,7 @@ uint32_t PADRead(PADStatus* status) {
 }
 
 void PADControlMotor(int32_t chan, uint32_t command) {
+  AURORA_HOST_ALLOC;
   auto controller = aurora::input::get_controller_for_player(chan);
   auto instance = aurora::input::get_instance_for_player(chan);
   if (controller == nullptr) {
@@ -835,6 +848,7 @@ void PADControlMotor(int32_t chan, uint32_t command) {
 }
 
 void PADControlAllMotors(const uint32_t* commands) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_CHANMAX; ++i) {
     PADControlMotor(i, commands[i]);
   }
@@ -940,6 +954,7 @@ void ClampStick(int8_t* px, int8_t* py, int8_t max, int8_t xy, int8_t min) {
 }
 
 void PADClamp(PADStatus* status) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_CHANMAX; ++i) {
     if (status[i].err != PAD_ERR_NONE) {
       continue;
@@ -954,6 +969,7 @@ void PADClamp(PADStatus* status) {
 }
 
 void PADClampCircle(PADStatus* status) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_CHANMAX; ++i) {
     if (status[i].err != PAD_ERR_NONE) {
       continue;
@@ -967,6 +983,7 @@ void PADClampCircle(PADStatus* status) {
 }
 
 void PADGetVidPid(uint32_t port, uint32_t* vid, uint32_t* pid) {
+  AURORA_HOST_ALLOC;
   *vid = 0;
   *pid = 0;
   auto* controller = aurora::input::get_controller_for_player(port);
@@ -979,6 +996,7 @@ void PADGetVidPid(uint32_t port, uint32_t* vid, uint32_t* pid) {
 }
 
 const char* PADGetName(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return nullptr;
@@ -988,6 +1006,7 @@ const char* PADGetName(uint32_t port) {
 }
 
 void PADSetButtonMapping(uint32_t port, PADButtonMapping mapping) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return;
@@ -1003,12 +1022,14 @@ void PADSetButtonMapping(uint32_t port, PADButtonMapping mapping) {
 }
 
 void PADSetAllButtonMappings(uint32_t port, PADButtonMapping buttons[PAD_BUTTON_COUNT]) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_BUTTON_COUNT; ++i) {
     PADSetButtonMapping(port, buttons[i]);
   }
 }
 
 PADButtonMapping* PADGetButtonMappings(uint32_t port, uint32_t* buttonCount) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     *buttonCount = 0;
@@ -1022,6 +1043,7 @@ PADButtonMapping* PADGetButtonMappings(uint32_t port, uint32_t* buttonCount) {
 }
 
 void PADSetAxisMapping(u32 port, PADAxisMapping mapping) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return;
@@ -1037,12 +1059,14 @@ void PADSetAxisMapping(u32 port, PADAxisMapping mapping) {
 }
 
 void PADSetAllAxisMappings(u32 port, PADAxisMapping axes[PAD_AXIS_COUNT]) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_AXIS_COUNT; ++i) {
     PADSetAxisMapping(port, axes[i]);
   }
 }
 
 PADAxisMapping* PADGetAxisMappings(uint32_t port, uint32_t* axisCount) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     *axisCount = 0;
@@ -1055,6 +1079,7 @@ PADAxisMapping* PADGetAxisMappings(uint32_t port, uint32_t* axisCount) {
 }
 
 BOOL PADSetKeyButtonBinding(u32 port, PADKeyButtonBinding binding) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS) {
     return FALSE;
   }
@@ -1071,6 +1096,7 @@ BOOL PADSetKeyButtonBinding(u32 port, PADKeyButtonBinding binding) {
 }
 
 BOOL PADSetKeyButtonBindings(u32 port, PADKeyButtonBinding bindings[PAD_BUTTON_COUNT]) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_BUTTON_COUNT; ++i) {
     if (!PADSetKeyButtonBinding(port, bindings[i])) {
       return FALSE;
@@ -1080,6 +1106,7 @@ BOOL PADSetKeyButtonBindings(u32 port, PADKeyButtonBinding bindings[PAD_BUTTON_C
 }
 
 PADKeyButtonBinding* PADGetKeyButtonBindings(u32 port, u32* buttonCount) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS || !g_keyboardBindings[port].m_mappingsSet) {
     return nullptr;
   }
@@ -1088,6 +1115,7 @@ PADKeyButtonBinding* PADGetKeyButtonBindings(u32 port, u32* buttonCount) {
 }
 
 BOOL PADSetKeyAxisBinding(u32 port, PADKeyAxisBinding binding) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS) {
     return FALSE;
   }
@@ -1103,6 +1131,7 @@ BOOL PADSetKeyAxisBinding(u32 port, PADKeyAxisBinding binding) {
   return FALSE;
 }
 BOOL PADSetKeyAxisBindings(u32 port, PADKeyAxisBinding bindings[PAD_BUTTON_COUNT]) {
+  AURORA_HOST_ALLOC;
   for (uint32_t i = 0; i < PAD_AXIS_COUNT; ++i) {
     if (!PADSetKeyAxisBinding(port, bindings[i])) {
       return FALSE;
@@ -1112,6 +1141,7 @@ BOOL PADSetKeyAxisBindings(u32 port, PADKeyAxisBinding bindings[PAD_BUTTON_COUNT
 }
 
 PADKeyAxisBinding* PADGetKeyAxisBindings(u32 port, u32* axisCount) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS || !g_keyboardBindings[port].m_mappingsSet) {
     return nullptr;
   }
@@ -1120,6 +1150,7 @@ PADKeyAxisBinding* PADGetKeyAxisBindings(u32 port, u32* axisCount) {
 }
 
 void PADSetKeyboardActive(u32 port, BOOL active) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS) {
     return;
   }
@@ -1127,6 +1158,7 @@ void PADSetKeyboardActive(u32 port, BOOL active) {
 }
 
 void PADClearKeyBindings(u32 port) {
+  AURORA_HOST_ALLOC;
   if (port >= PAD_MAX_CONTROLLERS) {
     return;
   }
@@ -1251,6 +1283,7 @@ void __PADWriteDeadZones(SDL_IOStream* file, aurora::input::GameController& cont
 }
 
 void PADSerializeMappings() {
+  AURORA_HOST_ALLOC;
   std::filesystem::path basePath{aurora::g_config.configPath};
 
   for (auto& controller : aurora::input::g_GameControllers) {
@@ -1301,6 +1334,7 @@ void PADSerializeMappings() {
 }
 
 PADDeadZones* PADGetDeadZones(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return nullptr;
@@ -1350,6 +1384,7 @@ static constexpr std::array<std::pair<PADButton, std::string_view>, PAD_AXIS_COU
 }};
 
 const char* PADGetButtonName(PADButton button) {
+  AURORA_HOST_ALLOC;
   auto it = std::find_if(skButtonNames.begin(), skButtonNames.end(),
                          [&button](const auto& pair) { return button == pair.first; });
 
@@ -1361,10 +1396,12 @@ const char* PADGetButtonName(PADButton button) {
 }
 
 const char* PADGetNativeButtonName(uint32_t button) {
+  AURORA_HOST_ALLOC;
   return SDL_GetGamepadStringForButton(static_cast<SDL_GamepadButton>(button));
 }
 
 const char* PADGetAxisName(PADAxis axis) {
+  AURORA_HOST_ALLOC;
   auto it =
       std::find_if(skAxisNames.begin(), skAxisNames.end(), [&axis](const auto& pair) { return axis == pair.first; });
 
@@ -1376,6 +1413,7 @@ const char* PADGetAxisName(PADAxis axis) {
 }
 
 const char* PADGetAxisDirectionLabel(PADAxis axis) {
+  AURORA_HOST_ALLOC;
   auto it = std::find_if(skAxisDirLabels.begin(), skAxisDirLabels.end(),
                          [&axis](const auto& pair) { return axis == pair.first; });
 
@@ -1387,10 +1425,12 @@ const char* PADGetAxisDirectionLabel(PADAxis axis) {
 }
 
 const char* PADGetNativeAxisName(PADSignedNativeAxis axis) {
+  AURORA_HOST_ALLOC;
   return SDL_GetGamepadStringForAxis(static_cast<SDL_GamepadAxis>(axis.nativeAxis));
 }
 
 int32_t PADGetNativeButtonPressed(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return -1;
@@ -1405,6 +1445,7 @@ int32_t PADGetNativeButtonPressed(uint32_t port) {
 }
 
 PADSignedNativeAxis PADGetNativeAxisPulled(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return {-1, AXIS_SIGN_POSITIVE};
@@ -1426,6 +1467,7 @@ PADSignedNativeAxis PADGetNativeAxisPulled(uint32_t port) {
 }
 
 void PADRestoreDefaultMapping(uint32_t port) {
+  AURORA_HOST_ALLOC;
   auto* controller = aurora::input::get_controller_for_player(port);
   if (controller == nullptr) {
     return;
@@ -1435,6 +1477,7 @@ void PADRestoreDefaultMapping(uint32_t port) {
 }
 
 void PADBlockInput(bool block) {
+  AURORA_HOST_ALLOC;
   if (g_blockPAD && !block) {
     g_suppressHeldOnRead = true;
   }
@@ -1442,6 +1485,7 @@ void PADBlockInput(bool block) {
 }
 
 SDL_Gamepad* PADGetSDLGamepadForIndex(u32 index) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = __PADGetControllerForIndex(index);
   if (ctrl == nullptr) {
     return nullptr;
@@ -1451,6 +1495,7 @@ SDL_Gamepad* PADGetSDLGamepadForIndex(u32 index) {
 }
 
 void PADSetDefaultMapping(const PADDefaultMapping* mapping, const PADControllerType type) {
+  AURORA_HOST_ALLOC;
   if (g_initialized) {
     aurora::input::Log.fatal("PADSetDefaultMapping called after PADInit()!");
   }
@@ -1499,6 +1544,7 @@ void PADSetDefaultMapping(const PADDefaultMapping* mapping, const PADControllerT
 }
 
 BOOL PADSetColor(u32 port, u8 red, u8 green, u8 blue) {
+  AURORA_HOST_ALLOC;
   const auto ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1512,6 +1558,7 @@ BOOL PADSetColor(u32 port, u8 red, u8 green, u8 blue) {
 }
 
 BOOL PADGetColor(u32 port, u8* red, u8* green, u8* blue) {
+  AURORA_HOST_ALLOC;
   const auto ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1524,6 +1571,7 @@ BOOL PADGetColor(u32 port, u8* red, u8* green, u8* blue) {
 }
 
 BOOL PADSetSensorEnabled(u32 port, PADSensorType sensor, BOOL enabled) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
 
   if (ctrl == nullptr) {
@@ -1536,6 +1584,7 @@ BOOL PADSetSensorEnabled(u32 port, PADSensorType sensor, BOOL enabled) {
 }
 
 BOOL PADHasSensor(u32 port, PADSensorType sensor) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1545,6 +1594,7 @@ BOOL PADHasSensor(u32 port, PADSensorType sensor) {
 }
 
 BOOL PADGetSensorData(u32 port, PADSensorType sensor, f32* data, const int nValues) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1554,6 +1604,7 @@ BOOL PADGetSensorData(u32 port, PADSensorType sensor, f32* data, const int nValu
 }
 
 BOOL PADSetRumbleIntensity(u32 port, u16 low, u16 high) {
+  AURORA_HOST_ALLOC;
   auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr || ctrl->m_isGameCube || !ctrl->m_hasRumble) {
     return FALSE;
@@ -1565,6 +1616,7 @@ BOOL PADSetRumbleIntensity(u32 port, u16 low, u16 high) {
 }
 
 BOOL PADGetRumbleIntensity(u32 port, u16* low, u16* high) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr || ctrl->m_isGameCube || !ctrl->m_hasRumble) {
     *low = 0;
@@ -1578,6 +1630,7 @@ BOOL PADGetRumbleIntensity(u32 port, u16* low, u16* high) {
 }
 
 BOOL PADSupportsRumbleIntensity(u32 port) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1587,6 +1640,7 @@ BOOL PADSupportsRumbleIntensity(u32 port) {
 }
 
 BOOL PADIsGCAdapter(u32 port) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return FALSE;
@@ -1595,6 +1649,7 @@ BOOL PADIsGCAdapter(u32 port) {
 }
 
 PADBatteryState PADGetBatteryState(u32 port, f32* perc) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return PAD_BATTERYSTATE_ERROR;
@@ -1611,6 +1666,7 @@ PADBatteryState PADGetBatteryState(u32 port, f32* perc) {
 }
 
 PADControllerType PADGetControllerType(const u32 port) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = aurora::input::get_controller_for_player(port);
   if (ctrl == nullptr) {
     return PAD_TYPE_UNKNOWN;
@@ -1621,6 +1677,7 @@ PADControllerType PADGetControllerType(const u32 port) {
 }
 
 PADControllerType PADGetControllerTypeForIndex(const u32 index) {
+  AURORA_HOST_ALLOC;
   const auto* ctrl = __PADGetControllerForIndex(index);
   if (ctrl == nullptr) {
     return PAD_TYPE_UNKNOWN;

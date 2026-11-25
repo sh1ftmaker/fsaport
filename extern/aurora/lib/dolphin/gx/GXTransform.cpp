@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 #include "dolphin/mtx/GeoTypes.h"
@@ -12,6 +13,7 @@ static inline void CacheProjectionVector(const f32* ptr, GXProjectionType type) 
 extern "C" {
 
 void GXSetProjection(const void* mtx_, GXProjectionType type) {
+  AURORA_HOST_ALLOC;
   const auto& mtx = *reinterpret_cast<const aurora::Mat4x4<float>*>(mtx_);
   const f32 projVec[] = {
       static_cast<f32>(type == GX_ORTHOGRAPHIC),
@@ -38,6 +40,7 @@ void GXSetProjection(const void* mtx_, GXProjectionType type) {
 }
 
 void GXSetProjectionv(const f32* ptr) {
+  AURORA_HOST_ALLOC;
   CHECK(ptr != nullptr, "null projection vector");
 
   const GXProjectionType type = ptr[0] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC;
@@ -54,6 +57,7 @@ void GXSetProjectionv(const f32* ptr) {
 }
 
 void GXLoadPosMtxImm(const void* mtx_, u32 id) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_PNMTX0 && id <= GX_PNMTX9, "invalid pn mtx {}", static_cast<int>(id));
   const auto* mtx = reinterpret_cast<const f32*>(mtx_);
 
@@ -65,6 +69,7 @@ void GXLoadPosMtxImm(const void* mtx_, u32 id) {
 }
 
 void GXLoadNrmMtxImm(const void* mtx_, u32 id) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_PNMTX0 && id <= GX_PNMTX9, "invalid pn mtx {}", static_cast<int>(id));
   const auto* mtx = reinterpret_cast<const f32*>(mtx_);
 
@@ -83,12 +88,14 @@ void GXLoadNrmMtxImm(const void* mtx_, u32 id) {
 }
 
 void GXSetCurrentMtx(u32 id) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_PNMTX0 && id <= GX_PNMTX9, "invalid pn mtx {}", id);
   SET_REG_FIELD(0, __gx->matIdxA, 6, 0, id);
   __GXSetMatrixIndex(GX_VA_PNMTXIDX);
 }
 
 void GXLoadTexMtxImm(const void* mtx_, u32 id, GXTexMtxType type) {
+  AURORA_HOST_ALLOC;
   CHECK((id >= GX_TEXMTX0 && id <= GX_IDENTITY) || (id >= GX_PTTEXMTX0 && id <= GX_PTIDENTITY), "invalid tex mtx {}",
         id);
 
@@ -113,10 +120,12 @@ void GXLoadTexMtxImm(const void* mtx_, u32 id, GXTexMtxType type) {
 }
 
 void GXSetViewport(float left, float top, float width, float height, float nearZ, float farZ) {
+  AURORA_HOST_ALLOC;
   GXSetViewportJitter(left, top, width, height, nearZ, farZ, 1);
 }
 
 void GXSetViewportJitter(float left, float top, float width, float height, float nearZ, float farZ, u32 field) {
+  AURORA_HOST_ALLOC;
   float sx;
   float sy;
   float sz;
@@ -159,6 +168,7 @@ void GXSetViewportJitter(float left, float top, float width, float height, float
 
 void GXProject(f32 x, f32 y, f32 z, const f32 mtx[3][4], const f32* pm, const f32* vp, f32* sx,
                f32* sy, f32* sz) {
+  AURORA_HOST_ALLOC;
   Vec peye;
   f32 xc;
   f32 yc;

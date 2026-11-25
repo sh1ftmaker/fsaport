@@ -1,3 +1,4 @@
+#include "../host_alloc.hpp"
 #include "common.hpp"
 
 #include "../internal.hpp"
@@ -70,6 +71,7 @@ uint64_t calc_texture_size(wgpu::TextureFormat format, u32 width, u32 height, u3
 
 TextureHandle new_static_texture_2d(uint32_t width, uint32_t height, uint32_t mips, u32 format, ArrayRef<uint8_t> data,
                                     bool tlut, const char* label) noexcept {
+  AURORA_HOST_ALLOC;
   ZoneScoped;
 
   auto handle = new_dynamic_texture_2d(width, height, mips, format, label);
@@ -134,6 +136,7 @@ TextureHandle new_static_texture_2d(uint32_t width, uint32_t height, uint32_t mi
 
 TextureHandle new_dynamic_texture_2d(uint32_t width, uint32_t height, uint32_t mips, u32 gxFormat,
                                      const char* label) noexcept {
+  AURORA_HOST_ALLOC;
   ZoneScopedS(3);
   const auto wgpuFormat = to_wgpu(gxFormat);
   const wgpu::Extent3D size{
@@ -164,6 +167,7 @@ TextureHandle new_dynamic_texture_2d(uint32_t width, uint32_t height, uint32_t m
 }
 
 TextureHandle new_render_texture(uint32_t width, uint32_t height, u32 gxFormat, const char* label) noexcept {
+  AURORA_HOST_ALLOC;
   ZoneScoped;
 
   const auto wgpuFormat = webgpu::g_graphicsConfig.surfaceConfiguration.format;
@@ -197,6 +201,7 @@ TextureHandle new_render_texture(uint32_t width, uint32_t height, u32 gxFormat, 
 }
 
 TextureHandle new_conv_texture(uint32_t width, uint32_t height, u32 gxFormat, const char* label) noexcept {
+  AURORA_HOST_ALLOC;
   ZoneScoped;
 
   const auto wgpuFormat = to_wgpu(gxFormat);

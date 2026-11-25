@@ -1,3 +1,4 @@
+#include "../host_alloc.hpp"
 #include <dolphin/os.h>
 #include "command_processor.hpp"
 
@@ -376,6 +377,7 @@ static void handle_aurora(const u8* data, u32& pos, u32 size, bool bigEndian);
 
 void process(const u8* data, u32 size, bool bigEndian) {
   ZoneScoped;
+  AURORA_HOST_ALLOC;
   u32 pos = 0;
 
   while (pos < size) {

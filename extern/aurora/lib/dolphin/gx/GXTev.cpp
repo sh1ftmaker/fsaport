@@ -1,8 +1,10 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
 extern "C" {
 void GXSetTevOp(GXTevStageID id, GXTevMode mode) {
+  AURORA_HOST_ALLOC;
   GXTevColorArg inputColor = GX_CC_RASC;
   GXTevAlphaArg inputAlpha = GX_CA_RASA;
   if (id != GX_TEVSTAGE0) {
@@ -36,6 +38,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode) {
 }
 
 void GXSetTevColorIn(GXTevStageID stageId, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c, GXTevColorArg d) {
+  AURORA_HOST_ALLOC;
   u32* reg = &__gx->tevc[stageId];
   SET_REG_FIELD(0, *reg, 4, 12, a);
   SET_REG_FIELD(0, *reg, 4, 8, b);
@@ -46,6 +49,7 @@ void GXSetTevColorIn(GXTevStageID stageId, GXTevColorArg a, GXTevColorArg b, GXT
 }
 
 void GXSetTevAlphaIn(GXTevStageID stageId, GXTevAlphaArg a, GXTevAlphaArg b, GXTevAlphaArg c, GXTevAlphaArg d) {
+  AURORA_HOST_ALLOC;
   u32* reg = &__gx->teva[stageId];
   SET_REG_FIELD(0, *reg, 3, 13, a);
   SET_REG_FIELD(0, *reg, 3, 10, b);
@@ -57,6 +61,7 @@ void GXSetTevAlphaIn(GXTevStageID stageId, GXTevAlphaArg a, GXTevAlphaArg b, GXT
 
 void GXSetTevColorOp(GXTevStageID stageId, GXTevOp op, GXTevBias bias, GXTevScale scale, bool clamp,
                      GXTevRegID outReg) {
+  AURORA_HOST_ALLOC;
   u32* reg = &__gx->tevc[stageId];
   SET_REG_FIELD(0, *reg, 1, 18, op & 1);
   if (op <= 1) {
@@ -74,6 +79,7 @@ void GXSetTevColorOp(GXTevStageID stageId, GXTevOp op, GXTevBias bias, GXTevScal
 
 void GXSetTevAlphaOp(GXTevStageID stageId, GXTevOp op, GXTevBias bias, GXTevScale scale, bool clamp,
                      GXTevRegID outReg) {
+  AURORA_HOST_ALLOC;
   u32* reg = &__gx->teva[stageId];
   SET_REG_FIELD(0, *reg, 1, 18, op & 1);
   if (op <= 1) {
@@ -90,6 +96,7 @@ void GXSetTevAlphaOp(GXTevStageID stageId, GXTevOp op, GXTevBias bias, GXTevScal
 }
 
 void GXSetTevColor(GXTevRegID id, GXColor color) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_TEVPREV && id < GX_MAX_TEVREG, "bad tevreg {}", static_cast<int>(id));
 
   // Write BP registers (RA + BG pairs) - needed for display list capture
@@ -110,6 +117,7 @@ void GXSetTevColor(GXTevRegID id, GXColor color) {
 }
 
 void GXSetTevColorS10(GXTevRegID id, GXColorS10 color) {
+  AURORA_HOST_ALLOC;
   // Write BP registers (RA + BG pairs) - needed for display list capture
   u32 regRA = 0;
   SET_REG_FIELD(0, regRA, 11, 0, color.r & 0x7FF);
@@ -128,6 +136,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color) {
 }
 
 void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, u8 ref1) {
+  AURORA_HOST_ALLOC;
   // BP register 0xF3
   u32 reg = 0;
   SET_REG_FIELD(0, reg, 8, 0, ref0);
@@ -141,6 +150,7 @@ void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, 
 }
 
 void GXSetTevOrder(GXTevStageID id, GXTexCoordID tcid, GXTexMapID tmid, GXChannelID cid) {
+  AURORA_HOST_ALLOC;
   // Channel ID mapping to hardware register values
   static const u8 c2r[] = {0, 1, 0, 1, 0, 1, 7, 5, 6};
   u32* ptref = &__gx->tref[id / 2];
@@ -169,15 +179,18 @@ void GXSetTevOrder(GXTevStageID id, GXTexCoordID tcid, GXTexMapID tmid, GXChanne
 }
 
 void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias) {
+  AURORA_HOST_ALLOC;
   // TODO
 }
 
 void GXSetNumTevStages(u8 num) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->genMode, 4, 10, num - 1);
   __gx->dirtyState |= 4; // gen mode dirty
 }
 
 void GXSetTevKColor(GXTevKColorID id, GXColor color) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_KCOLOR0 && id < GX_MAX_KCOLOR, "bad kcolor {}", static_cast<int>(id));
 
   // Write BP registers (RA + BG pairs with bit 23 set for K color)
@@ -197,6 +210,7 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color) {
 }
 
 void GXSetTevKColorSel(GXTevStageID id, GXTevKColorSel sel) {
+  AURORA_HOST_ALLOC;
   // tevKsel registers: 2 stages per register
   u32 kselIdx = id / 2;
   if (id & 1) {
@@ -209,6 +223,7 @@ void GXSetTevKColorSel(GXTevStageID id, GXTevKColorSel sel) {
 }
 
 void GXSetTevKAlphaSel(GXTevStageID id, GXTevKAlphaSel sel) {
+  AURORA_HOST_ALLOC;
   u32 kselIdx = id / 2;
   if (id & 1) {
     SET_REG_FIELD(0, __gx->tevKsel[kselIdx], 5, 19, sel);
@@ -220,6 +235,7 @@ void GXSetTevKAlphaSel(GXTevStageID id, GXTevKAlphaSel sel) {
 }
 
 void GXSetTevSwapMode(GXTevStageID stageId, GXTevSwapSel rasSel, GXTevSwapSel texSel) {
+  AURORA_HOST_ALLOC;
   // Swap mode is stored in teva register
   u32* reg = &__gx->teva[stageId];
   SET_REG_FIELD(0, *reg, 2, 0, rasSel);
@@ -230,6 +246,7 @@ void GXSetTevSwapMode(GXTevStageID stageId, GXTevSwapSel rasSel, GXTevSwapSel te
 
 void GXSetTevSwapModeTable(GXTevSwapSel id, GXTevColorChan red, GXTevColorChan green, GXTevColorChan blue,
                            GXTevColorChan alpha) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_TEV_SWAP0 && id < GX_MAX_TEVSWAP, "bad tev swap sel {}", static_cast<int>(id));
   // Swap table is stored in tevKsel registers
   u32 kselIdx = id * 2;

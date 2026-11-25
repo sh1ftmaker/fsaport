@@ -1,7 +1,9 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/gd.h>
 #include <dolphin/os.h>
 
 void GDSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color) {
+  AURORA_HOST_ALLOC;
     f32 A;
     f32 B;
     f32 B_mant;
@@ -71,6 +73,7 @@ void GDSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor
 }
 
 void GDSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor, GXLogicOp logic_op) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(0xFE00FFE3);
     GDWriteBPCmd(BP_BLEND_MODE(
         type == GX_BM_BLEND || type == GX_BM_SUBTRACT,
@@ -90,6 +93,7 @@ void GDSetBlendModeEtc(GXBlendMode type, GXBlendFactor src_factor,
                        GXBlendFactor dst_factor, GXLogicOp logic_op,
                        u8 color_update_enable, u8 alpha_update_enable,
                        u8 dither_enable) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_BLEND_MODE(
         type == GX_BM_BLEND || type == GX_BM_SUBTRACT,
         type == GX_BM_LOGIC,
@@ -105,14 +109,17 @@ void GDSetBlendModeEtc(GXBlendMode type, GXBlendFactor src_factor,
 }
 
 void GDSetZMode(u8 compare_enable, GXCompare func, u8 update_enable) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_Z_MODE(compare_enable, func, update_enable, 0x40));
 }
 
 void GDSetDstAlpha(u8 enable, u8 alpha) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_DST_ALPHA(alpha, enable, 0x42));
 }
 
 void GDSetDrawSync(u16 token) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_TOKEN(token, 0x48));
     GDWriteBPCmd(BP_TOKEN(token, 0x47));
 }

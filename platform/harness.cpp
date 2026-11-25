@@ -324,6 +324,8 @@ bool platform_lockstep() { return (g_flags & kLockstep) != 0; }
 
 // Called by fsa_pad_after_read after the touch pad is merged in.
 void platform_harness_pad(PADStatus* status) {
+  // Netplay (docs/NETPLAY.md): a rollback restores an earlier read here, g_reads included.
+  platform_net_read_begin(g_reads);
   u32 n = g_reads++;
   if (!g_flags)
     return;
@@ -347,6 +349,9 @@ void platform_harness_pad(PADStatus* status) {
     emit_state(scene ? "scene" : step ? "step" : "tick", n);
   if (g_flags & kReplay)
     replay(status, n);
+  // Netplay: the local pad (or the script's) goes into the timeline, and the
+  // timeline's four pads of frame n replace status.
+  platform_net_inputs(status, n);
   if (g_flags & kRecord)
     record(status, n);
 }

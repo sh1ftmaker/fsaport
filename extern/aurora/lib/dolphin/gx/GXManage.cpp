@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -14,6 +15,7 @@ extern "C" {
 static GXDrawDoneCallback DrawDoneCB = nullptr;
 
 GXFifoObj* GXInit(void* base, u32 size) {
+  AURORA_HOST_ALLOC;
   GXRenderModeObj* rmode;
   f32 identity_mtx[3][4];
   GXColor clear = {64, 64, 64, 255};
@@ -262,33 +264,39 @@ GXFifoObj* GXInit(void* base, u32 size) {
 }
 
 void GXDrawDone() {
+  AURORA_HOST_ALLOC;
   if (DrawDoneCB != nullptr)
     DrawDoneCB();
 }
 
 void GXSetDrawDone() {
+  AURORA_HOST_ALLOC;
   if (DrawDoneCB != nullptr)
     DrawDoneCB();
 }
 
 GXDrawDoneCallback GXSetDrawDoneCallback(GXDrawDoneCallback cb) {
+  AURORA_HOST_ALLOC;
   GXDrawDoneCallback old = DrawDoneCB;
   DrawDoneCB = cb;
   return old;
 }
 
 void GXFlush() {
+  AURORA_HOST_ALLOC;
   if (__gx->dirtyState) {
     __GXSetDirtyState();
   }
 }
 
 void GXPixModeSync() {
+  AURORA_HOST_ALLOC;
   GX_WRITE_RAS_REG(__gx->peCtrl);
   __gx->bpSent = 1;
 }
 
 void GXTexModeSync() {
+  AURORA_HOST_ALLOC;
   GX_WRITE_RAS_REG(0x63000000);
   __gx->bpSent = 1;
 }

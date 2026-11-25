@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/gd.h>
 #include <dolphin/os.h>
 
@@ -6,6 +7,7 @@ void GDSetTevIndirect(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
                       GXIndTexMtxID matrix_sel, GXIndTexWrap wrap_s,
                       GXIndTexWrap wrap_t, u8 add_prev, u8 utc_lod,
                       GXIndTexAlphaSel alpha_sel) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_TEV_INDIRECT(
         ind_stage & 3,
         format & 3,
@@ -21,6 +23,7 @@ void GDSetTevIndirect(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
 }
 
 void GDSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp) {
+  AURORA_HOST_ALLOC;
     u32 id_offset;
 
     switch (mtx_id) {
@@ -65,6 +68,7 @@ void GDSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp) 
 void GDSetIndTexCoordScale(GXIndTexStageID indStageEven, GXIndTexScale scaleS0,
                            GXIndTexScale scaleT0, GXIndTexScale scaleS1,
                            GXIndTexScale scaleT1) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_IND_TEXCOORD_SCALE(
         scaleS0 & 0xF,
         scaleT0 & 0xF,
@@ -78,6 +82,7 @@ void GDSetIndTexOrder(GXTexCoordID texCoord0, GXTexMapID texMap0,
                       GXTexCoordID texCoord1, GXTexMapID texMap1,
                       GXTexCoordID texCoord2, GXTexMapID texMap2,
                       GXTexCoordID texCoord3, GXTexMapID texMap3) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_IND_TEX_ORDER(
         texMap0 & 7,
         texCoord0 & 7,
@@ -92,10 +97,12 @@ void GDSetIndTexOrder(GXTexCoordID texCoord0, GXTexMapID texMap0,
 }
 
 void GDSetTevDirect(GXTevStageID tev_stage) {
+  AURORA_HOST_ALLOC;
     GDSetTevIndirect(tev_stage, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_OFF, GX_ITW_OFF, 0, 0, GX_ITBA_OFF);
 }
 
 void GDSetTevIndWarp(GXTevStageID tev_stage, GXIndTexStageID ind_stage, u8 signed_offset, u8 replace_mode, GXIndTexMtxID matrix_sel) {
+  AURORA_HOST_ALLOC;
     GXIndTexWrap wrap;
     wrap = replace_mode ? GX_ITW_0 : GX_ITW_OFF;
 
@@ -116,6 +123,7 @@ void GDSetTevIndTile(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
                      u16 tilespacing_t, GXIndTexFormat format,
                      GXIndTexMtxID matrix_sel, GXIndTexBiasSel bias_sel,
                      GXIndTexAlphaSel alpha_sel) {
+  AURORA_HOST_ALLOC;
     GXIndTexWrap wrap_s;
     GXIndTexWrap wrap_t;
     f32 mtx[2][3];
@@ -184,6 +192,7 @@ void GDSetTevIndTile(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
 }
 
 void GDSetTevIndBumpST(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndTexMtxID matrix_sel) {
+  AURORA_HOST_ALLOC;
     GXIndTexMtxID sm;
     GXIndTexMtxID tm;
 
@@ -240,6 +249,7 @@ void GDSetTevIndBumpST(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndT
 }
 
 void GDSetTevIndBumpXYZ(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndTexMtxID matrix_sel) {
+  AURORA_HOST_ALLOC;
     GDSetTevIndirect(tev_stage,
                      ind_stage,
                      GX_ITF_8,
@@ -253,6 +263,7 @@ void GDSetTevIndBumpXYZ(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXInd
 }
 
 void GDSetTevIndRepeat(GXTevStageID tev_stage) {
+  AURORA_HOST_ALLOC;
     GDSetTevIndirect(tev_stage,
                      GX_INDTEXSTAGE0,
                      GX_ITF_8,

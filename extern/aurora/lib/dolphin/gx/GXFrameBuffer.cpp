@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -95,6 +96,7 @@ GXRenderModeObj GXMpal480IntDf = {
 };
 
 void GXAdjustForOverscan(GXRenderModeObj* rmin, GXRenderModeObj* rmout, u16 hor, u16 ver) {
+  AURORA_HOST_ALLOC;
   *rmout = *rmin;
   const auto size = aurora::window::get_window_size();
   rmout->fbWidth = size.fb_width;
@@ -102,13 +104,17 @@ void GXAdjustForOverscan(GXRenderModeObj* rmin, GXRenderModeObj* rmout, u16 hor,
   rmout->xfbHeight = size.fb_height;
 }
 
-void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht) {}
+void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht) {
+  AURORA_HOST_ALLOC;}
 
-void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht) { g_gxState.texCopySrc = {left, top, wd, ht}; }
+void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht) {
+  AURORA_HOST_ALLOC; g_gxState.texCopySrc = {left, top, wd, ht}; }
 
-void GXSetDispCopyDst(u16 wd, u16 ht) {}
+void GXSetDispCopyDst(u16 wd, u16 ht) {
+  AURORA_HOST_ALLOC;}
 
 void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap) {
+  AURORA_HOST_ALLOC;
   g_gxState.texCopyFmt = fmt;
   g_gxState.texCopyDstWidth = wd;
   g_gxState.texCopyDstHeight = ht;
@@ -117,9 +123,11 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap) {
 // TODO GXSetDispCopyFrame2Field
 // TODO GXSetCopyClamp
 
-u32 GXSetDispCopyYScale(f32 vscale) { return 0; }
+u32 GXSetDispCopyYScale(f32 vscale) {
+  AURORA_HOST_ALLOC; return 0; }
 
 void GXSetCopyClear(GXColor color, u32 depth) {
+  AURORA_HOST_ALLOC;
   // BP 0x4F: clear color R + A
   u32 reg0 = 0;
   SET_REG_FIELD(0, reg0, 8, 0, color.r);
@@ -142,13 +150,17 @@ void GXSetCopyClear(GXColor color, u32 depth) {
   __gx->bpSent = 1;
 }
 
-void GXSetCopyFilter(GXBool aa, u8 sample_pattern[12][2], GXBool vf, u8 vfilter[7]) {}
+void GXSetCopyFilter(GXBool aa, u8 sample_pattern[12][2], GXBool vf, u8 vfilter[7]) {
+  AURORA_HOST_ALLOC;}
 
-void GXSetDispCopyGamma(GXGamma gamma) {}
+void GXSetDispCopyGamma(GXGamma gamma) {
+  AURORA_HOST_ALLOC;}
 
-void GXCopyDisp(void* dest, GXBool clear) {}
+void GXCopyDisp(void* dest, GXBool clear) {
+  AURORA_HOST_ALLOC;}
 
 void GXCopyTex(void* dest, GXBool clear) {
+  AURORA_HOST_ALLOC;
   // The copy is taken right away (resolve_pass ends the current render pass),
   // but draws issued since the last drain may still sit in the FIFO: the
   // game's GXEnd is an inline no-op, so immediate-mode GXBegin/GXEnd draws are

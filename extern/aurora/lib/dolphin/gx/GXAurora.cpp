@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "dolphin/gx/GXAurora.h"
 
 #include <limits>
@@ -10,6 +11,7 @@
 #include "../../gx/fifo.hpp"
 
 static void GXWriteString(const char* label) {
+  AURORA_HOST_ALLOC;
   auto length = strlen(label);
 
   if (length > std::numeric_limits<u16>::max()) {
@@ -22,13 +24,16 @@ static void GXWriteString(const char* label) {
 }
 
 void GXPushDebugGroup(const char* label) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_AURORA(GX_LOAD_AURORA_DEBUG_GROUP_PUSH);
   GXWriteString(label);
 }
 
-void GXPopDebugGroup() { GX_WRITE_AURORA(GX_LOAD_AURORA_DEBUG_GROUP_POP); }
+void GXPopDebugGroup() {
+  AURORA_HOST_ALLOC; GX_WRITE_AURORA(GX_LOAD_AURORA_DEBUG_GROUP_POP); }
 
 void GXInsertDebugMarker(const char* label) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_AURORA(GX_LOAD_AURORA_DEBUG_MARKER_INSERT);
   GXWriteString(label);
 }
@@ -49,6 +54,7 @@ void AuroraGetRenderSize(u32* width, u32* height) {
 }
 
 void GXSetViewportRender(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_AURORA(GX_LOAD_AURORA_VIEWPORT_RENDER);
   GX_WRITE_F32(left);
   GX_WRITE_F32(top);
@@ -59,6 +65,7 @@ void GXSetViewportRender(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz)
 }
 
 void GXSetScissorRender(u32 left, u32 top, u32 wd, u32 ht) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_AURORA(GX_LOAD_AURORA_SCISSOR_RENDER);
   GX_WRITE_U32(left);
   GX_WRITE_U32(top);
@@ -67,11 +74,13 @@ void GXSetScissorRender(u32 left, u32 top, u32 wd, u32 ht) {
 }
 
 void GXCreateFrameBuffer(u32 width, u32 height) {
+  AURORA_HOST_ALLOC;
   aurora::gx::fifo::drain();
   aurora::gfx::begin_offscreen(width, height);
 }
 
 void GXRestoreFrameBuffer() {
+  AURORA_HOST_ALLOC;
   aurora::gx::fifo::drain();
   aurora::gfx::end_offscreen();
 }

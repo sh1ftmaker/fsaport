@@ -13,7 +13,8 @@
 // The panel shows each GBA's native view (240 x 160) and its link state.
 Module.fsaGbaInit = function () {
   const q = new URLSearchParams(location.search);
-  const arg = q.get('gba');
+  // A netplay room plugs one GBA per seat (docs/NETPLAY.md).
+  const arg = Module.fsaNetSession ? String(Module.fsaNetSession.seats) : q.get('gba');
   if (!arg) return;
   let ports = [];
   if (/^[1-4]$/.test(arg)) for (let i = 0; i < Number(arg); i++) ports.push(i);

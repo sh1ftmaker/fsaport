@@ -498,10 +498,21 @@ void release(void *p)
 }
 } // namespace
 
-void *operator new(size_t byteCount) { return use_jkr() ? JKRHeap::alloc(byteCount, 4, nullptr) : host_alloc(byteCount, 8); }
+// Netplay diagnostics (deluxe, docs/NETPLAY.md, ?netprobe=1): told of every
+// allocation that goes to a JKR heap, to find host code that lands there.
+extern "C" void (*fsa_jkr_new_probe)(size_t);
+static inline bool use_jkr_probed(size_t n)
+{
+    if (!use_jkr())
+        return false;
+    if (fsa_jkr_new_probe)
+        fsa_jkr_new_probe(n);
+    return true;
+}
+void *operator new(size_t byteCount) { return use_jkr_probed(byteCount) ? JKRHeap::alloc(byteCount, 4, nullptr) : host_alloc(byteCount, 8); }
 void *operator new(size_t byteCount, int alignment)
 {
-    return use_jkr() ? JKRHeap::alloc(byteCount, alignment, nullptr) : host_alloc(byteCount, alignment < 0 ? -alignment : alignment);
+    return use_jkr_probed(byteCount) ? JKRHeap::alloc(byteCount, alignment, nullptr) : host_alloc(byteCount, alignment < 0 ? -alignment : alignment);
 }
 void *operator new(size_t byteCount, JKRHeap *heap, int alignment) { return JKRHeap::alloc(byteCount, alignment, heap); }
 void *operator new[](size_t byteCount) { return operator new(byteCount); }
@@ -512,7 +523,7 @@ void operator delete[](void *memory) { release(memory); }
 void operator delete(void *memory, size_t) { release(memory); }
 void operator delete[](void *memory, size_t) { release(memory); }
 namespace std { enum class align_val_t : size_t; }
-void *operator new(size_t n, std::align_val_t a) { return use_jkr() ? JKRHeap::alloc(n, (int)a, nullptr) : host_alloc(n, (size_t)a); }
+void *operator new(size_t n, std::align_val_t a) { return use_jkr_probed(n) ? JKRHeap::alloc(n, (int)a, nullptr) : host_alloc(n, (size_t)a); }
 void *operator new[](size_t n, std::align_val_t a) { return operator new(n, a); }
 void operator delete(void *memory, std::align_val_t) { release(memory); }
 void operator delete[](void *memory, std::align_val_t) { release(memory); }

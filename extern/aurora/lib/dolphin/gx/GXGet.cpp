@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -18,6 +19,7 @@ static inline u8 GetFracForNrm(GXCompType type) {
 }
 
 void GXGetVtxDesc(GXAttr attr, GXAttrType* type) {
+  AURORA_HOST_ALLOC;
   CHECK(type != nullptr, "null vtx desc output");
 
   u32 cpType = 0;
@@ -96,6 +98,7 @@ void GXGetVtxDesc(GXAttr attr, GXAttrType* type) {
 }
 
 void GXGetVtxDescv(GXVtxDescList* vcd) {
+  AURORA_HOST_ALLOC;
   CHECK(vcd != nullptr, "null vtx desc list");
 
   GXVtxDescList* out = vcd;
@@ -110,6 +113,7 @@ void GXGetVtxDescv(GXVtxDescList* vcd) {
 }
 
 void GXGetVtxAttrFmt(GXVtxFmt idx, GXAttr attr, GXCompCnt* compCnt, GXCompType* compType, u8* shift) {
+  AURORA_HOST_ALLOC;
   CHECK(compCnt != nullptr && compType != nullptr && shift != nullptr, "null vtx attr fmt output");
 
   const u32 va = __gx->vatA[idx];
@@ -190,6 +194,7 @@ void GXGetVtxAttrFmt(GXVtxFmt idx, GXAttr attr, GXCompCnt* compCnt, GXCompType* 
 }
 
 void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList* vat) {
+  AURORA_HOST_ALLOC;
   CHECK(vat != nullptr, "null vtx attr fmt list");
 
   GXVtxAttrFmtList* out = vat;
@@ -201,6 +206,7 @@ void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList* vat) {
 }
 
 void GXGetLineWidth(u8* width, GXTexOffset* texOffsets) {
+  AURORA_HOST_ALLOC;
   CHECK(width != nullptr && texOffsets != nullptr, "null line width output");
 
   *width = static_cast<u8>(GET_REG_FIELD(__gx->lpSize, 8, 0));
@@ -208,6 +214,7 @@ void GXGetLineWidth(u8* width, GXTexOffset* texOffsets) {
 }
 
 void GXGetPointSize(u8* pointSize, GXTexOffset* texOffsets) {
+  AURORA_HOST_ALLOC;
   CHECK(pointSize != nullptr && texOffsets != nullptr, "null point size output");
 
   *pointSize = static_cast<u8>(GET_REG_FIELD(__gx->lpSize, 8, 8));
@@ -215,6 +222,7 @@ void GXGetPointSize(u8* pointSize, GXTexOffset* texOffsets) {
 }
 
 void GXGetViewportv(f32 *vp) {
+  AURORA_HOST_ALLOC;
   CHECK(vp != nullptr, "null viewport output");
 
   vp[0] = __gx->vpLeft;
@@ -226,6 +234,7 @@ void GXGetViewportv(f32 *vp) {
 }
 
 void GXGetProjectionv(f32* p) {
+  AURORA_HOST_ALLOC;
   p[0] = __gx->projType == GX_PERSPECTIVE ? 0.0f : 1.0f;
   p[1] = __gx->projMtx[0];
   p[2] = __gx->projMtx[1];
@@ -236,6 +245,7 @@ void GXGetProjectionv(f32* p) {
 }
 
 void GXGetScissor(u32* left, u32* top, u32* wd, u32* ht) {
+  AURORA_HOST_ALLOC;
   CHECK(left != nullptr && top != nullptr && wd != nullptr && ht != nullptr, "null scissor output");
 
   const u32 tp = GET_REG_FIELD(__gx->suScis0, 11, 0);
@@ -250,6 +260,7 @@ void GXGetScissor(u32* left, u32* top, u32* wd, u32* ht) {
 }
 
 void GXGetCullMode(GXCullMode* mode) {
+  AURORA_HOST_ALLOC;
   CHECK(mode != nullptr, "null cull mode output");
 
   const auto hwMode = static_cast<GXCullMode>(GET_REG_FIELD(__gx->genMode, 2, 14));
@@ -267,6 +278,7 @@ void GXGetCullMode(GXCullMode* mode) {
 }
 
 void GXGetLightAttnA(GXLightObj* light_, float* a0, float* a1, float* a2) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
   *a0 = light->a0;
   *a1 = light->a1;
@@ -274,6 +286,7 @@ void GXGetLightAttnA(GXLightObj* light_, float* a0, float* a1, float* a2) {
 }
 
 void GXGetLightAttnK(GXLightObj* light_, float* k0, float* k1, float* k2) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
   *k0 = light->k0;
   *k1 = light->k1;
@@ -281,6 +294,7 @@ void GXGetLightAttnK(GXLightObj* light_, float* k0, float* k1, float* k2) {
 }
 
 void GXGetLightPos(GXLightObj* light_, float* x, float* y, float* z) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
   *x = light->px;
   *z = light->py;
@@ -288,6 +302,7 @@ void GXGetLightPos(GXLightObj* light_, float* x, float* y, float* z) {
 }
 
 void GXGetLightDir(GXLightObj* light_, float* nx, float* ny, float* nz) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
   *nx = -light->nx;
   *ny = -light->ny;
@@ -295,27 +310,35 @@ void GXGetLightDir(GXLightObj* light_, float* nx, float* ny, float* nz) {
 }
 
 void GXGetLightColor(GXLightObj* light_, GXColor* col) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
   *col = light->color;
 }
 
 void* GXGetTexObjData(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC;
   return const_cast<void*>(reinterpret_cast<const GXTexObj_*>(tex_obj)->data);
 }
 
-u16 GXGetTexObjWidth(GXTexObj* tex_obj) { return static_cast<u16>(reinterpret_cast<const GXTexObj_*>(tex_obj)->width()); }
+u16 GXGetTexObjWidth(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return static_cast<u16>(reinterpret_cast<const GXTexObj_*>(tex_obj)->width()); }
 
-u16 GXGetTexObjHeight(GXTexObj* tex_obj) { return static_cast<u16>(reinterpret_cast<const GXTexObj_*>(tex_obj)->height()); }
+u16 GXGetTexObjHeight(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return static_cast<u16>(reinterpret_cast<const GXTexObj_*>(tex_obj)->height()); }
 
 GXTexFmt GXGetTexObjFmt(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC;
   return static_cast<GXTexFmt>(reinterpret_cast<const GXTexObj_*>(tex_obj)->format());
 }
 
-GXTexWrapMode GXGetTexObjWrapS(GXTexObj* tex_obj) { return reinterpret_cast<const GXTexObj_*>(tex_obj)->wrap_s(); }
+GXTexWrapMode GXGetTexObjWrapS(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return reinterpret_cast<const GXTexObj_*>(tex_obj)->wrap_s(); }
 
-GXTexWrapMode GXGetTexObjWrapT(GXTexObj* tex_obj) { return reinterpret_cast<const GXTexObj_*>(tex_obj)->wrap_t(); }
+GXTexWrapMode GXGetTexObjWrapT(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return reinterpret_cast<const GXTexObj_*>(tex_obj)->wrap_t(); }
 
-GXBool GXGetTexObjMipMap(GXTexObj* tex_obj) { return reinterpret_cast<const GXTexObj_*>(tex_obj)->has_mips(); }
+GXBool GXGetTexObjMipMap(GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return reinterpret_cast<const GXTexObj_*>(tex_obj)->has_mips(); }
 
 // TODO GXGetTexObjAll
 // TODO GXGetTexObjMinFilt
@@ -327,7 +350,8 @@ GXBool GXGetTexObjMipMap(GXTexObj* tex_obj) { return reinterpret_cast<const GXTe
 // TODO GXGetTexObjEdgeLOD
 // TODO GXGetTexObjMaxAniso
 // TODO GXGetTexObjLODAll
-u32 GXGetTexObjTlut(const GXTexObj* tex_obj) { return reinterpret_cast<const GXTexObj_*>(tex_obj)->tlut; }
+u32 GXGetTexObjTlut(const GXTexObj* tex_obj) {
+  AURORA_HOST_ALLOC; return reinterpret_cast<const GXTexObj_*>(tex_obj)->tlut; }
 // TODO GXGetTlutObjData
 // TODO GXGetTlutObjFmt
 // TODO GXGetTlutObjNumEntries
