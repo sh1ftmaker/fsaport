@@ -100,7 +100,13 @@ struct TResourceContainer {
 
 	int parseCharacter(int string) const { return isLeadByte(string); }
 	TResource* getResource_groupID(u16 groupID) { return mContainer.Get_groupID(groupID); }
+#ifdef FSA_PORT
+	// As written it called itself (overload resolution on a const this picks the const one);
+	// it means the non-const overload above.
+	TResource* getResource_groupID(u16 groupID) const { return const_cast<TResourceContainer*>(this)->getResource_groupID(groupID); }
+#else
 	TResource* getResource_groupID(u16 groupID) const { return getResource_groupID(groupID); }
+#endif
 
 	bool isResourceContained_color() const { return mColor.mHeader.getRaw() != nullptr; }
 	bool isEncodingSettable(u8 e) const { return mEncoding == e || mEncoding == 0; }
