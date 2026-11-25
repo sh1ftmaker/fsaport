@@ -11,11 +11,15 @@ Module.fsaHarnessInit = async function () {
   const log = (s) => (window.fsaLog || console.log)('[harness] ' + s);
   const record = q.get('record') === '1';
   const inputs = q.get('inputs');
-  const script = q.get('script');
+  // A netplay room's script (docs/NETPLAY.md) is the room's, the same in every browser.
+  const sess = Module.fsaNetSession;
+  const script = (sess && sess.opts.script) || q.get('script');
   if (inputs && script) throw new Error('harness: ?inputs and ?script exclude each other');
   const fast = q.get('fast') === '1';
-  let lockstep = record || !!inputs || !!script || fast || q.get('lockstep') === '1';
-  if (q.get('lockstep') === '0') lockstep = false;
+  // Netplay (?room=, ?rbtest=; docs/NETPLAY.md) needs lockstep: virtual time.
+  const net = !!(sess || q.get('rbtest'));
+  let lockstep = record || !!inputs || !!script || fast || net || q.get('lockstep') === '1';
+  if (q.get('lockstep') === '0' && !net) lockstep = false;
   if (!record && !inputs && !script && !lockstep) return;
   if (script) {
     const r = await fetch(script, { cache: 'no-store' });
@@ -56,7 +60,7 @@ Module.fsaHarnessInit = async function () {
   Module.fsaClock.lockstep = lockstep;
   Module.fsaClock.fast = fast && lockstep;
   // A script's input goes to the "inputs" stream like a recording's.
-  Module._fsa_harness_config((lockstep ? 1 : 0) | (record || script ? 2 : 0) | (inputs ? 4 : 0) | (script ? 8 : 0));
+  Module._fsa_harness_config((lockstep ? 1 : 0) | (record || script || net ? 2 : 0) | (inputs ? 4 : 0) | (script ? 8 : 0));
   log(`lockstep ${lockstep}${fast ? ' (fast)' : ''}, record ${record || !!script}, replay ${!!inputs}, script ${!!script}`);
   window.fsaHarnessReads = () => Module._fsa_harness_reads();
 };

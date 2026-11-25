@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 
 extern "C" {
@@ -96,6 +97,7 @@ static void SubDivTriangle(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3]) {
 }
 
 void GXDrawCylinder(u8 numEdges) {
+  AURORA_HOST_ALLOC;
     s32 i;
     f32 top;
     f32 bottom;
@@ -148,6 +150,7 @@ void GXDrawCylinder(u8 numEdges) {
 }
 
 void GXDrawTorus(f32 rc, u8 numc, u8 numt) {
+  AURORA_HOST_ALLOC;
     GXAttrType ttype;
     s32 i, j, k;
     f32 s, t;
@@ -191,6 +194,7 @@ void GXDrawTorus(f32 rc, u8 numc, u8 numt) {
 }
 
 void GXDrawSphere(u8 numMajor, u8 numMinor) {
+  AURORA_HOST_ALLOC;
     GXAttrType ttype;
     f32 radius = 1.0f;
     f32 majorStep = 3.1415927f / numMajor;
@@ -239,6 +243,7 @@ void GXDrawSphere(u8 numMajor, u8 numMinor) {
 }
 
 static void GXDrawCubeFace(f32 nx, f32 ny, f32 nz, f32 tx, f32 ty, f32 tz, f32 bx, f32 by, f32 bz, GXAttrType binormal, GXAttrType texture) {
+  AURORA_HOST_ALLOC;
     GXPosition3f32(0.57735026f * (nx + tx + bx), 0.57735026f * (ny + ty + by), 0.57735026f * (nz + tz + bz));
     GXNormal3f32(nx, ny, nz);
 
@@ -289,6 +294,7 @@ static void GXDrawCubeFace(f32 nx, f32 ny, f32 nz, f32 tx, f32 ty, f32 tz, f32 b
 }
 
 void GXDrawCube(void) {
+  AURORA_HOST_ALLOC;
     GXAttrType ntype;
     GXAttrType ttype;
 
@@ -355,6 +361,7 @@ static f32 verts[20][3] = {
 };
 
 void GXDrawDodeca(void) {
+  AURORA_HOST_ALLOC;
     u32 i;
     f32 *p0;
     f32 *p1;
@@ -404,6 +411,7 @@ static u8 ondex[8][3] = {
 };
 
 void GXDrawOctahedron(void) {
+  AURORA_HOST_ALLOC;
     s32 i;
 
     GetVertState();
@@ -452,6 +460,7 @@ static u8 uindex[20][3] = {
 };
 
 void GXDrawIcosahedron(void) {
+  AURORA_HOST_ALLOC;
     s32 i;
 
     GetVertState();
@@ -462,6 +471,7 @@ void GXDrawIcosahedron(void) {
 }
 
 void GXDrawSphere1(u8 depth) {
+  AURORA_HOST_ALLOC;
     s32 i;
 
     GetVertState();
@@ -536,6 +546,7 @@ static void SubDivNrm(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3]) {
 }
 
 u32 GXGenNormalTable(u8 depth, f32* table) {
+  AURORA_HOST_ALLOC;
     s32 i;
 
     nrm_cnt = 0;

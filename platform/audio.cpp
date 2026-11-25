@@ -29,6 +29,7 @@ u32 g_dmaInits = 0;  // AIInitDMA calls
 u32 g_dmaTicks = 0;  // DMA "interrupts" raised
 OSAlarm g_alarm;
 bool g_alarmSet = false;
+OSTime g_netDue = 0;  // netplay: when the next block is due (virtual time)
 
 constexpr double kLeadSec = 0.05;
 
@@ -57,10 +58,22 @@ void dma_interrupt(OSAlarm*, OSContext*) {
   }
   double lead = 0;
   u32 frames = g_dmaLen / 4;
-  if (g_dmaAddr && frames)
+  // Netplay (docs/NETPLAY.md): the DMA is paced by virtual time alone, one
+  // block per block length, so the audio thread runs at the same reads in
+  // every browser and in a re-simulation; re-simulated blocks are not played.
+  bool net = platform_net_on();
+  if (g_dmaAddr && frames && !platform_net_resim())
     lead = fsa_js_audio_push((const s16*)(uintptr_t)g_dmaAddr, (int)frames, g_dspRate == 0 ? 32000 : 48000);
   g_dmaTicks++;
   g_dmaCallback();
+  if (net) {
+    // From the previous due time, not from now: alarms fire at retraces only.
+    if (!g_netDue)
+      g_netDue = now;
+    g_netDue += (OSTime)((double)frames * OS_TIMER_CLOCK / (g_dspRate == 0 ? 32000.0 : 48000.0));
+    arm(g_netDue);
+    return;
+  }
   double wait = lead - kLeadSec;
   arm(wait > 0 ? now + (OSTime)(wait * OS_TIMER_CLOCK) : now);
 }

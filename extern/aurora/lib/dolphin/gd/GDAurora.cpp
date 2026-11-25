@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include <limits>
 
 #include "gd.hpp"
@@ -6,6 +7,7 @@
 #include "dolphin/gx/GXAurora.h"
 
 static void GDWriteString(const char* label) {
+  AURORA_HOST_ALLOC;
   auto length = strlen(label);
 
   if (length > std::numeric_limits<u16>::max()) {
@@ -18,15 +20,18 @@ static void GDWriteString(const char* label) {
 }
 
 void GDPushDebugGroup(const char* label) {
+  AURORA_HOST_ALLOC;
   GDWriteAuroraCmd(GX_LOAD_AURORA_DEBUG_GROUP_PUSH);
   GDWriteString(label);
 }
 
 void GDPopDebugGroup() {
+  AURORA_HOST_ALLOC;
   GDWriteAuroraCmd(GX_LOAD_AURORA_DEBUG_GROUP_POP);
 }
 
 void GDInsertDebugMarker(const char* label) {
+  AURORA_HOST_ALLOC;
   GDWriteAuroraCmd(GX_LOAD_AURORA_DEBUG_MARKER_INSERT);
   GDWriteString(label);
 }

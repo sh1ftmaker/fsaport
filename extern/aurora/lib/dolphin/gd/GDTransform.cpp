@@ -1,7 +1,9 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/gd.h>
 #include <dolphin/os.h>
 
 void GDLoadPosMtxImm(const Mtx mtx, u32 id) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(4 * id, 12);
     GDWrite_f32(mtx[0][0]);
     GDWrite_f32(mtx[0][1]);
@@ -18,10 +20,12 @@ void GDLoadPosMtxImm(const Mtx mtx, u32 id) {
 }
 
 void GDLoadPosMtxIndx(u16 mtx_indx, u32 id) {
+  AURORA_HOST_ALLOC;
     GDWriteXFIndxACmd(4 * id, 12, mtx_indx);
 }
 
 void GDLoadNrmMtxImm(const Mtx mtx, u32 id) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(id * 3 + 0x400, 9);
     GDWrite_f32(mtx[0][0]);
     GDWrite_f32(mtx[0][1]);
@@ -35,6 +39,7 @@ void GDLoadNrmMtxImm(const Mtx mtx, u32 id) {
 }
 
 void GDLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(id * 3 + 0x400, 9);
     GDWrite_f32(mtx[0][0]);
     GDWrite_f32(mtx[0][1]);
@@ -48,10 +53,12 @@ void GDLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id) {
 }
 
 void GDLoadNrmMtxIndx3x3(u16 mtx_indx, u32 id) {
+  AURORA_HOST_ALLOC;
     GDWriteXFIndxBCmd(id * 3 + 0x400, 9, mtx_indx);
 }
 
 void GDLoadTexMtxImm(const Mtx mtx, u32 id, GXTexMtxType type) {
+  AURORA_HOST_ALLOC;
     u16 addr;
     u8 count;
 
@@ -83,6 +90,7 @@ void GDLoadTexMtxImm(const Mtx mtx, u32 id, GXTexMtxType type) {
 }
 
 void GDLoadTexMtxIndx(u16 mtx_indx, u32 id, GXTexMtxType type) {
+  AURORA_HOST_ALLOC;
     u16 addr;
     u8 count;
 
@@ -99,6 +107,7 @@ void GDLoadTexMtxIndx(u16 mtx_indx, u32 id, GXTexMtxType type) {
 }
 
 void GDSetCurrentMtx(u32 pn, u32 t0, u32 t1, u32 t2, u32 t3, u32 t4, u32 t5, u32 t6, u32 t7) {
+  AURORA_HOST_ALLOC;
     u32 regA;
     u32 regB;
 
@@ -113,6 +122,7 @@ void GDSetCurrentMtx(u32 pn, u32 t0, u32 t1, u32 t2, u32 t3, u32 t4, u32 t5, u32
 }
 
 void GDSetProjection(const Mtx44 mtx, GXProjectionType type) {
+  AURORA_HOST_ALLOC;
     u32 c;
     c = type == GX_ORTHOGRAPHIC ? 3 : 2;
 

@@ -1,9 +1,11 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/gd.h>
 #include <bit>
 #include <numbers>
 #include <cmath>
 
 void GDSetLightAttn(GXLightID light, f32 a0, f32 a1, f32 a2, f32 k0, f32 k1, f32 k2) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(__GDLightID2Offset(light) + XF_LIGHT_ATTN_ID, 6);
     GDWrite_f32(a0);
     GDWrite_f32(a1);
@@ -14,6 +16,7 @@ void GDSetLightAttn(GXLightID light, f32 a0, f32 a1, f32 a2, f32 k0, f32 k1, f32
 }
 
 void GDSetLightSpot(GXLightID light, f32 cutoff, GXSpotFn spot_func) {
+  AURORA_HOST_ALLOC;
     f32 a0;
     f32 a1;
     f32 a2;
@@ -77,6 +80,7 @@ void GDSetLightSpot(GXLightID light, f32 cutoff, GXSpotFn spot_func) {
 }
 
 void GDSetLightDistAttn(GXLightID light, f32 ref_dist, f32 ref_br, GXDistAttnFn dist_func) {
+  AURORA_HOST_ALLOC;
     f32 k0;
     f32 k1;
     f32 k2;
@@ -116,10 +120,12 @@ void GDSetLightDistAttn(GXLightID light, f32 ref_dist, f32 ref_br, GXDistAttnFn 
 }
 
 void GDSetLightColor(GXLightID light, GXColor color) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmd(__GDLightID2Offset(light) + XF_LIGHT_COLOR_ID, color.r << 24 | color.g << 16 | color.b << 8 | color.a);
 }
 
 void GDSetLightPos(GXLightID light, f32 x, f32 y, f32 z) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(__GDLightID2Offset(light) + XF_LIGHT_POS_ID, 3);
     GDWrite_f32(x);
     GDWrite_f32(y);
@@ -127,6 +133,7 @@ void GDSetLightPos(GXLightID light, f32 x, f32 y, f32 z) {
 }
 
 void GDSetLightDir(GXLightID light, f32 nx, f32 ny, f32 nz) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmdHdr(__GDLightID2Offset(light) + XF_LIGHT_DIR_ID, 3);
     GDWrite_f32(nx);
     GDWrite_f32(ny);
@@ -134,6 +141,7 @@ void GDSetLightDir(GXLightID light, f32 nx, f32 ny, f32 nz) {
 }
 
 void GDSetSpecularDirHA(GXLightID light, f32 nx, f32 ny, f32 nz, f32 hx, f32 hy, f32 hz) {
+  AURORA_HOST_ALLOC;
     f32 px;
     f32 py;
     f32 pz;
@@ -151,6 +159,7 @@ void GDSetSpecularDirHA(GXLightID light, f32 nx, f32 ny, f32 nz, f32 hx, f32 hy,
 }
 
 void GDSetSpecularDir(GXLightID light, f32 nx, f32 ny, f32 nz) {
+  AURORA_HOST_ALLOC;
     f32 px;
     f32 py;
     f32 pz;
@@ -185,18 +194,22 @@ void GDSetSpecularDir(GXLightID light, f32 nx, f32 ny, f32 nz) {
 }
 
 void GDLoadLightObjIndx(u32 lt_obj_indx, GXLightID light) {
+  AURORA_HOST_ALLOC;
     GDWriteXFIndxDCmd(__GDLightID2Offset(light) + XF_LIGHT_ID, 0x10, lt_obj_indx);
 }
 
 void GDSetChanAmbColor(GXChannelID chan, GXColor color) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmd((chan & 1) + XF_REG_AMBIENT0_ID, color.r << 24 | color.g << 16 | color.b << 8 | color.a);
 }
 
 void GDSetChanMatColor(GXChannelID chan, GXColor color) {
+  AURORA_HOST_ALLOC;
     GDWriteXFCmd((chan & 1) + XF_REG_MATERIAL0_ID, color.r << 24 | color.g << 16 | color.b << 8 | color.a);
 }
 
 void GDSetChanCtrl(GXChannelID chan, u8 enable, GXColorSrc amb_src, GXColorSrc mat_src, u32 light_mask, GXDiffuseFn diff_fn, GXAttnFn attn_fn) {
+  AURORA_HOST_ALLOC;
     u32 reg;
 
     reg = XF_REG_CHAN_CTRL(mat_src, enable, light_mask & 0xF, amb_src, attn_fn == GX_AF_SPEC ? GX_DF_NONE : diff_fn, attn_fn != GX_AF_NONE, attn_fn != GX_AF_SPEC, (light_mask >> 4) & 0xF);

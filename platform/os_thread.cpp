@@ -629,6 +629,10 @@ BOOL OSRestoreInterrupts(BOOL level) { return level; }
 
 }  // extern "C"
 
+namespace {
+u32 g_pollCount = 0, g_pollBlocks = 0;  // platform_poll_point's lockstep counters (saved by platform_threads_save)
+}  // namespace
+
 // Polling functions (DVDGetDriveStatus, VIGetRetraceCount, ...) call this. A
 // thread that polls for ~8 ms without blocking is waiting on something only the
 // browser can deliver (a retrace, a timer, a disc read), so it sleeps briefly
@@ -641,7 +645,8 @@ void platform_poll_point() {
     // Lockstep (docs/HARNESS.md): the same decision by call count, so that a
     // replay yields at the same points. 1000 polls with no thread blocking in
     // between is a spin loop; it sleeps until virtual time moves (a retrace).
-    static u32 polls = 0, blocks = 0;
+    u32& polls = g_pollCount;
+    u32& blocks = g_pollBlocks;
     if (blocks != g_blocks) {
       blocks = g_blocks;
       polls = 0;
@@ -684,4 +689,202 @@ extern "C" EMSCRIPTEN_KEEPALIVE void fsa_dump_threads() {
                  (unsigned)(uintptr_t)c->func, c->started, c->waiting, c->suspend, c->done, (long long)c->wakeAt,
                  queue);
   }
+}
+
+// --- Rollback (docs/NETPLAY.md, platform/netplay.cpp) -------------------------
+// The thread layer's part of a snapshot. A JSPI continuation cannot be copied,
+// so a snapshot can only be restored while every coroutine is suspended at the
+// same place as when it was taken: the same coroutines, each started/finished
+// alike and switched out at the same shadow-stack pointer (the same call path).
+// What may differ, and is restored, is the scheduling state around them: who
+// waits on what, timed wake-ups, the alarm list, the lockstep poll counters.
+// The coroutines' shadow stacks themselves are saved by netplay.cpp
+// (platform_thread_stacks).
+namespace {
+struct SavedCoroutine {
+  Coroutine* c;
+  OSThread* thread;
+  uintptr_t sp;
+  OSTime wakeAt;
+  void* exitVal;
+  int suspend;
+  u8 started, waiting, done, detached;
+};
+template <class T> void put(u8*& p, const T& v) { memcpy(p, &v, sizeof(T)); p += sizeof(T); }
+template <class T> T get(const u8*& p) { T v; memcpy(&v, p, sizeof(T)); p += sizeof(T); return v; }
+}  // namespace
+
+// Bytes written (0 when cap is too small). Called on the game thread inside
+// the pad-read hook; cur_sp is that thread's shadow-stack pointer there.
+int platform_threads_save(u8* buf, int cap, uintptr_t cur_sp) {
+  size_t need = 64 + g_coroutines.size() * sizeof(SavedCoroutine) + g_alarms.size() * sizeof(void*);
+  for (auto& [key, q] : g_waitQueues)
+    need += 16 + q.size() * sizeof(void*);
+  if (need > (size_t)cap)
+    return 0;
+  u8* p = buf;
+  put<u32>(p, (u32)g_coroutines.size());
+  put<Coroutine*>(p, g_current);
+  for (Coroutine* c : g_coroutines) {
+    SavedCoroutine s{};
+    s.c = c;
+    if (c) {
+      s.thread = c->thread;
+      s.sp = c == g_current ? cur_sp : c->sp;
+      s.wakeAt = c->wakeAt;
+      s.exitVal = c->exitVal;
+      s.suspend = c->suspend;
+      s.started = c->started;
+      s.waiting = c->waiting;
+      s.done = c->done;
+      s.detached = c->detached;
+    }
+    put(p, s);
+  }
+  put<u32>(p, (u32)g_alarms.size());
+  for (OSAlarm* a : g_alarms)
+    put(p, a);
+  u32 queues = 0;
+  for (auto& [key, q] : g_waitQueues)
+    queues += q.empty() ? 0 : 1;
+  put<u32>(p, queues);
+  for (auto& [key, q] : g_waitQueues) {
+    if (q.empty())
+      continue;
+    put<const void*>(p, key);
+    put<u32>(p, (u32)q.size());
+    for (Coroutine* c : q)
+      put(p, c);
+  }
+  put<u32>(p, g_blocks);
+  put<u32>(p, g_pollCount);
+  put<u32>(p, g_pollBlocks);
+  put<int>(p, g_schedulerDisabled);
+  return (int)(p - buf);
+}
+
+// 0 when restored; otherwise nothing is changed and the result says why:
+// -1 a coroutine of the snapshot is gone or was replaced, -2 one that was
+// running (started, not finished) at the snapshot has finished since, -3 one
+// is switched out at another place (its sp), -4 another thread is current,
+// -5 malformed.
+// Reversible, and undone here: coroutines created after the snapshot (dropped:
+// their continuations are abandoned, the re-run creates them again), and ones
+// that had not started at the snapshot but have since (they start afresh).
+int platform_threads_restore(const u8* buf, int len, uintptr_t cur_sp) {
+  const u8* p = buf;
+  const u8* end = buf + len;
+  if (len < 8)
+    return -5;
+  u32 n = get<u32>(p);
+  Coroutine* current = get<Coroutine*>(p);
+  if (n > g_coroutines.size())
+    return -1;
+  if (current != g_current)
+    return -4;
+  const u8* first = p;
+  for (u32 i = 0; i < n; i++) {
+    SavedCoroutine s = get<SavedCoroutine>(p);
+    Coroutine* c = g_coroutines[i];
+    if (s.c != c || (c && s.thread != c->thread))
+      return -1;
+    if (!c)
+      continue;
+    if (s.started && !s.done) {
+      if (!c->started || c->done)
+        return -2;
+      uintptr_t sp = c == g_current ? cur_sp : c->sp;
+      if (s.sp != sp)
+        return -3;
+    } else if (s.done && !c->done) {
+      return -1;
+    }
+  }
+  for (size_t i = n; i < g_coroutines.size(); i++)
+    if (g_coroutines[i] == g_current)
+      return -4;
+  if (p > end)
+    return -5;
+  HostAllocScope host;
+  // Coroutines newer than the snapshot: forgotten.
+  for (size_t i = n; i < g_coroutines.size(); i++) {
+    Coroutine* c = g_coroutines[i];
+    if (!c)
+      continue;
+    auto it = g_byThread.find(c->thread);
+    if (it != g_byThread.end() && it->second == c)
+      g_byThread.erase(it);
+    c->done = true;  // never picked again; its stack memory is leaked on purpose (a continuation may still point into it)
+  }
+  g_coroutines.resize(n);
+  p = first;
+  for (u32 i = 0; i < n; i++) {
+    SavedCoroutine s = get<SavedCoroutine>(p);
+    Coroutine* c = g_coroutines[i];
+    if (!c)
+      continue;
+    if (!s.started && c->started) {
+      // Started after the snapshot: it starts again from its entry point (a
+      // fresh JSPI stack); the old continuation is abandoned.
+      c->started = false;
+      c->done = false;
+      c->sp = 0;
+    }
+    c->wakeAt = s.wakeAt;
+    c->exitVal = s.exitVal;
+    c->suspend = s.suspend;
+    c->waiting = s.waiting;
+    c->detached = s.detached;
+  }
+  u32 alarms = get<u32>(p);
+  g_alarms.clear();
+  for (u32 i = 0; i < alarms; i++)
+    g_alarms.push_back(get<OSAlarm*>(p));
+  for (auto& [key, q] : g_waitQueues)
+    q.clear();
+  u32 queues = get<u32>(p);
+  for (u32 i = 0; i < queues; i++) {
+    const void* key = get<const void*>(p);
+    u32 k = get<u32>(p);
+    auto& q = g_waitQueues[key];
+    for (u32 j = 0; j < k; j++)
+      q.push_back(get<Coroutine*>(p));
+  }
+  g_blocks = get<u32>(p);
+  g_pollCount = get<u32>(p);
+  g_pollBlocks = get<u32>(p);
+  g_schedulerDisabled = get<int>(p);
+  return 0;
+}
+
+// Each coroutine as (id, switched-out sp, stack top), for the page's netplay
+// policy (only coroutines that are running: started, not finished).
+int platform_thread_layout(u32* out, int max, uintptr_t cur_sp) {
+  int k = 0;
+  for (Coroutine* c : g_coroutines) {
+    if (!c || !c->started || c->done || k >= max)
+      continue;
+    out[3 * k] = (u32)c->id;
+    out[3 * k + 1] = (u32)(c == g_current ? cur_sp : c->sp);
+    out[3 * k + 2] = (u32)c->stackTop;
+    k++;
+  }
+  return k;
+}
+
+// The live part of every coroutine's shadow stack, as (low, high) pairs: from
+// its saved sp (cur_sp for the current one) to its top. Returns the pair count.
+int platform_thread_stacks(uintptr_t* out, int max, uintptr_t cur_sp) {
+  int k = 0;
+  for (Coroutine* c : g_coroutines) {
+    if (!c || !c->started || c->done || k >= max)
+      continue;
+    uintptr_t lo = c == g_current ? cur_sp : c->sp;
+    if (lo < c->stackBase || lo > c->stackTop)
+      continue;
+    out[2 * k] = lo;
+    out[2 * k + 1] = c->stackTop;
+    k++;
+  }
+  return k;
 }

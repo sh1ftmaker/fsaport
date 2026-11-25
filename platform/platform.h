@@ -39,6 +39,13 @@ bool platform_lockstep();
 struct PADStatus;
 void platform_harness_pad(struct PADStatus* status);  // every JUTGamePad::read, after the touch pad
 
+// netplay.cpp (deluxe, docs/NETPLAY.md): the timeline's hooks in the pad read,
+// and whether frames are being re-simulated after a rollback (no picture, no sound).
+bool platform_net_on();
+bool platform_net_resim();
+void platform_net_read_begin(u32 n);
+void platform_net_inputs(struct PADStatus* status, u32 n);
+
 // Host allocations (libc++, Aurora, this layer) must not land in the game's
 // JKR heaps: JSystem's operator new sends them to malloc while this is > 0.
 extern "C" int fsa_host_alloc_depth;

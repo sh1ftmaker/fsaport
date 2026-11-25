@@ -1,8 +1,10 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
 extern "C" {
 void GXInitLightAttn(GXLightObj* light_, float a0, float a1, float a2, float k0, float k1, float k2) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->a0 = a0;
   light->a1 = a1;
@@ -13,6 +15,7 @@ void GXInitLightAttn(GXLightObj* light_, float a0, float a1, float a2, float k0,
 }
 
 void GXInitLightAttnA(GXLightObj* light_, float a0, float a1, float a2) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->a0 = a0;
   light->a1 = a1;
@@ -20,6 +23,7 @@ void GXInitLightAttnA(GXLightObj* light_, float a0, float a1, float a2) {
 }
 
 void GXInitLightAttnK(GXLightObj* light_, float k0, float k1, float k2) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->k0 = k0;
   light->k1 = k1;
@@ -27,6 +31,7 @@ void GXInitLightAttnK(GXLightObj* light_, float k0, float k1, float k2) {
 }
 
 void GXInitLightSpot(GXLightObj* light_, float cutoff, GXSpotFn spotFn) {
+  AURORA_HOST_ALLOC;
   if (cutoff <= 0.f || cutoff > 90.f) {
     spotFn = GX_SP_OFF;
   }
@@ -83,6 +88,7 @@ void GXInitLightSpot(GXLightObj* light_, float cutoff, GXSpotFn spotFn) {
 }
 
 void GXInitLightDistAttn(GXLightObj* light_, float refDistance, float refBrightness, GXDistAttnFn distFunc) {
+  AURORA_HOST_ALLOC;
   if (refDistance < 0.f || refBrightness < 0.f || refBrightness >= 1.f) {
     distFunc = GX_DA_OFF;
   }
@@ -119,6 +125,7 @@ void GXInitLightDistAttn(GXLightObj* light_, float refDistance, float refBrightn
 }
 
 void GXInitLightPos(GXLightObj* light_, float x, float y, float z) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->px = x;
   light->py = y;
@@ -126,11 +133,13 @@ void GXInitLightPos(GXLightObj* light_, float x, float y, float z) {
 }
 
 void GXInitLightColor(GXLightObj* light_, GXColor col) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->color = col;
 }
 
 void GXLoadLightObjImm(GXLightObj* light_, GXLightID id) {
+  AURORA_HOST_ALLOC;
   u32 idx = std::log2<u32>(id);
   auto* light = reinterpret_cast<const GXLightObj_*>(light_);
 
@@ -170,6 +179,7 @@ void GXLoadLightObjImm(GXLightObj* light_, GXLightID id) {
 }
 
 void GXSetChanAmbColor(GXChannelID id, GXColor color) {
+  AURORA_HOST_ALLOC;
   if (id == GX_COLOR0A0) {
     GXSetChanAmbColor(GX_COLOR0, color);
     GXSetChanAmbColor(GX_ALPHA0, color);
@@ -195,6 +205,7 @@ void GXSetChanAmbColor(GXChannelID id, GXColor color) {
 }
 
 void GXSetChanMatColor(GXChannelID id, GXColor color) {
+  AURORA_HOST_ALLOC;
   if (id == GX_COLOR0A0) {
     GXSetChanMatColor(GX_COLOR0, color);
     GXSetChanMatColor(GX_ALPHA0, color);
@@ -220,12 +231,14 @@ void GXSetChanMatColor(GXChannelID id, GXColor color) {
 }
 
 void GXSetNumChans(u8 num) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->genMode, 3, 4, num);
   GX_WRITE_XF_REG(9, num);
   __gx->dirtyState |= 4;
 }
 
 void GXInitLightDir(GXLightObj* light_, float nx, float ny, float nz) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->nx = -nx;
   light->ny = -ny;
@@ -233,6 +246,7 @@ void GXInitLightDir(GXLightObj* light_, float nx, float ny, float nz) {
 }
 
 void GXInitSpecularDir(GXLightObj* light_, float nx, float ny, float nz) {
+  AURORA_HOST_ALLOC;
   float hx = -nx;
   float hy = -ny;
   float hz = (-nz + 1.0f);
@@ -251,6 +265,7 @@ void GXInitSpecularDir(GXLightObj* light_, float nx, float ny, float nz) {
 }
 
 void GXInitSpecularDirHA(GXLightObj* light_, float nx, float ny, float nz, float hx, float hy, float hz) {
+  AURORA_HOST_ALLOC;
   auto* light = reinterpret_cast<GXLightObj_*>(light_);
   light->px = (nx * GX_LARGE_NUMBER);
   light->py = (ny * GX_LARGE_NUMBER);
@@ -262,6 +277,7 @@ void GXInitSpecularDirHA(GXLightObj* light_, float nx, float ny, float nz, float
 
 void GXSetChanCtrl(GXChannelID id, bool lightingEnabled, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightState,
                    GXDiffuseFn diffFn, GXAttnFn attnFn) {
+  AURORA_HOST_ALLOC;
   if (id == GX_COLOR0A0) {
     GXSetChanCtrl(GX_COLOR0, lightingEnabled, ambSrc, matSrc, lightState, diffFn, attnFn);
     GXSetChanCtrl(GX_ALPHA0, lightingEnabled, ambSrc, matSrc, lightState, diffFn, attnFn);

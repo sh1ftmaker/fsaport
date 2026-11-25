@@ -17,6 +17,10 @@ static BOOL AR_init_flag;
 // and using a simple bump allocator (matching ARAlloc behavior on real hardware).
 static u8* sAramBuffer = nullptr;
 
+// fsaport rollback: called before every write into ARAM (offset, length).
+extern "C" void (*aurora_aram_write_hook)(u32 offset, u32 length);
+void (*aurora_aram_write_hook)(u32 offset, u32 length) = nullptr;
+
 // Convert an ARAM "address" (offset) to a real host pointer
 static u8* aramToHost(u32 aramAddr) {
   if (!sAramBuffer || aramAddr >= aurora::g_config.mem2Size) {
@@ -89,6 +93,9 @@ void ARQPostRequest(ARQRequest* request, u32 owner, u32 type, u32 priority, uint
     u8* hostSrc = (u8*)(uintptr_t)source;
     u8* aramDst = aramToHost(dest);
     if (aramDst && hostSrc) {
+      // fsaport rollback (platform/netplay.cpp): copy-on-write of the ARAM blocks a snapshot still needs.
+      if (aurora_aram_write_hook)
+        aurora_aram_write_hook((u32)dest, length);
       memcpy(aramDst, hostSrc, length);
     }
   } else {

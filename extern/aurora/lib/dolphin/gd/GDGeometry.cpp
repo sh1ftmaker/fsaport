@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include <cassert>
 #include <dolphin/gd.h>
 #include <dolphin/os.h>
@@ -5,6 +6,7 @@
 #include "dolphin/gx/GXAurora.h"
 
 void GDSetVtxDescv(const GXVtxDescList* attrPtr) {
+  AURORA_HOST_ALLOC;
     u32 nnorms = 0;
     u32 ncols = 0;
     u32 ntexs = 0;
@@ -121,6 +123,7 @@ void GDSetVtxDescv(const GXVtxDescList* attrPtr) {
 }
 
 void GDSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list) {
+  AURORA_HOST_ALLOC;
     u32 posCnt = GX_POS_XYZ;
     u32 posType = GX_F32;
     u32 posFrac = 0;
@@ -246,6 +249,7 @@ void GDSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list) {
 }
 
 void GDSetArraySized(GXAttr attr, void* base_ptr, u32 size, u8 stride, bool le) {
+  AURORA_HOST_ALLOC;
   s32 cpAttr;
   if (attr == GX_VA_NBT) {
     cpAttr = 1;
@@ -264,18 +268,22 @@ void GDSetArraySized(GXAttr attr, void* base_ptr, u32 size, u8 stride, bool le) 
 }
 
 void GDSetArray(GXAttr, void*, u8) {
+  AURORA_HOST_ALLOC;
     OSPanic(__FILE__, __LINE__, "GDSetArray is not supported on Aurora");
 }
 
 void GDSetArrayRaw(GXAttr, u32, u8) {
+  AURORA_HOST_ALLOC;
     OSPanic(__FILE__, __LINE__, "GDSetArrayRaw is not supported on Aurora");
 }
 
 void GDPatchArrayPtr(void* base_ptr) {
+  AURORA_HOST_ALLOC;
     GDWrite_u32(OSCachedToPhysical(base_ptr));
 }
 
 void GDSetTexCoordGen(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc src_param, u8 normalize, u32 postmtx) {
+  AURORA_HOST_ALLOC;
     u32 form;
     u32 tgType;
     u32 proj;
@@ -401,6 +409,7 @@ void GDSetTexCoordGen(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc src
 }
 
 void GDSetCullMode(GXCullMode mode) {
+  AURORA_HOST_ALLOC;
     static u8 cm2hw[4] = { 0, 2, 1, 3 };
 
     GDWriteBPCmd(0xFE00C000);
@@ -408,6 +417,7 @@ void GDSetCullMode(GXCullMode mode) {
 }
 
 void GDSetGenMode(u8 nTexGens, u8 nChans, u8 nTevs) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(0xFE003C3F);
     GDWriteBPCmd(BP_GEN_MODE(nTexGens, nChans, nTevs - 1, 0, 0));
 
@@ -416,6 +426,7 @@ void GDSetGenMode(u8 nTexGens, u8 nChans, u8 nTevs) {
 }
 
 void GDSetGenMode2(u8 nTexGens, u8 nChans, u8 nTevs, u8 nInds, GXCullMode cm) {
+  AURORA_HOST_ALLOC;
     static u8 cm2hw[4] = { 0, 2, 1, 3 };
 
     GDWriteBPCmd(0xFE07FC3F);
@@ -426,10 +437,12 @@ void GDSetGenMode2(u8 nTexGens, u8 nChans, u8 nTevs, u8 nInds, GXCullMode cm) {
 }
 
 void GDSetLPSize(u8 lineWidth, u8 pointSize, GXTexOffset lineOffset, GXTexOffset pointOffset, u8 lineHalfAspect) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_LP_SIZE(lineWidth, pointSize, lineOffset, pointOffset, lineHalfAspect, 0x22));
 }
 
 void GDSetCoPlanar(u8 enable) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(0xFE080000);
     GDWriteBPCmd(enable << 19);
 }

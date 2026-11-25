@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/si.h>
 #include <dolphin/pad.h>
 #include "../../input.hpp"
@@ -10,6 +11,7 @@ extern "C" uint32_t (*aurora_si_probe_hook)(int32_t chan);
 uint32_t (*aurora_si_probe_hook)(int32_t chan) = nullptr;
 
 uint32_t SIProbe(int32_t chan) {
+  AURORA_HOST_ALLOC;
   if (aurora_si_probe_hook != nullptr) {
     if (const uint32_t type = aurora_si_probe_hook(chan)) {
       return type;

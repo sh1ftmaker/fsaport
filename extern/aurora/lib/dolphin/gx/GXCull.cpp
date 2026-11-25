@@ -1,9 +1,11 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
 extern "C" {
 
 void GXSetScissor(u32 left, u32 top, u32 width, u32 height) {
+  AURORA_HOST_ALLOC;
   const u32 tp = top + 342;
   const u32 lf = left + 342;
   const u32 bm = tp + height - 1;
@@ -22,6 +24,7 @@ void GXSetScissor(u32 left, u32 top, u32 width, u32 height) {
 // TODO GXSetScissorBoxOffset
 
 void GXSetCullMode(GXCullMode mode) {
+  AURORA_HOST_ALLOC;
   // Swap front/back to match hardware convention
   GXCullMode hwMode;
   switch (mode) {
@@ -40,11 +43,13 @@ void GXSetCullMode(GXCullMode mode) {
 }
 
 void GXSetClipMode(GXClipMode mode) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_XF_REG(5, mode);
   __gx->bpSent = 1;
 }
 
 void GXSetCoPlanar(GXBool enable) {
+  AURORA_HOST_ALLOC;
   u32 reg;
   SET_REG_FIELD(0, __gx->genMode, 1, 19, enable);
 

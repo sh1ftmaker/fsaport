@@ -516,6 +516,11 @@ them), not measured over a network.
 
 ---
 
+### What was built (owner's choice: (a) with rollback)
+
+Every browser runs the whole game and inputs travel, with rollback, lockstep as
+a mode: docs/NETPLAY.md (design, protocol, how to run, measurements).
+
 ## 5. Open questions for the owner
 
 1. **(a) or (b)?** §4 recommends (b), same-room first.
