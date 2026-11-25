@@ -17,7 +17,7 @@ static inline void stepChannel(LightEnvironmentControl_804AA4F0* actor, s32 i) {
 // Passes the frame counter (u8) to fn_80128C58 and the packed colour word to fn_8013A884.
 static inline void applyColor(LightEnvironmentControl_804AA4F0* actor) {
     fn_80128C58((u8)actor->mCounter);
-    u32 packed = (actor->mColorCur[0] << 24) | (actor->mColorCur[1] << 16) | (actor->mColorCur[2] << 8) |
+    JUtility::TColor packed = (actor->mColorCur[0] << 24) | (actor->mColorCur[1] << 16) | (actor->mColorCur[2] << 8) |
                  actor->mColorCur[3];
     fn_8013A884(&packed);
 }

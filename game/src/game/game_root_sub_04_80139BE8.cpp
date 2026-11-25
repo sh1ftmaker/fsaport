@@ -24,13 +24,11 @@
 extern const char lbl_80465920[];
 extern const char lbl_80465960[];
 
-// FIXME(shotgun): 33.1 %, missing/extra (the colour is copied byte by byte; fn_8013A884 takes a u32* in act_light_environment_control_802EF76C.h)
 // 0x8013A884
 // auto_inline off: the original GameRootSub04 destructor (bl at 0x8013A2B8) calls it out of line.
 #pragma auto_inline off
-// FIXME: 33.09 %, missing/extra; behaviour drift.
-void fn_8013A884(u32* color) {
-    gGameRoot2_8053AB10->field_0x2c->field_0x4.set(*color);
+void fn_8013A884(const JUtility::TColor* color) {
+    gGameRoot2_8053AB10->field_0x2c->field_0x4 = *color;
 }
 #pragma auto_inline reset
 
@@ -80,7 +78,7 @@ GameRootSub04_801F856C::GameRootSub04_801F856C(JKRHeap* heap) {
 }
 
 GameRootSub04_801F856C::~GameRootSub04_801F856C() {
-    u32 color = 0xFFFFFF00;
+    JUtility::TColor color = 0xFFFFFF00;
     fn_8013A884(&color);
     getEffectSystem_8013C824()->mEmitterManager->forceDeleteAllEmitter();
     if (lbl_80529DEC.field_0x24b != 0) {

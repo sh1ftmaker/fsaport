@@ -221,7 +221,7 @@ void TingleTimeUpManager_804ACBF0::update() {
     case 7:
         if (mTimer <= 0) {
             if (getGameView_802D6A9C()->mStage_0x4 != 5 || getGameView_802D6A9C()->mLevel_0x8 != 0) {
-                u32 color = field_0x240;
+                JUtility::TColor color = field_0x240;
                 fn_8013A884(&color);
             }
             markDead_801F3668();
@@ -234,7 +234,7 @@ void TingleTimeUpManager_804ACBF0::update() {
     }
 
     if (getGameView_802D6A9C()->mStage_0x4 != 5 || getGameView_802D6A9C()->mLevel_0x8 != 0) {
-        u32 color = ((s32)field_0x244 << 24) | ((s32)field_0x248 << 16) | ((s32)field_0x24c << 8) | (s32)field_0x250;
+        JUtility::TColor color = ((s32)field_0x244 << 24) | ((s32)field_0x248 << 16) | ((s32)field_0x24c << 8) | (s32)field_0x250;
         fn_8013A884(&color);
     }
 

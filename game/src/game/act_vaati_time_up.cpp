@@ -150,7 +150,7 @@ void VaatiTimeUp_804ACCC0::update() {
         break;
     }
 
-    u32 color = ((s32)field_0x2d8 << 24) | ((s32)field_0x2dc << 16) | ((s32)field_0x2e0 << 8) | (s32)field_0x2e4;
+    JUtility::TColor color = ((s32)field_0x2d8 << 24) | ((s32)field_0x2dc << 16) | ((s32)field_0x2e0 << 8) | (s32)field_0x2e4;
     fn_8013A884(&color);
 }
 

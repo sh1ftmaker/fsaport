@@ -60,21 +60,6 @@ JUtility::TColor* fn_8017ECF4(JUtility::TColor* color, u8 r, u8 g, u8 b, u8 a) {
     return color;
 }
 
-#ifdef FSA_PORT
-// The original hands fn_8013A884 the TColor's own bytes as a u32*; that word
-// is 0xRRGGBBAA only on a big-endian CPU. The port's fn_8013A884 takes the
-// value 0xRRGGBBAA (TColor::set(u32)), so pass the packed value instead:
-// otherwise the screen colour comes out byte-reversed (white/alpha 0 "off"
-// became opaque cyan, the purple tint a green one).
-static void fsaSetScreenColor(const JUtility::TColor* color) {
-    u32 packed = color->toUInt32();
-    fn_8013A884(&packed);
-}
-#define FSA_SET_SCREEN_COLOR(color) fsaSetScreenColor(color)
-#else
-#define FSA_SET_SCREEN_COLOR(color) fn_8013A884((u32*)(color))
-#endif
-
 // Out-of-line copy of TVec2<f32>::set(x, y).
 void fn_8017ECE8(JGeometry::TVec2f* v, f32 x, f32 y) {
     v->set(x, y);
@@ -439,7 +424,7 @@ void PhantomGanon_804A1318::update() {
         }
         fn_8022ADE4();
         JUtility::TColor color;
-        FSA_SET_SCREEN_COLOR(fn_8017ECF4(&color, 0xFF, 0xFF, 0xFF, 0));
+        fn_8013A884(fn_8017ECF4(&color, 0xFF, 0xFF, 0xFF, 0));
         field_0x250 = 0;
         field_0x254 = 0;
         mState = 1;
@@ -535,7 +520,7 @@ void PhantomGanon_804A1318::update() {
             field_0x254 = 0x7F;
         }
         JUtility::TColor fade;
-        FSA_SET_SCREEN_COLOR(fn_8017ECF4(&fade, field_0x250, field_0x254, 0xFF, 0));
+        fn_8013A884(fn_8017ECF4(&fade, field_0x250, field_0x254, 0xFF, 0));
         if (field_0x234 != 0) {
             break;
         }
@@ -547,7 +532,7 @@ void PhantomGanon_804A1318::update() {
         field_0x250 = 0;
         field_0x254 = 0;
         JUtility::TColor tint;
-        FSA_SET_SCREEN_COLOR(fn_8017ECF4(&tint, 0x9F, 0x7F, 0xFF, 0));
+        fn_8013A884(fn_8017ECF4(&tint, 0x9F, 0x7F, 0xFF, 0));
         field_0x268 = 0;
         gAudioMgr_8053AF80->startBgm_80458FF0(0x1000004, false, 0);
         getActorManager_801F856C()->fn_801F6884();
