@@ -1,4 +1,5 @@
 #include <dolphin/thp.h>
+#include "portable/BigEndian.h"
 
 u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 {
@@ -16,28 +17,13 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 		return 0;
 	}
 
-#ifdef FSA_PORT
-	// Port: the record header is big-endian; decode from a swapped copy.
-	THPAudioRecordHeader swapped;
-	{
-		const u8* b = audioFrame;
-		swapped.offsetNextChannel = (u32)b[0] << 24 | (u32)b[1] << 16 | (u32)b[2] << 8 | b[3];
-		swapped.sampleSize        = (u32)b[4] << 24 | (u32)b[5] << 16 | (u32)b[6] << 8 | b[7];
-		s16* h = &swapped.lCoef[0][0];
-		for (int k = 0; k < 36; k++) {
-			h[k] = (s16)(b[8 + k * 2] << 8 | b[9 + k * 2]);
-		}
-	}
-	header = &swapped;
-#else
 	header = (THPAudioRecordHeader*)audioFrame;
-#endif
 	left   = audioFrame + sizeof(THPAudioRecordHeader);
-	right  = left + header->offsetNextChannel;
+	right  = left + be_read_u32(&header->offsetNextChannel);
 
 	if (flag == 1) {
 		decRightPtr = audioBuffer;
-		decLeftPtr  = audioBuffer + header->sampleSize;
+		decLeftPtr  = audioBuffer + be_read_u32(&header->sampleSize);
 		step        = 1;
 	} else {
 		decRightPtr = audioBuffer;
@@ -45,16 +31,16 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 		step        = 2;
 	}
 
-	if (header->offsetNextChannel == 0) {
+	if (be_read_u32(&header->offsetNextChannel) == 0) {
 		__THPAudioInitialize(&decInfo, left);
 
-		yn1 = header->lYn1;
-		yn2 = header->lYn2;
+		yn1 = be_read_s16(&header->lYn1);
+		yn2 = be_read_s16(&header->lYn2);
 
-		for (i = 0; i < header->sampleSize; i++) {
+		for (i = 0; i < be_read_u32(&header->sampleSize); i++) {
 			sample = __THPAudioGetNewSample(&decInfo);
-			yn     = header->lCoef[decInfo.predictor][1] * yn2;
-			yn += header->lCoef[decInfo.predictor][0] * yn1;
+			yn     = be_read_s16(&header->lCoef[decInfo.predictor][1]) * yn2;
+			yn += be_read_s16(&header->lCoef[decInfo.predictor][0]) * yn1;
 			yn += (sample << decInfo.scale) << 11;
 			yn <<= 5;
 
@@ -83,13 +69,13 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 	} else {
 		__THPAudioInitialize(&decInfo, left);
 
-		yn1 = header->lYn1;
-		yn2 = header->lYn2;
+		yn1 = be_read_s16(&header->lYn1);
+		yn2 = be_read_s16(&header->lYn2);
 
-		for (i = 0; i < header->sampleSize; i++) {
+		for (i = 0; i < be_read_u32(&header->sampleSize); i++) {
 			sample = __THPAudioGetNewSample(&decInfo);
-			yn     = header->lCoef[decInfo.predictor][1] * yn2;
-			yn += header->lCoef[decInfo.predictor][0] * yn1;
+			yn     = be_read_s16(&header->lCoef[decInfo.predictor][1]) * yn2;
+			yn += be_read_s16(&header->lCoef[decInfo.predictor][0]) * yn1;
 			yn += (sample << decInfo.scale) << 11;
 			yn <<= 5;
 			if ((u16)(yn & 0xffff) > 0x8000) {
@@ -117,13 +103,13 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 
 		__THPAudioInitialize(&decInfo, right);
 
-		yn1 = header->rYn1;
-		yn2 = header->rYn2;
+		yn1 = be_read_s16(&header->rYn1);
+		yn2 = be_read_s16(&header->rYn2);
 
-		for (i = 0; i < header->sampleSize; i++) {
+		for (i = 0; i < be_read_u32(&header->sampleSize); i++) {
 			sample = __THPAudioGetNewSample(&decInfo);
-			yn     = header->rCoef[decInfo.predictor][1] * yn2;
-			yn += header->rCoef[decInfo.predictor][0] * yn1;
+			yn     = be_read_s16(&header->rCoef[decInfo.predictor][1]) * yn2;
+			yn += be_read_s16(&header->rCoef[decInfo.predictor][0]) * yn1;
 			yn += (sample << decInfo.scale) << 11;
 			yn <<= 5;
 
@@ -151,7 +137,7 @@ u32 THPAudioDecode(s16* audioBuffer, u8* audioFrame, s32 flag)
 		}
 	}
 
-	return header->sampleSize;
+	return be_read_u32(&header->sampleSize);
 }
 
 static s32 __THPAudioGetNewSample(THPAudioDecodeInfo* info)
