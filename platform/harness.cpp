@@ -58,7 +58,7 @@ u32 g_anchor = 0;  // script mode: the latest scene change or step start
 //   condition at c:   term count T, then T terms: key, value count V, V values
 // A key is a kGlobals index, or kMode/kStage/kLevel (the scene triple, mode -1
 // before GameRoot exists); a NaN value matches null (the value does not exist).
-enum : int { kWait, kWaitReads, kPress, kHold, kStick, kEnd };
+enum : int { kWait, kWaitReads, kPress, kHold, kStick, kEnd, kSet };
 enum : int { kMode = -1, kStage = -2, kLevel = -3 };
 const double* g_script = nullptr;
 int g_scriptLen = 0;
@@ -113,6 +113,8 @@ bool scene_point(u32 n) {
   }
   return changed;
 }
+
+extern "C" int fsa_harness_set(int id, double value);  // game/src/port/harness_state.cpp
 
 // --- Script ------------------------------------------------------------------
 bool cond_value(int key, double* v) {
@@ -207,6 +209,14 @@ bool script(PADStatus* status, u32 n) {
     case kHold:
     case kStick: finished = t >= reads; break;
     case kPress: finished = t % every == 0 && cond_holds(cond); break;
+    case kSet:  // zero reads: write the settings, then the next step starts at read n
+      if (cond >= 0) {
+        int count = (int)g_script[cond];
+        for (int k = 0; k < count; k++)
+          fsa_harness_set((int)g_script[cond + 1 + 2 * k], g_script[cond + 2 + 2 * k]);
+      }
+      finished = true;
+      break;
     default: script_stop("script_end", n); return started;
     }
     if (finished) {

@@ -73,9 +73,9 @@ function compileScript(doc) {
   if (!doc || doc.version !== 1 || !Array.isArray(doc.steps)) fail('need {"version":1,"steps":[...]}');
   const BUTTONS = { LEFT: 0x1, RIGHT: 0x2, DOWN: 0x4, UP: 0x8, Z: 0x10, R: 0x20, L: 0x40,
                     A: 0x100, B: 0x200, X: 0x400, Y: 0x800, START: 0x1000 };
-  const KINDS = ['wait', 'wait_reads', 'press', 'hold', 'stick', 'end'];
+  const KINDS = ['wait', 'wait_reads', 'press', 'hold', 'stick', 'end', 'set'];
   const ALLOWED = { wait: ['wait'], wait_reads: ['wait_reads'], press: ['press', 'every', 'until'],
-                    hold: ['hold', 'reads'], stick: ['stick', 'reads', 'buttons'], end: ['end'] };
+                    hold: ['hold', 'reads'], stick: ['stick', 'reads', 'buttons'], end: ['end'], set: ['set'] };
   const keys = { mode: -1, stage: -2, level: -3,
                  'gGameRoot_8053AAF8->field_0x4c': -1,
                  'lbl_80529DEC.mStage_0x118': -2, 'lbl_80529DEC.mLevel_0x11c': -3 };
@@ -144,6 +144,21 @@ function compileScript(doc) {
       row[1] = buttons(s.buttons, i);
     }
     if (kind === 'end' && s.end !== true) fail('step ' + i + ': end must be true');
+    if (kind === 'set') {
+      // {"set": {NAME: number, ...}}: the GameState fields ?stage= writes
+      // (platform/harness.cpp kSet, game/src/port/harness_state.cpp fsa_harness_set).
+      const SETTABLE = { 'lbl_80529DEC.mStage_0x118': 1, stage: 1, 'lbl_80529DEC.mLevel_0x11c': 2, level: 2,
+                         'lbl_80529DEC.field_0x128': 3, 'lbl_80529DEC.field_0x12c': 4 };
+      if (!s.set || typeof s.set !== 'object' || Array.isArray(s.set)) fail('step ' + i + ': set is an object');
+      const entries = Object.entries(s.set);
+      row[7] = conds.length;
+      conds.push(entries.length);
+      for (const [k, v] of entries) {
+        if (!(k in SETTABLE)) fail('step ' + i + ': cannot set ' + k + ' (settable: ' + Object.keys(SETTABLE).join(' ') + ')');
+        if (!Number.isInteger(v)) fail('step ' + i + ': set values are integers');
+        conds.push(SETTABLE[k], v);
+      }
+    }
     steps.push(...row);
   });
   const base = 1 + steps.length;

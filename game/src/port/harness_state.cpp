@@ -293,6 +293,20 @@ extern "C" int fsa_harness_state(char* buf, int size, u32 n, const char* sync) {
 // --- Script conditions (platform/harness.cpp) ------------------------------------
 // The page looks names up by index (fsa_harness_global_name), so a script's
 // condition keys are exactly the kGlobals names.
+// The `set` script step (docs/HARNESS.md): the GameState fields the
+// stage jump writes (?stage=, game_root_80134C04.cpp), by id: 1 mStage_0x118,
+// 2 mLevel_0x11c, 3 field_0x128, 4 field_0x12c. Returns 0 for an unknown id.
+extern "C" int fsa_harness_set(int id, double value) {
+    s32 v = (s32)value;
+    switch (id) {
+    case 1: lbl_80529DEC.mStage_0x118 = v; return 1;
+    case 2: lbl_80529DEC.mLevel_0x11c = v; return 1;
+    case 3: lbl_80529DEC.field_0x128 = v; return 1;
+    case 4: lbl_80529DEC.field_0x12c = v; return 1;
+    }
+    return 0;
+}
+
 extern "C" int fsa_harness_global_count() { return (int)(sizeof(kGlobals) / sizeof(kGlobals[0])); }
 extern "C" const char* fsa_harness_global_name(int k) {
     return k >= 0 && k < fsa_harness_global_count() ? kGlobals[k].name : NULL;

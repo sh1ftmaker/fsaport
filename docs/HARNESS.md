@@ -96,6 +96,13 @@ after the scene sync point and before the input is recorded.
 | `{"stick": [x, y], "reads": N, "buttons": BUTTONS}` | main stick (s8, as `PADStatus`: up and right positive) for N reads, `buttons` (optional) held too |
 | `{"end": true}` | stop: neutral from here on, sync `script_end` |
 
+`{"set": {NAME: integer, ...}}` takes no reads: it writes the GameState fields
+the stage jump writes (`?stage=`), so a script can enter a stage after the
+player-count screen. Settable: `lbl_80529DEC.mStage_0x118` (alias `stage`),
+`lbl_80529DEC.mLevel_0x11c` (`level`), `lbl_80529DEC.field_0x128`,
+`lbl_80529DEC.field_0x12c` — the same step as fsa-decomp's Dolphin driver, so
+its `tools/harness_scripts/stage_S_L.json` run unchanged in the port.
+
 - **Exactly one step is active.** A step is checked at each read before it
   gives input: when it is finished (its COND holds; its N reads are used
   up), it ends *before* that read, and the next step starts *at* that read
