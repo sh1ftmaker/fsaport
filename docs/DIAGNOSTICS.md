@@ -389,17 +389,20 @@ In the merged TSV, 1756 of the 6166 functions with a symbol are entered,
 and 953 of those have regions that never ran. The 2089 entered functions have
 27357 `untaken` items.
 
-stage_2_0 does not reach the stage. At read 4044, in the map select
-(`MapSelect`), the normal build and the coverage build both stop with
-`RuntimeError: null function` in `cls_804AF480::cls_804AF480()`
-(`tu_8039003C.cpp`, inlined into `GameRoot::applyRequestedMode_80135494`).
-Its counters show where. `MapScreen_804B1288::MapScreen_804B1288()`
-(`map_screen_80403D84.cpp:288`) runs to its end (line 709), but the
-pane-building loops at lines 366, 370, 376, 390, 400, 410, 414, ... report
-their condition false at the first test (`i < 3` with `i = 0`). That only
-happens if the compiler removed those loops. The code between them ran. The
-`cls_804AF480` constructor never reaches line 42, the code after
-`new MapScreen_804B1288`. The decomp has the details.
+stage_2_0 stopped at read 4044 (these figures are from that run), in the
+map select, with `RuntimeError: null function`: `MapScreen_804B1288`'s
+constructor (`map_screen_80403D84.cpp:355`, inlined through
+`cls_804AF480::cls_804AF480()` into `GameRoot::applyRequestedMode_80135494`)
+searched `main_message_window.blo` for `Tmt02`, a tag the decomp source had
+wrong (the panes are `Tmmt01`/`Tmmt02`). `search()` returned NULL, and the
+`setFont()` virtual call through it trapped. That is fixed. **Reading the
+counters of a function that trapped:** clang stores one counter per loop body
+and branch arm, and works out the rest (the code after a loop, the false side
+of a condition) by subtracting from the function's entry count. A function
+that stops partway leaves its later body counters at 0, so the code after each
+loop seems to have run and each loop seems to have failed its first test. That
+is what this run's report showed for the constructor. Trust the stack, not
+those counts.
 
 The coverage build plays every script exactly as the normal build does.
 `tools/harness_compare.py <coverage run> <normal run>` on each pair gives
@@ -785,8 +788,22 @@ file form stays big-endian.
    as `build/diag/req/<name>.json`, drives the page through
    `tools/web_run.mjs`, then runs
    `tools/fntrace_summary.py <run> --split DIR`.
-4. `DIR/<sym>.md` is the readable summary and `DIR/<sym>.jsonl` holds that
-   function's records. The summary gives:
+4. `DIR/<name>.md` is the readable summary and `DIR/<name>.jsonl` holds that
+   function's records. `<name>` is the decomp's full mangled symbol from
+   `symbols.txt` with `<`, `>` and `/` as `_`: the key fsa-decomp's
+   `tools/grind.py` looks an answer up by (`logs/fntrace-answers/*/<name>.md`,
+   the last batch directory wins, first 40 lines). It is resolved from the
+   request's symbol even when that was shortened or the port's signature
+   differs (the request's or port's symbol if `symbols.txt` has it, else the
+   port name table, else the one function with the same name and class, else
+   the one at the address in the name). Port-only helpers with no decomp
+   symbol keep the request's name, file-safe. `--symbols` overrides the
+   `symbols.txt` (default: the build's `FSA_DECOMP_SYMBOLS`). The first line
+   of each `.md` is a one-line summary: calls, callers, each argument's values
+   (distinct values, or range and count) and the result, and `branches:`, the
+   text that `--notes NOTES.json` (`{name or sym: text}`, `"*"` for all) gives
+   for the function (branch coverage needs the source plus the values, so it
+   is written by hand per batch). The summary gives:
    - call count, callers and scenes
    - each argument's range and distinct values, and whether they fit s16
    - the `this` fields written: decomp offset, field name and type from the
@@ -848,6 +865,10 @@ allocated at selection time.
   growing. `touch build/diag/fsa.wasm`, or use a fresh profile.
 - What a run can show depends on the scene it reaches. Batch 1's
   sword-level NPC stayed in state 0 for a whole stage-1 run.
+  Paths that scripted play does not reach can be forced with the harness
+  diagnostic pokes (docs/HARNESS.md, "Diagnostic pokes": more players, faked
+  GBA links, hits on actors, forced flags, direct calls of the message
+  mapper); `tools/harness_scripts/batch3/` has the scripts of batch 3.
 
 ## Uninitialised reads (`uninit`)
 

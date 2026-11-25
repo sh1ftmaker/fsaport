@@ -16,7 +16,8 @@ use --keys to go further). With --stage S-L and no --keys, the defaults are
 50 s ('--evals'), as in the coverage sessions.
 
 Writes the run to DIAG/<run>/ (fntrace*.jsonl, fntrace_summary.md) and, with
---out, one <sym>.md + <sym>.jsonl per function into DIR. Prints the run dir.
+--out, one <name>.md + <name>.jsonl per function into DIR (named by the decomp's
+symbol, see tools/fntrace_summary.py). Prints the run dir.
 """
 import argparse, glob, json, os, shutil, subprocess, sys, time, urllib.request
 
@@ -92,6 +93,7 @@ def main():
     ap.add_argument('--every', type=int)
     ap.add_argument('--extra', default='')
     ap.add_argument('--name')
+    ap.add_argument('--notes', help='JSON {name: branch text} for the one-line summaries (fntrace_summary.py --notes)')
     a = ap.parse_args()
 
     name = a.name or os.path.splitext(os.path.basename(a.request))[0]
@@ -142,6 +144,8 @@ def main():
     cmd = [sys.executable, os.path.join(HERE, 'fntrace_summary.py'), run, '--build', a.build]
     if a.out:
         cmd += ['--split', a.out]
+    if a.notes:
+        cmd += ['--notes', a.notes]
     subprocess.run(cmd, check=True)
     if a.out:
         shutil.copyfile(os.path.join(run, 'fntrace_summary.md'), os.path.join(a.out, 'fntrace_summary.md'))

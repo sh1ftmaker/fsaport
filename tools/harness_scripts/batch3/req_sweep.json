@@ -1,0 +1,8 @@
+{"batch": 3, "comment": "stage sweep: which actors draw on which layer (drawSprite_801F06F0's layer-8 branch), conditional messages",
+ "requests": [
+  {"functions": [{"sym": "drawSprite_801F06F0__18ActorBase_804A5770CFPCclP21SpriteParams_801F5AE0lff",
+                  "this_bytes": 8, "this_ranges": [[216, 224], [248, 256], [312, 316], [416, 420]],
+                  "ptr_args": [{"arg": 1, "str": true, "bytes": 32}], "cap": 50, "every": 5000}],
+   "nested": [{"sym": "drawSobSprite_801EF574", "cap": 50, "every": 100}],
+   "scene": "stage starts", "question": "layer values per stage; does the layer-8 branch run"}
+ ]}

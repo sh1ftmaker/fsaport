@@ -116,6 +116,15 @@ bool scene_point(u32 n) {
 
 extern "C" int fsa_harness_set(int id, double value);  // game/src/port/harness_state.cpp
 
+#if FSA_DIAG
+// Diagnostics builds only (docs/HARNESS.md "Diagnostic pokes"): script mode's
+// connected pads (bit i = port i; the `pads` set key, default port 0 alone) and
+// the per-read pokes of game/src/port/harness_state.cpp.
+u32 g_padsConnected = 1;
+extern "C" void fsa_harness_diag_tick(u32 n);  // game/src/port/harness_state.cpp
+extern "C" void fsa_harness_set_pads(u32 mask) { g_padsConnected = (mask & 0xF) | 1; }
+#endif
+
 // --- Script ------------------------------------------------------------------
 bool cond_value(int key, double* v) {
   switch (key) {
@@ -161,7 +170,11 @@ bool cond_holds(int at) {
 void neutral(PADStatus* status) {
   for (int i = 0; i < PAD_CHANMAX; i++) {
     memset(&status[i], 0, sizeof(PADStatus));
+#if FSA_DIAG
+    status[i].err = (g_padsConnected >> i) & 1 ? PAD_ERR_NONE : PAD_ERR_NO_CONTROLLER;
+#else
     status[i].err = i == 0 ? PAD_ERR_NONE : PAD_ERR_NO_CONTROLLER;
+#endif
   }
 }
 
@@ -197,7 +210,7 @@ bool script(PADStatus* status, u32 n) {
     }
     const double* s = g_script + 1 + 9 * g_step;
     int kind = (int)s[0];
-    u16 buttons = (u16)s[1];
+    u16 buttons = (u16)((u32)s[1] & 0xFFFF);
     u32 every = s[2] >= 1 ? (u32)s[2] : 1;
     u32 reads = (u32)s[3];
     int cond = (int)s[7];
@@ -212,8 +225,15 @@ bool script(PADStatus* status, u32 n) {
     case kSet:  // zero reads: write the settings, then the next step starts at read n
       if (cond >= 0) {
         int count = (int)g_script[cond];
-        for (int k = 0; k < count; k++)
-          fsa_harness_set((int)g_script[cond + 1 + 2 * k], g_script[cond + 2 + 2 * k]);
+        for (int k = 0; k < count; k++) {
+          int id = (int)g_script[cond + 1 + 2 * k];
+          if (!fsa_harness_set(id, g_script[cond + 2 + 2 * k])) {
+            // Not applied: a diagnostics-only key in a normal build, or "seed" before GameRoot exists.
+            char line[96];
+            snprintf(line, sizeof(line), "{\"sync\":\"set_ignored\",\"n\":%u,\"step\":%d,\"id\":%d}", n, g_step, id);
+            fsa_diag("sync", line);
+          }
+        }
       }
       finished = true;
       break;
@@ -228,16 +248,26 @@ bool script(PADStatus* status, u32 n) {
       script_stop("script_timeout", n);
       break;
     }
-    // The pad the step drives (deluxe: "pad" 0-3; 1-3 count as connected
-    // while a step drives them, so a GBA in that port sees the input).
+    // The step's pads: "pad" 0-3 (deluxe; s[8], default 0), or in diagnostics
+    // builds a "pads" mask in bits 16-19 of the buttons word. A driven pad counts
+    // as connected, so a GBA in that port sees the input.
     int pad = (int)s[8];
-    PADStatus& p = status[pad >= 0 && pad < PAD_CHANMAX ? pad : 0];
-    p.err = PAD_ERR_NONE;
-    if (kind == kHold || kind == kStick || (kind == kPress && t % every == 0))
-      p.button = buttons;
-    if (kind == kStick) {
-      p.stickX = (s8)s[4];
-      p.stickY = (s8)s[5];
+    u32 pads = 1u << (pad >= 0 && pad < PAD_CHANMAX ? pad : 0);
+#if FSA_DIAG
+    if (((u32)s[1] >> 16) & 0xF)
+      pads = ((u32)s[1] >> 16) & 0xF;
+#endif
+    for (int i = 0; i < PAD_CHANMAX; i++) {
+      if (!((pads >> i) & 1))
+        continue;
+      PADStatus& p = status[i];
+      p.err = PAD_ERR_NONE;
+      if (kind == kHold || kind == kStick || (kind == kPress && t % every == 0))
+        p.button = buttons;
+      if (kind == kStick) {
+        p.stickX = (s8)s[4];
+        p.stickY = (s8)s[5];
+      }
     }
     break;
   }
@@ -299,6 +329,10 @@ void platform_harness_pad(PADStatus* status) {
     return;
   bool scene = scene_point(n);
   bool step = (g_flags & kScript) && script(status, n);
+#if FSA_DIAG
+  if (g_flags & kScript)
+    fsa_harness_diag_tick(n);
+#endif
   bool tick;
   if (g_flags & kScript) {
     if (scene || step)

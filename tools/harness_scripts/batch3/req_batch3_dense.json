@@ -1,0 +1,46 @@
+{
+ "batch": 3,
+ "from": "fsa-decomp (batch 2 gaps)",
+ "requests": [
+  {
+   "functions": [
+    {
+     "sym": "drawSprite_801F06F0__18ActorBase_804A5770CFPCclP21SpriteParams_801F5AE0lff",
+     "this_bytes": 8,
+     "this_ranges": [
+      [
+       216,
+       224
+      ],
+      [
+       248,
+       256
+      ],
+      [
+       312,
+       316
+      ]
+     ],
+     "ptr_args": [
+      {
+       "arg": 1,
+       "str": true,
+       "bytes": 24
+      },
+      {
+       "arg": 3,
+       "bytes": 32,
+       "type": "SpriteParams_801F5AE0"
+      }
+     ],
+     "cap": 3000,
+     "every": 4
+    }
+   ],
+   "nested": [],
+   "scene": "stage 1-0 with diagnostic pokes",
+   "question": "batch 2 gaps: drawSprite hit flash / actor matrix / layer 8; fn_801F172C flag != 0 and the top-edge move"
+  }
+ ],
+ "comment": "hit-flash runs: drawSprite_801F06F0 alone, small snapshots logged densely (every 4th call), so fast mode stays under the 8 MB diag POST limit"
+}

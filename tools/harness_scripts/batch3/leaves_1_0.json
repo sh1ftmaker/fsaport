@@ -1,0 +1,384 @@
+{
+ "version": 1,
+ "comment": "batch 3: LeafEffectNPC spawnLeaves (player 0 field_0xb9c held), stage 1-0",
+ "steps": [
+  {
+   "wait": {
+    "mode": 7
+   },
+   "timeout": 6000
+  },
+  {
+   "wait_reads": 300
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "set": {
+    "player_b9c": 1
+   }
+  },
+  {
+   "wait_reads": 30
+  },
+  {
+   "set": {
+    "player_b9c": 0
+   }
+  },
+  {
+   "wait_reads": 60
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 30
+  },
+  {
+   "set": {
+    "player_b9c": 1
+   }
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 240
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 240
+  },
+  {
+   "set": {
+    "player_b9c": 0
+   }
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "end": true
+  }
+ ]
+}

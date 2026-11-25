@@ -1258,7 +1258,15 @@ s32 ActorBase_804A5770::findOverlappingActorOf_801F26CC(const u32* ids) {
 // the result and passes the other vector out. Returns whether it hit.
 // u8 (clrlwi r3, r31, 24 at the return): EnemyBase / Thief vfunc_0x64 and
 // fn_801545C0 return it raw, the update()s keep it in a u8 local.
+#if FSA_DIAG
+extern "C" u32 fsa_diag_force;  // game/src/port/harness_state.cpp: harness poke "force"
+#endif
 u8 ActorBase_804A5770::sweepMapBox_801F2618(JGeometry::TVec3f* out, bool flag) {
+#if FSA_DIAG
+    if (fsa_diag_force & 1) {  // bit 0: every caller passes flag = true (fn_801F172C's corner block)
+        flag = true;
+    }
+#endif
     bool result = false;
     if (field_0x174 <= 0) {
         JGeometry::TVec3f pos;

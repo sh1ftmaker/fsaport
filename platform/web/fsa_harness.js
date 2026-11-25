@@ -74,8 +74,8 @@ function compileScript(doc) {
   const BUTTONS = { LEFT: 0x1, RIGHT: 0x2, DOWN: 0x4, UP: 0x8, Z: 0x10, R: 0x20, L: 0x40,
                     A: 0x100, B: 0x200, X: 0x400, Y: 0x800, START: 0x1000 };
   const KINDS = ['wait', 'wait_reads', 'press', 'hold', 'stick', 'end', 'set'];
-  const ALLOWED = { wait: ['wait'], wait_reads: ['wait_reads'], press: ['press', 'every', 'until'],
-                    hold: ['hold', 'reads'], stick: ['stick', 'reads', 'buttons'], end: ['end'], set: ['set'] };
+  const ALLOWED = { wait: ['wait'], wait_reads: ['wait_reads'], press: ['press', 'every', 'until', 'pads'],
+                    hold: ['hold', 'reads', 'pads'], stick: ['stick', 'reads', 'buttons', 'pads'], end: ['end'], set: ['set'] };
   const keys = { mode: -1, stage: -2, level: -3,
                  'gGameRoot_8053AAF8->field_0x4c': -1,
                  'lbl_80529DEC.mStage_0x118': -2, 'lbl_80529DEC.mLevel_0x11c': -3 };
@@ -146,17 +146,30 @@ function compileScript(doc) {
       row[1] = buttons(s.buttons, i);
     }
     if (kind === 'end' && s.end !== true) fail('step ' + i + ': end must be true');
+    if (s.pads !== undefined) {
+      // Diagnostics builds only (docs/HARNESS.md "Diagnostic pokes"): the pads that get the
+      // step's input, as bits 16-19 of the buttons word; a normal build feeds port 0 only.
+      if (!Array.isArray(s.pads) || !s.pads.length) fail('step ' + i + ': pads is a list of ports 0-3');
+      row[1] += 65536 * s.pads.reduce((m, p) => m | (1 << int(p, i, 'pad', 0, 3)), 0);
+    }
     if (kind === 'set') {
       // {"set": {NAME: number, ...}}: the GameState fields ?stage= writes
       // (platform/harness.cpp kSet, game/src/port/harness_state.cpp fsa_harness_set).
+      // Ids from 100 are the diagnostic pokes (FSA_DIAG builds; fsa_harness_diag_set).
       const SETTABLE = { 'lbl_80529DEC.mStage_0x118': 1, stage: 1, 'lbl_80529DEC.mLevel_0x11c': 2, level: 2,
                          'lbl_80529DEC.field_0x128': 3, 'lbl_80529DEC.field_0x12c': 4,
-                         seed: 5, 'gGameRoot_8053AAF8->mRandom.seed': 5, seed_on_stage: 6 };
+                         seed: 5, 'gGameRoot_8053AAF8->mRandom.seed': 5, seed_on_stage: 6,
+                         players_on_stage: 100, kinds_on_stage: 101, pads: 102, gba_link: 103, force: 104,
+                         target: 110, hit_type: 111, hit_strength: 112, hit_dy: 113, hit: 114, shake: 115,
+                         kill: 116, layer: 117, player_b9c: 120, msg_scan: 130, msg_window: 131, msg_eval: 132 };
+      const fourcc = (v) => (typeof v === 'string' && v.length === 4)
+        ? [...v].reduce((m, c) => m * 256 + c.charCodeAt(0), 0) : v;
       if (!s.set || typeof s.set !== 'object' || Array.isArray(s.set)) fail('step ' + i + ': set is an object');
       const entries = Object.entries(s.set);
       row[7] = conds.length;
       conds.push(entries.length);
-      for (const [k, v] of entries) {
+      for (let [k, v] of entries) {
+        if (k === 'target') v = fourcc(v);  // an ActorId ("OCTR") or a slot number
         if (!(k in SETTABLE)) fail('step ' + i + ': cannot set ' + k + ' (settable: ' + Object.keys(SETTABLE).join(' ') + ')');
         if (!Number.isInteger(v) || v < -(2 ** 31) || v > 2 ** 32 - 1) fail('step ' + i + ': set values are 32-bit integers');
         conds.push(SETTABLE[k], v);
