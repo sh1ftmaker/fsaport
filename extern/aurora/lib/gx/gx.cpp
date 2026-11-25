@@ -82,6 +82,40 @@ struct TlutObjectCache {
 absl::flat_hash_map<u32, CachedTextureEntry> s_textureObjectCaches;
 absl::flat_hash_map<u32, TlutObjectCache> s_tlutObjectCaches;
 
+// Converted palette textures by content (fsaport change): a game that runs
+// GXInitTlutObj + GXInitTexObjCI before every draw (FSA's
+// TileMap::drawBlockMap_802F6CF4 does, per flying floor tile) gives every draw
+// a new texture identity, so the cache above never hits and each draw
+// converts and uploads the whole sheet (128 x 512) again: 100+ flying tiles
+// took 35 ms a frame and the idle entries held gigabytes of textures. Keyed
+// by the data's address, layout and a hash of its texel and palette bytes, so
+// a palette or image changed in place still gets a new texture.
+struct PaletteContentKey {
+  const void* data = nullptr;
+  u32 width = 0;
+  u32 height = 0;
+  u32 format = 0;
+  u32 mips = 0;
+  u32 tlutFormat = 0;
+  u32 tlutEntries = 0;
+  u64 texHash = 0;
+  u64 tlutHash = 0;
+
+  bool operator==(const PaletteContentKey& rhs) const = default;
+  template <typename H>
+  friend H AbslHashValue(H h, const PaletteContentKey& key) {
+    return H::combine(std::move(h), key.data, key.width, key.height, key.format, key.mips, key.tlutFormat,
+                      key.tlutEntries, key.texHash, key.tlutHash);
+  }
+};
+
+struct PaletteContentEntry {
+  gfx::TextureHandle handle;
+  u32 lastUsedFrame = 0;
+};
+
+absl::flat_hash_map<PaletteContentKey, PaletteContentEntry> s_paletteContentCache;
+
 DynamicPaletteKey make_dynamic_palette_key(const GXTexObj_& obj, const GXState::CopyTextureRef& source) {
   return {
       .sourceIdentity = source.handle.get(),
@@ -194,16 +228,34 @@ gfx::TextureHandle resolve_static_palette_texture(const GXTexObj_& obj, const GX
   if (const auto replacement = gfx::texture_replacement::find_replacement(obj); replacement.has_value()) {
     handle = *replacement;
   } else {
-    auto converted = gfx::convert_texture_palette(
-        obj.format(), obj.width(), obj.height(), obj.mip_count(), {static_cast<const u8*>(obj.data), UINT32_MAX},
-        tlut.format, tlut.numEntries, {static_cast<const u8*>(tlut.data), static_cast<size_t>(tlut.numEntries) * 2});
-    if (converted.data.empty()) {
-      return {};
+    const PaletteContentKey contentKey{
+        .data = obj.data,
+        .width = obj.width(),
+        .height = obj.height(),
+        .format = obj.format(),
+        .mips = obj.mip_count(),
+        .tlutFormat = static_cast<u32>(tlut.format),
+        .tlutEntries = tlut.numEntries,
+        .texHash = XXH3_64bits(obj.data, GXGetTexBufferSize(obj.width(), obj.height(), obj.format(), obj.has_mips(),
+                                                            obj.mip_count())),
+        .tlutHash = XXH3_64bits(tlut.data, static_cast<size_t>(tlut.numEntries) * 2),
+    };
+    auto& content = s_paletteContentCache[contentKey];
+    content.lastUsedFrame = s_cacheFrame;
+    if (!content.handle) {
+      auto converted = gfx::convert_texture_palette(
+          obj.format(), obj.width(), obj.height(), obj.mip_count(), {static_cast<const u8*>(obj.data), UINT32_MAX},
+          tlut.format, tlut.numEntries, {static_cast<const u8*>(tlut.data), static_cast<size_t>(tlut.numEntries) * 2});
+      if (converted.data.empty()) {
+        s_paletteContentCache.erase(contentKey);
+        return {};
+      }
+      content.handle =
+          gfx::new_static_texture_2d(obj.width(), obj.height(), obj.mip_count(), GX_TF_RGBA8_PC,
+                                     {converted.data.data(), converted.data.size()}, false, "GX Static Palette Texture");
+      content.handle->hasArbitraryMips = converted.hasArbitraryMips;
     }
-    handle =
-        gfx::new_static_texture_2d(obj.width(), obj.height(), obj.mip_count(), GX_TF_RGBA8_PC,
-                                   {converted.data.data(), converted.data.size()}, false, "GX Static Palette Texture");
-    handle->hasArbitraryMips = converted.hasArbitraryMips;
+    handle = content.handle;
   }
   if (!obj.no_cache() && !tlut.no_cache()) {
     store_cached_texture(obj, handle, tlut.tlutObjId, tlut.tlutDataVersion);
@@ -345,6 +397,13 @@ void sweep_texture_cache() noexcept {
     if (s_cacheFrame - it->second.lastUsedFrame > kMaxIdleFrames) {
       clear_texture_dependency(it->first, it->second.tlutObjId);
       s_textureObjectCaches.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+  for (auto it = s_paletteContentCache.begin(); it != s_paletteContentCache.end();) {
+    if (s_cacheFrame - it->second.lastUsedFrame > kMaxIdleFrames) {
+      s_paletteContentCache.erase(it++);
     } else {
       ++it;
     }

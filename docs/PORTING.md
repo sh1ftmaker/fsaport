@@ -249,6 +249,12 @@ Worth checking for in any code that misbehaves:
 - The texture-object cache drops entries unused for 300 frames
   (`sweep_texture_cache`, `lib/gx/gx.cpp`): every `GXInitTexObj` is a new
   identity, so games that re-init per frame grew it without bound.
+- Converted palette (CI) textures are also cached by content: data address,
+  layout and a hash of the texel and TLUT bytes (`s_paletteContentCache`,
+  `lib/gx/gx.cpp`). `TileMap::drawBlockMap_802F6CF4` re-inits its TLUTs and
+  texture object before every draw, so each flying floor tile (stage 8-1)
+  converted and uploaded the 128 x 512 tile sheet again (35 ms a frame, then
+  a hang).
 - `OSGetTime` takes its time from `aurora_os_time_hook` when it is set: the
   behaviour harness's virtual clock (`lib/dolphin/os/OSTime.cpp`,
   docs/HARNESS.md).
