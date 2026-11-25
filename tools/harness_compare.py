@@ -82,6 +82,49 @@ def load_list(run, stream):
     return out
 
 
+SEED_KEY = 'gGameRoot_8053AAF8->mRandom.seed'
+SEED_STEP_LIMIT = 1 << 21
+
+
+def lcg_steps(a, b, limit=SEED_STEP_LIMIT):
+    """Steps of JMath::TRandom_fast_ (x = x * 0x19660D + 0x3C6EF35F) from a to b, or None."""
+    x = a
+    for k in range(limit + 1):
+        if x == b:
+            return k
+        x = (x * 0x19660D + 0x3C6EF35F) & 0xFFFFFFFF
+    return None
+
+
+def seed_within_segments(seg):
+    """Replaces the RNG seed in each segment's state records by how far the
+    generator advanced since the segment's first record: the runs reach a scene
+    after menus of different lengths (the port's card writes are instant), so
+    their seeds differ there, but what happens inside the scene can still be
+    compared. A seed the generator cannot reach is a reseed: marked, and
+    counting restarts from it."""
+    for recs in seg.values():
+        base = prev = None
+        total = 0
+        for key in sorted(k for k in recs if True):
+            g = recs[key].get('globals')
+            if not isinstance(g, dict) or not isinstance(g.get(SEED_KEY), int):
+                continue
+            v = g[SEED_KEY] & 0xFFFFFFFF
+            if base is None:
+                base = prev = v
+                g[SEED_KEY] = 'advances 0'
+                continue
+            k = lcg_steps(prev, v)
+            if k is None:
+                total = 0
+                g[SEED_KEY] = 'reseeded'
+            else:
+                total += k
+                g[SEED_KEY] = f'advances {total}'
+            prev = v
+
+
 def anchor_id(o):
     if o['sync'] == 'scene':
         return ('scene', o.get('mode'), o.get('stage'), o.get('level'))
@@ -95,7 +138,7 @@ def anchor_name(a):
 class AnchoredRun:
     """A run's records re-keyed by (anchor ordinal, reads since the anchor, sync kind)."""
 
-    def __init__(self, run):
+    def __init__(self, run, seed_mode='within'):
         sync = load_list(run, 'sync')
         state = load_list(run, 'state')
         self.anchors = []  # (identity, n)
@@ -124,6 +167,8 @@ class AnchoredRun:
                 off = o['n'] - ns[k]
                 rec = {key: v for key, v in o.items() if key != 'n'}
                 self.seg[stream].setdefault(k, {})[(off, o['sync'])] = rec
+        if seed_mode == 'within':
+            seed_within_segments(self.seg['state'])
 
     @staticmethod
     def _owner(ns, n):
@@ -138,7 +183,7 @@ class AnchoredRun:
 
 
 def compare_anchored(args):
-    A, B = AnchoredRun(args.a), AnchoredRun(args.b)
+    A, B = AnchoredRun(args.a, args.seed), AnchoredRun(args.b, args.seed)
     ida = [a for a, _ in A.anchors]
     idb = [b for b, _ in B.anchors]
     sm = difflib.SequenceMatcher(None, ida, idb, autojunk=False)
@@ -213,6 +258,8 @@ def main():
     ap.add_argument('--upto', type=int, help='compare reads n <= UPTO only')
     ap.add_argument('--show', type=int, default=3, help='differing records to print per stream')
     ap.add_argument('--anchor', choices=['scene'], help='scene-anchored comparison (see above)')
+    ap.add_argument('--seed', choices=['within', 'raw'], default='within',
+                    help='with --anchor scene: compare the RNG seed as advances within each segment (default) or raw')
     args = ap.parse_args()
     if args.anchor:
         compare_anchored(args)

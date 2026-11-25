@@ -248,6 +248,17 @@ relative to the anchors); in per-read runs (ticks at n % 60) a tick matches
 only where both runs' anchors fall on the same read modulo 60, which is the
 case for two runs of the same input in the port.
 
+With `--anchor scene` the RNG seed (`gGameRoot_8053AAF8->mRandom.seed`) is
+compared within each segment by default (`--seed within`): each state
+record's seed is replaced by how many `TRandom_fast_` steps the generator took
+since the segment's first record (`advances N`; `reseeded` when the game set a
+new seed). Runs reach a scene after menus of different lengths (the port's card
+writes are instant: 14 reads against Dolphin's 69), so raw seeds differ from
+the main menu on; `--seed raw` compares them as they are. Port vs Dolphin over
+the scripted opening: 40/54 state records identical within segments (6/54
+raw); the rest differ by ±1-2 advances that swing both ways without growing,
+i.e. a random call landing a frame earlier or later, not a missing call.
+
 `Module._fsa_harness_reads()` in the page gives the current read count. The
 page batches each stream and posts it every 2 s, so call
 `window.fsaDiagFlush()` before closing a tab.
