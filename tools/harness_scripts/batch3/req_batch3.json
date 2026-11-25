@@ -1,0 +1,38 @@
+{"batch": 3, "from": "fsa-decomp (batch 2 gaps)", "requests": [
+ {"functions": [
+    {"sym": "drawSprite_801F06F0__18ActorBase_804A5770CFPCclP21SpriteParams_801F5AE0lff",
+     "this_bytes": 160, "this_ranges": [[216, 256], [288, 352], [416, 420]],
+     "ptr_args": [{"arg": 1, "str": true, "bytes": 64}, {"arg": 3, "bytes": 60, "type": "SpriteParams_801F5AE0"}],
+     "cap": 300, "every": 200},
+    {"sym": "fn_801F172C__18ActorBase_804A5770FlPQ29JGeometry8TVec3<f>PCQ29JGeometry8TBox2<f>PQ29JGeometry8TVec3<f>b",
+     "this_bytes": 16,
+     "ptr_args": [{"arg": 2, "bytes": 12}, {"arg": 3, "bytes": 16}, {"arg": 4, "bytes": 12}],
+     "cap": 400, "every": 40}],
+  "nested": [
+    {"sym": "isBlockedOrOutOfView_0x50__18ActorBase_804A5770FlPCQ29JGeometry8TVec3<f>", "follow": true,
+     "ptr_args": [{"arg": 2, "bytes": 12}]},
+    {"sym": "getTileCollisionCodeAlt_802265FC", "follow": true, "ptr_args": [{"arg": 0, "bytes": 8}]},
+    {"sym": "drawSobSprite_801EF574", "cap": 100, "every": 20}],
+  "scene": "stage 1-0 with diagnostic pokes",
+  "question": "batch 2 gaps: drawSprite hit flash / actor matrix / layer 8; fn_801F172C flag != 0 and the top-edge move"},
+ {"functions": ["update__22LeafEffectNPC_804AE2E0Fv"], "this_bytes": 608,
+  "nested": [{"sym": "tileCodeAt(LeafEffectNPC_804AE2E0*, JGeometry::TVec2<float> const*)", "follow": true},
+             {"sym": "LeafEffectNPC_804AE2E0::spawnLeaves()", "this": false},
+             {"sym": "fn_8023A51C__Fl", "follow": true}, {"sym": "fn_802373EC__Fl", "follow": true},
+             {"sym": "getPlayerPos_8023E724__Fl", "follow": true, "ptr_args": [{"arg": "ret", "bytes": 12}]},
+             {"sym": "spawnEmitter_8013CC50__FlPCQ29JGeometry8TVec3<f>UsllP18JPAEmitterCallBackP19JPAParticleCallBackbf", "follow": true}],
+  "scene": "stage 1-0", "question": "batch 2 gap: the spawnLeaves path"},
+ {"functions": [
+    {"sym": "fn_80383EB0", "cap": 2000, "every": 1},
+    {"sym": "openMessageById_8038C678", "cap": 500, "every": 1, "ptr_args": [{"arg": 4, "bytes": 12}]}],
+  "this_bytes": 0,
+  "globals": [{"name": "lbl_8053AD78", "deref": true, "bytes": 352, "type": "MessageManager_804AF070"}],
+  "nested": ["findMessageIndex_803846BC__FUl", "fn_803846A4__Fl", "fn_80383E2C__FUlPUc"],
+  "scene": "msg_eval pokes", "question": "batch 2 gap: the conditional-command cases"},
+ {"functions": ["fn_80306A94__12cls_804AA8B8Fl", {"sym": "fn_80304FB0__12cls_804AA8B8Fv", "cap": 100, "every": 500}],
+  "this_bytes": 4,
+  "globals": [{"name": "lbl_80506DE8", "bytes": 416, "type": "cls_804AA858Sub11C"}, "lbl_8053ACEC", "lbl_8053ACF0",
+              "lbl_8053AD08", "lbl_8053AD34", "lbl_80506D58"],
+  "cap": 400, "every": 25,
+  "question": "batch 2 gap: players 1-3 and the GBA client paths"}
+]}

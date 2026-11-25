@@ -3,14 +3,26 @@
 "Function traces (fntrace)").
 
   tools/fntrace_summary.py logs/diag/<run> [more runs] [--build build/diag]
-      [--out FILE.md] [--split DIR] [--json FILE]
+      [--out FILE.md] [--split DIR] [--symbols symbols.txt] [--notes NOTES.json]
 
 Reads <run>/fntrace_config.jsonl, fntrace_agg.jsonl (cumulative aggregates over
 every traced call; the last record per function id wins) and fntrace.jsonl (the
 sampled per-call records). Writes FILE.md (default <first run>/fntrace_summary.md);
-with --split one DIR/<sym>.md per function plus the matching JSONL lines in
-DIR/<sym>.jsonl. --build names the build directory whose fsa.diag.vt.tsv and
+with --split one DIR/<name>.md per function plus the matching JSONL lines in
+DIR/<name>.jsonl. --build names the build directory whose fsa.diag.vt.tsv and
 fsa.diag.data.tsv identify vtable and static-data pointers (default build/diag).
+
+<name> is the decomp's full mangled name from symbols.txt with < > / as _ (the
+key fsa-decomp's tools/grind.py looks answers up by), also when the request
+gave a shortened name or the port's signature differs (DecompSyms.resolve).
+Functions without a decomp symbol (port-only helpers, inlined in the original)
+keep the request's name with every character outside [A-Za-z0-9_.-] as _.
+--symbols is the decomp's symbols.txt (default: FSA_DECOMP_SYMBOLS of the
+build's CMakeCache.txt). Every per-function .md starts with a one-line summary
+(calls, callers, the arguments' values, branches); --notes JSON {name: text}
+appends text to its "branches:" part (the branches seen / not seen, which an
+entry/exit trace cannot know by itself); the key is the decomp name or the
+request's sym, "*" applies to every function.
 """
 import argparse, collections, json, math, os, re, struct, sys
 
@@ -140,6 +152,194 @@ def width_of(bytes_changed):
 
 def sub(v, off, width):
     return (v >> (8 * off)) & ((1 << (8 * width)) - 1)
+
+
+def symbols_path(build, given):
+    if given:
+        return given
+    p = os.path.join(build or '', 'CMakeCache.txt')
+    if os.path.exists(p):
+        for line in open(p):
+            if line.startswith('FSA_DECOMP_SYMBOLS:'):
+                return line.split('=', 1)[1].strip()
+    p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                     '../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt')
+    return p if os.path.exists(p) else None
+
+
+class DecompSyms:
+    """The decomp's symbols.txt functions (names, by address), and the port's
+    name table (fsa.diag.tsv: port demangled name -> decomp symbol)."""
+
+    def __init__(self, path, build=None):
+        self.names, self.by_addr, self.order = set(), collections.defaultdict(list), []
+        if path and os.path.exists(path):
+            for line in open(path, errors='replace'):
+                m = re.match(r'(\S+) = \.text:0x([0-9A-Fa-f]+);.*type:function', line)
+                if m:
+                    self.names.add(m.group(1))
+                    self.order.append(m.group(1))
+                    self.by_addr[int(m.group(2), 16)].append(m.group(1))
+        self.port = collections.defaultdict(set)
+        p = os.path.join(build or '', 'fsa.diag.tsv')
+        if os.path.exists(p):
+            for line in open(p, errors='replace'):
+                f = line.rstrip('\n').split('\t')
+                if len(f) >= 3 and f[1]:
+                    self.port[f[2]].add(f[1])
+
+    @staticmethod
+    def split(sym):
+        """CodeWarrior name -> (function name, mangled qualifier or '') or None."""
+        i = sym.find('__', 2 if sym.startswith('__') else 1)
+        if i < 0:
+            return None
+        base, rest = sym[:i], sym[i + 2:]
+        q = ''
+        m = re.match(r'(\d+)', rest)
+        if m:
+            q = rest[:len(m.group(1)) + int(m.group(1))]
+        elif len(rest) > 1 and rest[0] == 'Q' and rest[1].isdigit():
+            j = 2
+            for _ in range(int(rest[1])):
+                m = re.match(r'(\d+)', rest[j:])
+                if not m:
+                    return None
+                j += len(m.group(1)) + int(m.group(1))
+            q = rest[:j]
+        return base, q
+
+    def resolve(self, sym, port_sym=None):
+        """The decomp's full symbol for a traced function, or None: the request's
+        or the port's symbol when symbols.txt has it; the decomp symbol the port's
+        name table gives a demangled name; the one symbols.txt function with the
+        same name and class (a shortened request name, or a signature that differs);
+        the one at the address the name carries (fn_801F172C)."""
+        for s in (sym, port_sym):
+            if s and s in self.names:
+                return s
+        for s in (sym, port_sym):
+            c = self.port.get(s or '')
+            if c and len(c) == 1:
+                return next(iter(c))
+        for s in (sym, port_sym):
+            sp = self.split(s) if s else None
+            if not sp:
+                continue
+            base, q = sp
+            pre = base + '__' + q
+            c = [n for n in self.order if n.startswith(pre) and n[len(pre):len(pre) + 1] in ('F', 'C')]
+            if len(c) == 1:
+                return c[0]
+            m = re.search(r'_(8[0-9A-Fa-f]{7})$', base)
+            if m:
+                c = [n for n in self.by_addr.get(int(m.group(1), 16), []) if n.startswith(base)]
+                if len(c) == 1:
+                    return c[0]
+        return None
+
+
+def answer_key(sym, dname):
+    """File name (no extension) of a function's answer: grind.py's key for the
+    decomp name (< > / as _), else the request's name made file-safe."""
+    if dname:
+        return re.sub(r'[<>/]', '_', dname)
+    return re.sub(r'[^A-Za-z0-9_.-]', '_', sym)[:150]
+
+
+def _vals(a, decl):
+    """Short text for one argument's (or the result's) aggregate."""
+    if not a or not a.get('n'):
+        return 'no calls'
+    t = a['t']
+    d = a.get('distinct', [])
+    more = '+' if a.get('more') else ''
+    if decl.startswith(('P', 'R')):
+        nn = sum(n for v, n in d if int(v, 16) == 0)
+        return f'pointer ({len(d)}{more} distinct' + (f', null ×{nn}' if nn else '') + ')'
+
+    def one(v):
+        iv = int(v, 16)
+        if t == 'f32':
+            return fmt_f(f32(iv))
+        if t == 'f64':
+            return fmt_f(struct.unpack('<d', struct.pack('<Q', iv))[0])
+        return str(s32(iv) if t == 'i32' else iv)
+    if d and not more and len(d) <= 8:
+        if t in ('f32', 'f64'):
+            d = sorted(d, key=lambda x: float(one(x[0])) if one(x[0]) not in ('nan', 'inf', '-inf') else 0)
+        else:
+            d = sorted(d, key=lambda x: s32(int(x[0], 16)) if t == 'i32' else int(x[0], 16))
+        return '{' + ', '.join(f'{one(v)}×{n}' for v, n in d) + '}'
+    lo, hi = (fmt_f(a['min']), fmt_f(a['max'])) if t in ('f32', 'f64') else (a['min'], a['max'])
+    return f'[{lo}, {hi}] ({len(d)}{more} distinct)'
+
+
+def merge_stats(sts):
+    """One argument's aggregates from several runs -> one."""
+    sts = [s for s in sts if s and s.get('n')]
+    if not sts:
+        return None
+    m = dict(sts[0])
+    if len(sts) == 1:
+        return m
+    d = collections.Counter()
+    for s in sts:
+        for v, n in s.get('distinct', []):
+            d[v] += n
+    m.update(n=sum(s['n'] for s in sts), min=min(s['min'] for s in sts), max=max(s['max'] for s in sts),
+             distinct=[[v, n] for v, n in d.most_common()][:16],
+             more=int(any(s.get('more') for s in sts) or len(d) > 16))
+    return m
+
+
+def merged_agg(aggs):
+    """The args/ret aggregates of several runs (one agg per run) merged."""
+    if not aggs:
+        return {}
+    a0 = dict(aggs[0])
+    if len(aggs) > 1 and a0.get('args') is not None:
+        a0['args'] = [merge_stats([a['args'][i] for a in aggs if a.get('args') and i < len(a['args'])])
+                      or a0['args'][i] for i in range(len(a0['args']))]
+        if a0.get('ret'):
+            a0['ret'] = merge_stats([a.get('ret') for a in aggs]) or a0['ret']
+    return a0
+
+
+def one_line(dname, sym, cfgs, aggs, note):
+    """The one-line summary at the top of a function's answer file."""
+    c0 = cfgs[0] if cfgs else {}
+    a0 = merged_agg(aggs)
+    calls = sum(a['calls'] for a in aggs)
+    entries = sum(a.get('entries', 0) for a in aggs)
+    parts = [f'calls {calls}' + (f' (+{entries - calls} inlined entries not seen)'
+                                 if c0.get('kind') == 'primary' and entries > calls else '')]
+    if c0.get('kind') == 'nested':
+        parts[0] += ' (nested: only while a primary function of the request ran)'
+    cl = collections.Counter()
+    for a in aggs:
+        for c in a.get('callers', []):
+            nm = c.get('id_sym') or c.get('id_name') or str(c['id'])
+            i = nm.find('__', 2 if nm.startswith('__') else 1)
+            cl[nm[:i] if i > 0 else nm] += c['n']
+    if cl:
+        parts.append('from ' + ', '.join(f'{k} ×{n}' for k, n in cl.most_common(3)) + (', …' if len(cl) > 3 else ''))
+    if calls and a0.get('args') is not None:
+        decl = (c0.get('declared') or '').split(',') if c0.get('declared') else []
+        ti = c0.get('this_arg', -1)
+        av, k = [], 0
+        for i, a in enumerate(a0['args']):
+            if i == ti or (ti == 1 and i == 0):
+                continue
+            d = decl[k] if k < len(decl) else ''
+            k += 1
+            av.append(f'arg{i}{" " + d if d else ""} = {_vals(a, d)}')
+        if av:
+            parts.append('args: ' + '; '.join(av))
+        if a0.get('ret'):
+            parts.append('ret = ' + _vals(a0['ret'], ''))
+    parts.append('branches: ' + (note or 'not instrumented (entry/exit trace)'))
+    return f'**Summary** `{dname or sym}`: ' + '. '.join(parts) + ('' if parts[-1].endswith('.') else '.')
 
 
 def load(runs):
@@ -525,8 +725,12 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--split')
     ap.add_argument('--no-layout', action='store_true')
+    ap.add_argument('--symbols')
+    ap.add_argument('--notes')
     a = ap.parse_args()
     tables = Tables(a.build)
+    dsyms = DecompSyms(symbols_path(a.build, a.symbols), a.build)
+    notes = json.load(open(a.notes)) if a.notes else {}
     cfg, agg, recs = load(a.runs)
     syms = []
     cfg_by = collections.defaultdict(list)
@@ -567,9 +771,19 @@ def main():
         allout += out
         if a.split:
             os.makedirs(a.split, exist_ok=True)
-            safe = re.sub(r'[^A-Za-z0-9_.-]', '_', s)[:150]
+            c0 = cfg_by[s][0]
+            dname = dsyms.resolve(s, c0.get('port_sym'))
+            safe = answer_key(s, dname)
+            note = ' '.join(x for x in (notes.get(dname or '') or notes.get(s), notes.get('*')) if x)
+            top = [one_line(dname, s, cfg_by[s], agg_by.get(s, []), note), '']
+            if dname and dname != s:
+                top.append(f'Decomp symbol `{dname}`; traced as `{s}`'
+                           + (f' (port `{c0["port_sym"]}`)' if c0.get('port_sym') and c0['port_sym'] != dname else '')
+                           + '.\n')
+            elif not dname:
+                top.append(f'No decomp symbol in symbols.txt for `{s}` (a port-only or inlined helper).\n')
             with open(os.path.join(a.split, safe + '.md'), 'w') as f:
-                f.write('\n'.join(head + out) + '\n')
+                f.write('\n'.join(top + head + out) + '\n')
             with open(os.path.join(a.split, safe + '.jsonl'), 'w') as f:
                 for r in rec_by.get(s, []):
                     f.write(json.dumps({k: v for k, v in r.items() if k != '_run'}) + '\n')

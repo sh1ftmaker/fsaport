@@ -1,0 +1,889 @@
+{
+ "version": 1,
+ "comment": "batch 3: four players with controllers (players_on_stage 15, pads 15), stage 1-0",
+ "steps": [
+  {
+   "comment": "diagnostic pokes before the stage builds",
+   "set": {
+    "players_on_stage": 15,
+    "pads": 15
+   }
+  },
+  {
+   "wait": {
+    "mode": 7
+   },
+   "timeout": 6000
+  },
+  {
+   "wait_reads": 300
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4,
+   "pads": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "end": true
+  }
+ ]
+}

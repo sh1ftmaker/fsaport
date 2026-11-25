@@ -785,8 +785,22 @@ file form stays big-endian.
    as `build/diag/req/<name>.json`, drives the page through
    `tools/web_run.mjs`, then runs
    `tools/fntrace_summary.py <run> --split DIR`.
-4. `DIR/<sym>.md` is the readable summary and `DIR/<sym>.jsonl` holds that
-   function's records. The summary gives:
+4. `DIR/<name>.md` is the readable summary and `DIR/<name>.jsonl` holds that
+   function's records. `<name>` is the decomp's full mangled symbol from
+   `symbols.txt` with `<`, `>` and `/` as `_`: the key fsa-decomp's
+   `tools/grind.py` looks an answer up by (`logs/fntrace-answers/*/<name>.md`,
+   the last batch directory wins, first 40 lines). It is resolved from the
+   request's symbol even when that was shortened or the port's signature
+   differs (the request's or port's symbol if `symbols.txt` has it, else the
+   port name table, else the one function with the same name and class, else
+   the one at the address in the name). Port-only helpers with no decomp
+   symbol keep the request's name, file-safe. `--symbols` overrides the
+   `symbols.txt` (default: the build's `FSA_DECOMP_SYMBOLS`). The first line
+   of each `.md` is a one-line summary: calls, callers, each argument's values
+   (distinct values, or range and count) and the result, and `branches:`, the
+   text that `--notes NOTES.json` (`{name or sym: text}`, `"*"` for all) gives
+   for the function (branch coverage needs the source plus the values, so it
+   is written by hand per batch). The summary gives:
    - call count, callers and scenes
    - each argument's range and distinct values, and whether they fit s16
    - the `this` fields written: decomp offset, field name and type from the
@@ -848,6 +862,10 @@ allocated at selection time.
   growing. `touch build/diag/fsa.wasm`, or use a fresh profile.
 - What a run can show depends on the scene it reaches. Batch 1's
   sword-level NPC stayed in state 0 for a whole stage-1 run.
+  Paths that scripted play does not reach can be forced with the harness
+  diagnostic pokes (docs/HARNESS.md, "Diagnostic pokes": more players, faked
+  GBA links, hits on actors, forced flags, direct calls of the message
+  mapper); `tools/harness_scripts/batch3/` has the scripts of batch 3.
 
 ## Uninitialised reads (`uninit`)
 
