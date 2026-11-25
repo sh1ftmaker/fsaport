@@ -190,6 +190,18 @@ if(FSA_DIAG)
               ${CMAKE_BINARY_DIR}/fsa.map --llvm-bin ${FSA_LLVM_BIN}/../bin
       VERBATIM)
   endif()
+  # Function traces (platform/diag_fntrace.cpp, platform/web/fsa_fntrace.js):
+  # every instrumented function gets a one-byte "selected?" test on entry and
+  # exit; the page selects functions at run time (?trace=URL). Runs last.
+  option(FSA_DIAG_FNTRACE "rewrite fsa.wasm for the fntrace stream (FSA_DIAG builds)" ON)
+  if(FSA_DIAG_FNTRACE)
+    target_link_options(fsa PRIVATE "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_fntrace.js")
+    set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS ${CMAKE_SOURCE_DIR}/platform/web/fsa_fntrace.js)
+    add_custom_command(TARGET fsa POST_BUILD
+      COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/fntrace_instrument.py ${CMAKE_BINARY_DIR}/fsa.wasm
+              ${CMAKE_BINARY_DIR}/fsa.map
+      VERBATIM)
+  endif()
 endif()
 
 add_custom_command(TARGET fsa POST_BUILD

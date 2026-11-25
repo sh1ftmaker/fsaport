@@ -390,11 +390,16 @@ extern "C" NOINST void fsa_diag_add_flush_hook(fsa_diag_flush_hook hook) {
 
 // The virtual dispatch audit (diag_vdispatch.cpp) installs its hooks here.
 extern "C" void fsa_diag_vdispatch_init(void);
+// Function traces (diag_fntrace.cpp; configured by the page before main()).
+// The reference links that unit.
+extern "C" void fsa_diag_fntrace_init(void);
 
 // Once per retrace (vi.cpp, interrupt context).
 extern "C" NOINST void fsa_diag_retrace(void) {
-  if (!g_frame)
+  if (!g_frame) {
     fsa_diag_vdispatch_init();
+    fsa_diag_fntrace_init();
+  }
   g_frame++;
   sample_scene();
   if (g_frame % FSA_DIAG_FLUSH_RETRACES == 0)

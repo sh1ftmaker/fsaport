@@ -334,6 +334,7 @@ EMSCRIPTEN_KEEPALIVE void fsa_harness_script(const double* data, int len) {
 }
 
 EMSCRIPTEN_KEEPALIVE int fsa_is_idle() { return platform_is_idle() ? 1 : 0; }
-EMSCRIPTEN_KEEPALIVE u32 fsa_harness_reads() { return g_reads; }
+// Not instrumented: diag_fntrace.cpp reads it from inside the entry hook.
+__attribute__((no_instrument_function)) EMSCRIPTEN_KEEPALIVE u32 fsa_harness_reads() { return g_reads; }
 
 }  // extern "C"
