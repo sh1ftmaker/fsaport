@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -10,6 +11,7 @@ static __GXData_struct sSavedGXData;
 
 extern "C" {
 void GXBeginDisplayList(void* list, u32 size) {
+  AURORA_HOST_ALLOC;
   CHECK(!aurora::gx::fifo::in_display_list(), "Display list began twice!");
 
   // Flush any pending dirty state before recording
@@ -29,6 +31,7 @@ void GXBeginDisplayList(void* list, u32 size) {
 }
 
 u32 GXEndDisplayList() {
+  AURORA_HOST_ALLOC;
   // Flush any pending dirty state into the display list
   if (__gx->dirtyState != 0) {
     __GXSetDirtyState();
@@ -48,6 +51,7 @@ u32 GXEndDisplayList() {
 }
 
 void GXCallDisplayList(const void* data, u32 nbytes) {
+  AURORA_HOST_ALLOC;
   // Flush any pending dirty state before calling
   if (__gx->dirtyState != 0) {
     __GXSetDirtyState();
@@ -68,6 +72,7 @@ void GXCallDisplayList(const void* data, u32 nbytes) {
 }
 
 void GXCallDisplayListLE(const void* data, u32 nbytes) {
+  AURORA_HOST_ALLOC;
   // Flush any pending dirty state before calling
   if (__gx->dirtyState != 0) {
     __GXSetDirtyState();

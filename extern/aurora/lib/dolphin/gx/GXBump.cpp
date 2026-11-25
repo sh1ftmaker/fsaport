@@ -1,13 +1,16 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
 extern "C" {
 void GXSetNumIndStages(u8 num) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->genMode, 3, 16, num);
   __gx->dirtyState |= 6; // gen mode dirty + BP mask dirty
 }
 
 void GXSetIndTexOrder(GXIndTexStageID indStage, GXTexCoordID texCoord, GXTexMapID texMap) {
+  AURORA_HOST_ALLOC;
   switch (indStage) {
   case GX_INDTEXSTAGE0:
     SET_REG_FIELD(0, __gx->iref, 3, 0, texMap);
@@ -32,6 +35,7 @@ void GXSetIndTexOrder(GXIndTexStageID indStage, GXTexCoordID texCoord, GXTexMapI
 }
 
 void GXSetIndTexCoordScale(GXIndTexStageID indStage, GXIndTexScale scaleS, GXIndTexScale scaleT) {
+  AURORA_HOST_ALLOC;
   if (indStage < GX_INDTEXSTAGE2) {
     switch (indStage) {
     case GX_INDTEXSTAGE0:
@@ -61,6 +65,7 @@ void GXSetIndTexCoordScale(GXIndTexStageID indStage, GXIndTexScale scaleS, GXInd
 }
 
 void GXSetIndTexMtx(GXIndTexMtxID id, const void* offset, s8 scaleExp) {
+  AURORA_HOST_ALLOC;
   CHECK(id >= GX_ITM_0 && id <= GX_ITM_2, "invalid ind tex mtx ID {}", static_cast<int>(id));
 
   const auto* mtx = reinterpret_cast<const f32*>(offset);
@@ -104,6 +109,7 @@ void GXSetIndTexMtx(GXIndTexMtxID id, const void* offset, s8 scaleExp) {
 void GXSetTevIndirect(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexFormat fmt, GXIndTexBiasSel biasSel,
                       GXIndTexMtxID matrixSel, GXIndTexWrap wrapS, GXIndTexWrap wrapT, GXBool addPrev, GXBool indLod,
                       GXIndTexAlphaSel alphaSel) {
+  AURORA_HOST_ALLOC;
   // BP register: tev_stage + 0x10
   u32 reg = 0;
   SET_REG_FIELD(0, reg, 2, 0, indStage);
@@ -121,28 +127,33 @@ void GXSetTevIndirect(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexF
 }
 
 void GXSetTevDirect(GXTevStageID stageId) {
+  AURORA_HOST_ALLOC;
   GXSetTevIndirect(stageId, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE,
                    GX_FALSE, GX_ITBA_OFF);
 }
 
 void GXSetTevIndWarp(GXTevStageID tevStage, GXIndTexStageID indStage, GXBool signedOffsets, GXBool replaceMode,
                      GXIndTexMtxID matrixSel) {
+  AURORA_HOST_ALLOC;
   const auto wrap = replaceMode ? GX_ITW_0 : GX_ITW_OFF;
   const auto biasSel = signedOffsets ? GX_ITB_STU : GX_ITB_NONE;
   GXSetTevIndirect(tevStage, indStage, GX_ITF_8, biasSel, matrixSel, wrap, wrap, false, false, GX_ITBA_OFF);
 }
 
 void GXSetTevIndRepeat(GXTevStageID tevStage) {
+  AURORA_HOST_ALLOC;
   GXSetTevIndirect(tevStage, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_0, GX_ITW_0, GX_TRUE,
                    GX_FALSE, GX_ITBA_OFF);
 }
 
 void GXSetTevIndBumpXYZ(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexMtxID matrixSel) {
+  AURORA_HOST_ALLOC;
   GXSetTevIndirect(tevStage, indStage, GX_ITF_8, GX_ITB_STU, matrixSel, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE,
                    GX_ITBA_OFF);
 }
 
 void GXSetTevIndBumpST(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexMtxID matrixSel) {
+  AURORA_HOST_ALLOC;
   GXIndTexMtxID sMtx, tMtx;
   switch (matrixSel) {
   case GX_ITM_0:
@@ -176,6 +187,7 @@ void GXSetTevIndBumpST(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTex
 void GXSetTevIndTile(GXTevStageID tevStage, GXIndTexStageID indStage, u16 tileSizeS, u16 tileSizeT, u16 tileSizeS_exp,
                      u16 tileSizeT_exp, GXIndTexFormat fmt, GXIndTexMtxID matrixSel, GXIndTexBiasSel biasSel,
                      GXIndTexAlphaSel alphaSel) {
+  AURORA_HOST_ALLOC;
   // Convert tile size exponents to wrap modes
   auto sizeToWrap = [](u16 sizeExp) -> GXIndTexWrap {
     switch (sizeExp) {

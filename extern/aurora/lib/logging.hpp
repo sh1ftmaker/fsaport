@@ -4,6 +4,7 @@
 
 #include <fmt/base.h>
 #include <fmt/format.h>
+#include "host_alloc.hpp"
 
 #include <cstdlib>
 #include <string_view>
@@ -19,6 +20,7 @@ struct Module {
 
   template <typename... T>
   void report(const AuroraLogLevel level, fmt::format_string<T...> fmt, T&&... args) noexcept {
+    AURORA_HOST_ALLOC;
     if (g_config.logLevel > level) return;
 
     auto message = fmt::format(fmt, std::forward<T>(args)...);

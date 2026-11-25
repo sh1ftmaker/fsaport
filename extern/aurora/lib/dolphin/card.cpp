@@ -1,3 +1,4 @@
+#include "../host_alloc.hpp"
 #include "dolphin/card.h"
 
 #include <filesystem>
@@ -103,6 +104,7 @@ void CopyDolphinStatsToKabu(aurora::card::CardStat& kabuStats, const CARDStat* s
 }
 
 void CARDDetectDolphin(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (Initialized) {
     Log.fatal("CARDDetectDolphin() called after CARDInit()!");
   }
@@ -129,6 +131,7 @@ void CARDDetectDolphin(const s32 chan) {
 }
 
 void CARDSetBasePath(const char* path, const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (Initialized) {
     Log.fatal("CARDSetBasePath() called after CARDInit()!");
   }
@@ -149,10 +152,12 @@ void CARDSetBasePath(const char* path, const s32 chan) {
 }
 
 void CARDSetLoadType(CARDFileType type) {
+  AURORA_HOST_ALLOC;
   SelectedFileType = type;
 }
 
 void CARDInit(const char* game, const char* maker) {
+  AURORA_HOST_ALLOC;
   if (Initialized) {
     return;
   }
@@ -204,6 +209,7 @@ void CARDInit(const char* game, const char* maker) {
 }
 
 void CARDSetGameAndMaker(const s32 chan, const char* game, const char* maker) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return;
   }
@@ -213,15 +219,18 @@ void CARDSetGameAndMaker(const s32 chan, const char* game, const char* maker) {
 }
 
 // TODO: Investigate if this is necessary. Do some games throw an error if CARD's fast mode can't be use?
-BOOL CARDGetFastMode() { return UseFastMode; }
+BOOL CARDGetFastMode() {
+  AURORA_HOST_ALLOC; return UseFastMode; }
 
 BOOL CARDSetFastMode(const BOOL enable) {
+  AURORA_HOST_ALLOC;
   const bool oldFast = UseFastMode;
   UseFastMode = enable;
   return oldFast;
 }
 
 s32 CARDCheck(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -234,6 +243,7 @@ s32 CARDCheck(const s32 chan) {
 }
 
 s32 CARDCheckAsync(const s32 chan, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -247,6 +257,7 @@ s32 CARDCheckAsync(const s32 chan, const CARDCallback callback) {
 }
 
 s32 CARDCheckEx(const s32 chan, s32* xferBytes [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -259,6 +270,7 @@ s32 CARDCheckEx(const s32 chan, s32* xferBytes [[maybe_unused]]) {
 }
 
 s32 CARDCheckExAsync(const s32 chan, s32* xferBytes [[maybe_unused]], const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -269,6 +281,7 @@ s32 CARDCheckExAsync(const s32 chan, s32* xferBytes [[maybe_unused]], const CARD
 }
 
 s32 CARDCreate(const s32 chan, const char* fileName, const u32 size, CARDFileInfo* fileInfo) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -289,6 +302,7 @@ s32 CARDCreate(const s32 chan, const char* fileName, const u32 size, CARDFileInf
 
 s32 CARDCreateAsync(const s32 chan, const char* fileName, const u32 size, CARDFileInfo* fileInfo,
                     const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -298,6 +312,7 @@ s32 CARDCreateAsync(const s32 chan, const char* fileName, const u32 size, CARDFi
 }
 
 s32 CARDDelete(const s32 chan, const char* fileName) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -317,6 +332,7 @@ s32 CARDDelete(const s32 chan, const char* fileName) {
 }
 
 s32 CARDDeleteAsync(const s32 chan, const char* fileName, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -326,6 +342,7 @@ s32 CARDDeleteAsync(const s32 chan, const char* fileName, const CARDCallback cal
 }
 
 s32 CARDFastDelete(const s32 chan, const s32 fileNo) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -344,6 +361,7 @@ s32 CARDFastDelete(const s32 chan, const s32 fileNo) {
 }
 
 s32 CARDFastDeleteAsync(const s32 chan, const s32 fileNo, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -353,6 +371,7 @@ s32 CARDFastDeleteAsync(const s32 chan, const s32 fileNo, const CARDCallback cal
 }
 
 s32 CARDFastOpen(const s32 chan, const s32 fileNo, CARDFileInfo* fileInfo) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -372,6 +391,7 @@ s32 CARDFastOpen(const s32 chan, const s32 fileNo, CARDFileInfo* fileInfo) {
 }
 
 s32 CARDFormat(s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -385,6 +405,7 @@ s32 CARDFormat(s32 chan) {
 }
 
 s32 CARDFormatAsync(const s32 chan, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -394,6 +415,7 @@ s32 CARDFormatAsync(const s32 chan, const CARDCallback callback) {
 }
 
 s32 CARDFreeBlocks(const s32 chan, s32* byteNotUsed, s32* filesNotUsed) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -406,6 +428,7 @@ s32 CARDFreeBlocks(const s32 chan, s32* byteNotUsed, s32* filesNotUsed) {
 }
 
 s32 CARDGetAttributes(const s32 chan, const s32 fileNo [[maybe_unused]], u8* attr [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -415,6 +438,7 @@ s32 CARDGetAttributes(const s32 chan, const s32 fileNo [[maybe_unused]], u8* att
 }
 
 s32 CARDGetEncoding(const s32 chan, u16* encode) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -427,6 +451,7 @@ s32 CARDGetEncoding(const s32 chan, u16* encode) {
 }
 
 s32 CARDGetMemSize(const s32 chan, u16* size [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -436,6 +461,7 @@ s32 CARDGetMemSize(const s32 chan, u16* size [[maybe_unused]]) {
 }
 
 s32 CARDGetResultCode(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -447,6 +473,7 @@ s32 CARDGetResultCode(const s32 chan) {
 }
 
 s32 CARDGetSectorSize(const s32 chan, u32* size) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -458,6 +485,7 @@ s32 CARDGetSectorSize(const s32 chan, u32* size) {
 }
 
 s32 CARDGetSerialNo(const s32 chan, u64* serialNo) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -479,6 +507,7 @@ s32 __CARDGetStatusEx(const s32 chan, const s32 fileNo [[maybe_unused]], CARDDir
 }
 
 s32 CARDGetStatus(const s32 chan, s32 fileNo, CARDStat* stat) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -497,6 +526,7 @@ s32 CARDGetStatus(const s32 chan, s32 fileNo, CARDStat* stat) {
 }
 
 s32 CARDGetXferredBytes(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -508,6 +538,7 @@ s32 CARDGetXferredBytes(const s32 chan) {
 }
 // these two funcs are out of scope for aurora::card. stubbed for now
 s32 CARDMount(const s32 chan, void* workArea [[maybe_unused]], CARDCallback detachCallback [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -516,6 +547,7 @@ s32 CARDMount(const s32 chan, void* workArea [[maybe_unused]], CARDCallback deta
 }
 s32 CARDMountAsync(const s32 chan, void* workArea [[maybe_unused]], const CARDCallback detachCallback [[maybe_unused]],
                    const CARDCallback attachCallback [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -523,6 +555,7 @@ s32 CARDMountAsync(const s32 chan, void* workArea [[maybe_unused]], const CARDCa
 }
 
 s32 CARDOpen(const s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -541,6 +574,7 @@ s32 CARDOpen(const s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
 }
 
 BOOL CARDProbe(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -551,6 +585,7 @@ BOOL CARDProbe(const s32 chan) {
 }
 
 s32 CARDProbeEx(const s32 chan, s32* memSize, s32* sectorSize) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -565,6 +600,7 @@ s32 CARDProbeEx(const s32 chan, s32* memSize, s32* sectorSize) {
 }
 
 s32 CARDRename(const s32 chan, const char* oldName, const char* newName) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -576,6 +612,7 @@ s32 CARDRename(const s32 chan, const char* oldName, const char* newName) {
 }
 
 s32 CARDRenameAsync(const s32 chan, const char* oldName, const char* newName, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -586,6 +623,7 @@ s32 CARDRenameAsync(const s32 chan, const char* oldName, const char* newName, co
 
 s32 CARDSetAttributesAsync(const s32 chan, s32 fileNo [[maybe_unused]], u8 attr [[maybe_unused]],
                            CARDCallback callback [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -595,6 +633,7 @@ s32 CARDSetAttributesAsync(const s32 chan, s32 fileNo [[maybe_unused]], u8 attr 
 }
 
 s32 CARDSetAttributes(const s32 chan, s32 fileNo [[maybe_unused]], u8 attr [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -604,6 +643,7 @@ s32 CARDSetAttributes(const s32 chan, s32 fileNo [[maybe_unused]], u8 attr [[may
 }
 
 s32 CARDSetStatus(const s32 chan, s32 fileNo, const CARDStat* stat) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -633,6 +673,7 @@ s32 __CARDSetStatusEx(const s32 chan, s32 fileNo [[maybe_unused]], CARDDir* dire
 }
 
 s32 CARDSetStatusAsync(const s32 chan, const s32 fileNo, const CARDStat* stat, const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -642,6 +683,7 @@ s32 CARDSetStatusAsync(const s32 chan, const s32 fileNo, const CARDStat* stat, c
 }
 
 s32 CARDUnmount(const s32 chan) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -650,6 +692,7 @@ s32 CARDUnmount(const s32 chan) {
 }
 
 s32 CARDGetCurrentMode(const s32 chan, u32* mode [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   if (chan < 0 || chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -658,11 +701,13 @@ s32 CARDGetCurrentMode(const s32 chan, u32* mode [[maybe_unused]]) {
 }
 
 s32 CARDCancel(CARDFileInfo* fileInfo [[maybe_unused]]) {
+  AURORA_HOST_ALLOC;
   // TODO:ge
   return CARD_RESULT_NOCARD;
 }
 
 s32 CARDClose(CARDFileInfo* fileInfo) {
+  AURORA_HOST_ALLOC;
   if (fileInfo->chan < 0 || fileInfo->chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -680,6 +725,7 @@ s32 CARDClose(CARDFileInfo* fileInfo) {
 }
 
 s32 CARDRead(const CARDFileInfo* fileInfo, void* addr, s32 length, const s32 offset) {
+  AURORA_HOST_ALLOC;
   if (fileInfo->chan < 0 || fileInfo->chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -700,12 +746,14 @@ s32 CARDRead(const CARDFileInfo* fileInfo, void* addr, s32 length, const s32 off
 
 s32 CARDReadAsync(const CARDFileInfo* fileInfo, void* addr, const s32 length, const s32 offset,
                   const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   const auto res = CARDRead(fileInfo, addr, length, offset);
   callback(fileInfo->chan, res);
   return res;
 }
 
 s32 CARDWrite(const CARDFileInfo* fileInfo, const void* addr, const s32 length, const s32 offset) {
+  AURORA_HOST_ALLOC;
   if (fileInfo->chan < 0 || fileInfo->chan >= 2) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -729,6 +777,7 @@ s32 CARDWrite(const CARDFileInfo* fileInfo, const void* addr, const s32 length, 
 
 s32 CARDWriteAsync(const CARDFileInfo* fileInfo, const void* addr, const s32 length, const s32 offset,
                    const CARDCallback callback) {
+  AURORA_HOST_ALLOC;
   const auto res = CARDWrite(fileInfo, addr, length, offset);
   callback(fileInfo->chan, res);
   return res;

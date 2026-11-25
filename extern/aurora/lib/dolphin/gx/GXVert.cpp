@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 #include "../../gx/fifo.hpp"
@@ -10,6 +11,7 @@ static bool sInBegin = false;
 extern "C" {
 
 void GXBegin(GXPrimitive primitive, GXVtxFmt vtxFmt, u16 nVerts) {
+  AURORA_HOST_ALLOC;
   CHECK(!sInBegin, "GXBegin: called without matching GXEnd");
 
   // Flush dirty state before starting a draw
@@ -32,6 +34,7 @@ void GXBegin(GXPrimitive primitive, GXVtxFmt vtxFmt, u16 nVerts) {
 }
 
 void GXEnd() {
+  AURORA_HOST_ALLOC;
   if (sInBegin) {
     u32 bytesWritten = aurora::gx::fifo::get_buffer_size() - sBeginFifoSize;
     if (sBeginNVerts > 0 && bytesWritten > 0) {
@@ -54,87 +57,105 @@ void GXEnd() {
 }
 
 void GXPosition3f32(f32 x, f32 y, f32 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_F32(x);
   GX_WRITE_F32(y);
   GX_WRITE_F32(z);
 }
 
 void GXPosition3u16(u16 x, u16 y, u16 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(x);
   GX_WRITE_U16(y);
   GX_WRITE_U16(z);
 }
 
 void GXPosition3s16(s16 x, s16 y, s16 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(static_cast<u16>(x));
   GX_WRITE_U16(static_cast<u16>(y));
   GX_WRITE_U16(static_cast<u16>(z));
 }
 
 void GXPosition3u8(u8 x, u8 y, u8 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(x);
   GX_WRITE_U8(y);
   GX_WRITE_U8(z);
 }
 
 void GXPosition3s8(s8 x, s8 y, s8 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(static_cast<u8>(x));
   GX_WRITE_U8(static_cast<u8>(y));
   GX_WRITE_U8(static_cast<u8>(z));
 }
 
 void GXPosition2f32(f32 x, f32 y) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_F32(x);
   GX_WRITE_F32(y);
 }
 
 void GXPosition2u16(u16 x, u16 y) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(x);
   GX_WRITE_U16(y);
 }
 
 void GXPosition2s16(s16 x, s16 y) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(static_cast<u16>(x));
   GX_WRITE_U16(static_cast<u16>(y));
 }
 
 void GXPosition2u8(u8 x, u8 y) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(x);
   GX_WRITE_U8(y);
 }
 
 void GXPosition2s8(s8 x, s8 y) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(static_cast<u8>(x));
   GX_WRITE_U8(static_cast<u8>(y));
 }
 
-void GXPosition1x16(u16 idx) { GX_WRITE_U16(idx); }
+void GXPosition1x16(u16 idx) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(idx); }
 
-void GXPosition1x8(u8 idx) { GX_WRITE_U8(idx); }
+void GXPosition1x8(u8 idx) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(idx); }
 
 void GXNormal3f32(f32 x, f32 y, f32 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_F32(x);
   GX_WRITE_F32(y);
   GX_WRITE_F32(z);
 }
 
 void GXNormal3s16(s16 x, s16 y, s16 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(static_cast<u16>(x));
   GX_WRITE_U16(static_cast<u16>(y));
   GX_WRITE_U16(static_cast<u16>(z));
 }
 
 void GXNormal3s8(s8 x, s8 y, s8 z) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(static_cast<u8>(x));
   GX_WRITE_U8(static_cast<u8>(y));
   GX_WRITE_U8(static_cast<u8>(z));
 }
 
-void GXNormal1x16(u16 index) { GX_WRITE_U16(index); }
+void GXNormal1x16(u16 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(index); }
 
-void GXNormal1x8(u8 index) { GX_WRITE_U8(index); }
+void GXNormal1x8(u8 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(index); }
 
 void GXColor4f32(f32 r, f32 g, f32 b, f32 a) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(static_cast<u8>(r * 255.0));
   GX_WRITE_U8(static_cast<u8>(g * 255.0));
   GX_WRITE_U8(static_cast<u8>(b * 255.0));
@@ -142,6 +163,7 @@ void GXColor4f32(f32 r, f32 g, f32 b, f32 a) {
 }
 
 void GXColor4u8(u8 r, u8 g, u8 b, u8 a) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(r);
   GX_WRITE_U8(g);
   GX_WRITE_U8(b);
@@ -149,76 +171,106 @@ void GXColor4u8(u8 r, u8 g, u8 b, u8 a) {
 }
 
 void GXColor3u8(u8 r, u8 g, u8 b) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(r);
   GX_WRITE_U8(g);
   GX_WRITE_U8(b);
 }
 
-void GXColor1u32(u32 clr) { GX_WRITE_U32(clr); }
+void GXColor1u32(u32 clr) {
+  AURORA_HOST_ALLOC; GX_WRITE_U32(clr); }
 
-void GXColor1u16(u16 clr) { GX_WRITE_U16(clr); }
+void GXColor1u16(u16 clr) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(clr); }
 
-void GXColor1x16(u16 index) { GX_WRITE_U16(index); }
+void GXColor1x16(u16 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(index); }
 
-void GXColor1x8(u8 index) { GX_WRITE_U8(index); }
+void GXColor1x8(u8 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(index); }
 
 void GXTexCoord2f32(f32 s, f32 t) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_F32(s);
   GX_WRITE_F32(t);
 }
 
 void GXTexCoord2u16(u16 s, u16 t) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(s);
   GX_WRITE_U16(t);
 }
 
 void GXTexCoord2s16(s16 s, s16 t) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U16(static_cast<u16>(s));
   GX_WRITE_U16(static_cast<u16>(t));
 }
 
 void GXTexCoord2u8(u8 s, u8 t) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(s);
   GX_WRITE_U8(t);
 }
 
 void GXTexCoord2s8(s8 s, s8 t) {
+  AURORA_HOST_ALLOC;
   GX_WRITE_U8(static_cast<u8>(s));
   GX_WRITE_U8(static_cast<u8>(t));
 }
 
-void GXTexCoord1f32(f32 s) { GX_WRITE_F32(s); }
+void GXTexCoord1f32(f32 s) {
+  AURORA_HOST_ALLOC; GX_WRITE_F32(s); }
 
-void GXTexCoord1u16(u16 s) { GX_WRITE_U16(s); }
+void GXTexCoord1u16(u16 s) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(s); }
 
-void GXTexCoord1s16(s16 s) { GX_WRITE_U16(static_cast<u16>(s)); }
+void GXTexCoord1s16(s16 s) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(static_cast<u16>(s)); }
 
-void GXTexCoord1u8(u8 s) { GX_WRITE_U8(s); }
+void GXTexCoord1u8(u8 s) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(s); }
 
-void GXTexCoord1s8(s8 s) { GX_WRITE_U8(static_cast<u8>(s)); }
+void GXTexCoord1s8(s8 s) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(static_cast<u8>(s)); }
 
-void GXTexCoord1x16(u16 index) { GX_WRITE_U16(index); }
+void GXTexCoord1x16(u16 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U16(index); }
 
-void GXTexCoord1x8(u8 index) { GX_WRITE_U8(index); }
+void GXTexCoord1x8(u8 index) {
+  AURORA_HOST_ALLOC; GX_WRITE_U8(index); }
 
-void GXCmd1u8(const u8 x) { aurora::gx::fifo::write_u8(x); }
-void GXCmd1u16(const u16 x) { aurora::gx::fifo::write_u16(x); }
-void GXCmd1u32(const u32 x) { aurora::gx::fifo::write_u32(x); }
-void GXCmd1u64(const u64 x) { aurora::gx::fifo::write_u64(x); }
+void GXCmd1u8(const u8 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u8(x); }
+void GXCmd1u16(const u16 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u16(x); }
+void GXCmd1u32(const u32 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u32(x); }
+void GXCmd1u64(const u64 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u64(x); }
 
-void GXParam1u8(const u8 x) { aurora::gx::fifo::write_u8(x); }
-void GXParam1u16(const u16 x) { aurora::gx::fifo::write_u16(x); }
-void GXParam1u32(const u32 x) { aurora::gx::fifo::write_u32(x); }
-void GXParam1s8(const s8 x) { aurora::gx::fifo::write_u8(static_cast<uint8_t>(x)); }
-void GXParam1s16(const s16 x) { aurora::gx::fifo::write_u16(static_cast<uint16_t>(x)); }
-void GXParam1s32(const s32 x) { aurora::gx::fifo::write_u32(static_cast<uint32_t>(x)); }
-void GXParam1f32(const f32 x) { aurora::gx::fifo::write_f32(x); }
+void GXParam1u8(const u8 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u8(x); }
+void GXParam1u16(const u16 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u16(x); }
+void GXParam1u32(const u32 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u32(x); }
+void GXParam1s8(const s8 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u8(static_cast<uint8_t>(x)); }
+void GXParam1s16(const s16 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u16(static_cast<uint16_t>(x)); }
+void GXParam1s32(const s32 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_u32(static_cast<uint32_t>(x)); }
+void GXParam1f32(const f32 x) {
+  AURORA_HOST_ALLOC; aurora::gx::fifo::write_f32(x); }
 void GXParam3f32(const f32 x, const f32 y, const f32 z) {
+  AURORA_HOST_ALLOC;
   aurora::gx::fifo::write_f32(x);
   aurora::gx::fifo::write_f32(y);
   aurora::gx::fifo::write_f32(z);
 }
 void GXParam4f32(const f32 x, const f32 y, const f32 z, const f32 w) {
+  AURORA_HOST_ALLOC;
   aurora::gx::fifo::write_f32(x);
   aurora::gx::fifo::write_f32(y);
   aurora::gx::fifo::write_f32(z);

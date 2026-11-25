@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/si.h>
 #include <dolphin/pad.h>
 #include "../../input.hpp"
@@ -5,6 +6,7 @@
 #include <SDL3/SDL_power.h>
 
 uint32_t SIProbe(int32_t chan) {
+  AURORA_HOST_ALLOC;
   auto* const controller = aurora::input::get_controller_for_player(chan);
   if (controller == nullptr) {
     // A port with keyboard bindings is a controller to PADRead, so it must be

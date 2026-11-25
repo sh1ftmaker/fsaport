@@ -298,6 +298,15 @@ Worth checking for in any code that misbehaves:
   texture object before every draw, so each flying floor tile (stage 8-1)
   converted and uploaded the 128 x 512 tile sheet again (35 ms a frame, then
   a hang).
+- Host-allocation scopes: every GX/GD/PAD/VI/SI/CARD entry point the game
+  calls, plus Aurora's logging, command push, texture creation and command
+  processor, holds `AURORA_HOST_ALLOC` (`lib/host_alloc.hpp`, from deluxe
+  ff1a10d). Before, the allocations Aurora made inside them (pipelines, command
+  vectors, texture caches, card I/O, log strings) went through JSystem's
+  `operator new` into the game's current JKR heap. That took MEM1 from the
+  game, fragmented it, and could leave Aurora objects inside a heap the game
+  later destroys or resets.
+  `?allocprobe=1` checks it (docs/DIAGNOSTICS.md).
 - `OSGetTime` takes its time from `aurora_os_time_hook` when it is set: the
   behaviour harness's virtual clock (`lib/dolphin/os/OSTime.cpp`,
   docs/HARNESS.md).
