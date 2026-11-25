@@ -6,6 +6,9 @@
 #include <dolphin/gx.h>
 #include <string.h>
 #include "JSystem/JUtility/JUTVideo.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 
 static inline bool contains(const JGeometry::TBox2f& b, const JGeometry::TVec2f& p) {
     return p.x >= b.i.x && p.y >= b.i.y && p.x < b.f.x && p.y < b.f.y;
@@ -168,6 +171,73 @@ void Camera_804AA9E4::fn_8030E154() {
 
 void Camera_804AA9E4::fn_8030E150() {}
 
+
+#ifdef FSA_PORT
+// The picture mod (docs/VIEW.md): whether the loaded matrices are the camera's
+// own view (fn_8030CB10, or a copy=true reload of it) rather than a box of
+// fn_8030DD8C (the map screen, the players' GBA panels).
+static bool sFsaViewMainLoaded = true;
+
+// Replaces the projection and viewport loadGXState_8030DFE8 just set with the
+// render box of the view mod: the same view matrix, an ortho whose edges are
+// the render box's, and the whole render target as the viewport. Only for the
+// camera's own view on the full screen; nothing else (and nothing the game
+// reads back: the stored matrices, mViewBox_0x164, worldToScreen) changes.
+static void fsaViewLoadWorld(Camera_804AA9E4* cam) {
+    if (!fsa_view_active() || !sFsaViewMainLoaded) {
+        return;
+    }
+    const JGeometry::TBox2<u32>& rect = cam->mScreenRect_0x144;
+    if (rect.i.x != 0 || rect.i.y != 0 || rect.f.x != JUTVideo::getManager()->getFbWidth() ||
+        rect.f.y != JUTVideo::getManager()->getEfbHeight()) {
+        return;
+    }
+    const Mtx44& p = cam->mLoadedProjMtx_0xa4;
+    if (p[0][0] == 0.0f || p[1][1] == 0.0f) {
+        return;
+    }
+    // The box the loaded matrices show, in the camera's plane (x, y - z).
+    f32 cx = -cam->mLoadedViewMtx_0x74[0][3];
+    f32 cy = -cam->mLoadedViewMtx_0x74[1][3];
+    f32 left = (-1.0f - p[0][3]) / p[0][0];
+    f32 right = (1.0f - p[0][3]) / p[0][0];
+    f32 top = (1.0f - p[1][3]) / p[1][1];
+    f32 bottom = (-1.0f - p[1][3]) / p[1][1];
+    FsaViewBox sim = {cx + left, cy + top, cx + right, cy + bottom};
+    FsaViewBox bounds = {cam->mVisibleBox_0x154.i.x, cam->mVisibleBox_0x154.i.y, cam->mVisibleBox_0x154.f.x,
+                         cam->mVisibleBox_0x154.f.y};
+    if (cam->mInTransition_0x1e8) {
+        const JGeometry::TBox2f& next = cam->mNextVisibleBox_0x190;
+        if (next.i.x < bounds.x0) bounds.x0 = next.i.x;
+        if (next.i.y < bounds.y0) bounds.y0 = next.i.y;
+        if (next.f.x > bounds.x1) bounds.x1 = next.f.x;
+        if (next.f.y > bounds.y1) bounds.y1 = next.f.y;
+    }
+    const JGeometry::TBox2f& fb = cam->mPrevFocusBox_0x1b4;
+    FsaViewBox focus = {fb.i.x, fb.i.y, fb.f.x, fb.f.y};
+    FsaViewBox r;
+    if (!fsa_view_render_box(&sim, &bounds, &focus, &r)) {
+        return;
+    }
+    Mtx44 q;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            q[i][j] = p[i][j];
+        }
+    }
+    f32 l = r.x0 - cx, rr = r.x1 - cx, t = r.y0 - cy, b = r.y1 - cy;
+    q[0][0] = 2.0f / (rr - l);
+    q[0][3] = -(rr + l) / (rr - l);
+    q[1][1] = 2.0f / (t - b);
+    q[1][3] = -(t + b) / (t - b);
+    GXSetProjection(q, GX_ORTHOGRAPHIC);
+    unsigned tw, th;
+    fsa_view_target_size(&tw, &th);
+    GXSetViewportRender(0.0f, 0.0f, (f32)tw, (f32)th, 0.0f, 1.0f);
+    GXSetScissorRender(0, 0, tw, th);
+}
+#endif
+
 // Loads the projection / view into the GX state (taking the pending matrices first when copy is
 // set) and sets the viewport and scissor to the screen rect.
 void Camera_804AA9E4::loadGXState_8030DFE8(bool copy) {
@@ -180,6 +250,12 @@ void Camera_804AA9E4::loadGXState_8030DFE8(bool copy) {
     GXLoadNrmMtxImm(mLoadedViewMtx_0x74, GX_PNMTX8);
     GXSetCurrentMtx(GX_PNMTX8);
     setScreenRectViewport();
+#ifdef FSA_PORT
+    if (copy) {
+        sFsaViewMainLoaded = true;
+    }
+    fsaViewLoadWorld(this);
+#endif
 }
 
 // The 2D view of the box: the view matrix straight into the GX one, the projection from the box's
@@ -213,6 +289,9 @@ void Camera_804AA9E4::fn_8030DD8C(const JGeometry::TBox2f* box, bool light) {
         PSMTXCopy(mLoadedViewMtx_0x74, mDrawInfo_0xe4.mCamMtx);
         C_MTXLightOrtho(mDrawInfo_0xe4.mPrjMtx, halfH, -halfH, -halfW, halfW, 0.5f, 0.5f, 0.5f, 0.5f);
     }
+#ifdef FSA_PORT
+    sFsaViewMainLoaded = false;
+#endif
     loadGXState_8030DFE8(false);
 }
 
@@ -794,6 +873,9 @@ void Camera_804AA9E4::fn_8030CB10(const JGeometry::TBox2f* box, f32 depth) {
     mViewBox_0x164.i.y = box->i.y;
     mViewBox_0x164.f.x = box->f.x;
     mViewBox_0x164.f.y = box->f.y;
+#ifdef FSA_PORT
+    sFsaViewMainLoaded = true;
+#endif
 }
 #pragma auto_inline reset
 

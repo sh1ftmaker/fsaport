@@ -1,4 +1,7 @@
 #include "game/GameAudio.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 #include "game/Camera.h"
 #include "game/GameGlobals.h"
 #include "game/GameState.h"
@@ -528,6 +531,9 @@ void HudMgr_804B1920::fn_8043E80C(u32 digit, u8 alpha, u32 top, u32 bottom, f32 
 void HudMgr_804B1920::fn_8043E7CC(JGeometry::TVec3f pos) {
     Vec screen;
     gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&pos, false, false, &screen);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screen);
+#endif
     fn_80440928(screen.x, screen.y);
 }
 
@@ -541,7 +547,13 @@ void HudMgr_804B1920::fn_8043E398(JGeometry::TVec3f a, JGeometry::TVec3f b) {
     Vec screenA;
     Vec screenB;
     gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&a, false, false, &screenA);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screenA);
+#endif
     gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&b, false, false, &screenB);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screenB);
+#endif
     f32 margin = maxf(fabs(screenB.x - screenA.x), fabs(screenB.y - screenA.y));
     f32 cx = (screenA.x + screenB.x) / 2.0f;
     f32 cy = (screenA.y + screenB.y) / 2.0f;
@@ -568,11 +580,17 @@ void HudMgr_804B1920::fn_8043DF8C(f32 x, f32 y) {
     origin.y = 0.0f;
     origin.z = 0.0f;
     gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&origin, false, false, &screenOrigin);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screenOrigin);
+#endif
     Vec unit;
     unit.x = 16.0f;
     unit.y = 0.0f;
     unit.z = 0.0f;
     gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&unit, false, false, &screenUnit);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screenUnit);
+#endif
     f32 margin = screenUnit.x - screenOrigin.x;
     if (!outsideBox(93.0f, 61.5f + topOffset(lbl_8053AED0), x, y, margin)) {
         lbl_8053AED0->field_0xdc |= 1;
@@ -890,14 +908,23 @@ void HudMgr_804B1920::fn_8043D034() {
         // The screen height of 16 units at the origin.
         JGeometry::TVec3f origin(0.0f, 0.0f, 0.0f);
         gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&origin, false, false, &originScreen);
+#ifdef FSA_PORT
+        FSA_VIEW_HUD_POINT(originScreen);
+#endif
         JGeometry::TVec3f top(0.0f, 16.0f, 0.0f);
         gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(&top, false, false, &topScreen);
+#ifdef FSA_PORT
+        FSA_VIEW_HUD_POINT(topScreen);
+#endif
         f32 margin = (topScreen.y - originScreen.y) +
                      ((s32)JUTVideo::getManager()->getEfbHeight() - field_0x40[9]->field_0xc);
         u8 side[4];
         field_0x10c = 0;
         for (int i = 0; i < 4; i++) {
             gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(i), false, false, &screen);
+#ifdef FSA_PORT
+            FSA_VIEW_HUD_POINT(screen);
+#endif
             side[i] = 0;
             if (screen.x > 0.0f && screen.x < (s32)JUTVideo::getManager()->getFbWidth() && screen.y > 0.0f &&
                 screen.y < (s32)JUTVideo::getManager()->getEfbHeight()) {

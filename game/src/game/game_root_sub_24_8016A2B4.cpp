@@ -18,6 +18,9 @@
 #include "JSystem/J3D/J3DMaterialAnm.h"
 #include "JSystem/J3D/J3DSys.h"
 #include "JSystem/JKernel/JKRArchive.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 #include "game/GameState.h"
 #include "game/GameView.h"
 #include "game/Player.h"
@@ -1251,6 +1254,18 @@ void pool_8053D938(JGeometry::TVec3f& center, JGeometry::TVec3f& half) {
     center.x = -camera->mViewMtx_0x4[0][3] * sx;
     center.y = -camera->mViewMtx_0x4[1][3] * sy;
     center.z = 0.0f;
+#ifdef FSA_PORT
+    // The picture mod (docs/VIEW.md): the full-screen overlays drawn with this
+    // (clouds, water, darkness) cover the world's render box, not the 4:3 box;
+    // fn_8013B460 stretches their screen quad over the whole render target.
+    FsaViewBox sim, render;
+    if (fsa_view_last_boxes(&sim, &render)) {
+        half.x = 0.5f * sx * (render.x1 - render.x0);
+        half.y = 0.5f * sy * (render.y1 - render.y0);
+        center.x = 0.5f * sx * (render.x0 + render.x1);
+        center.y = 0.5f * sy * (render.y0 + render.y1);
+    }
+#endif
 }
 
 // FIXME: 99.79 %, regalloc-only; behaviour clean.

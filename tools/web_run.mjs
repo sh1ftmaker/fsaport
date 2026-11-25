@@ -8,6 +8,7 @@
 //        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
 //        [--wav FILE]  (with ?audiorec=S in the URL: save the game's sound as a WAV)
 //        [--until-script [--after S]]  (stop early when the ?script= run ends)
+//        [--viewport WxH[,mobile]]  (emulate a screen size, e.g. a phone: 844x390,mobile)
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -55,6 +56,16 @@ await send('Runtime.enable');
 await send('Log.enable');
 await send('Page.enable');
 if (args.ua) await send('Emulation.setUserAgentOverride', { userAgent: args.ua });
+// --viewport WxH[,mobile]: emulate a screen of that size (CSS pixels), e.g. a
+// phone in landscape: --viewport 844x390,mobile (also turns on touch).
+if (args.viewport && args.viewport !== 'true') {
+  const [size, kind] = args.viewport.split(',');
+  const [w, h] = size.split('x').map(Number);
+  const mobile = kind === 'mobile';
+  await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: mobile ? 2 : 1, mobile,
+    screenOrientation: { type: w >= h ? 'landscapePrimary' : 'portraitPrimary', angle: w >= h ? 90 : 0 } });
+  if (mobile) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+}
 await send('Page.navigate', { url });
 const t0 = Date.now();
 let shot = 0;

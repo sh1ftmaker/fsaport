@@ -304,6 +304,21 @@ Vec2<uint32_t> logical_fb_size() noexcept {
   return gfx::is_offscreen() ? gfx::get_render_target_size() : vi::configured_fb_size();
 }
 
+LogicalMapping logical_mapping(Vec2<uint32_t> logicalSize, Vec2<uint32_t> targetSize) noexcept {
+  LogicalMapping m;
+  m.scaleX = static_cast<float>(targetSize.x) / static_cast<float>(logicalSize.x);
+  m.scaleY = static_cast<float>(targetSize.y) / static_cast<float>(logicalSize.y);
+  // fsaport change: pillarbox the logical frame into a box of contentAspect
+  // (only on the main EFB: an offscreen target is its own logical frame).
+  if (g_gxState.contentAspect > 0.f && !gfx::is_offscreen()) {
+    const float contentWidth = std::min(static_cast<float>(targetSize.y) * g_gxState.contentAspect,
+                                        static_cast<float>(targetSize.x));
+    m.scaleX = contentWidth / static_cast<float>(logicalSize.x);
+    m.offsetX = std::round((static_cast<float>(targetSize.x) - contentWidth) * 0.5f);
+  }
+  return m;
+}
+
 gfx::Viewport map_logical_viewport(const gfx::Viewport& logicalViewport) noexcept {
   if (g_gxState.viewportPolicy == AURORA_VIEWPORT_NATIVE) {
     return logicalViewport;
@@ -315,13 +330,12 @@ gfx::Viewport map_logical_viewport(const gfx::Viewport& logicalViewport) noexcep
     return logicalViewport;
   }
 
-  const float scaleX = static_cast<float>(targetWidth) / static_cast<float>(logicalFbWidth);
-  const float scaleY = static_cast<float>(targetHeight) / static_cast<float>(logicalFbHeight);
+  const auto m = logical_mapping({logicalFbWidth, logicalFbHeight}, {targetWidth, targetHeight});
   return {
-      .left = logicalViewport.left * scaleX,
-      .top = logicalViewport.top * scaleY,
-      .width = logicalViewport.width * scaleX,
-      .height = logicalViewport.height * scaleY,
+      .left = logicalViewport.left * m.scaleX + m.offsetX,
+      .top = logicalViewport.top * m.scaleY,
+      .width = logicalViewport.width * m.scaleX,
+      .height = logicalViewport.height * m.scaleY,
       .znear = logicalViewport.znear,
       .zfar = logicalViewport.zfar,
   };
@@ -338,13 +352,12 @@ gfx::ClipRect map_logical_scissor(const gfx::ClipRect& logicalScissor) noexcept 
     return logicalScissor;
   }
 
-  const float scaleX = static_cast<float>(targetWidth) / static_cast<float>(logicalFbWidth);
-  const float scaleY = static_cast<float>(targetHeight) / static_cast<float>(logicalFbHeight);
+  const auto m = logical_mapping({logicalFbWidth, logicalFbHeight}, {targetWidth, targetHeight});
 
-  const float left = static_cast<float>(logicalScissor.x) * scaleX;
-  const float top = static_cast<float>(logicalScissor.y) * scaleY;
-  const float right = static_cast<float>(logicalScissor.x + logicalScissor.width) * scaleX;
-  const float bottom = static_cast<float>(logicalScissor.y + logicalScissor.height) * scaleY;
+  const float left = static_cast<float>(logicalScissor.x) * m.scaleX + m.offsetX;
+  const float top = static_cast<float>(logicalScissor.y) * m.scaleY;
+  const float right = static_cast<float>(logicalScissor.x + logicalScissor.width) * m.scaleX + m.offsetX;
+  const float bottom = static_cast<float>(logicalScissor.y + logicalScissor.height) * m.scaleY;
 
   const auto mappedLeft = std::clamp(static_cast<int32_t>(std::floor(left)), 0, static_cast<int32_t>(targetWidth));
   const auto mappedTop = std::clamp(static_cast<int32_t>(std::floor(top)), 0, static_cast<int32_t>(targetHeight));

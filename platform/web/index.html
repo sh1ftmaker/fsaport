@@ -465,7 +465,8 @@
     },
   };
 
-  // The picture: the largest 4:3 box that fits the stage, in whole pixels.
+  // The picture: the largest box of the picture's aspect (4:3 unless the
+  // Picture setting says otherwise: view.js) that fits the stage, in whole pixels.
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('canvas');
   const layoutHooks = window.layoutHooks = [];
@@ -473,9 +474,10 @@
     const cs = getComputedStyle(stage);
     const w = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const h = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    const s = Math.max(1, Math.min(w / 4, h / 3));
-    canvas.style.width = Math.floor(s * 4) + 'px';
-    canvas.style.height = Math.floor(s * 3) + 'px';
+    const a = window.fsaView ? window.fsaView.aspect() : 4 / 3;
+    const s = Math.max(1, Math.min(w / a, h));
+    canvas.style.width = Math.floor(s * a) + 'px';
+    canvas.style.height = Math.floor(s) + 'px';
     for (const f of layoutHooks) f();
   }
   window.addEventListener('resize', fit);
@@ -901,6 +903,7 @@
     fit();
   });
 </script>
+<script src="view.js"></script>
 <script src="touch.js"></script>
 <script src="gputrace.js"></script>
 <script src="fsa.js"></script>

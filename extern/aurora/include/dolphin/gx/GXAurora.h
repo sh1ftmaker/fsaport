@@ -95,6 +95,14 @@ typedef enum _AuroraViewportPolicy {
 void AuroraSetViewportPolicy(AuroraViewportPolicy policy);
 
 /**
+ * fsaport change: maps logical (EFB) coordinates to a centred box of this display aspect
+ * (width / height) inside the render target, leaving bars at the sides, instead of stretching
+ * them over the whole target. 0 (the default) turns it off. GXSetViewportRender /
+ * GXSetScissorRender still address the whole target.
+ */
+void AuroraSetContentAspect(float aspect);
+
+/**
  * Retrieves the current content framebuffer size.
  */
 void AuroraGetRenderSize(u32* width, u32* height);
