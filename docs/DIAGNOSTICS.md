@@ -485,11 +485,16 @@ is no extra flag; `-DFSA_DIAG_FNTRACE=OFF` leaves it out.
 ```json
 {"functions": ["fn_802D4CCC__17GameView_804A9950Fl",
                {"sym": "...", "this_bytes": 128, "this_ranges": [[9056, 9120]], "this": true,
-                "cap": 200, "every": 50}],
+                "cap": 200, "every": 50,
+                "ptr_args": [{"arg": 1, "str": true, "bytes": 64},
+                             {"arg": 3, "bytes": 60, "type": "SpriteParams_801F5AE0"},
+                             {"arg": "ret", "bytes": 12}]}],
  "this_bytes": 96,
  "this_ranges": [[9056, 9120]],
- "globals": ["lbl_8053AD08", {"name": "lbl_804DB798", "bytes": 512}],
- "nested": ["getTile_802F9908__16TileMap_804AA858Fll"],
+ "globals": ["lbl_8053AD08", {"name": "lbl_804DB798", "bytes": 512},
+             {"name": "lbl_8053AD78", "deref": true, "bytes": 352, "type": "MessageManager_804AF070"}],
+ "nested": ["getTile_802F9908__16TileMap_804AA858Fll",
+            {"sym": "...", "follow": true, "ptr_args": [{"arg": 2, "bytes": 12}]}],
  "nested_this_bytes": 0,
  "cap": 200, "every": 50,
  "offsets": "decomp",
@@ -500,13 +505,31 @@ or `{"requests": [request, ...]}` for a batch traced in one run.
 
 - `functions`: CodeWarrior symbols as in `symbols.txt`. Every port function
   that maps to the symbol is selected (constructor/destructor variants).
+  When the symbol is not in the port (the decomp's parameter list differs,
+  e.g. a parameter it does not declare yet), the one port function with the
+  same name and class is taken; `fntrace_config` gives it as `port_sym`.
 - `this_bytes` and `this_ranges`: which part of `this` to snapshot at entry
   and exit (at most 4096 bytes and 8 ranges per function). The default for
   `this_bytes` is the whole object.
 - `globals`: data symbols (at most 16 per run, 512 bytes each, 2048 per
   call), snapshotted at entry and exit of the request's functions.
+  `deref`: the variable is a pointer; the snapshot is `bytes` at the
+  address it holds (a manager object behind a global pointer). `type` names
+  the class whose layout labels the offsets in the summary (an array of that
+  class shows as `[i] field`).
 - `this` overrides the signature guess: `false` means no snapshot, `true`
   means parameter 0.
+- `ptr_args` (per function, or for all primary functions of the request;
+  `nested_ptr_args` for the nested ones): pointees of pointer arguments, at
+  most 4 per function and 1024 bytes. `arg` is the wasm parameter index as in
+  the records' `args` (`this` included; a struct passed by value is a
+  pointer there too). `bytes` bytes are snapshotted at entry and exit; with
+  `"str": true` a C string of at most `bytes` - 1 characters (default 64) is
+  read at entry. `"arg": "ret"` reads what the i32 result points to, at
+  exit. `type` labels the offsets with that class's layout.
+- `follow` (nested): log a nested call exactly when the enclosing primary
+  call is logged, so a sampled primary call has all of its callees' records
+  (values computed inside the function, e.g. which probes hit).
 - `offsets`: **request offsets are the decomp's**. `tools/fntrace_run.py`
   translates them to the port's layout with `tools/fntrace_layout.py`. That
   tool runs clang's record-layout dump over the unit that defines the
@@ -533,7 +556,10 @@ or `{"requests": [request, ...]}` for a batch traced in one run.
   - `diff`: per changed word `{"off", "mask"` (changed bytes)`, "old", "new",
     "s32", "f32"` when plausible, `"lo16"`/`"hi16"` when only that half
     changed`}`
-  - `globals`: `[{"name", "addr", "in", "out"}]`
+  - `globals`: `[{"name", "addr", "in", "out"}]` (`deref`, `base`: the
+    address it pointed to)
+  - `ptrs`: `[{"arg", "ptr", "in", "out", "diff"}]`, or `{"arg", "ptr",
+    "str"}` for a C string (`cut` when it was longer), `{"arg", "null": 1}` when the pointer was null or unreadable
 - `fntrace_agg` (per function, cumulative; the last line per `fn` wins):
   - `calls` (traced), `logged`
   - `entries` (instrumented entries, inlined copies included)
@@ -541,6 +567,8 @@ or `{"requests": [request, ...]}` for a batch traced in one run.
   - `args`, `ret`, `callers`, `scenes`, `ranges`
   - `words`: `off` (port offset), `emin`/`emax`/`efmin`/`efmax`/`entry`,
     and `changed`/`bytes`/`nmin`/`nmax`/`new` when the word was written
+  - `ptrs`: per pointer argument `arg`, `bytes`, `nulls`, and `words` (as
+    above, offsets in the pointee) or `strings` (`[string, count]`, 32 at most)
 - `fntrace_meta` (per flush): `seq`, `dropped` (lines over 256 KB).
 
 Byte order: the game's own structs are in host (little-endian) order in the

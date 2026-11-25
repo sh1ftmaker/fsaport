@@ -95,12 +95,32 @@ def layout(build, cls, unit):
     return lay
 
 
+def sym_prefix(s):
+    """'name__<len><class>[C]F...' -> 'name__<len><class>[C]F' (the symbol without its
+    parameter list), or None. As platform/web/fsa_fntrace.js: a decomp symbol whose
+    parameter list differs from the port's still names one port function."""
+    i = s.find('__', 1)
+    if i < 0:
+        return None
+    j = i + 2
+    m = re.match(r'(Q\d)?(\d+)', s[j:])
+    if m and m.group(1):
+        return None
+    if m:
+        j += len(m.group(2)) + int(m.group(2))
+    if s[j:j + 1] == 'C':
+        j += 1
+    return s[:j + 1] if s[j:j + 1] == 'F' else None
+
+
 def tsv_row(build, sym):
-    for line in open(os.path.join(build, 'fsa.diag.tsv')):
-        f = line.rstrip('\n').split('\t')
+    rows = [line.rstrip('\n').split('\t') for line in open(os.path.join(build, 'fsa.diag.tsv'))]
+    for f in rows:
         if len(f) >= 6 and (f[1] == sym or f[2] == sym):
             return f
-    return None
+    pre = sym_prefix(sym)
+    cand = [f for f in rows if pre and len(f) >= 6 and sym_prefix(f[1]) == pre]
+    return cand[0] if len({f[1] for f in cand}) == 1 else None
 
 
 def class_of(name):
@@ -140,6 +160,22 @@ def layout_for_sym(build, sym):
         return layout(build, cls, unit)
     except SystemExit as e:
         print(f'fntrace_layout: {sym}: {e}', file=sys.stderr)
+        return None
+
+
+def layout_for_type(build, sym, cls):
+    """The layout of class `cls` as the unit that defines `sym` sees it (a pointer
+    argument's pointee type)."""
+    row = tsv_row(build, sym)
+    unit = row[5] if row else ''
+    if unit.startswith('inline:'):
+        unit = unit[len('inline:'):]
+    if not unit:
+        return None
+    try:
+        return layout(build, cls, unit)
+    except SystemExit as e:
+        print(f'fntrace_layout: {cls} ({sym}): {e}', file=sys.stderr)
         return None
 
 

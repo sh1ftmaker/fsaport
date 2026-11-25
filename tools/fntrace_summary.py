@@ -256,7 +256,71 @@ def labeler(lay):
     return lbl
 
 
-def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
+def elem_labeler(lay):
+    """Offset in a global -> text: the field of its layout (`[i]` element of an
+    array of that type when past its size), or +0x... without a layout."""
+    if not lay:
+        return lambda p: f'+0x{p:x}'
+    lbl, size = labeler(lay), lay.get('size') or 0
+
+    def f(p):
+        if size and p >= size:
+            return f'[{p // size}] ' + lbl(p % size)
+        return lbl(p)
+    return f
+
+
+def render_fields(w, words, lay, calls, tables):
+    """The written / varying / constant words of a snapshot (`this` or a pointee):
+    words = {port offset: [word stats]}."""
+    lbl = labeler(lay)
+    written = [(off, l) for off, l in sorted(words.items()) if any(x.get('changed') for x in l)]
+    if written:
+        w('Written by the function (offset, how often, guessed type from the values it stores):\n')
+        w('| offset | changed in calls | bytes changed | values at entry | new values | guess |')
+        w('|---|---|---|---|---|---|')
+        for off, l in written:
+            wd = l[0]
+            bytes_ = [sum(x.get('bytes', [0] * 4)[i] for x in l) for i in range(4)]
+            ch = sum(x.get('changed', 0) for x in l)
+            for so, width in pieces(lay, off, bytes_):
+                ent = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x['entry']})
+                new = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x.get('new', [])})
+                more = any(x.get('entry_more') or x.get('new_more') for x in l)
+
+                def show(vs):
+                    sv = [v - (1 << (8 * width)) if v >> (8 * width - 1) else v for v in vs]
+                    if width == 4 and guess(vs, 4, tables).startswith('f32'):
+                        return ', '.join(fmt_f(f32(v)) for v in vs[:8]) + (' …' if len(vs) > 8 else '')
+                    if width == 4 and 'pointer' in guess(vs, 4, tables):
+                        return ', '.join(f'{v:#x}' for v in vs[:6]) + (' …' if len(vs) > 6 else '')
+                    return ', '.join(str(v) for v in sv[:12]) + (' …' if len(vs) > 12 else '')
+                w(f'| {lbl(off + so)} | {ch} / {calls} | {width} | {show(ent)}{" (+more)" if more else ""} | '
+                  f'{show(new)} | {guess(sorted(set(ent) | set(new)), width, tables)} |')
+        w('')
+    else:
+        w('No snapshot word changed during any traced call.\n')
+    # Varying but not written: inputs.
+    varying = [(off, l) for off, l in sorted(words.items())
+               if not any(x.get('changed') for x in l) and
+               (sum(len(x['entry']) for x in l) > 1 or any(x.get('entry_more') for x in l))]
+    if varying:
+        w('Read-side context: words that differ between calls but the function does not write:\n')
+        for off, l in varying[:40]:
+            vs = sorted({int(v, 16) for x in l for v, _ in x['entry']})
+            w(f'- {lbl(off)}: {len(vs)}{"+" if any(x.get("entry_more") for x in l) else ""} values, '
+              f'{guess(vs, 4, tables)}')
+        w('')
+    const = [(off, l) for off, l in sorted(words.items())
+             if sum(len(x['entry']) for x in l) == 1 and not any(x.get('changed') for x in l)]
+    if const:
+        w(f'Constant over the run ({len(const)} words): ' + ', '.join(
+            f'{lbl(off)}={l[0]["entry"][0][0]}' + (f' ({tables.vtable(int(l[0]["entry"][0][0], 16))})'
+                                                   if tables.vtable(int(l[0]['entry'][0][0], 16)) else '')
+            for off, l in const[:24]) + (' …' if len(const) > 24 else '') + '\n')
+
+
+def summarize(sym, cfgs, aggs, recs, tables, out, lay=None, ptr_lays=None, glob_lays=None):
     lbl = labeler(lay)
     c0 = cfgs[0] if cfgs else {}
     a0 = aggs[0] if aggs else {}
@@ -339,50 +403,43 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
         if lay:
             w(f'Offsets are the decomp\'s (from the field names of the port\'s `{lay["cls"]}` layout; '
               '[port 0x...] where the port\'s offset differs).\n')
-        written = [(off, l) for off, l in sorted(words.items()) if any(x.get('changed') for x in l)]
-        if written:
-            w('Written by the function (offset, how often, guessed type from the values it stores):\n')
-            w('| offset | changed in calls | bytes changed | values at entry | new values | guess |')
-            w('|---|---|---|---|---|---|')
-            for off, l in written:
-                wd = l[0]
-                bytes_ = [sum(x.get('bytes', [0] * 4)[i] for x in l) for i in range(4)]
-                ch = sum(x.get('changed', 0) for x in l)
-                for so, width in pieces(lay, off, bytes_):
-                    ent = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x['entry']})
-                    new = sorted({sub(int(v, 16), so, width) for x in l for v, _ in x.get('new', [])})
-                    more = any(x.get('entry_more') or x.get('new_more') for x in l)
-
-                    def show(vs):
-                        sv = [v - (1 << (8 * width)) if v >> (8 * width - 1) else v for v in vs]
-                        if width == 4 and guess(vs, 4, tables).startswith('f32'):
-                            return ', '.join(fmt_f(f32(v)) for v in vs[:8]) + (' …' if len(vs) > 8 else '')
-                        if width == 4 and 'pointer' in guess(vs, 4, tables):
-                            return ', '.join(f'{v:#x}' for v in vs[:6]) + (' …' if len(vs) > 6 else '')
-                        return ', '.join(str(v) for v in sv[:12]) + (' …' if len(vs) > 12 else '')
-                    w(f'| {lbl(off + so)} | {ch} / {calls} | {width} | {show(ent)}{" (+more)" if more else ""} | '
-                      f'{show(new)} | {guess(sorted(set(ent) | set(new)), width, tables)} |')
+        render_fields(w, words, lay, calls, tables)
+    # Pointer arguments (ptr_args): C strings, or pointee snapshots at entry and exit.
+    pargs = collections.OrderedDict()
+    for a in aggs:
+        for p in a.get('ptrs', []):
+            pargs.setdefault(p['arg'], []).append(p)
+    argno = lambda v: 31 if v == 'ret' else v  # the result's pointee: arg 31 in the records
+    pname = lambda v: 'Result pointer' if v == 31 else f'Pointer argument {v}'
+    ptypes = {argno(p.get('arg')): p.get('type') for p in (c0.get('ptr_args') or [])}
+    for arg, pl in pargs.items():
+        nulls = sum(p.get('nulls', 0) for p in pl)
+        if any(p.get('str') for p in pl):
+            strs = collections.Counter()
+            for p in pl:
+                for s_, n in p.get('strings', []):
+                    strs[s_] += n
+            more = any(p.get('more') for p in pl)
+            w(f'### {pname(arg)}: C string (at most {pl[0]["bytes"] - 1} characters read; all traced calls)\n')
+            w(f'{len(strs)}{"+" if more else ""} distinct strings, {nulls} null:\n')
+            for s_, n in strs.most_common():
+                w(f'- `{json.dumps(s_)[1:-1]}` ×{n}')
             w('')
-        else:
-            w('No snapshot word changed during any traced call.\n')
-        # Varying but not written: inputs.
-        varying = [(off, l) for off, l in sorted(words.items())
-                   if not any(x.get('changed') for x in l) and
-                   (sum(len(x['entry']) for x in l) > 1 or any(x.get('entry_more') for x in l))]
-        if varying:
-            w('Read-side context: words that differ between calls but the function does not write:\n')
-            for off, l in varying[:40]:
-                vs = sorted({int(v, 16) for x in l for v, _ in x['entry']})
-                w(f'- {lbl(off)}: {len(vs)}{"+" if any(x.get("entry_more") for x in l) else ""} values, '
-                  f'{guess(vs, 4, tables)}')
-            w('')
-        const = [(off, l) for off, l in sorted(words.items())
-                 if sum(len(x['entry']) for x in l) == 1 and not any(x.get('changed') for x in l)]
-        if const:
-            w(f'Constant over the run ({len(const)} words): ' + ', '.join(
-                f'{lbl(off)}={l[0]["entry"][0][0]}' + (f' ({tables.vtable(int(l[0]["entry"][0][0], 16))})'
-                                                       if tables.vtable(int(l[0]['entry'][0][0], 16)) else '')
-                for off, l in const[:24]) + (' …' if len(const) > 24 else '') + '\n')
+            continue
+        play = (ptr_lays or {}).get(arg)
+        t = ptypes.get(arg)
+        what = 'result' if arg == 31 else f'arg{arg}'
+        when = 'at exit' if arg == 31 else 'at entry and exit'
+        w(f'### {pname(arg)}: `*{what}`{" (" + t + ")" if t else ""}, {pl[0]["bytes"]} bytes {when} '
+          f'(all traced calls; {nulls} null)\n')
+        if play:
+            w(f'Offsets are the decomp\'s (the port\'s `{play["cls"]}` layout).\n')
+        pw = {}
+        for p in pl:
+            for wd in p.get('words', []):
+                pw.setdefault(wd['off'], []).append(wd)
+        if pw:
+            render_fields(w, pw, play, calls, tables)
     # Per-call deltas of the sampled records.
     deltas = collections.defaultdict(collections.Counter)
     for r in recs:
@@ -433,6 +490,7 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
     if gl:
         w('### Globals (logged calls)\n')
         for k, st in gl.items():
+            glbl = elem_labeler((glob_lays or {}).get(k))
             w(f'`{k}`: changed in {st["ch"]} of {st["n"]} logged calls.\n')
             rows = []
             for o, ws in sorted(st['words'].items()):
@@ -441,7 +499,7 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
                     new = sorted({sub(v, so, width) for v in ws['new']})
                     sv = lambda vs: ', '.join(str(v - (1 << (8 * width)) if v >> (8 * width - 1) else v)
                                               for v in vs[:12]) + (' …' if len(vs) > 12 else '')
-                    rows.append(f'| +0x{o + so:x} | {ws["changed"]} / {st["n"]} | {width} | {sv(ent)} | {sv(new)} | '
+                    rows.append(f'| {glbl(o + so)} | {ws["changed"]} / {st["n"]} | {width} | {sv(ent)} | {sv(new)} | '
                                 f'{guess(sorted(set(ent) | set(new)), width, tables)} |')
             if rows:
                 w('| offset | changed | width | values at entry | new values | guess |')
@@ -451,7 +509,7 @@ def summarize(sym, cfgs, aggs, recs, tables, out, lay=None):
                 w('')
             var = [(o, ws) for o, ws in sorted(st['words'].items()) if not ws['changed'] and len(ws['entry']) > 1]
             if var:
-                w('Varying, not written: ' + ', '.join(f'+0x{o:x} ({guess(sorted(ws["entry"]), 4, tables)})'
+                w('Varying, not written: ' + ', '.join(f'{glbl(o)} ({guess(sorted(ws["entry"]), 4, tables)})'
                                                        for o, ws in var[:16]) + '\n')
     if recs:
         r = recs[0]
@@ -496,7 +554,16 @@ def main():
         lay = None
         if any(o.get('words') for o in agg_by.get(s, [])) and not a.no_layout:
             lay = fntrace_layout.layout_for_sym(a.build, s)
-        summarize(s, cfg_by[s], agg_by.get(s, []), rec_by.get(s, []), tables, out, lay)
+        ptr_lays = {}
+        for p in (cfg_by[s][0].get('ptr_args') or []) if not a.no_layout else []:
+            if p.get('type') and not p.get('str'):
+                ptr_lays[31 if p.get('arg') == 'ret' else p.get('arg')] = fntrace_layout.layout_for_type(a.build, s, p['type'])
+        glob_lays = {}
+        req = cfg_by[s][0].get('req')
+        for g in cfg:
+            if g.get('global') and g.get('type') and g.get('req') == req and not a.no_layout:
+                glob_lays[g['global']] = fntrace_layout.layout_for_type(a.build, s, g['type'])
+        summarize(s, cfg_by[s], agg_by.get(s, []), rec_by.get(s, []), tables, out, lay, ptr_lays, glob_lays)
         allout += out
         if a.split:
             os.makedirs(a.split, exist_ok=True)
