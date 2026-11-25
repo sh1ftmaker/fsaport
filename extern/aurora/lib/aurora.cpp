@@ -371,14 +371,18 @@ bool begin_frame() noexcept {
     return false;
   }
 
+  // gfx::begin_frame has opened a frame (render pass 0 targets the EFB). It
+  // must be closed by end_frame, so a hidden / paused window no longer returns
+  // false here: the caller then skipped end_frame, the open pass list stayed
+  // and every later begin_frame appended a default pass with no views to it,
+  // so the first frame after the tab came back submitted a pass whose depth
+  // view was null ("depthStencilAttachment.view: Required member is
+  // undefined"). The frame is recorded as usual; end_frame skips the present
+  // while the window is not presentable or paused.
   {
     window::SurfaceLock surfaceLock;
     if (!window::is_presentable()) {
       webgpu::release_surface();
-      return false;
-    }
-    if (window::is_paused()) {
-      return false;
     }
   }
   // g_currentView intentionally left empty here — populated by end_frame.
