@@ -120,7 +120,7 @@ public:
     s32 getSize(void *ptr);
     s32 getFreeSize();
     void *getMaxFreeBlock();
-    u32 getTotalFreeSize();
+    s32 getTotalFreeSize();
     u8 getCurrentGroupId();
     u8 changeGroupID(u8 newGroupId);
     u32 getMaxAllocatableSize(int alignment);

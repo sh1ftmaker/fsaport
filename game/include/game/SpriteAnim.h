@@ -66,6 +66,7 @@ public:
     // isStopped_801D21F0 the same way). Not called out of line anywhere.
     void calcCel();
     void setFrameInline(f32 frame);
+    bool isOneShot();
     bool isLoopEnd();
     bool isStopped();
 

@@ -44,6 +44,7 @@ public:
     void pool_8053C574();
     void flyToGoal();
     void standBelow(const JGeometry::TVec3f& target);
+    void startDrift(JGeometry::TVec3f& start, JGeometry::TVec3f& target, f32 frames);
     void pool_8053C590();
     void inl_8011093C(s32 dir);
     s32 startTalk(u32 msg, bool talkFlag);

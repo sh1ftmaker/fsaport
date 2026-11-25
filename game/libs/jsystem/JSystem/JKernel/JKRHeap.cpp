@@ -254,7 +254,7 @@ int JKRHeap::resize(void *memoryBlock, u32 newSize)
 }
 s32 JKRHeap::getSize(void *ptr) { return do_getSize(ptr); }
 s32 JKRHeap::getFreeSize() { return do_getFreeSize(); }
-u32 JKRHeap::getTotalFreeSize() { return do_getTotalFreeSize(); }
+s32 JKRHeap::getTotalFreeSize() { return do_getTotalFreeSize(); }
 
 u8 JKRHeap::changeGroupID(u8 newGroupID)
 {

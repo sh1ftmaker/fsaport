@@ -147,8 +147,12 @@ namespace JGeometry {
 
         // Operators as in later JGeometry (SMG's TVec.hpp, reference only): copy *this into a
         // local, change it, return it by value. Evidence: game player_8025EB18 fn_802604CC.
-        TVec2<T> operator+(const TVec2<T>& o) const { TVec2 ret(*this); ret.x += o.x; ret.y += o.y; return ret; }
-        TVec2<T> operator-(const TVec2<T>& o) const { TVec2 ret(*this); ret.x -= o.x; ret.y -= o.y; return ret; }
+        // + and - go through the compound operator on a temporary copy: the copy stays on the
+        // stack (game act_navi setState_8021DFAC, fn_8021E4F8; decomp 975491243).
+        TVec2<T>& operator+=(const TVec2<T>& o) { x += o.x; y += o.y; return *this; }
+        TVec2<T>& operator-=(const TVec2<T>& o) { x -= o.x; y -= o.y; return *this; }
+        TVec2<T> operator+(const TVec2<T>& o) const { return TVec2(*this) += o; }
+        TVec2<T> operator-(const TVec2<T>& o) const { return TVec2(*this) -= o; }
         TVec2<T> operator*(f32 s) const { TVec2 ret(*this); ret.x *= s; ret.y *= s; return ret; }
         T x, y;
     };
