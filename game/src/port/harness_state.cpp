@@ -13,6 +13,8 @@
 #include "game/GameView.h"
 #include "game/Player.h"
 #include "game/file_select_803BC6F0.h"
+#include "game/cls_804AF878.h"
+#include "game/adv_entry_screen_803E1668.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -126,6 +128,7 @@ void actor_name(Json& j, u32 id) {
 
 GameRoot_8049EF20* root() { return gGameRoot_8053AAF8; }
 GameRootSub04_801F856C* stage_sub() { return root() ? root()->field_0x4 : NULL; }
+AdvEntryScreen_804B0B00* entry() { return lbl_8053AD98 ? lbl_8053AD98->field_0x4 : NULL; }
 
 // --- Globals: one row per value, "symbol->field" -------------------------------
 // get() returns false when the value does not exist yet (written as null).
@@ -160,6 +163,12 @@ const GlobalField kGlobals[] = {
     {"lbl_8053ADB0->field_0x7c", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x7c), true); }},
     {"lbl_8053ADB0->field_0x114", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x114), true); }},
     {"lbl_8053ADB0->field_0x116", [](Json& j) { return lbl_8053ADB0 && (j.i(lbl_8053ADB0->field_0x116), true); }},
+    // The adventure's player-count screen (mode 4, lbl_8053AD98's field_0x4, only
+    // while it exists; deluxe): its state, the cursor (players - 1) and the
+    // number of controllers / GBAs it counts as connected.
+    {"lbl_8053AD98->field_0x4->field_0x1d4", [](Json& j) { return entry() && (j.i(entry()->field_0x1d4), true); }},
+    {"lbl_8053AD98->field_0x4->field_0x1bc", [](Json& j) { return entry() && (j.i(entry()->field_0x1bc), true); }},
+    {"lbl_8053AD98->field_0x4->field_0x1d0", [](Json& j) { return entry() && (j.i(entry()->field_0x1d0), true); }},
     // The stage's view (getGameView_802D6A9C), only while a stage is loaded.
     {"getGameView_802D6A9C()->mStage_0x4", [](Json& j) { return stage_sub() && (j.i(getGameView_802D6A9C()->mStage_0x4), true); }},
     {"getGameView_802D6A9C()->mLevel_0x8", [](Json& j) { return stage_sub() && (j.i(getGameView_802D6A9C()->mLevel_0x8), true); }},

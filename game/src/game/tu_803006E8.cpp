@@ -359,7 +359,14 @@ void* fn_80300E1C(void* arg) {
                             nextMsg = TRUE;
                             break;
                         }
+#ifdef FSA_PORT
+                        // The record's field_0x3_0 (lbl_8053AD08, cls_804AA858Sub11C in
+                        // game/Map.h) is the low two bits of byte 3 under MWCC's MSB-first
+                        // bitfields and the top two under clang's LSB-first ones.
+                        client->field_0xdb = (client->mTransfer[3] >> 6) & 3;
+#else
                         client->field_0xdb = client->mTransfer[3] & 3;
+#endif
                         client->field_0xda = lbl_80541618[client->field_0xdb];
                         if (client->field_0xdb != 0) {
                             err = GBAGetStatus(client->mPort, &client->mStatus);

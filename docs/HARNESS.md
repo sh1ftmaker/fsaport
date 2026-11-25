@@ -138,6 +138,10 @@ pinned seed, use `seed_on_stage` (e.g. in the same step that sets the stage).
   pad header (L and R are the digital bits only; analog triggers stay 0).
 - Input: pad 0 only, connected; ports 1-3 unplugged
   (`PAD_ERR_NO_CONTROLLER`). Neutral = buttons 0, sticks 0, triggers 0.
+  (deluxe) A step may name its pad, `"pad": 0-3` (default 0); a pad 1-3 counts
+  as connected at the reads that step drives it. With GBAs plugged in
+  (`?gba=N`, docs/MULTIPLAYER.md) each GBA takes its buttons from the pad of
+  its port, so a script drives all four players.
 - A `"comment"` key is allowed on a step and at the top level. Any other
   unknown key, an unknown button or condition key is an error at load.
 - The conditions are evaluated on the game state at read n (after it handled
@@ -215,7 +219,10 @@ scene changed at that read, else `"step"` when a script step started, else
   select screen (mode 3, `lbl_8053ADB0`, null while it does not exist): its
   `mState` (index into `lbl_804AFD70`), `field_0x7c` (message shown),
   `field_0x114` (the message window's cursor: 0 yes, 1 no) and `field_0x116`
-  (the message window's phase).
+  (the message window's phase). (deluxe) The adventure's player-count screen
+  (mode 4, `lbl_8053AD98->field_0x4`, null while it does not exist): its state
+  `field_0x1d4` (3 = the count menu), cursor `field_0x1bc` (players - 1) and
+  the number of GBAs it counts as connected `field_0x1d0`.
 
 **Adding fields:** `game/src/port/harness_state.cpp` has three tables,
 `kGlobals`, `kActorFields`, `kPlayerFields`, each a list of `{name, getter}`;

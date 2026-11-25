@@ -53,8 +53,8 @@ u32 g_anchor = 0;  // script mode: the latest scene change or step start
 // The script (docs/HARNESS.md "Scripted input"), compiled by the page
 // (platform/web/fsa_harness.js) into doubles:
 //   [0]               step count S
-//   [1 + 8 * i ...]   step i: kind, buttons, every, reads, stickX, stickY,
-//                     timeout (-1: none), condition offset (-1: none)
+//   [1 + 9 * i ...]   step i: kind, buttons, every, reads, stickX, stickY,
+//                     timeout (-1: none), condition offset (-1: none), pad
 //   condition at c:   term count T, then T terms: key, value count V, V values
 // A key is a kGlobals index, or kMode/kStage/kLevel (the scene triple, mode -1
 // before GameRoot exists); a NaN value matches null (the value does not exist).
@@ -195,7 +195,7 @@ bool script(PADStatus* status, u32 n) {
       snprintf(line, sizeof(line), "{\"sync\":\"step\",\"n\":%u,\"step\":%d}", n, g_step);
       fsa_diag("sync", line);
     }
-    const double* s = g_script + 1 + 8 * g_step;
+    const double* s = g_script + 1 + 9 * g_step;
     int kind = (int)s[0];
     u16 buttons = (u16)s[1];
     u32 every = s[2] >= 1 ? (u32)s[2] : 1;
@@ -228,7 +228,11 @@ bool script(PADStatus* status, u32 n) {
       script_stop("script_timeout", n);
       break;
     }
-    PADStatus& p = status[0];
+    // The pad the step drives (deluxe: "pad" 0-3; 1-3 count as connected
+    // while a step drives them, so a GBA in that port sees the input).
+    int pad = (int)s[8];
+    PADStatus& p = status[pad >= 0 && pad < PAD_CHANMAX ? pad : 0];
+    p.err = PAD_ERR_NONE;
     if (kind == kHold || kind == kStick || (kind == kPress && t % every == 0))
       p.button = buttons;
     if (kind == kStick) {

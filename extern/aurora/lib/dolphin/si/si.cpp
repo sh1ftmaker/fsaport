@@ -4,7 +4,17 @@
 
 #include <SDL3/SDL_power.h>
 
+// fsaport (deluxe): the port's GBA link (platform/gba_link.cpp) answers for the
+// ports it has a GBA plugged into (SI_GBA); 0 = not one of them.
+extern "C" uint32_t (*aurora_si_probe_hook)(int32_t chan);
+uint32_t (*aurora_si_probe_hook)(int32_t chan) = nullptr;
+
 uint32_t SIProbe(int32_t chan) {
+  if (aurora_si_probe_hook != nullptr) {
+    if (const uint32_t type = aurora_si_probe_hook(chan)) {
+      return type;
+    }
+  }
   auto* const controller = aurora::input::get_controller_for_player(chan);
   if (controller == nullptr) {
     // A port with keyboard bindings is a controller to PADRead, so it must be

@@ -503,6 +503,7 @@
       Module._fsa_debug_set_stage(Number(stageArg[1]), Number(stageArg[2] || 0));
     }
     await Module.fsaHarnessInit();  // ?record=1 / ?inputs=URL (docs/HARNESS.md)
+    if (Module.fsaGbaInit) Module.fsaGbaInit();  // ?gba=N: native GBAs in ports 0..N-1 (docs/MULTIPLAYER.md)
     if (Module.fsaFntraceInit) await Module.fsaFntraceInit();  // ?trace=URL (FSA_DIAG builds; docs/DIAGNOSTICS.md)
     Module.fsaClock.start();
     try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }

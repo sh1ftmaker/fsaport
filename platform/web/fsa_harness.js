@@ -63,7 +63,7 @@ Module.fsaHarnessInit = async function () {
 
 // The script format (docs/HARNESS.md "Scripted input") compiled into the
 // Float64Array platform/harness.cpp reads:
-//   [0] step count; [1 + 8 * i ...] step i: kind, buttons, every, reads,
+//   [0] step count; [1 + 9 * i ...] step i: kind, buttons, every, reads,
 //   stickX, stickY, timeout (-1 none), condition offset (-1 none);
 //   a condition: term count, then per term key, value count, values (NaN = null).
 // Keys are kGlobals indices (game/src/port/harness_state.cpp), or -1/-2/-3 for
@@ -121,9 +121,11 @@ function compileScript(doc) {
     if (kinds.length !== 1) fail('step ' + i + ': needs exactly one of ' + KINDS.join(' '));
     const kind = kinds[0];
     for (const k of Object.keys(s))
-      if (k !== 'timeout' && k !== 'comment' && !ALLOWED[kind].includes(k))
+      if (k !== 'timeout' && k !== 'comment' && k !== 'pad' && !ALLOWED[kind].includes(k))
         fail('step ' + i + ': unexpected key ' + k + ' in a ' + kind + ' step');
-    const row = [KINDS.indexOf(kind), 0, 1, 0, 0, 0, -1, -1];
+    const row = [KINDS.indexOf(kind), 0, 1, 0, 0, 0, -1, -1, 0];
+    // "pad": 0-3, the pad the step's input goes to (deluxe; default 0).
+    if (s.pad !== undefined) row[8] = int(s.pad, i, 'pad', 0, 3);
     if (s.timeout !== undefined) row[6] = int(s.timeout, i, 'timeout', 0, 2 ** 31);
     if (kind === 'wait') row[7] = cond(s.wait, i);
     if (kind === 'wait_reads') row[3] = int(s.wait_reads, i, 'wait_reads', 0, 2 ** 31);
@@ -167,6 +169,6 @@ function compileScript(doc) {
   out[0] = doc.steps.length;
   out.set(steps, 1);
   out.set(conds, base);
-  for (let i = 0; i < doc.steps.length; i++) if (out[1 + 8 * i + 7] >= 0) out[1 + 8 * i + 7] += base;
+  for (let i = 0; i < doc.steps.length; i++) if (out[1 + 9 * i + 7] >= 0) out[1 + 9 * i + 7] += base;
   return out;
 }

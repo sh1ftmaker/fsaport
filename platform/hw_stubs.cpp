@@ -1,6 +1,6 @@
 // Hardware the port does not have yet, made to look present and idle:
-// the DSP's mailbox, the GBA link, and GX calls Aurora does not implement.
-// Each is a placeholder until its real replacement exists.
+// the DSP's mailbox and GX calls Aurora does not implement (the GBA link is
+// platform/gba_link.cpp). Each is a placeholder until its real replacement exists.
 #include "platform.h"
 
 #include <dolphin/gx.h>
@@ -24,18 +24,8 @@ void DSPSendMailToDSP(u32) {}
 void DSPAssertInt() {}
 void __DSP_boot_task(void*) {}
 
-// --- GBA link: no GBA is plugged in (the native GBA views come later). -------
-#define GBA_NOT_READY 1
-void GBAInit() {}
-s32 GBAGetStatus(s32, u8* status) {
-  if (status)
-    *status = 0;
-  return GBA_NOT_READY;
-}
-s32 GBAReset(s32, u8* status) { return GBAGetStatus(0, status); }
-s32 GBARead(s32, u8*, u8* status) { return GBAGetStatus(0, status); }
-s32 GBAWrite(s32, u8*, u8* status) { return GBAGetStatus(0, status); }
-s32 GBAJoyBoot(s32, s32, s32, u8*, u32, u8* status) { return GBAGetStatus(0, status); }
+// --- GBA link: platform/gba_link.cpp (deluxe). A native endpoint per port; with
+// no GBA plugged in it answers as the stub here did (GBA_NOT_READY).
 
 BOOL __PADDisableRecalibration(BOOL) { return FALSE; }
 

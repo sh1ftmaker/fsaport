@@ -7,6 +7,7 @@
 // keyboard and the touch pads can be used at once; the stick and the analog
 // triggers take whichever source is pushed further.
 #include "platform.h"
+#include "gba_link.h"
 
 #include <dolphin/pad.h>
 #include <emscripten.h>
@@ -51,6 +52,9 @@ extern "C" void fsa_pad_after_read(PADStatus* status) {
   // The behaviour harness (platform/harness.cpp): sync points, then replay
   // replaces or record logs all four pads.
   platform_harness_pad(status);
+  // The GBA link's local peer (platform/gba_link.cpp, deluxe) takes each GBA's
+  // buttons from the pad of its port, as the game saw it at this read.
+  FsaGbaPadsRead(status);
 
   // Port 0's buttons in the log whenever they change, so input problems show.
   // The stick counts as changed when it crosses into another of nine zones

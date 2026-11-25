@@ -24,7 +24,8 @@ committed.
 | Speed | 60 frames per 60 retraces everywhere tested; <= ~4 ms of CPU per frame |
 | Past the prologue | not yet (a message window does not advance) |
 | Audio | yes: music, sound effects and movie sound through Web Audio (starts on the first key, touch or click); no reverb yet |
-| Saves, GBA views | not yet |
+| Saves | not yet |
+| GBA link (branch `deluxe`) | native GBAs in ports 1-4 (`?gba=N`): the game accepts 2-4 players and plays them; GBA screens are a debug view so far (docs/MULTIPLAYER.md) |
 
 ## Build and run (browser)
 
