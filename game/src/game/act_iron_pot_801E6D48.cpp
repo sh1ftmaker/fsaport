@@ -106,12 +106,12 @@ void IronPot_804A5418::fn_801E728C(int state) {
                         if (serial >= 0) {
                             ActorBase_804A5770* gem = getActorManager_801F856C()->findActorBySerial_801F666C(serial);
                             if (gem != NULL) {
-                                f32 z = 6.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() + 6.0f;
-                                f32 y = 0.6f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
-                                f32 x = 0.6f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
-                                gem->mVel_0x3c.x = x;
-                                gem->mVel_0x3c.y = y;
-                                gem->mVel_0x3c.z = z;
+                                // MWCC evaluates the TVec3f arguments right to left, so the original draws z, y, x;
+                                // named in that order so every compiler draws them the same way
+                                f32 vz = 6.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() + 6.0f;
+                                f32 vy = 0.6f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
+                                f32 vx = 0.6f * (2.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() - 1.0f);
+                                gem->mVel_0x3c = JGeometry::TVec3f(vx, vy, vz);
                             }
                         }
                     }
