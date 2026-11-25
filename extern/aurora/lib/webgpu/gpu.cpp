@@ -767,6 +767,9 @@ void resize_swapchain(uint32_t width, uint32_t height, uint32_t native_width, ui
   // old frame / depth buffers, and on the web a released view is gone from the
   // handle table, so submitting them failed ("depthStencilAttachment.view is
   // undefined"). Keep the previous set alive until the next resize.
+  // (Recorded passes hold their own view references, so this is only a
+  // safety net: the crash seen when a hidden tab came back was begin_frame
+  // leaving a frame open; see begin_frame in aurora.cpp.)
   {
     static TextureWithSampler s_retiredFrame, s_retiredResolved, s_retiredDepth;
     static wgpu::BindGroup s_retiredCopy;
