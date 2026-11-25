@@ -551,7 +551,7 @@ void GreatFairy_8049EB8C::placeAtBarrier() {
         pos.x += 20.0f;
         setPlayerFacing_80230BF4(i, 3);
         fn_80230498(i, &pos, 0x3F, 0xFF, -0x80, -0x80, true);
-        fn_802303FC(i, &pos, true);
+        fn_802303FC(i, &pos, 0xFF);
     }
 }
 

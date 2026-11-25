@@ -447,10 +447,10 @@ void AudioMgr_8045A080::init_80459AE4(JKRSolidHeap* heap, u32 audioMemSize, void
 #endif
 
     JASDsp::FxlineConfig_ fxConfig[4] = {
-        {1, 0x6000, 1, 0, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
-        {1, 0, 1, 0x6000, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
-        {1, 0x6000, 1, 0, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
-        {1, 0, 1, 0x6000, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
+        {1, 0, 0x6000, 1, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
+        {1, 0, 0, 1, 0x6000, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
+        {1, 0, 0x6000, 1, 0, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
+        {1, 0, 0, 1, 0x6000, 0x40, {0, 0, 0, 0, 0, 0, 0x3FFF, 0}},
     };
 #ifdef FSA_PORT_TRACE
     OSReport("[trace] audio init step 47\n");

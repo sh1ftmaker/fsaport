@@ -7,7 +7,7 @@
 // JMath's fast vector magnitude (0x80093280, unnamed upstream, see JMath.cpp): the
 // asm computes sq = |v|^2 and returns sq == 0 ? sq : sq * frsqrte(sq), i.e. |v|.
 f32 fn_80093280(const JGeometry::TVec3f* v) {
-    f32 sq = v->x * v->x + v->y * v->y + v->z * v->z;
+    f32 sq = (v->z * v->z + v->x * v->x) + v->y * v->y; // ps_madd then ps_sum0, as the asm adds
     if (sq == 0.0f) {
         return sq;
     }

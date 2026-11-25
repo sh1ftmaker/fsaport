@@ -537,7 +537,7 @@ void Bomb_8049F784::update() {
                 break;
             }
             if (field_0x26c == 0 && mPos.z < 2.0f && (mVel_0x3c.x != 0.0f || mVel_0x3c.y != 0.0f)) {
-                if (getTileCollisionCodeAlt_802265FC(&mPos, mLayer_0x4) == 0x50) {
+                if (getTileCollisionCodeAlt_802265FC((const JGeometry::TVec3f*)&mid, mLayer_0x4) == 0x50) {
                     field_0x26c = 1;
                 }
             }

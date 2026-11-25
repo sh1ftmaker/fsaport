@@ -829,7 +829,7 @@ void BigMoldorm_8049F6C8::draw() {
     params.field_0x1d = 1;
     if (mSpawnParam_0x90 == 2 || mSpawnParam_0x90 == 3) {
         if (lbl_8053AB34 == 1) {
-            drawSpriteScaled_801F02BC("enemy_both2_sob.bin", 0x176, NULL, -1, 0, true, 1.0f, 1.0f);
+            drawSpriteScaled_801F02BC("enemy_both2_sob.bin", 0x176, NULL, -1, 1, false, 1.0f, 1.0f);
         }
         return;
     }

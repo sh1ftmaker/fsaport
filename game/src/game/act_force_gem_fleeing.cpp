@@ -542,6 +542,9 @@ void FleeingForceGem_804AB170::update() {
 // FIXME(shotgun): 96.04 %, missing/extra + reloc-name; behaviour clean.
 void FleeingForceGem_804AB170::draw() {
     SpriteParams_801F5AE0 params;
+    params.field_0x2d = 1;
+    params.field_0x1d = 0;
+    params.field_0x20 = 0;
     if (field_0x230 == 8 || field_0x230 == 9) {
         return;
     }

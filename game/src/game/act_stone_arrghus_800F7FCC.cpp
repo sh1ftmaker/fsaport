@@ -1188,9 +1188,11 @@ void StoneArrghusChildPuff_8049C678::fn_800F953C() {
         mFlag249 = 0;
     }
     if (updateHitReaction_801F3D94(1) == 0) {
-        if (findOverlappingPlayer_801F285C(NULL, NULL, true, -1) >= 0) {
+        // The player that touched the puff is the one hit (not player 0; decomp 2e0806a22).
+        s32 player = findOverlappingPlayer_801F285C(NULL, NULL, true, -1);
+        if (player >= 0) {
             JGeometry::TVec2f xy(mPos.x, mPos.y);
-            hitPlayerGroup_80238548(0, 0, &xy, 0x10);
+            hitPlayerGroup_80238548(player, 0, &xy, 0x10);
         }
         moveToward(mPos, target, speed);
         damagePlayersInBox_801F2B7C(2, -1, 1);
@@ -1227,7 +1229,9 @@ void StoneArrghusChildPuff_8049C678::fn_800F9170() {
     v.normalize();
     v.scale(0.8f);
     v.z = 0.0f;
-    if (mPos.z < 10.0f || mCount >= 0x50) {
+    // Still for the first 0x50 frames, then towards the parent (the test was inverted;
+    // decomp 4636c2a74).
+    if (mPos.z < 10.0f || mCount < 0x50) {
         v.zero();
     }
     mVel_0x3c.set(v);

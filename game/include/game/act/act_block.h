@@ -19,7 +19,12 @@ public:
     /* 0x4C */ virtual bool isBlocked_0x4C(s32 layer, const JGeometry::TVec3f* pos);
 
     bool fn_8028C364(u8 dir);
-    bool fn_8028C518(u8 dir);
+    u8 fn_8028C518(u8 dir); // update compares the result with 1 (cmplwi)
+    // update compares both with signed compares (cmpwi / cmpw).
+    s32 getType() const { return mSpawnParam_0x90 & 3; }
+    s32 getParamBit7() const { return (mSpawnParam_0x90 >> 7) & 1; }
+    s32 getParamBit8() const { return (mSpawnParam_0x90 >> 8) & 1; }
+    s32 getDir() const { return (mSpawnParam_0x90 >> 2) & 3; }
     // Not in the binary: a plain function that update inlines.
     bool keepsMoving(f32 threshold);
 

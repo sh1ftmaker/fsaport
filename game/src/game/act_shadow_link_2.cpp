@@ -429,11 +429,11 @@ void ShadowLink2_804A43E8::setState_801C3B7C(int state) {
         } else {
             field_0x250 = 0x1E;
         }
-        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
         field_0x340.setState_800FEB78(4);
         break;
     case 0x14:
-        mSpeed = 0.0f;
+        mTargetSpeed = 0.0f;
         mFlags |= 0x100;
         mBox.set(1.0f, 1.0f, -1.0f, -1.0f);
         mBox2.set(mBox);
@@ -524,12 +524,14 @@ void ShadowLink2_804A43E8::setState_801C3B7C(int state) {
         mMapBox_0x80.set(1.0f, 1.0f, -1.0f, -1.0f);
         field_0x340.setState_800FEB78(4);
         if (mState == 0xD) {
-            s16 angle = -((s16)field_0x94 / 4 + 0x2000);
+            s16 angle = -(s16)((field_0x94 << 16) / 4 + 0x2000);
             f32 s = JMath::sincosTable_.sinShort(angle);
             f32 c = JMath::sincosTable_.cosShort(angle);
             field_0x32c = mSpawnPos;
-            field_0x32c.x += 90.0f * s - 0.0f * c;
-            field_0x32c.y += 90.0f * c + 0.0f * s;
+            f32 offX = 0.0f;
+            f32 offY = 90.0f;
+            field_0x32c.x += offX * c - offY * s;
+            field_0x32c.y += offX * s + offY * c;
             startSound_801F0E34(0x40035, 0);
         } else if (getShadowLinkFight_801C0D70()->field_0x0 & 0x400) {
             startSound_801F0E34(0x40036, 0);
@@ -677,7 +679,7 @@ void ShadowLink2_804A43E8::setState_801C3B7C(int state) {
         if (field_0x560 == 4) {
             field_0x560 = randInt_801CD664(4);
         }
-        // FIXME(shotgun): field_0x548 is cls_802153A8 (fn_80215558((u8)field_0x560)), not typed in header
+        field_0x548.fn_80215558(field_0x560);
         if (field_0x560 >= 0 && field_0x560 <= 3) {
             startSound_801F0E34(lbl_80469450[field_0x560], 0);
         }
@@ -1047,7 +1049,7 @@ void ShadowLink2_804A43E8::updateState_0x90(u8 mapHit) {
     case 0x29:
         if (mStateTimer >= 0xA0) {
             if (mFlags & 0x10000) {
-                getShadowLinkFight_801C0D70()->fn_801C1224(mSerial);
+                getShadowLinkFight_801C0D70()->fn_801C1224(mLastAttacker_0x10c);
             }
             die_0x24();
         } else {

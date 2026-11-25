@@ -472,7 +472,7 @@ void VaatiBoss_804A4958::updateState_0x90(u8 mapHit) {
         }
         break;
     case 5:
-        if (field_0x5b0 == -1 || field_0x2a8[field_0x5b0].field_0x0 != 0 || !canTargetPlayer_801D0B44(field_0x5b0)) {
+        if (field_0x5b0 != -1 && (field_0x2a8[field_0x5b0].field_0x0 != 0 || !canTargetPlayer_801D0B44(field_0x5b0))) {
             field_0x5b0 = pickTarget(this);
             setState_801D5D84(5);
         } else if (mStateTimer >= field_0x250) {

@@ -1096,8 +1096,7 @@ void Ganon_804A25F0::update() {
                 getEmitterManager_8018A5F0()->forceDeleteEmitter(mEmitters[0]);
                 mEmitters[0] = NULL;
             }
-            fn_80196DF0();
-            fn_803B8C74(0);
+            fn_803B8C74(fn_80196DF0());
             mState = 15;
         }
         break;
@@ -1558,8 +1557,10 @@ void Ganon_804A25F0::update() {
             field_0x234[0] = 200;
             startSound_801F0E34(0x5001E, 0);
             mState = 37;
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 37:
         if (field_0x234[0] == 0 || lbl_8053AB90 == 1) {
             zeroVec_801546BC(&field_0x2b8);
@@ -1703,7 +1704,7 @@ void Ganon_804A25F0::update() {
                     if (findActorBySerial_8015445C(field_0x318[i]) == NULL) {
                         field_0x318[i] = -1;
                         field_0x264++;
-                        if (field_0x264 < 4) {
+                        if (field_0x264 >= 4) {
                             field_0x260 = 3;
                         }
                     }

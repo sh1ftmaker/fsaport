@@ -450,6 +450,14 @@ public:
     // clrlwi r4, r31, 24 (0x801CDE0C), which MWCC emits for a bool going to
     // an unsigned char parameter (a bool one takes it with mr).
     s32 updateHitReaction_801F3D94(u8 flag);
+    // The death effect for mHitType_0xfc, inlined in updateHitReaction_801F3D94:
+    // its two-effect path leaves past the id test (b to the code after the
+    // caller's block), an early return.
+    inline void spawnDeathEffect();
+    // The dust trail of the knock-back from `start` to mPos, inlined in
+    // updateHitReaction_801F3D94: its vectors lie below every local of the
+    // caller in the frame, as an inlined copy's locals do.
+    inline void spawnDustTrail(const JGeometry::TVec3f& start);
     // 0x801F52A4, called by die_0x24 (0x801F50FC). Drops items by
     // EnemyParam "dasu" (mParamDasu_0x18c): a chance per dasu, then one of eight
     // drops ('HART' / 'RUPY', count and spawn parameter) spawned at the

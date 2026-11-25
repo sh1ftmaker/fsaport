@@ -275,6 +275,8 @@ s32 ActorBase_804A5770::fn_801A5400(const JGeometry::TBox2f* box, JGeometry::TVe
         case 6:
             spawnEmitter_8013CC50(arrow->mLayer_0x4, &arrow->mPos, 0x117, 0, 1, NULL, NULL, true, 1.0f);
             spawnEmitter_8013CC50(arrow->mLayer_0x4, &arrow->mPos, 0x118, 0, 1, NULL, NULL, true, 1.0f);
+            // decomp 4d67253b0: case 6 is the Octorok rock; the original stores 1 at this + 0x230.
+            static_cast<OctorokRock_8049F5D8*>(this)->field_0x230 = 1;
             // fall through
         case 4:
             for (s32 i = 0; i < 4; i++) {

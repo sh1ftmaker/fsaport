@@ -47,6 +47,30 @@ s32 fn_803BAEF4(CARDFileInfo* file, void* dst1, void* dst2, u32 size1, u32 size2
 s32 fn_803BBF08(CARDFileInfo* file, void* src1, void* src2, u32 size1, u32 size2);
 s32 fn_803BAE68(CARDFileInfo* file);
 
+// CARDMount's result: like mapCardResult, but it tells whether the card is usable and has no case -4.
+static inline bool mountCard(CardMgr_804AFB48* self) {
+    switch (CARDMount(self->field_0x1ff4, lbl_80512180, NULL)) {
+    case -5:
+    case -128:
+        self->mState = 0xC;
+        return false;
+    case -3:
+        self->mState = 0;
+        return false;
+    case 0:
+    case -6:
+        if (CARDCheck(self->field_0x1ff4) == 0) {
+            return true;
+        }
+        self->mState = 7;
+        return false;
+    case -13:
+        self->mState = 6;
+        return false;
+    }
+    return false;
+}
+
 static inline bool mapCardResult(CardMgr_804AFB48* self, s32 result) {
     bool ok = false;
     switch (result) {
@@ -162,7 +186,7 @@ void CardMgr_804AFB48::fn_803B9F40() {
                 mState = 0xA;
             } else if (sectorSize != 0x2000) {
                 mState = 0xB;
-            } else if (mapCardResult(this, CARDMount(field_0x1ff4, lbl_80512180, NULL))) {
+            } else if (mountCard(this)) {
                 CARDFileInfo file;
                 bool exists;
                 s32 res = CARDOpen(field_0x1ff4, "gc4sword", &file);

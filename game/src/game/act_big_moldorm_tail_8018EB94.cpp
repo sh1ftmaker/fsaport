@@ -235,14 +235,14 @@ void BigMoldormTail_804A1FA0::draw() {
     PSMTXIdentity(mtx);
     setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x274, 0.0f), 0.5f);
     params.mMtx = mtx;
-    mPos = field_0x288[4];
+    mPos = field_0x288[3];
     mPos.z = z0;
     drawSprite_801F06F0("enemy_gc_sob.bin", 0x2A, &params, -1, 1.0f, 1.0f);
 
     PSMTXIdentity(mtx);
-    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, field_0x274, 0.0f), 0.5f);
+    setRotScaleMtx(mtx, JGeometry::TVec3f(0.0f, -field_0x274, 0.0f), 0.5f);
     params.mMtx = mtx;
-    mPos = field_0x288[5];
+    mPos = field_0x288[4];
     mPos.z = z0;
     drawSprite_801F06F0("enemy_gc_sob.bin", 0x2A, &params, -1, 1.0f, 1.0f);
 

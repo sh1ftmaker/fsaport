@@ -444,8 +444,8 @@ bool ActorBase_804A5770::updateBossDeath_0x2C(f32 x, f32 y, f32 scale) {
                                     3.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1() + 3.0f);
                 gem->mVel_0x3c = v;
             } else if (mActorId == 'BOIC') {
-                JGeometry::TVec3f v(2.0f - 4.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1(), 0.0f,
-                                    -5.0f);
+                JGeometry::TVec3f v(2.0f - 4.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1(), -5.0f,
+                                    0.0f);
                 gem->mVel_0x3c = v;
             } else {
                 JGeometry::TVec3f v(2.0f - 4.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1(),

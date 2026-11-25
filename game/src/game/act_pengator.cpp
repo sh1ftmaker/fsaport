@@ -40,17 +40,13 @@ void Pengator_804A1888::init() {
     field_0x240 = 0;
     field_0x244 = 0;
     field_0x248 = 0;
-    field_0x234 = 0;
-    field_0x238 = 0;
-    field_0x23c = 0;
+    field_0x234[0] = 0;
+    field_0x234[1] = 0;
+    field_0x234[2] = 0;
     mDir_0x98 = (s32)(3.99f * gGameRoot_8053AAF8->mRandom.get_ufloat_1());
     field_0x24c = mDir_0x98 << 2;
-    field_0x260 = 0.0f;
-    field_0x25c = 0.0f;
-    field_0x258 = 0.0f;
-    mVel_0x3c.z = 0.0f;
-    mVel_0x3c.y = 0.0f;
-    mVel_0x3c.x = 0.0f;
+    field_0x258.zero();
+    mVel_0x3c.zero();
     field_0xb0 = 0x11101;
     field_0xb8 = 1;
     field_0x195 = 1;
@@ -64,14 +60,9 @@ void Pengator_804A1888::checkPlayerContact_0x18() {
     ActorBase_804A5770::checkPlayerContact_0x18();
 }
 
-// FIXME: 96.97 %, missing/extra + reloc-name; behaviour drift.
-// What differs: (1) the (mDir_0x98 & 2) test's branch layout
-// (the original falls through into the y check, we branch to it), so the
-// near-check blocks shuffle; (2) the case 2 velocity stores are ordered
-// differently (0x254 reloaded, 0.3f and 5.0f hoisted above the stores); (3)
-// the tail's field_0x23c decrement goes through `this + 8` in the original
-// (addi r4, r29, 8; stw 0x234(r4)), which natural `-= 1` doesn't reproduce;
-// (4) several register choices (gGameRoot_8053AAF8 and the zero literal swap).
+// FIXME: 99.82 %, regalloc-only; behaviour clean.
+// What differs: register choices only (gGameRoot_8053AAF8 in the random
+// calls, the frame table index).
 void Pengator_804A1888::update() {
     // Entry copies: the box and the position's x, y are read before the calls.
     JGeometry::TBox2f box(mMapBox_0x80);
@@ -91,8 +82,8 @@ void Pengator_804A1888::update() {
         return;
     }
 
-    addCalc2_801F71A4(&mVel_0x3c.x, field_0x258, 0.1f, field_0x250);
-    addCalc2_801F71A4(&mVel_0x3c.y, field_0x25c, 0.1f, field_0x250);
+    addCalc2_801F71A4(&mVel_0x3c.x, field_0x258.x, 0.1f, field_0x250);
+    addCalc2_801F71A4(&mVel_0x3c.y, field_0x258.y, 0.1f, field_0x250);
     mPos += mVel_0x3c;
     fn_80212AC0()->fn_80212AF0(&mPos);
     damagePlayersInBox_801F2B7C(-100, -1, 1);
@@ -111,13 +102,13 @@ void Pengator_804A1888::update() {
 
     switch (field_0x230) {
     case 0:
-        field_0x234 = 0;
+        field_0x234[0] = 0;
         field_0x240 = 0;
         field_0xbc = 2;
         field_0x230 = 1;
         // fall through
     case 1:
-        if (field_0x23c == 0 && mDir_0x98 == outDir) {
+        if (field_0x234[2] == 0 && mDir_0x98 == outDir) {
             if (((!(mDir_0x98 & 2) && FABS(getPlayerPos_8023E724(outPlayer)->y - mPos.y) < 24.0f) ||
                  ((mDir_0x98 & 2) && FABS(getPlayerPos_8023E724(outPlayer)->x - mPos.x) < 24.0f)) &&
                 !fn_801F23BC(mLayer_0x4, &mPos, getPlayerPos_8023E724(outPlayer), &mMapBox_0x80, NULL, NULL, false)) {
@@ -125,14 +116,12 @@ void Pengator_804A1888::update() {
                 break;
             }
         }
-        if (moved || field_0x238 == 0) {
+        if (moved || field_0x234[1] == 0) {
             u8 flag = moved;
             if (moved || tile != 0x50) {
-                mVel_0x3c.z = 0.0f;
-                mVel_0x3c.y = 0.0f;
-                mVel_0x3c.x = 0.0f;
+                mVel_0x3c.zero();
             }
-            field_0x238 = (s32)(100.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 0x32;
+            field_0x234[1] = (s32)(100.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 0x32;
             if (!moved) {
                 if (gGameRoot_8053AAF8->mRandom.get_ufloat_1() < 0.7f) {
                     if (outDir != -1) {
@@ -142,7 +131,7 @@ void Pengator_804A1888::update() {
                         mDir_0x98 = outDir;
                     }
                 } else {
-                    field_0x234 = 8;
+                    field_0x234[0] = 8;
                     flag = 1;
                 }
             }
@@ -164,41 +153,29 @@ void Pengator_804A1888::update() {
         }
         switch (mDir_0x98) {
         case 0:
-            field_0x258 = 0.7f;
-            field_0x25c = 0.0f;
-            field_0x260 = 0.0f;
+            field_0x258.set(0.7f, 0.0f, 0.0f);
             break;
         case 1:
-            field_0x258 = -0.7f;
-            field_0x25c = 0.0f;
-            field_0x260 = 0.0f;
+            field_0x258.set(-0.7f, 0.0f, 0.0f);
             break;
         case 2:
-            field_0x258 = 0.0f;
-            field_0x25c = 0.7f;
-            field_0x260 = 0.0f;
+            field_0x258.set(0.0f, 0.7f, 0.0f);
             break;
         case 3:
-            field_0x258 = 0.0f;
-            field_0x25c = -0.7f;
-            field_0x260 = 0.0f;
+            field_0x258.set(0.0f, -0.7f, 0.0f);
             break;
         }
-        if (field_0x234 == 0) {
+        if (field_0x234[0] == 0) {
             field_0x24c = lbl_804A1808[mDir_0x98 * 4 + field_0x240];
-            field_0x234 = lbl_804A1848[mDir_0x98 * 4 + field_0x240];
+            field_0x234[0] = lbl_804A1848[mDir_0x98 * 4 + field_0x240];
             field_0x240++;
             field_0x240 &= 3;
         }
         break;
     case 2:
-        mVel_0x3c.z = 0.0f;
-        mVel_0x3c.y = 0.0f;
-        mVel_0x3c.x = 0.0f;
-        field_0x260 = 0.0f;
-        field_0x25c = 0.0f;
-        field_0x258 = 0.0f;
-        field_0x234 = 0;
+        mVel_0x3c.zero();
+        field_0x258.zero();
+        field_0x234[0] = 0;
         field_0x240 = 0;
         field_0x24c = mDir_0x98 + 0xc;
         startSound_801F0E34(0x400AB, 0);
@@ -208,36 +185,20 @@ void Pengator_804A1888::update() {
         }
         switch (mDir_0x98) {
         case 0:
-            field_0x258 = field_0x254;
-            field_0x25c = 0.0f;
-            field_0x260 = 0.0f;
-            mVel_0x3c.x = 0.3f * field_0x254;
-            mVel_0x3c.y = 0.0f;
-            mVel_0x3c.z = 5.0f;
+            field_0x258.set(field_0x254, 0.0f, 0.0f);
+            mVel_0x3c.set(0.3f * field_0x254, 0.0f, 5.0f);
             break;
         case 1:
-            field_0x258 = -field_0x254;
-            field_0x25c = 0.0f;
-            field_0x260 = 0.0f;
-            mVel_0x3c.x = -(0.3f * field_0x254);
-            mVel_0x3c.y = 0.0f;
-            mVel_0x3c.z = 5.0f;
+            field_0x258.set(-field_0x254, 0.0f, 0.0f);
+            mVel_0x3c.set(-(0.3f * field_0x254), 0.0f, 5.0f);
             break;
         case 2:
-            field_0x258 = 0.0f;
-            field_0x25c = field_0x254;
-            field_0x260 = 0.0f;
-            mVel_0x3c.x = 0.0f;
-            mVel_0x3c.y = 0.3f * field_0x254;
-            mVel_0x3c.z = 5.0f;
+            field_0x258.set(0.0f, field_0x254, 0.0f);
+            mVel_0x3c.set(0.0f, 0.3f * field_0x254, 5.0f);
             break;
         case 3:
-            field_0x258 = 0.0f;
-            field_0x25c = -field_0x254;
-            field_0x260 = 0.0f;
-            mVel_0x3c.x = 0.0f;
-            mVel_0x3c.y = -(0.3f * field_0x254);
-            mVel_0x3c.z = 5.0f;
+            field_0x258.set(0.0f, -field_0x254, 0.0f);
+            mVel_0x3c.set(0.0f, -(0.3f * field_0x254), 5.0f);
             break;
         }
         field_0xbc = 3;
@@ -251,35 +212,25 @@ void Pengator_804A1888::update() {
         if (mPos.z > 0.0f) {
             mVel_0x3c.z -= 1.0f;
         }
-        addCalc2_801F71A4(&field_0x258, 0.0f, 0.1f, rate);
-        addCalc2_801F71A4(&field_0x25c, 0.0f, 0.1f, rate);
+        addCalc2_801F71A4(&field_0x258.x, 0.0f, 0.1f, rate);
+        addCalc2_801F71A4(&field_0x258.y, 0.0f, 0.1f, rate);
         if (mPos.z <= 0.0f) {
-            break;
-        }
-        mVel_0x3c.z = 0.0f;
-        if (!moved) {
-            if (FABS(mVel_0x3c.x) >= 0.1f || field_0x258 >= 0.1f ||
-                FABS(mVel_0x3c.y) >= 0.1f || field_0x25c >= 0.1f) {
-                break;
+            mVel_0x3c.z = 0.0f;
+            if (moved || (FABS(mVel_0x3c.x) < 0.1f && field_0x258.x < 0.1f &&
+                          FABS(mVel_0x3c.y) < 0.1f && field_0x258.y < 0.1f)) {
+                mVel_0x3c.zero();
+                field_0x234[2] = (s32)(100.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 0x32;
+                field_0x230 = 0;
             }
         }
-        mVel_0x3c.z = 0.0f;
-        mVel_0x3c.y = 0.0f;
-        mVel_0x3c.x = 0.0f;
-        field_0x23c = (s32)(100.0f * gGameRoot_8053AAF8->mRandom.get_ufloat_1()) + 0x32;
-        field_0x230 = 0;
         break;
     }
     }
 
-    if (field_0x234 > 0) {
-        field_0x234 -= 1;
-    }
-    if (field_0x238 > 0) {
-        field_0x238 -= 1;
-    }
-    if (field_0x23c > 0) {
-        field_0x23c -= 1;
+    for (s32 i = 0; i < 3; i++) {
+        if (field_0x234[i] > 0) {
+            field_0x234[i]--;
+        }
     }
 }
 

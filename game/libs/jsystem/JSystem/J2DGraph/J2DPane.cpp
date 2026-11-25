@@ -445,12 +445,17 @@ void J2DPane::rotate(f32 f1)
     calcMtx();
 }
 
-// FIXME: FSA has a 0x30-byte J2DPane function here (0x8009611C, called from game
-// code) that stores its f32 argument to mAngleX/Y/Z by mRotationAxis, like
-// rotate(f32) without calcMtx(). No donor has it, so its name is unknown.
+// The angle about the pane's rotation axis (what rotate(f32) sets).
+// (decomp 2ce3a03d0; this used to fall off the end.)
 f32 J2DPane::getRotate() const
 {
-    // UNUSED FUNCTION
+    if (mRotationAxis == J2DROTATE_X) {
+        return mAngleX;
+    }
+    if (mRotationAxis == J2DROTATE_Y) {
+        return mAngleY;
+    }
+    return mAngleZ;
 }
 
 void J2DPane::clip(const JGeometry::TBox2f& bounds)

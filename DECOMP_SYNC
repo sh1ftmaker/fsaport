@@ -1,0 +1,9 @@
+matching 30761c6f1e713aa6919a77e55c27d8e9755ee90a
+
+The fsa-decomp commit (branch matching) whose behaviour changes the port has pulled.
+Update after each sync; see docs/PORTING.md, "Syncing with the decomp", and tools/decomp_sync.py.
+
+2026-11-25: cde64f65e..30761c6f1 (402 files, 769 commits): ~70 behaviour changes pulled
+(commits 0d45938, d210489, a738bd6, c1ec687). Harness castle and stage_1_0: identical to the
+pre-sync build; against the decomp's Dolphin runs as before (stage_1_0 804/808 + 4 within
+--ftol 1e-5; castle differs only in RNG advance counts within segments).

@@ -432,6 +432,7 @@ void Thief_804A5A30::updateState_0x90(u8 mapHit) {
 
     switch (mState) {
     case 0:
+    case 8:
         if (field_0x340 >= 0) {
             setState_80205E0C(1);
         } else if (field_0x338 >= 0) {
@@ -547,13 +548,11 @@ void Thief_804A5A30::updateState_0x90(u8 mapHit) {
             setState_80205E0C(0);
         }
         break;
-    case 8:
+    case 9:
         if (mapHit) {
             fn_801D11FC();
         }
         field_0x33c = field_0x374.fn_8021B904(field_0x33c, mapHit);
-        break;
-    case 9:
         break;
     }
 

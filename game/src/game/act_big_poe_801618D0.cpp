@@ -3,6 +3,7 @@
 #include "game/GameView.h"
 #include "game/Player.h"
 #include "game/act/tu_801F9484.h"
+#include "game/act/act_poe.h"
 #include "game/ActorManager.h"
 #include "game/Camera.h"
 #include "game/Effect.h"
@@ -414,9 +415,9 @@ void BigPoe_804A0440::update() {
         field_0x280 = 10.0f;
         field_0x278 = 0.2f;
         field_0x274 = 0.0f;
-        field_0x294[0] = field_0x294[3];
-        field_0x294[1] = field_0x294[4];
-        field_0x294[2] = field_0x294[5];
+        field_0x294[0] = field_0x294[6];
+        field_0x294[1] = field_0x294[7];
+        field_0x294[2] = field_0x294[8];
         field_0x230 = 6;
         // fall through
     case 6: {
@@ -463,9 +464,9 @@ void BigPoe_804A0440::update() {
         }
         break;
     case 9:
-        field_0x294[0] = field_0x294[3];
-        field_0x294[1] = field_0x294[4];
-        field_0x294[2] = field_0x294[5];
+        field_0x294[0] = field_0x294[6];
+        field_0x294[1] = field_0x294[7];
+        field_0x294[2] = field_0x294[8];
         lbl_8053AB58 = 1;
         field_0x27c = 0.2f;
         field_0x280 = 1.0f;
@@ -482,7 +483,7 @@ void BigPoe_804A0440::update() {
             ActorBase_804A5770* list[0x400];
             s32 count = getActorManager_801F856C()->collectActorsById_801F7818('POOH', mLayer_0x4, list, -1);
             for (s32 i = 0; i < count; i++) {
-                BigPoe_804A0440* pooh = static_cast<BigPoe_804A0440*>(list[i]);
+                Poe_8049F330* pooh = static_cast<Poe_8049F330*>(list[i]);
                 if (pooh != NULL) {
                     pooh->field_0x234 = 1;
                 }

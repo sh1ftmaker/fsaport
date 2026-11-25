@@ -27,7 +27,7 @@ void ShadowLink2_804A43E8::fn_801C6784() {
 // attack state (0x22, 0x25, 0x26) when close, or turns away and switches to 0x1C.
 void ShadowLink2_804A43E8::fn_801C6260() {
     f32 dist = getPlayerDistSq_801D0DA0(field_0x338, &mPos);
-    bool near = fn_801D183C(1.0f);
+    bool near = fn_801D183C(64.0f);
     bool notTarget = !fn_801CAED4(field_0x338);
     if (field_0x597 == 0 && near && notTarget && (field_0x524.field_0x0 & 0x10) && dist <= 900.0f) {
         setState_801C3B7C(0x22);

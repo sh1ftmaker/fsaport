@@ -264,7 +264,7 @@ void Fairy_804A03B8::update() {
         }
         field_0x26c = 5.0f;
         if (mCounters[2] == 0) {
-            field_0x274 = (s16)(JMath::atanTable_.atan2_(targetY - mPos.y, targetX - mPos.x) * 10430.378f);
+            field_0x274 = (s16)(10430.378f * JMath::atanTable_.atan2_(targetX - mPos.x, targetY - mPos.y));
             mCounters[2] = 4;
         }
         field_0x278 = field_0x26c * JMath::sincosTable_.sinShort(field_0x274);

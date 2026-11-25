@@ -63,6 +63,15 @@ public:
     // 0x80433718: follows GameView's field_0x131dc (bit 0x8000 = 'raised').
     void fn_80433718();
 
+    // The field_0xa4 entry of each array (TileMap_804AA858::fn_802FCE74 reads them
+    // with base + (index + offset) addressing).
+    const JGeometry::TVec3f& getField_0x40() const { return field_0x40[field_0xa4]; }
+    const JGeometry::TVec3f& getField_0x58() const { return field_0x58[field_0xa4]; }
+    f32 getField_0x70() const { return field_0x70[field_0xa4]; }
+    f32 getField_0x78() const { return field_0x78[field_0xa4]; }
+    f32 getField_0x80() const { return field_0x80[field_0xa4]; }
+    f32 getField_0x88() const { return field_0x88[field_0xa4]; }
+
     /* 0x04 */ J2DScreen* field_0x4[2];
     /* 0x0C */ J2DScreen* field_0xc;
     /* 0x10 */ J2DAnmTextureSRTKey* field_0x10[2]; // the screens' animations

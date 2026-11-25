@@ -13,6 +13,7 @@
 #include "game/ActorManager.h"
 #include "game/Effect.h"
 #include "game/Player.h"
+#include "game/VecEpsilon.h"
 
 static inline bool testBox(s32 layer, const JGeometry::TVec3f* pos, s32 serial, const u32* ignoreIds) {
     CollisionBoxes_8020D58C* boxes = fn_8020D58C();
@@ -1003,7 +1004,7 @@ void MovingHouse_804A7AE0::update() {
                 }
                 if ((field_0x244 != 1 || (field_0x2b6 == 1 && field_0x2b7 == 1)) &&
                     (fn_8023A30C() || hitActorId == 'BBMB') &&
-                    field_0x250.squared() <= 32.0f * JGeometry::TUtil<f32>::epsilon()) {
+                    field_0x250.isZero()) {
                     field_0x234 = 50;
                     bakeTiles();
                     field_0x230 = 3;
@@ -1020,7 +1021,7 @@ void MovingHouse_804A7AE0::update() {
                     }
                     break;
                 }
-                if (field_0x250.squared() <= 32.0f * JGeometry::TUtil<f32>::epsilon() && field_0x24c == 0 &&
+                if (field_0x250.isZero() && field_0x24c == 0 &&
                     field_0x2ac == 0) {
                     if (field_0x2b6 == 0) {
                         JGeometry::TVec3f p1 = mPos;
@@ -1104,7 +1105,7 @@ void MovingHouse_804A7AE0::update() {
                         ActorBase_804A5770* actor =
                             getActorManager_801F856C()->findActorBySerial_801F666C(mSerialsB[i]);
                         if (actor != NULL &&
-                            field_0x250.squared() > 32.0f * JGeometry::TUtil<f32>::epsilon()) {
+                            !field_0x250.isZero()) {
                             JGeometry::TBox2f b;
                             b.i.x = -10.0f;
                             b.i.y = -10.0f;
@@ -1154,7 +1155,7 @@ void MovingHouse_804A7AE0::update() {
                         fn_80298FC4();
                         fn_80298C18();
                     }
-                    if (field_0x250.squared() > 32.0f * JGeometry::TUtil<f32>::epsilon()) {
+                    if (!field_0x250.isZero()) {
                         if (field_0x244 == 1) {
                             if (mEmitters2[0] == NULL) {
                                 u16 effId;
@@ -1243,7 +1244,7 @@ void MovingHouse_804A7AE0::update() {
                         ActorBase_804A5770* actor =
                             getActorManager_801F856C()->findActorBySerial_801F666C(mSerialsB[i]);
                         if (actor != NULL &&
-                            field_0x250.squared() > 32.0f * JGeometry::TUtil<f32>::epsilon()) {
+                            !field_0x250.isZero()) {
                             JGeometry::TBox2f b;
                             b.i.x = -10.0f;
                             b.i.y = -10.0f;
@@ -1291,7 +1292,7 @@ void MovingHouse_804A7AE0::update() {
             }
             const JGeometry::TVec3f* pPos = fn_8023E7B0(field_0xc8);
             mPos.set(pPos->x, pPos->y, pPos->z);
-            if (!mPos.equals(field_0x238)) {
+            if (!epsilonEquals(mPos, field_0x238, JGeometry::TUtilf::epsilon())) {
                 for (s32 i = 0; i < 4; i++) {
                     if (!hasPlayerLeader_8022F514(i)) {
                         s32 v = (mSpawnParam_0x90 >> 7) & 0x1F;
@@ -1377,7 +1378,7 @@ void MovingHouse_804A7AE0::update() {
     }
     JGeometry::TVec3f delta = mPos;
     delta.sub(mPrevPos);
-    if (delta.squared() > 32.0f * JGeometry::TUtil<f32>::epsilon()) {
+    if (!delta.isZero()) {
         for (s32 i = 0; i < mSerialCountA; i++) {
             Warp_804A6DC8* warp =
                 (Warp_804A6DC8*)getActorManager_801F856C()->findActorBySerial_801F666C(mSerialsA[i]);

@@ -240,7 +240,7 @@ void BTINPC_804A927C::draw() {
         params.field_0x24 = 1;
         if (field_0x234 >= 0x1B && field_0x234 <= 0x1E) {
             PSMTXIdentity(mtx);
-            setRotScaleMtxS16(mtx, 0, 0, field_0x248, field_0x24c, field_0x250, field_0x254);
+            setRotScaleMtxS16(mtx, 0, field_0x248, 0, field_0x24c, field_0x250, field_0x254);
             params.mMtx = mtx;
         } else if (field_0x234 == 0x15) {
             params.field_0x2d = 1;

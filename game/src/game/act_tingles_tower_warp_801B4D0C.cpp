@@ -209,7 +209,7 @@ void TinglesTowerWarp_804A38D4::fn_801B56A0() {
                         fn_80230498(i, &field_0x264[i], 0x3F, 0xFF, -0x80, -0x80, true);
                     } else {
                         setPlayerFacing_80230BF4(i, angleToDir_801F681C((s32)(JMath::atanTable_.atan2_(-dx, -dy) * 10430.378f)));
-                        fn_802303FC(i, &field_0x264[i], true);
+                        fn_802303FC(i, &field_0x264[i], 0xFF);
                     }
                 } else {
                     done++;

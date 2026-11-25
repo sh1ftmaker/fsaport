@@ -195,9 +195,10 @@ void Dodongo_804A3334::fn_801ACFF4() {
     f32 centerY = (boxIY - boxFY) * 0.5f + boxFY;
 
     for (int i = 0; i < 4; i++) {
-        if (findOverlappingPlayer_801F285C(NULL, NULL, NULL, i) >= 0) {
+        s32 player = findOverlappingPlayer_801F285C(NULL, NULL, NULL, i);
+        if (player >= 0) {
             JGeometry::TVec2f center(centerX, centerY);
-            if (fn_80237948(0, &center)) {
+            if (fn_80237948(player, &center)) {
                 spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x117, 0, 1, NULL, NULL, true, 1.0f);
                 spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x118, 0, 1, NULL, NULL, true, 1.0f);
                 startSound_801F0E34(0x400D1, 0);
@@ -207,7 +208,7 @@ void Dodongo_804A3334::fn_801ACFF4() {
 
     switch (field_0x230) {
     case 0:
-        gAudioMgr_8053AF80->startBgm_80458FF0(0x10004, 0, 0);
+        gAudioMgr_8053AF80->startBgm_80458FF0(0x1000004, 0, 0);
         field_0x230 = 1;
         // fallthrough
     case 1:
@@ -498,7 +499,7 @@ void Dodongo_804A3334::fn_801ACFF4() {
                 const f32* p = &data[mDir_0x98 * 2];
                 mouthPos.x += f4 * p[0];
                 mouthPos.y += f4 * p[1];
-                if ((mDir_0x98 & 1) == 0) {
+                if ((mDir_0x98 & 2) == 0) {
                     mouthPos.y += 12.0f * f4;
                 }
                 addCalc2_801F71A4(&bombPos.x, mouthPos.x, 0.3f, 2.0f);

@@ -35,6 +35,7 @@ void OshinUnidentified_804AB528::init() {
         if (other->field_0x248 == field_0x248) {
             if (!isOutsideView_801F6758(&other->mPos, other->mLayer_0x4, 0.0f)) {
                 mAlive = false;
+                break;
             }
         }
     }
@@ -337,7 +338,7 @@ void OshinUnidentified_804AB528::draw() {
         void* res = gGameRoot_8053AAF8->field_0xa4->getResource('SOB ', "enemy_both2_sob.bin");
         gGameRoot2_8053AB10->field_0x20->drawSobSprite_802F86CC(&mPos, res, frame, &params, 1.0f, 1.0f);
     }
-    showGbaSprite_803075AC(mSerial, mLayer_0x4, &mPos, frame, 0, 2, -1, field_0x240 != 0, 0, 0);
+    showGbaSprite_803075AC(mSerial, mLayer_0x4, &mPos, field_0x234 + 0x141, field_0x240 != 0, 2, -1, false, 0, 0);
 }
 
 OshinUnidentified_804AB528::~OshinUnidentified_804AB528() {}

@@ -357,6 +357,8 @@ namespace JMath
     {
     public:
         TRandom_(u32 num) : T(num) {}
+
+        f32 get_ufloat(f32 max) { return this->get_ufloat_1() * max; }
     };
 }
 
@@ -446,6 +448,24 @@ inline f32 JMAFastSqrt(f32 x)
     return x;
 }
 #endif
+
+// JMAFastSqrt refined by one Newton step: tile_map_802F5040 fn_802FDDD4,
+// act_giant_generator_effect_802ED538. The original keeps frsqrte's result
+// in single precision (no frsp), as JMAFastSqrt's asm does. The name is ours.
+// (decomp 13231ec2b; __frsqrte is exact in the port, an estimate on Gekko.)
+inline f32 JMAFastSqrtNewton(f32 x)
+{
+    if (x > 0.0f)
+    {
+        f32 recip = __frsqrte(x);
+        x = recip * x;
+        recip = 3.0f - x * recip;
+        recip = recip * x;
+        recip = recip * 0.5f;
+        return recip;
+    }
+    return x;
+}
 
 void JMAEulerToQuat(s16, s16, s16, Quaternion *);
 void JMAQuatLerp(const Quaternion *, const Quaternion *, f32, Quaternion *);

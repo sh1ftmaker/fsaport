@@ -173,7 +173,7 @@ void OpeningNarration_8049E500::fn_80128728(int state) {
         fn_80119DD0()->field_0x1 = 0;
         GameView_804A9950* view = getGameView_802D6A9C();
         JGeometry::TBox2f box = view->mVisibleBox;
-        JGeometry::TVec3f pos(0.5f * (box.f.x - box.i.x) + box.i.x, 0.5f * (box.f.y - box.i.y) + box.i.y, 0.0f);
+        JGeometry::TVec3f pos(box.f.x + 0.5f * (box.i.x - box.f.x), box.f.y + 0.5f * (box.i.y - box.f.y), 0.0f);
         spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x33C, 1, 2, NULL, NULL, true, 1.0f);
         spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x33D, 1, 2, NULL, NULL, true, 1.0f);
         break;
