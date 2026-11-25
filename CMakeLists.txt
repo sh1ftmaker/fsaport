@@ -42,6 +42,13 @@ target_compile_options(fsa_game_flags INTERFACE
   # callers read it: fn_802340A0 lost the player's Link in the GBA views).
   # Write the return the original has (docs/PORTING.md, "Missing returns").
   -Werror=return-type
+  # Other undefined behaviour that MWCC's codegen happened to make work: a pointer
+  # to a dead local returned (clang dropped the stores), a local read on a path
+  # that never set it (MWCC read a caller's register), a function calling itself,
+  # an array indexed past its end onto the next field. docs/PORTING.md, "Other
+  # undefined behaviour".
+  -Werror=return-stack-address -Werror=sometimes-uninitialized
+  -Werror=infinite-recursion -Werror=array-bounds
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
 target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1 $<$<BOOL:${FSA_TRACE}>:FSA_PORT_TRACE=1> $<$<BOOL:${FSA_NO_AUDIO}>:FSA_PORT_NO_AUDIO=1>)
