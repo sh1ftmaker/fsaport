@@ -124,6 +124,18 @@ void GXCreateFrameBuffer(u32 width, u32 height);
  */
 void GXRestoreFrameBuffer(void);
 
+/**
+ * fsaport: between GXCreateFrameBuffer() and GXRestoreFrameBuffer(), read back this
+ * rect (native pixels) of the offscreen colour to the CPU once the frame is
+ * rendered, labelled `tag`. AuroraReadbackLatest copies the newest result (RGBA8,
+ * w * h * 4 bytes, when it fits in `capacity`) and its tag, and returns its
+ * serial, 0 while there is none. Results arrive a few frames late.
+ */
+void AuroraReadbackFrameBuffer(u32 left, u32 top, u32 wd, u32 ht, u32 tag);
+u32 AuroraReadbackLatest(u8* rgba, u32 capacity, u32* width, u32* height, u32* tag);
+/** fsaport: nonzero while a requested readback has not arrived yet. */
+u32 AuroraReadbackPending(void);
+
 #if __cplusplus
 }
 #endif

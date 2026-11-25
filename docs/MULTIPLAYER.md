@@ -11,11 +11,12 @@ the GBA link cable (`katamport/port/docs/MULTIPLAYER.md` §2). Below it, instead
 of a GBA, a native endpoint answers the game: no GBA emulator, no client
 program, only what the game checks, word by word.
 
-This document is four things: what the game does on the link (§1, read from
+This document is five things: what the game does on the link (§1, read from
 the decompilation: `game/src/game/tu_803006E8.cpp`, `tu_803099FC.cpp`,
 `tu_80301CD0.cpp`, `adv_entry_screen_803E1668.cpp`); the seam (§2); what is
-implemented and verified (§3); and the options for remote play, with a
-recommendation (§4). Open questions for the owner are in §5.
+implemented and verified (§3); each player's GBA screen, three approaches
+("GBA screen"); and the options for remote play, with a recommendation (§4).
+Open questions for the owner are in §5.
 
 Conventions: **verified** = run in this branch's build, with the run named;
 **read** = taken from the code without running it; **assumed** = neither.
@@ -188,15 +189,14 @@ int FsaGbaDetach(int chan);
   it at the latest `JUTGamePad::read` (hook in `platform/input.cpp`, after the
   harness), so keyboard, gamepads and the harness's four pads all drive GBAs,
   and lockstep runs stay deterministic. It feeds the native view.
-- **The native view** (`platform/gba_view.cpp`), first phase: a GBA memory
-  image per port (EWRAM, palette RAM, VRAM) with the files placed at their
-  addresses (Yaz0 decoded), the latest record decoded, and a 240 × 160 debug
-  picture: in a sub-area the BG files and the sprites as boxes and the player
-  marks; elsewhere a sheet of the tiles the GBA holds (BG and OBJ characters
-  with their palettes), which shows the data arrived intact.
+- **The native view** (`platform/gba_view.cpp`): a GBA memory image per port
+  (EWRAM, palette RAM, VRAM) with the files placed at their addresses (Yaz0
+  decoded), the latest record decoded, and the 240 × 160 GBA screen rebuilt
+  from them ("GBA screen", approach A).
 - **The page** (`platform/web/fsa_gba.js`): `?gba=N` plugs GBAs into ports
-  0..N-1 (`?gba=0,2` for a list), `?gbaview=0` hides the panel, `?gbaview=S`
-  scales it. Live keys for ports 2-4: IJKL/U/O/P, TFGH/R/Y/V, arrows/Numpad1-3
+  0..N-1 (`?gba=0,2` for a list), `?gbaview=0` hides the panel,
+  `?gbaview=native|gc|both` picks how it draws ("GBA screen"), `?gbascale=S`
+  (or `?gbaview=S`) scales it. Live keys for ports 2-4: IJKL/U/O/P, TFGH/R/Y/V, arrows/Numpad1-3
   (ORed with that port's gamepad). `window.fsaGba` has `attach(port, on)`
   (hot-plug), `link(port)`, `view(port)`, `memory(port, region, len)`,
   `dump()`.
@@ -212,10 +212,11 @@ int FsaGbaDetach(int chan);
 |---|---|
 | `platform/gba_link.{h,cpp}`: SDK GBA calls, endpoint, local peer, page exports | done |
 | `extern/aurora/lib/dolphin/si/si.cpp`: `SIProbe` hook | done |
-| `platform/gba_view.cpp`: files, Yaz0, records, debug picture | done (debug view only) |
+| `platform/gba_view.cpp`: files, Yaz0, records, the native GBA screen (approach A) | done for rooms ("GBA screen") |
+| `game/src/port/gba_gcview.cpp` + Aurora readback: the GameCube-drawn GBA screen (approach B) | done ("GBA screen") |
 | `platform/web/fsa_gba.js`: `?gba=`, keys for ports 2-4, panel | done |
 | harness: `"pad"` on script steps, entry-screen globals; `tools/harness_scripts/mp_{2,3,4}_stage_1_0.json` | done |
-| a native GBA picture as the client program draws it | **not done** (§5) |
+| the client's own screens (overworld, messages, HUD) | **not known** without the client (docs/GBA-CLIENT.md) |
 | a network peer, rooms | **not done**: the decision of §4 comes first |
 
 Runs (build of this branch, `tools/serve.py --diag logs/diag-mp`, own Chromium
@@ -246,9 +247,9 @@ screenshots in `logs/multiplayer/`):
 - **The data is right**: the OBJ tiles the game sends render as the GBA's
   sprites (Link, hearts, rupees, the font: `gba-obj-tiles.png`).
 
-Not verified: a sub-area view (no script yet walks a player into a house or
-cave, so no kind-5 record with `mValid` set and no room files have been seen);
-message records (10-12); unplugging and replugging mid-game (the code path
+Since verified ("GBA screen"): sub-area views (kind-5 records with `mValid`
+set, the room files 0x0600C000 / 0x0600E000), with
+`mp_2_stage_1_2_rooms.json`. Not verified: message records (10-12); unplugging and replugging mid-game (the code path
 exists: `fsaGba.attach(p, 0)`, the game's own timeouts and reprobe); Tetra's
 Trackers / Navi Trackers / Shadow Battle modes (`connect_screen_803F0A54.cpp`
 counts GBAs the same way; untested).
@@ -256,6 +257,170 @@ counts GBAs the same way; untested).
 Note: `fn_80300E1C` is a 72 % "behaviour drift" match in the decomp. The
 protocol above works through it as built; differences from the original that
 only show with a real GBA's timing (stalls, retries) would not show here.
+
+---
+
+## GBA screen: three approaches
+
+Each player's GBA screen (240 x 160) can be had three ways; the page shows
+the first two, switchable per panel. Verified runs: build of this branch,
+`tools/serve.py --diag logs/diag-gbav`, own Chromium (CDP 9369); run
+directories `logs/diag-gbav/<run>` and the shots in `logs/gba-screen/` of the
+main checkout.
+
+### Where a player sees their GBA screen
+
+The game shows a player on their GBA while they are in a sub-area (a house, a
+cave, the underground: player layer >= 8; the record's `mValid` is the layer
+- 7). `tools/harness_scripts/mp_2_stage_1_2_rooms.json` gets there: two
+players, stage 1-2 (a cave entrance two steps from the start, warp at
+(1216, 3496) -> layer 12, and a house below it, warp (1200, 3768) -> layer 9);
+player 1 walks into the cave, player 2 round the house and in at its door
+(verified: state stream, players' `mLayer_0x3b4` 12 and 9). Entering a room
+sends that GBA the room's two tile grids (0x0600C000 / 0x0600E000), which
+earlier runs had never seen.
+
+### (A) Native rebuild (`platform/gba_view.cpp`)
+
+The GBA memory image per port (files at their addresses) is drawn like a GBA:
+the room grid at 0x0600E000 as metatiles (bg_a_spl at 0x0203C000: four BG map
+entries each) of the stage's BG characters (0x06000000) and palettes,
+scrolled by the record's 9-bit scroll; the sprite table (each record's words
+replace the half its phase selects, as the GameCube's own copy does,
+`fn_803068D0`) and the four player marks, each the frame `id` of a "SOB "
+resource (6-byte GBA OAM entries; OBJ characters from VRAM 0x06010000 or the
+player sheet in EWRAM; OBJ palettes; flips, 2x, mirror, translucency, player
+colours); sorted by (kind key, y), the overlay grid 0x0600C000 between keys
+< 2 and >= 2. The rules are the GameCube's drawing of the same records
+(below); what neither the data nor the GameCube says is listed in
+[GBA-CLIENT.md](GBA-CLIENT.md) (the overworld screen, messages, the client's
+OBJ VRAM use, effects). On the overworld the rebuild shows the backdrop only.
+
+### (B) The GameCube's own drawing (`game/src/port/gba_gcview.cpp`)
+
+**The single-player path.** In single player, entering a house or cave makes
+the TV show a "Game Boy Advance SP" window with the room in GBA style. That is
+`GameRoot2_8049F108::fn_8013B618` -> `TileMap_804AA858::drawPlayerPanels_802FF0EC`
+-> `drawPlayerPanel_802FB69C(player, field_0x11c[player], rect, viewport,
+flag, count, alpha)`: an orthographic box of 240 x 160 GBA pixels (`rect`)
+into a TV viewport (`viewport`), drawing the room layers (`fn_802FAC10`), the
+sprite table and marks (`fn_8030275C`, `fn_803022C4`) of the player's record.
+It keys on **the record**: `field_0x11c[p]` is the GameCube's copy of the
+record it sends GBA `p` (`fn_802F53F4`, called from `fn_80304FB0` for every
+linked player, single or multi), and `fn_802FCE74` decides where (and
+whether) the TV shows it: in single player the big window (`field_0x7e` 0,
+player 0 only), in multiplayer small 48 x 48 corner views or nothing. So it
+can be driven per player without touching gameplay: the records exist for
+every linked player whatever the TV shows.
+
+**Reuse.** At the end of each game frame (`platform_frame_end`, before Aurora
+ends the frame) the hook draws, for each requested port whose current record
+is a room view, `drawPlayerPanel_802FB69C(p, field_0x11c[p], {0,0,240,160},
+{port's cell}, 1, 0, 0xFF)` into an Aurora offscreen framebuffer (2 x 2 cells
+of 240 x 160), and reads it back for the page (new in Aurora:
+`AuroraReadbackFrameBuffer` / `AuroraReadbackLatest` / `AuroraReadbackPending`,
+a `CopyTextureToBuffer` + `MapAsync` of the offscreen pass; one in flight, so
+the panels follow at the GPU's pace, a few frames late). The draw writes some
+game objects (the camera's view box and matrices in `fn_8030DD8C`, the
+player's line-shift state in `cls_804AA8D8::fn_8030B1E8`, TileMap queues), so
+the hook saves the TileMap, the camera and that object before and restores
+them after, byte for byte. Off unless the page asks (`fsa_gba_gcview(mask)`).
+In netplay the same pixels could go to that player's own screen.
+
+### The page
+
+`?gba=N&gbaview=native|gc|both` (default native); a button on each panel
+cycles the mode; `?gbascale=S` sets the size (`?gbaview=S` still works). In
+`gc` mode a port that is not in a room shows the native view (the GameCube
+draws rooms only). `?gbashots=1` logs a side-by-side shot of each port when
+its screen settles (overworld / room), `fsaGba.shot(p)` / `fsaGba.logShot(name,
+p)` on demand; `tools/gba_shots.py console.log DIR` writes them as PNGs. A shot
+compares the GameCube panel with the native screen **of the same frame** (the
+hook keeps the native rendering of each frame it draws).
+
+![the page: both players in rooms, each panel native | GameCube](multiplayer/gba-screen-panel-both.png)
+
+### A and B side by side (same frames)
+
+`mp_2_stage_1_2_rooms.json`, `?gba=2&gbaview=both&gbashots=1`, run
+`20261125-230416-qw10sern`. Each picture: native | GameCube | difference
+(magenta: a channel differs by more than 24).
+
+Cave (player 1, layer 12; read 1491; 10.3 % of pixels differ):
+![cave](multiplayer/gba-cave-native-gc-diff.png)
+
+House (player 2, layer 9; read 2440; 17.0 % differ):
+![house](multiplayer/gba-house-native-gc-diff.png)
+
+Overworld (player 2 at the start, read 1357): the GameCube draws nothing; the
+native screen is the backdrop (what the client shows here is not known):
+![overworld](multiplayer/gba-overworld-native.png)
+
+- **Structure matches**: the same room, layers, objects (pots, stools, bed,
+  fire place), the same sprites at the same places, the player's Link with
+  their colours, the cuccos that followed them in. (verified, the pictures)
+- **The colours differ by design**: the GBA is sent its own palettes
+  (`gb_cl_obj_base_scl`, the stage's GBA palette), the GameCube draws with
+  its own (`cu_cl_obj_base_scl`, `adjustChannel`) through RGB5A3 textures;
+  nearly all of the magenta is dark outline and shading colours mapping to
+  different values (e.g. native #945229 vs GameCube #b16f42), not misplaced
+  pixels.
+- **Spin**: a "turning" word (`field_0x3_3`, a cucco) is turned by the
+  GameCube's angle on one side and the rebuild's own on the other, so it can
+  face the other way.
+- **Messages**: no run of ours has produced a message record (kinds 10-12:
+  sent while that player's own message window is open,
+  `getMessageWindowState_8037F1E4(player) == 3`; talking to the girl at the
+  start of 1-2 opens the shared TV window instead, no GBA message). The
+  GameCube's panel never draws text either. Not compared.
+- **Dolphin**: not done. The decomp's harness (`harness_dolphin.py`) sets
+  `SIDevice0 = 6` (a standard controller) and has no GBA device or screen
+  capture; its Dolphin is built with mGBA (`USE_MGBA=ON`), but a GBA BIOS and
+  a harness change (SI device "GBA (integrated)", per-player GBA frame
+  dumps) would be needed, and the harness is read-only for us.
+
+### Gameplay does not change
+
+- **Without GBAs**: `stage_1_0.json` (`fast=1`, `nosave=1`) on this branch and
+  on the main build (`build/web` of the main checkout): sync 918/918, state
+  914/914 identical over 28,478 reads (runs `20261125-225222-2q0d0z9c`,
+  `20261125-225527-mslrfzh1`; the three deluxe entry-screen globals stripped,
+  as in §3).
+- **With GBAs, B on vs off**: `mp_2_stage_1_2_rooms.json` with
+  `gbaview=both&gbashots=1` and with `gbaview=native`: sync 97/97, state
+  92/92 identical over 4,424 reads (runs `20261125-225054-jn3wlf2v`,
+  `20261125-225135-i77c8h6i`).
+
+### A port bug found on the way (fixed): the player vanished from GBA views
+
+With the views working, neither showed the player's own Link in a room, and
+neither did single player's TV window (`sp-tv-gba-window-before-fix.png`).
+`cls_804AA8B8::fn_80306A94` places mark `fn_802340A0(i)` for each player `i`;
+`fn_802340A0` (`tu_8022AD64.cpp`) has no return for an inactive player: the
+original returns `r3` unchanged, i.e. `player` (the decomp notes this,
+"Missing final return"), while clang returns an undefined value (0 here), so
+every inactive player's hidden mark overwrote mark 0. Fixed under `FSA_PORT`
+(`return player;`). It is reached only by the record builder (records,
+the TV's GBA-style windows), so game state is unchanged (the comparisons
+above are with the fix). Single player's cave window now shows Link:
+
+![single player: the TV's GBA window, fixed](multiplayer/sp-tv-gba-window-fixed.png)
+
+### (C) Decompiling the client
+
+Not done here. Its location, format and the behaviours (A) guesses are in
+[GBA-CLIENT.md](GBA-CLIENT.md), a brief for the decomp session.
+
+### Which to use
+
+B is exact by construction for rooms (it is the game's own GBA-style drawing)
+and cheap to keep, but it needs the host's GPU, so it serves a host-side view
+(a TV corner, a streamed panel); it draws nothing on the overworld and no
+text. A runs anywhere the files and records go (a phone in netplay, §4 (b))
+and matches B's structure; its gaps are the client's own screens (overworld,
+messages, HUD), which only (C) can settle. Recommendation: A for the phones,
+B as the reference A is checked against (`gbaview=both`), and the decomp's
+client (C) to fill A's gaps.
 
 ---
 
@@ -343,8 +508,9 @@ unacceptable.
 
 Verified vs assumed for this recommendation: the record and file traffic and
 its sizes are measured (§3); that a GBA screen can be rebuilt from them
-natively is **assumed** (the tiles, palettes and records arrive intact; the
-client program's drawing rules are not yet known); the network latency
+natively is **verified for rooms** (the native rebuild matches the
+GameCube's own drawing of the same records, "GBA screen"; the overworld,
+message and HUD screens of the client are not known); the network latency
 behaviour is read from the code (the game reads keys, it never waits for
 them), not measured over a network.
 
@@ -353,14 +519,12 @@ them), not measured over a network.
 ## 5. Open questions for the owner
 
 1. **(a) or (b)?** §4 recommends (b), same-room first.
-2. **How faithful must the GBA screen be?** The client program
-   (`client_thread.bin`) is not decompiled. Options: (i) rebuild its drawing
-   from the data (BG files + scroll, sprite words + the `*_sob` definitions)
-   and check it against Dolphin's GBA screens; (ii) draw it with the game's own
-   GameCube-side renderer of the same records (`drawPlayerPanel_802FB69C`,
-   `fn_803022C4`), into a 240 × 160 target per player; (iii) decompile the
-   client program (ARM; a separate project). (ii) is the quickest picture,
-   (i) the most native.
+2. **How faithful must the GBA screen be?** All three tried ("GBA screen"):
+   (i) the native rebuild and (ii) the GameCube-drawn view both work for
+   rooms and agree in structure; (iii), the client's decompilation, is with
+   the decomp session (brief: GBA-CLIENT.md) and is what the overworld,
+   message and HUD screens need. Recommendation there: (i) for phones, (ii)
+   as its reference.
 3. **Player 1 on the TV device**: in a same-room session, should player 1 also
    be a phone, or the host's keyboard/pad with a GBA view on the TV corner?
    The game requires player 1 to be a GBA for multiplayer, which the endpoint
@@ -368,7 +532,8 @@ them), not measured over a network.
 4. **Single-player with a GBA** (`?gba=1`): the game then sends the GBA views
    for single-player too. Worth exposing (a phone as a second screen in
    single-player), or keep single-player on the pad only?
-5. **What the GBA shows on the overworld** (record `mValid` 0): to be checked
-   against Dolphin; the debug view shows a tile sheet there.
+5. **What the GBA shows on the overworld** (record `mValid` 0): not known
+   (the GameCube draws no panel then); the native rebuild shows the backdrop
+   until the client's decompilation says (GBA-CLIENT.md, item 1).
 6. The four-pad harness extension (`"pad"`) and the entry-screen globals are
    generic: forward them to main?

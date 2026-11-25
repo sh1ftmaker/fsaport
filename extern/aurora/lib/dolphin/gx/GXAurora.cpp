@@ -71,6 +71,19 @@ void GXCreateFrameBuffer(u32 width, u32 height) {
   aurora::gfx::begin_offscreen(width, height);
 }
 
+void AuroraReadbackFrameBuffer(u32 left, u32 top, u32 wd, u32 ht, u32 tag) {
+  aurora::gx::fifo::drain();
+  aurora::gfx::request_readback(aurora::gfx::ClipRect{static_cast<int32_t>(left), static_cast<int32_t>(top),
+                                                      static_cast<int32_t>(wd), static_cast<int32_t>(ht)},
+                                tag);
+}
+
+u32 AuroraReadbackPending(void) { return aurora::gfx::readback_pending() ? 1 : 0; }
+
+u32 AuroraReadbackLatest(u8* rgba, u32 capacity, u32* width, u32* height, u32* tag) {
+  return aurora::gfx::readback_latest(rgba, capacity, width, height, tag);
+}
+
 void GXRestoreFrameBuffer() {
   aurora::gx::fifo::drain();
   aurora::gfx::end_offscreen();
