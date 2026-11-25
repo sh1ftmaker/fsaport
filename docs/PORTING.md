@@ -17,8 +17,43 @@
   are the port's own (state invariants, scripted playthroughs, replays recorded
   in the port itself).
 - **Upstream keeps moving.** The decomp is still matching functions. This fork
-  is based on `cde64f65e` (the first commit here is that tree unmodified), so
-  upstream's improvements can be merged later by diffing the two.
+  is based on `cde64f65e` (the first commit here is that tree unmodified);
+  upstream's behaviour fixes are pulled by hand (below), and `DECOMP_SYNC`
+  records the decomp commit pulled up to.
+
+## Syncing with the decomp
+
+`DECOMP_SYNC` holds the decomp commit the port's game code is synced to (its
+`matching` branch, the only one to pull from: every commit there passed the
+decomp's checks and review; `grind2` and the worktrees under `fsa-wt/` can hold
+commits that publishing later refuses). A sync pulls the decomp's *behaviour*
+changes since then, not its matching work:
+
+1. `python3 tools/decomp_sync.py` writes `build/decomp-sync/`: the changed
+   files (`files.tsv`, with whether the port has changed each one and whether
+   a 3-way merge conflicts), the commits (`log.txt`), a first screen of hunks
+   whose literals changed (`screen.txt`: tags, constants, offsets) and 3-way
+   merge candidates (`merged/`, reference only).
+2. Read `git -C ../fsadecomp/fsa-decomp diff <DECOMP_SYNC> matching -- <file>`
+   for every file. Skip what only changes the generated code (register
+   allocation, independent statement order, renames, temporaries, inlining,
+   `bool`/`BOOL` with the same truthiness). Port by hand what changes
+   behaviour: resource and pane tags, constants and tables, which field is read
+   or written, branches and conditions, argument order, call targets, virtual
+   or not, signedness or width that changes arithmetic, newly written functions.
+   Commit subjects do not tell: grind commits ("match lane, grind") have carried
+   behaviour fixes (the map screen's `'Tmt01'` -> `'Tmmt01'`).
+3. Keep the port's adaptations: `FSA_TAG64("...")` for 5-8 character literals,
+   `BE<T>` / `be_read_*` for file data, the bit-field accessors,
+   `gc_f32_to_u16`, `gc_div_s32`, `#ifdef __MWERKS__` / `FSA_PORT` blocks.
+   The decomp's own portable bodies (`#else` of MWERKS-only asm) are compared
+   with the port's, not pulled. Layout changes of structs that the platform
+   layer overlays by offset (`JASDsp::TChannel` in `platform/audio_dsp.cpp`)
+   need the platform side changed with them.
+4. Check with the decomp's harness scripts (`castle`, `stage_1_0`; docs/HARNESS.md)
+   against a run of the previous build and against the decomp's Dolphin runs
+   (`harness_compare.py --anchor scene --ftol 1e-5`); then write the new
+   commit into `DECOMP_SYNC`.
 
 ## Toolchain and flags
 
