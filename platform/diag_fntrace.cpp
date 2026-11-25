@@ -53,6 +53,11 @@ constexpr unsigned kDistinct = 16;
 constexpr unsigned kCallers = 32;
 constexpr unsigned kScenes = 32;
 constexpr unsigned kMaxArgs = 27;
+constexpr unsigned kPtrArgs = 4;       // pointer arguments snapshotted per function
+constexpr unsigned kPtrSnap = 1024;    // their bytes per call (all of them)
+constexpr unsigned kStrMax = 64;       // C-string arguments: bytes read (NUL included)
+constexpr unsigned kStrDistinct = 32;
+constexpr unsigned kRetArg = 31;       // a "pointer argument" that is the result
 
 uint8_t g_sel[kSel];   // slot + 1 of the selected function, 0 = not selected
 uint64_t g_args[32];
@@ -133,6 +138,23 @@ struct Range {
   unsigned start, len;
 };
 
+// Distinct C-string argument values.
+struct StrStat {
+  char s[kStrDistinct][kStrMax];
+  uint32_t n[kStrDistinct];
+  uint8_t count, more;
+};
+
+// A pointer argument whose pointee is snapshotted at entry and exit
+// (`bytes` bytes, a multiple of 4) or read as a C string (at most `bytes`).
+struct PtrArg {
+  unsigned arg, bytes, off;  // wasm parameter index, size, offset in Call::pbuf
+  bool str;
+  uint64_t nulls;            // calls with a null / unreadable pointer
+  WordStat* words;           // bytes / 4 (not for strings)
+  StrStat* strs;
+};
+
 struct Fn {
   unsigned id, flags;   // 1 primary, 2 nested
   int req;
@@ -141,6 +163,8 @@ struct Fn {
   Range ranges[kRanges];
   unsigned nranges, snapLen;
   uint32_t globals;     // bit mask of g_globals
+  PtrArg ptrs[kPtrArgs];
+  unsigned nptrs, ptrLen;
   uint64_t calls, logged, untracked, nullThis;
   uint64_t sig;
   int sigSet;
@@ -164,6 +188,7 @@ unsigned g_nfns;
 
 struct Global {
   unsigned addr, size;
+  bool deref;  // a pointer variable: snapshot `size` bytes of what it points to
   char name[96];
 };
 Global g_globals[kGlobals];
@@ -180,7 +205,10 @@ struct Call {
   uint8_t snap[kSnap];
   uint8_t snapOk[kSnap / 8];  // bit per byte: inside the heap at entry
   uint8_t glob[kGlobSnap];
-  Call* outer;                // enclosing traced primary call
+  unsigned pptr[kPtrArgs];    // pointer argument values (0 = null / not readable)
+  unsigned pstrLen[kPtrArgs]; // C strings: bytes read (without the NUL)
+  uint8_t pbuf[kPtrSnap];     // the pointees at entry
+  Call* outer;               // enclosing traced primary call
 };
 Call g_calls[kCalls];
 Call* g_primary;              // innermost primary call in flight
@@ -243,14 +271,21 @@ NOINST void snapshot(const Fn& f, unsigned self, uint8_t* out, uint8_t* ok) {
   }
 }
 
+NOINST unsigned glob_base(const Global& gl) {
+  if (!gl.deref)
+    return gl.addr;
+  return readable(gl.addr, 4) ? *(const uint32_t*)(uintptr_t)gl.addr : 0;
+}
+
 NOINST void glob_snapshot(const Fn& f, uint8_t* out) {
   unsigned o = 0;
   for (unsigned g = 0; g < g_nglobals; g++) {
     if (!(f.globals & (1u << g)))
       continue;
     const Global& gl = g_globals[g];
+    unsigned base = glob_base(gl);
     for (unsigned k = 0; k < gl.size && o < kGlobSnap; k++, o++)
-      out[o] = readable(gl.addr + k, 1) ? *(const uint8_t*)(uintptr_t)(gl.addr + k) : 0;
+      out[o] = base && readable(base + k, 1) ? *(const uint8_t*)(uintptr_t)(base + k) : 0;
   }
 }
 
@@ -350,14 +385,16 @@ NOINST uint32_t word_at(const uint8_t* p) {
 
 // Snapshot words: ranges are rounded to 4 bytes at selection, so word w is
 // snapshot bytes 4w..4w+3 and lies in one range.
-NOINST void aggregate_this(Fn& f, const uint8_t* in, const uint8_t* out, const uint8_t* ok) {
-  if (!f.words)
+// ok == nullptr: every byte is valid.
+NOINST void aggregate_words(WordStat* words, unsigned nwords, const uint8_t* in, const uint8_t* out,
+                            const uint8_t* ok) {
+  if (!words)
     return;
-  for (unsigned w = 0; w < f.snapLen / 4; w++) {
+  for (unsigned w = 0; w < nwords; w++) {
     const unsigned o = 4 * w;
-    if (((ok[o >> 3] >> (o & 7)) & 15) != 15)
+    if (ok && ((ok[o >> 3] >> (o & 7)) & 15) != 15)
       continue;
-    WordStat& s = f.words[w];
+    WordStat& s = words[w];
     uint32_t a = word_at(in + o), b = word_at(out + o);
     bool first = !s.entry.count;
     if (first || (int32_t)a < s.emin) s.emin = (int32_t)a;
@@ -382,7 +419,125 @@ NOINST void aggregate_this(Fn& f, const uint8_t* in, const uint8_t* out, const u
   }
 }
 
-NOINST void emit_call(Fn& f, Call& c, const uint8_t* out, const uint8_t* globOut) {
+NOINST void aggregate_this(Fn& f, const uint8_t* in, const uint8_t* out, const uint8_t* ok) {
+  aggregate_words(f.words, f.snapLen / 4, in, out, ok);
+}
+
+// Reads pointer argument p's pointee at a into d (a C string: at most p.bytes - 1
+// characters and the NUL; *len = its length). Returns a, or 0 when unreadable.
+NOINST unsigned ptr_read(const PtrArg& p, unsigned a, uint8_t* d, unsigned* len) {
+  *len = 0;
+  if (p.str) {
+    unsigned n = 0;
+    if (a && readable(a, 1)) {
+      while (n + 1 < p.bytes && readable(a + n, 1) && *(const uint8_t*)(uintptr_t)(a + n))
+        n++;
+      memcpy(d, (const void*)(uintptr_t)a, n);
+    } else {
+      a = 0;
+    }
+    d[n] = 0;
+    *len = n;
+  } else if (a && readable(a, p.bytes)) {
+    memcpy(d, (const void*)(uintptr_t)a, p.bytes);
+  } else {
+    a = 0;
+    memset(d, 0, p.bytes);
+  }
+  return a;
+}
+
+// The pointer arguments at entry (pointees to c.pbuf) or exit (to `dst`, which
+// is laid out as c.pbuf). C strings are read at entry only. The result
+// (arg kRetArg) is read at exit only, into both buffers.
+NOINST void ptr_snapshot(const Fn& f, Call& c, uint8_t* dst, bool entry) {
+  for (unsigned k = 0; k < f.nptrs; k++) {
+    const PtrArg& p = f.ptrs[k];
+    uint8_t* d = dst + p.off;
+    unsigned len;
+    if (p.arg == kRetArg) {
+      if (entry) {
+        c.pptr[k] = 0;
+        c.pstrLen[k] = 0;
+        continue;
+      }
+      c.pptr[k] = ptr_read(p, sig_ret(c.sig) == 1 ? (unsigned)g_ret : 0, d, &len);
+      c.pstrLen[k] = len;
+      memcpy(c.pbuf + p.off, d, p.bytes);
+      continue;
+    }
+    if (entry) {
+      c.pptr[k] = ptr_read(p, p.arg < kMaxArgs ? (unsigned)c.args[p.arg] : 0, d, &len);
+      c.pstrLen[k] = len;
+    } else if (!p.str) {
+      ptr_read(p, c.pptr[k], d, &len);
+    }
+  }
+}
+
+NOINST void str_add(StrStat& s, const char* v) {
+  for (unsigned i = 0; i < s.count; i++)
+    if (!strcmp(s.s[i], v)) {
+      s.n[i]++;
+      return;
+    }
+  if (s.count < kStrDistinct) {
+    snprintf(s.s[s.count], kStrMax, "%s", v);
+    s.n[s.count++] = 1;
+  } else {
+    s.more = 1;
+  }
+}
+
+// The changed words of in -> out (len bytes, a multiple of 4): offsets in `this`
+// through f's ranges, or byte offsets in the pointee when f is null.
+NOINST void emit_diff(const uint8_t* in, const uint8_t* out, unsigned len, const Fn* f) {
+  ap("[");
+  bool any = false;
+  for (unsigned o2 = 0; o2 + 4 <= len; o2 += 4) {
+    uint32_t a = word_at(in + o2), b = word_at(out + o2);
+    if (a == b)
+      continue;
+    unsigned mask = 0;
+    for (int k = 0; k < 4; k++)
+      mask |= (in[o2 + k] != out[o2 + k]) << k;
+    ap("%s{\"off\":%u,\"mask\":%u,\"old\":\"0x%08x\",\"new\":\"0x%08x\",\"s32\":[%d,%d]", any ? "," : "",
+       f ? snap_off(*f, o2) : o2, mask, a, b, (int32_t)a, (int32_t)b);
+    if (plausible_f32(a) && plausible_f32(b)) {
+      float fa, fb;
+      memcpy(&fa, &a, 4);
+      memcpy(&fb, &b, 4);
+      ap(",\"f32\":[");
+      fmt_double(fa);
+      ap(",");
+      fmt_double(fb);
+      ap("]");
+    }
+    if (!(mask & 12))
+      ap(",\"lo16\":[%d,%d]", (int16_t)a, (int16_t)b);
+    if (!(mask & 3))
+      ap(",\"hi16\":[%d,%d]", (int16_t)(a >> 16), (int16_t)(b >> 16));
+    ap("}");
+    any = true;
+  }
+  ap("]");
+}
+
+NOINST void jstr(const uint8_t* p, unsigned n) {
+  ap("\"");
+  for (unsigned i = 0; i < n && !g_over; i++) {
+    uint8_t ch = p[i];
+    if (ch == '"' || ch == '\\')
+      ap("\\%c", ch);
+    else if (ch < 0x20 || ch >= 0x7f)
+      ap("\\u%04x", ch);
+    else
+      ap("%c", ch);
+  }
+  ap("\"");
+}
+
+NOINST void emit_call(Fn& f, Call& c, const uint8_t* out, const uint8_t* globOut, const uint8_t* pout) {
   char sc[128];
   line_start();
   ap("{\"seq\":%llu,", (unsigned long long)c.seq);
@@ -423,37 +578,33 @@ NOINST void emit_call(Fn& f, Call& c, const uint8_t* out, const uint8_t* globOut
         ap("\"}");
         o += f.ranges[r].len;
       }
-      ap("],\"diff\":[");
-      bool any = false;
-      for (unsigned w = 0; w < f.snapLen / 4; w++) {
-        unsigned o2 = 4 * w;
-        uint32_t a = word_at(c.snap + o2), b = word_at(out + o2);
-        if (a == b)
-          continue;
-        unsigned mask = 0;
-        for (int k = 0; k < 4; k++)
-          mask |= (c.snap[o2 + k] != out[o2 + k]) << k;
-        ap("%s{\"off\":%u,\"mask\":%u,\"old\":\"0x%08x\",\"new\":\"0x%08x\",\"s32\":[%d,%d]", any ? "," : "",
-           snap_off(f, o2), mask, a, b, (int32_t)a, (int32_t)b);
-        if (plausible_f32(a) && plausible_f32(b)) {
-          float fa, fb;
-          memcpy(&fa, &a, 4);
-          memcpy(&fb, &b, 4);
-          ap(",\"f32\":[");
-          fmt_double(fa);
-          ap(",");
-          fmt_double(fb);
-          ap("]");
-        }
-        if (!(mask & 12))
-          ap(",\"lo16\":[%d,%d]", (int16_t)a, (int16_t)b);
-        if (!(mask & 3))
-          ap(",\"hi16\":[%d,%d]", (int16_t)(a >> 16), (int16_t)(b >> 16));
-        ap("}");
-        any = true;
-      }
-      ap("]");
+      ap("],\"diff\":");
+      emit_diff(c.snap, out, f.snapLen, &f);
     }
+  }
+  if (f.nptrs) {
+    ap(",\"ptrs\":[");
+    for (unsigned k = 0; k < f.nptrs; k++) {
+      const PtrArg& p = f.ptrs[k];
+      ap("%s{\"arg\":%u,\"ptr\":\"0x%08x\"", k ? "," : "", p.arg, c.pptr[k]);
+      if (!c.pptr[k]) {
+        ap(",\"null\":1");
+      } else if (p.str) {
+        ap(",\"str\":");
+        jstr(c.pbuf + p.off, c.pstrLen[k]);
+        if (c.pstrLen[k] + 1 >= p.bytes)
+          ap(",\"cut\":1");
+      } else {
+        ap(",\"in\":\"");
+        hex(c.pbuf + p.off, p.bytes);
+        ap("\",\"out\":\"");
+        hex(pout + p.off, p.bytes);
+        ap("\",\"diff\":");
+        emit_diff(c.pbuf + p.off, pout + p.off, p.bytes, nullptr);
+      }
+      ap("}");
+    }
+    ap("]");
   }
   if (f.globals) {
     ap(",\"globals\":[");
@@ -466,7 +617,10 @@ NOINST void emit_call(Fn& f, Call& c, const uint8_t* out, const uint8_t* globOut
       unsigned n = gl.size;
       if (o + n > kGlobSnap)
         n = o < kGlobSnap ? kGlobSnap - o : 0;
-      ap("%s{\"name\":\"%s\",\"addr\":\"0x%08x\",\"in\":\"", first ? "" : ",", gl.name, gl.addr);
+      ap("%s{\"name\":\"%s\",\"addr\":\"0x%08x\",", first ? "" : ",", gl.name, gl.addr);
+      if (gl.deref)
+        ap("\"deref\":1,\"base\":\"0x%08x\",", glob_base(gl));
+      ap("\"in\":\"");
       hex(c.glob + o, n);
       ap("\",\"out\":\"");
       hex(globOut + o, n);
@@ -503,6 +657,8 @@ NOINST void emit_val(const ValStat& s, int kind) {
   }
   ap("}");
 }
+
+NOINST void emit_words(const WordStat* words, unsigned nwords, const Fn* f);
 
 NOINST void flush() {
   char sc[128];
@@ -552,30 +708,25 @@ NOINST void flush() {
       ap(",\"ranges\":[");
       for (unsigned r = 0; r < f.nranges; r++)
         ap("%s[%u,%u]", r ? "," : "", f.ranges[r].start, f.ranges[r].start + f.ranges[r].len);
-      ap("],\"words\":[");
-      bool first = true;
-      for (unsigned w = 0; w < f.snapLen / 4; w++) {
-        const WordStat& s = f.words[w];
-        if (!s.entry.count)
-          continue;
-        ap("%s{\"off\":%u,\"emin\":%d,\"emax\":%d", first ? "" : ",", snap_off(f, 4 * w), s.emin, s.emax);
-        first = false;
-        if (s.efset) {
-          ap(",\"efmin\":");
-          fmt_double(s.efmin);
-          ap(",\"efmax\":");
-          fmt_double(s.efmax);
-        }
-        ap(",\"entry\":[");
-        for (unsigned k = 0; k < s.entry.count; k++)
-          ap("%s[\"0x%08x\",%u]", k ? "," : "", (unsigned)s.entry.v[k], s.entry.n[k]);
-        ap("],\"entry_more\":%d", s.entry.more);
-        if (s.changed) {
-          ap(",\"changed\":%u,\"bytes\":[%u,%u,%u,%u],\"nmin\":%d,\"nmax\":%d,\"new\":[", s.changed, s.bytes[0],
-             s.bytes[1], s.bytes[2], s.bytes[3], s.nmin, s.nmax);
-          for (unsigned k = 0; k < s.next.count; k++)
-            ap("%s[\"0x%08x\",%u]", k ? "," : "", (unsigned)s.next.v[k], s.next.n[k]);
-          ap("],\"new_more\":%d", s.next.more);
+      ap("],\"words\":");
+      emit_words(f.words, f.snapLen / 4, &f);
+    }
+    if (f.nptrs) {
+      ap(",\"ptrs\":[");
+      for (unsigned k = 0; k < f.nptrs; k++) {
+        const PtrArg& p = f.ptrs[k];
+        ap("%s{\"arg\":%u,\"bytes\":%u,\"nulls\":%llu", k ? "," : "", p.arg, p.bytes, (unsigned long long)p.nulls);
+        if (p.str && p.strs) {
+          ap(",\"str\":1,\"strings\":[");
+          for (unsigned i = 0; i < p.strs->count; i++) {
+            ap(i ? ",[" : "[");
+            jstr((const uint8_t*)p.strs->s[i], strlen(p.strs->s[i]));
+            ap(",%u]", p.strs->n[i]);
+          }
+          ap("],\"more\":%d", p.strs->more);
+        } else if (p.words) {
+          ap(",\"words\":");
+          emit_words(p.words, p.bytes / 4, nullptr);
         }
         ap("}");
       }
@@ -589,6 +740,40 @@ NOINST void flush() {
   ap("{\"frame\":%u,\"functions\":%u,\"seq\":%llu,\"dropped\":%llu}", fsa_diag_frame(), g_nfns,
      (unsigned long long)g_seq, (unsigned long long)g_dropped);
   fsa_diag("fntrace_meta", g_line);
+}
+
+// Word statistics as a JSON list: offsets in `this` through f's ranges, or
+// byte offsets in a pointee when f is null.
+NOINST void emit_words(const WordStat* words, unsigned nwords, const Fn* f) {
+  ap("[");
+  bool first = true;
+  for (unsigned w = 0; w < nwords; w++) {
+    const WordStat& s = words[w];
+    if (!s.entry.count)
+      continue;
+    ap("%s{\"off\":%u,\"emin\":%d,\"emax\":%d", first ? "" : ",", f ? snap_off(*f, 4 * w) : 4 * w, s.emin,
+       s.emax);
+    first = false;
+    if (s.efset) {
+      ap(",\"efmin\":");
+      fmt_double(s.efmin);
+      ap(",\"efmax\":");
+      fmt_double(s.efmax);
+    }
+    ap(",\"entry\":[");
+    for (unsigned k = 0; k < s.entry.count; k++)
+      ap("%s[\"0x%08x\",%u]", k ? "," : "", (unsigned)s.entry.v[k], s.entry.n[k]);
+    ap("],\"entry_more\":%d", s.entry.more);
+    if (s.changed) {
+      ap(",\"changed\":%u,\"bytes\":[%u,%u,%u,%u],\"nmin\":%d,\"nmax\":%d,\"new\":[", s.changed, s.bytes[0],
+         s.bytes[1], s.bytes[2], s.bytes[3], s.nmin, s.nmax);
+      for (unsigned k = 0; k < s.next.count; k++)
+        ap("%s[\"0x%08x\",%u]", k ? "," : "", (unsigned)s.next.v[k], s.next.n[k]);
+      ap("],\"new_more\":%d", s.next.more);
+    }
+    ap("}");
+  }
+  ap("]");
 }
 
 bool g_hooked;
@@ -632,6 +817,9 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE unsigned fsa_ft_enter(unsigned id, unsign
     c->args[k] = g_args[k];
   c->callNo = f.calls++;
   c->log = c->callNo < f.cap || (f.every && (c->callNo - f.cap) % f.every == 0);
+  // flag 4 (nested "follow"): logged exactly when the enclosing primary call is
+  if ((f.flags & 4) && parent)
+    c->log = parent->log;
   // The callee has not pushed itself yet: the top of the shadow stack is the caller.
   c->caller = fsa_diag_caller(0);
   c->ctx = fsa_diag_context();
@@ -647,6 +835,18 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE unsigned fsa_ft_enter(unsigned id, unsign
   }
   if (f.globals)
     glob_snapshot(f, c->glob);
+  if (f.nptrs) {
+    ptr_snapshot(f, *c, c->pbuf, true);
+    for (unsigned k = 0; k < f.nptrs; k++) {
+      PtrArg& p = f.ptrs[k];
+      if (p.arg == kRetArg)
+        continue;
+      if (!c->pptr[k])
+        p.nulls++;
+      else if (p.str && p.strs)
+        str_add(*p.strs, (const char*)c->pbuf + p.off);
+    }
+  }
   for (unsigned k = 0; k < na; k++)
     val_add(f.args[k], arg_kind(sig, k), c->args[k]);
   // callers
@@ -703,9 +903,22 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_ft_exit(unsigned tok) {
   }
   if (f.globals)
     glob_snapshot(f, gout);
+  static uint8_t pout[kPtrSnap];
+  if (f.nptrs) {
+    ptr_snapshot(f, c, pout, false);
+    for (unsigned k = 0; k < f.nptrs; k++) {
+      PtrArg& p = f.ptrs[k];
+      if (p.arg == kRetArg && !c.pptr[k])
+        p.nulls++;
+      else if (p.arg == kRetArg && p.str && p.strs)
+        str_add(*p.strs, (const char*)c.pbuf + p.off);
+      if (c.pptr[k] && !p.str)
+        aggregate_words(p.words, p.bytes / 4, c.pbuf + p.off, pout + p.off, nullptr);
+    }
+  }
   if (c.log && !wasBusy) {
     f.logged++;
-    emit_call(f, c, out, gout);
+    emit_call(f, c, out, gout, pout);
   }
   if (f.flags & 1) {
     req_depth(f.req, -1);
@@ -736,7 +949,7 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_ft_defaults(unsigned cap, unsign
   g_defEvery = every;
 }
 
-// Select function `id`: flags 1 primary, 2 nested. this_bytes snapshots
+// Select function `id`: flags 1 primary, 2 nested (| 4: log a nested call exactly when its primary call is logged). this_bytes snapshots
 // [0, this_bytes) of `this`; this_mode -1 by signature, 0 never, 1 parameter 0.
 // cap/every 0xFFFFFFFF = default. Returns the slot, -1 when full.
 extern "C" NOINST EMSCRIPTEN_KEEPALIVE int fsa_ft_select(unsigned id, unsigned flags, unsigned thisBytes, int thisMode,
@@ -780,11 +993,38 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE int fsa_ft_add_range(int slot, unsigned s
   return 0;
 }
 
-extern "C" NOINST EMSCRIPTEN_KEEPALIVE int fsa_ft_add_global(unsigned addr, unsigned size, const char* name) {
+// Snapshot the pointee of wasm parameter `arg` (`this` included, as in the
+// records' `args`): `bytes` bytes at entry and exit, or with `str` a C string of
+// at most `bytes` - 1 characters at entry. arg 31 (kRetArg) is the i32 result,
+// read at exit. Returns 0, -1 when full.
+extern "C" NOINST EMSCRIPTEN_KEEPALIVE int fsa_ft_add_ptr_arg(int slot, unsigned arg, unsigned bytes, int str) {
+  if (slot < 0 || (unsigned)slot >= g_nfns || (arg >= kMaxArgs && arg != kRetArg))
+    return -1;
+  Fn& f = g_fns[slot];
+  if (str)
+    bytes = bytes < 2 ? kStrMax : bytes > kStrMax ? kStrMax : bytes;
+  else
+    bytes = (bytes + 3) & ~3u;
+  if (!bytes || f.nptrs >= kPtrArgs || f.ptrLen + bytes > kPtrSnap)
+    return -1;
+  PtrArg& p = f.ptrs[f.nptrs++];
+  p = PtrArg{};
+  p.arg = arg;
+  p.bytes = bytes;
+  p.off = f.ptrLen;
+  p.str = str != 0;
+  f.ptrLen += (bytes + 3) & ~3u;
+  return 0;
+}
+
+// deref: `addr` holds a pointer; the snapshot is `size` bytes at that pointer.
+extern "C" NOINST EMSCRIPTEN_KEEPALIVE int fsa_ft_add_global(unsigned addr, unsigned size, const char* name,
+                                                             int deref) {
   if (g_nglobals >= kGlobals)
     return -1;
   Global& g = g_globals[g_nglobals];
   g.addr = addr;
+  g.deref = deref != 0;
   g.size = size > 512 ? 512 : size;
   snprintf(g.name, sizeof(g.name), "%s", name);
   return (int)g_nglobals++;
@@ -802,6 +1042,13 @@ extern "C" NOINST EMSCRIPTEN_KEEPALIVE void fsa_ft_start(void) {
     Fn& f = g_fns[i];
     if (f.snapLen && !f.words)
       f.words = (WordStat*)calloc(f.snapLen / 4, sizeof(WordStat));
+    for (unsigned k = 0; k < f.nptrs; k++) {
+      PtrArg& p = f.ptrs[k];
+      if (p.str && !p.strs)
+        p.strs = (StrStat*)calloc(1, sizeof(StrStat));
+      else if (!p.str && !p.words)
+        p.words = (WordStat*)calloc(p.bytes / 4, sizeof(WordStat));
+    }
   }
   if (!g_hooked) {
     g_hooked = true;

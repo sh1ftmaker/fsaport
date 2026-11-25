@@ -9,8 +9,10 @@
 //
 // A request: {"functions": [sym | {"sym", "this_bytes", "this_ranges", "this",
 // "cap", "every"}], "this_bytes": N, "this_ranges": [[start, end], ...],
-// "globals": [name | {"name", "bytes"}], "nested": [sym | {...}],
-// "nested_this_bytes": N, "cap": N, "every": N, "scene": "...", "question": "..."}
+// "globals": [name | {"name", "bytes", "deref", "type"}], "nested": [sym | {..., "follow"}],
+// "nested_this_bytes": N, "ptr_args": [{"arg" (wasm parameter index or "ret"), "bytes", "str", "type"}],
+// "nested_ptr_args": [...],
+// "cap": N, "every": N, "scene": "...", "question": "..."}
 // or {"requests": [request, ...]} (a batch, all traced in one run). A sym is the
 // decomp's CodeWarrior symbol (fsa.diag.tsv column 2), the demangled name, or
 // "id:<n>". The resolution goes to the "fntrace_config" stream.
@@ -56,9 +58,29 @@ Module.fsaFntraceInit = async function () {
     }
     return data.get(name);
   };
+  // The decomp's symbol and the port's can differ in the parameter list (a
+  // parameter the port declares and the decomp's symbols.txt does not yet):
+  // without an exact match, a unique port symbol with the same name and class
+  // ("name__<len><class>", up to the F of the parameters) is taken.
+  const symPrefix = (s) => {
+    const i = s.indexOf('__', 1);
+    if (i < 0) return null;
+    let j = i + 2;
+    const m = /^(Q\d)?(\d+)/.exec(s.slice(j));
+    if (m && !m[1]) j += m[2].length + Number(m[2]);
+    else if (m && m[1]) return null;
+    if (s[j] === 'C') j++;
+    return s[j] === 'F' ? s.slice(0, j) : null;
+  };
   const resolve = (s) => {
-    if (/^id:\d+$/.test(s)) return [Number(s.slice(3))];
-    return bySym.get(s) || byName.get(s) || [];
+    if (/^id:\d+$/.test(s)) return { ids: [Number(s.slice(3))] };
+    const ids = bySym.get(s) || byName.get(s);
+    if (ids) return { ids };
+    const pre = symPrefix(s);
+    if (!pre) return { ids: [] };
+    const cand = [...bySym.keys()].filter((k) => symPrefix(k) === pre);
+    if (cand.length !== 1) return { ids: [], near: cand.slice(0, 8) };
+    return { ids: bySym.get(cand[0]), by_name: cand[0] };
   };
   const num = (v, d) => (v === undefined || v === null ? d : Number(v));
   const defCap = num(q.get('trace_cap'), 200), defEvery = num(q.get('trace_every'), 50);
@@ -73,27 +95,39 @@ Module.fsaFntraceInit = async function () {
       const d = await dataSym(name);
       if (!d) { diag({ req: ri, global: name, error: 'not in fsa.diag.data.tsv' }); continue; }
       const size = Math.min(num(g.bytes, d[1] || 4), 512);
-      const k = Module._fsa_ft_add_global(d[0], size, cstr(name));
+      const deref = typeof g === 'object' && !!g.deref;
+      const k = Module._fsa_ft_add_global(d[0], size, cstr(name), deref ? 1 : 0);
       globals.push(k);
-      diag({ req: ri, global: name, addr: d[0], size, index: k });
+      diag({ req: ri, global: name, addr: d[0], size, index: k, deref: deref || undefined, type: g.type });
     }
     const sel = (spec, flags) => {
       const o = typeof spec === 'string' ? { sym: spec } : spec;
-      const ids = resolve(o.sym);
-      if (!ids.length) { diag({ req: ri, sym: o.sym, kind: flags & 1 ? 'primary' : 'nested', error: 'no such function in fsa.diag.tsv' }); return; }
+      const res = resolve(o.sym), ids = res.ids;
+      if (!ids.length) {
+        diag({ req: ri, sym: o.sym, kind: flags & 1 ? 'primary' : 'nested', error: 'no such function in fsa.diag.tsv',
+               candidates: res.near });
+        return;
+      }
+      const ptrArgs = o.ptr_args || (flags & 1 ? r.ptr_args : r.nested_ptr_args) || [];
       const tb = num(o.this_bytes, flags & 1 ? num(r.this_bytes, 64) : num(r.nested_this_bytes, 0));
       const ranges = o.this_ranges || (flags & 1 ? r.this_ranges : r.nested_this_ranges) || [];
       const thisMode = o.this === true ? 1 : o.this === false ? 0 : -1;
       for (const id of ids) {
-        const slot = Module._fsa_ft_select(id, flags, tb, thisMode, num(o.cap, num(r.cap, 0xFFFFFFFF)) >>> 0,
+        const slot = Module._fsa_ft_select(id, flags | (o.follow ? 4 : 0), tb, thisMode, num(o.cap, num(r.cap, 0xFFFFFFFF)) >>> 0,
           num(o.every, num(r.every, 0xFFFFFFFF)) >>> 0, ri);
         if (slot < 0) { diag({ req: ri, sym: o.sym, id, error: 'too many functions selected' }); continue; }
         for (const [s, e] of ranges) Module._fsa_ft_add_range(slot, s, e);
         for (const g of globals) Module._fsa_ft_use_global(slot, g);
+        for (const p of ptrArgs) {
+          const bytes = num(p.bytes, p.str ? 64 : 4);
+          if (Module._fsa_ft_add_ptr_arg(slot, p.arg === 'ret' ? 31 : num(p.arg, 0), bytes, p.str ? 1 : 0) < 0)
+            diag({ req: ri, sym: o.sym, id, ptr_arg: p, error: 'pointer argument not added (at most 4, 1024 bytes)' });
+        }
         const t = ft.get(id);
         diag({ req: ri, sym: o.sym, id, slot, kind: flags & 1 ? 'primary' : 'nested', this_bytes: tb, this_ranges: ranges,
                instrumented: !!t, this_arg: t ? t.this : null, params: t ? t.params : null, result: t ? t.result : null,
-               declared: t ? t.declared : null, scene: r.scene, question: r.question });
+               declared: t ? t.declared : null, scene: r.scene, question: r.question,
+               ptr_args: ptrArgs.length ? ptrArgs : undefined, port_sym: res.by_name });
         if (!t) log(`${o.sym} (id ${id}) is not rewritten (no instrumentation or unsupported signature)`);
         total++;
       }
