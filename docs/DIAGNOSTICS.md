@@ -5,8 +5,8 @@ Runtime diagnostics for the decomp. Game code writes JSON lines with
 `tools/serve.py --diag DIR` stores them in `DIR/<run>/<name>.jsonl`, one run
 per page load.
 
-Two diagnostics builds exist: coverage, stub hits and the virtual dispatch
-audit (`-DFSA_DIAG=ON`) and uninitialised reads (`-DFSA_DIAG_UNINIT=ON`). Use a separate build directory for
+Two diagnostics builds exist: coverage, stub hits, the virtual dispatch
+audit and function traces (`-DFSA_DIAG=ON`) and uninitialised reads (`-DFSA_DIAG_UNINIT=ON`). Use a separate build directory for
 each; the normal build is unchanged when they are off.
 
 ## Coverage and stub hits (`coverage`, `scenes`, `stubs`)
@@ -425,6 +425,208 @@ game CPU per frame after the first 60 s: opening 2.01 -> 2.16 ms, stage 1
 machine. fsa.wasm grows from 9.09 to 9.40 MB; the edge table is 2.6 MB of
 static memory; a flush posts at most a few hundred KB (3 MB per 225 s run).
 
+
+## Function traces (`fntrace`)
+
+Runtime context for one function the decomp is decompiling: argument and
+result values, the fields of `this` it writes (and with what values), what
+it reads that varies, its callers and scenes. The functions are chosen when
+the page loads, with no rebuild. This is part of the `FSA_DIAG=ON` build. There
+is no extra flag; `-DFSA_DIAG_FNTRACE=OFF` leaves it out.
+
+### Design
+
+- **Rewrite** (`tools/fntrace_instrument.py`, the last POST_BUILD step, after
+  `vdispatch_instrument.py`; it keeps its input as `fsa.wasm.noft`). Every
+  instrumented function `id` (one whose body calls `__cyg_profile_func_enter`
+  with its own table index: 15609 in the current build) becomes:
+
+  ```
+  if (i32.load8_u(SEL + id)) { store params to ARGS[0..]; tok = fsa_ft_enter(id, sig) }
+  block (result T) <original body; every `return` becomes `br` to this block> end
+  if (tok) { store result to RET; fsa_ft_exit(tok) }
+  ```
+
+  `SEL` is a 128 KB byte table (one byte per table index) in
+  `platform/diag_fntrace.cpp`. With nothing selected, a call costs one byte
+  load and branch on entry and a local test on exit. `sig` is a constant
+  that packs the wasm signature (result kind, parameter kinds, up to 27
+  parameters) and which parameter is `this`. `this` is parameter 0 when the
+  Itanium name is a member and the function has one wasm parameter more than
+  it declares, or parameter 1 behind an sret pointer. The rewriter also
+  writes `fsa.diag.ft.tsv` (`id, this, wasm params, result, declared
+  parameter types`) and `fsa.diag.data.tsv` (`addr, size, name` of the data
+  symbols in `fsa.map`, for `globals`).
+- Rejected alternative: a second link step per request. It needs a rebuild
+  for every question, and the bit test is cheap enough (see Cost).
+- **Selection** (`platform/web/fsa_fntrace.js`, awaited before `main()`):
+  `?trace=URL` fetches the request. It maps each symbol through
+  `fsa.diag.tsv` (`sym` column, the demangled name, or `id:<n>`) and calls
+  `fsa_ft_select` / `fsa_ft_add_range` / `fsa_ft_add_global`. The page then
+  writes what it resolved, or why it could not, to `fntrace_config`.
+  `?trace_cap=N` and `?trace_every=N` set the sampling default.
+- **Per call** (`fsa_ft_enter` / `fsa_ft_exit`): every call of a selected
+  function is aggregated. Aggregates cover each argument and the result
+  (signed and unsigned min/max, float min/max, up to 16 distinct values with
+  counts), callers, scenes, and for each 4-byte word of the `this` snapshot:
+  the entry values (min/max, f32 range, 16 distinct values), how many calls
+  changed it, which of its bytes, and the new values. The first `cap` calls
+  (default 200) and then every `every`-th (default 50) are also written in
+  full. Memory reads are clipped to the wasm heap (`[1024, memory size)`).
+  Calls up to 64 deep are tracked; deeper ones are counted as `untracked`.
+- **Nested functions**: a request's `nested` list is traced only while one of
+  that request's primary functions is running (in any context). A nested
+  record's `parent` is the `seq` of that primary call, so values computed
+  inside the function (its callees' arguments and results) can be grouped
+  per call.
+
+### Request format
+
+```json
+{"functions": ["fn_802D4CCC__17GameView_804A9950Fl",
+               {"sym": "...", "this_bytes": 128, "this_ranges": [[9056, 9120]], "this": true,
+                "cap": 200, "every": 50}],
+ "this_bytes": 96,
+ "this_ranges": [[9056, 9120]],
+ "globals": ["lbl_8053AD08", {"name": "lbl_804DB798", "bytes": 512}],
+ "nested": ["getTile_802F9908__16TileMap_804AA858Fll"],
+ "nested_this_bytes": 0,
+ "cap": 200, "every": 50,
+ "offsets": "decomp",
+ "scene": "stage 1", "question": "..."}
+```
+
+or `{"requests": [request, ...]}` for a batch traced in one run.
+
+- `functions`: CodeWarrior symbols as in `symbols.txt`. Every port function
+  that maps to the symbol is selected (constructor/destructor variants).
+- `this_bytes` and `this_ranges`: which part of `this` to snapshot at entry
+  and exit (at most 4096 bytes and 8 ranges per function). The default for
+  `this_bytes` is the whole object.
+- `globals`: data symbols (at most 16 per run, 512 bytes each, 2048 per
+  call), snapshotted at entry and exit of the request's functions.
+- `this` overrides the signature guess: `false` means no snapshot, `true`
+  means parameter 0.
+- `offsets`: **request offsets are the decomp's**. `tools/fntrace_run.py`
+  translates them to the port's layout with `tools/fntrace_layout.py`. That
+  tool runs clang's record-layout dump over the unit that defines the
+  function and reads each field's decomp offset from its `_0xNNN` name.
+  `"offsets": "port"` skips the translation. The two layouts do differ: in
+  `TileMap_804AA858` everything from `mSpriteTexObjs_0xb5c` on sits 0x2D00
+  further in the port, because of Aurora's larger `GXTexObj`.
+  `tools/fntrace_layout.py --build build/diag --sym SYM` prints a class's
+  layout with both offsets.
+
+### Records
+
+- `fntrace` (one line per logged call):
+  - `seq` (the run's call number), `fn`, `fn_sym`, `fn_name`, `req`,
+    `call` (that function's call number), `n` (harness pad-read index),
+    `frame`, `ctx`, `scene`
+  - `caller`, `caller_sym`, `caller_name`: the innermost instrumented
+    function when it was called
+  - `parent` (nested only)
+  - `args` and `ret`: `{"t":"i32","v":-3,"x":"0xfffffffd"}`; f32/f64 with
+    `v` the float; i64 too
+  - `this` (the pointer)
+  - `snap`: `[{"off", "in", "out"}]`, hex in memory order per port range
+  - `diff`: per changed word `{"off", "mask"` (changed bytes)`, "old", "new",
+    "s32", "f32"` when plausible, `"lo16"`/`"hi16"` when only that half
+    changed`}`
+  - `globals`: `[{"name", "addr", "in", "out"}]`
+- `fntrace_agg` (per function, cumulative; the last line per `fn` wins):
+  - `calls` (traced), `logged`
+  - `entries` (instrumented entries, inlined copies included)
+  - `entries_in_parent` (nested: entries while a primary ran)
+  - `args`, `ret`, `callers`, `scenes`, `ranges`
+  - `words`: `off` (port offset), `emin`/`emax`/`efmin`/`efmax`/`entry`,
+    and `changed`/`bytes`/`nmin`/`nmax`/`new` when the word was written
+- `fntrace_meta` (per flush): `seq`, `dropped` (lines over 256 KB).
+
+Byte order: the game's own structs are in host (little-endian) order in the
+port, so the hex `02010000` is the u32 0x102. Data that the game keeps in
+file form stays big-endian.
+
+### Answering a decomp request end to end
+
+1. Build `build/diag` (`-DFSA_DIAG=ON`, see Build above). Copy `index.html`,
+   `touch.js`, `gputrace.js` and `disc-manifest.json` next to it. Start
+   `tools/serve.py --dir build/diag --diag logs/diag --iso ...` and a
+   Chromium with `--remote-debugging-port`.
+2. Find where the function runs: the `first_scene` of its symbol in a
+   coverage run (`coverage_by_sym.jsonl`) tells the stage. Read its source to
+   pick `this_ranges` for the fields it touches, and the callees worth
+   `nested`.
+3. Run `tools/fntrace_run.py REQUEST.json --stage S-L --seconds 150 --out DIR`.
+   For a stage, the default keys are the stage-start dialogue and the stick
+   held right; `--script` takes a harness script; with neither, the page
+   boots to the title. The script translates the offsets, serves the request
+   as `build/diag/req/<name>.json`, drives the page through
+   `tools/web_run.mjs`, then runs
+   `tools/fntrace_summary.py <run> --split DIR`.
+4. `DIR/<sym>.md` is the readable summary and `DIR/<sym>.jsonl` holds that
+   function's records. The summary gives:
+   - call count, callers and scenes
+   - each argument's range and distinct values, and whether they fit s16
+   - the `this` fields written: decomp offset, field name and type from the
+     layout, how many calls changed them, which bytes, entry and new values,
+     and a type guess (vtable pointer, heap or static pointer, f32, bool,
+     small int / enum, s16/u16)
+   - per-call deltas (timers and counters show as steps of ±1)
+   - the fields that vary but are not written, the constant words, and
+     the globals
+   Answer the question from it. Check `entries` against `calls`: entries the
+   wrapper did not see are inlined copies.
+
+### Cost
+
+Stage 1-0 with the stick held. The figure is game CPU per frame from the
+`[vi]` log, the mean from 70 s to 130 s, on a shared machine (load 12-20).
+One run each, so differences under about 1 ms are noise. The first
+nothing-selected run measured 6.77 ms; its repeat measured 5.42 ms.
+
+| configuration | ms/frame | fps |
+|---|---|---|
+| `fsa.wasm.noft` (the diag build without the rewrite) | 5.42 | 60 |
+| fntrace build, nothing selected | 5.42 | 60 |
+| `isPlayerActive_8023F264` (67 traced calls per frame; its other 4300 entries per frame are inlined) | 5.63 | 60 |
+| the 60 most-entered symbols, no `this`, `trace_every=0` (about 10 k traced calls per frame) | 6.20 | 60 |
+| batch 1 (5 requests, 13 functions, snapshots of up to 1.3 KB, 9 globals) | 5.56 | 60 |
+| `hasLeader_80240808` + `JKRHeap::find` with 256-byte `this` snapshots (3200 calls per frame, every 50th logged: 64 full records per frame) | 10.57 | 59.5 |
+
+With nothing selected the rewrite costs nothing measurable. A traced call
+is cheap. Logging a full record with large hex snapshots is not: for a hot
+function use `trace_every=0` or a large `every` (the aggregates still see
+every call) and small `this_ranges`. `fsa.wasm` grows from 9.42 to 10.38 MB.
+The static state is about 0.7 MB, and the per-word statistics are
+allocated at selection time.
+
+### Limits
+
+- Inlined copies are invisible: the wrapper only sees out-of-line calls.
+  Clang and wasm-opt inline small functions (e.g. `fn_802F5FF4(float)`,
+  `getScreenLayerMask_802D7AC4`). The summary says so when `entries` exceeds
+  `calls`. Trace the caller and snapshot what the inlined code touches
+  instead.
+- A write of the value a field already holds is not seen (snapshot diff).
+- Pointer arguments are recorded as addresses; the memory behind them is
+  not followed (use `globals` or the object's `this` snapshot).
+- The layout translation trusts the `_0xNNN` field names and the class of
+  the function's own unit. `this` of a derived class is snapshotted with the
+  base's ranges.
+- Calls from before the page's selection runs are not traced (none: the
+  selection happens before `main()`). Exits skipped by a coroutine that never
+  resumes leave their call slot in use.
+- At most 64 selected function ids per run, 64 calls in flight, 4096
+  `this` bytes per function, and 16 distinct values per statistic (`more`
+  marks overflow; min/max are always exact).
+- Globals are only analysed in the logged calls (no aggregate over all
+  calls), and their words are not named (no layout for data).
+- A stale `fsa.wasm` in the browser cache (for example after serving
+  `fsa.wasm.noft` from another directory) gives `calls: 0` with `entries`
+  growing. `touch build/diag/fsa.wasm`, or use a fresh profile.
+- What a run can show depends on the scene it reaches. Batch 1's
+  sword-level NPC stayed in state 0 for a whole stage-1 run.
 
 ## Uninitialised reads (`uninit`)
 

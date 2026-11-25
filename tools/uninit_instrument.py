@@ -203,13 +203,17 @@ def skip_memarg(d, i):
 
 LOADS = {0x28: 'i32', 0x29: 'i64', 0x2A: 'f32', 0x2E: 's16', 0x2F: 'u16'}
 
-def scan_body(d, i, end, on_load, on_call, on_indirect=None):
+def scan_body(d, i, end, on_load, on_call, on_indirect=None, on_ctrl=None):
     """Walk one function body's instructions. on_load(pos, op, memarg_end,
     align, offset); on_call(pos, op, target, after); on_indirect(pos, op,
     after) for call_indirect / return_call_indirect (also used by
-    tools/vdispatch_instrument.py)."""
+    tools/vdispatch_instrument.py); on_ctrl(pos, op) for the structured
+    control instructions block/loop/if/try/try_table, end, delegate and
+    return (tools/fntrace_instrument.py)."""
     while i < end:
         op = d[i]; p = i; i += 1
+        if on_ctrl and op in (0x02, 0x03, 0x04, 0x06, 0x0B, 0x0F, 0x18, 0x1F):
+            on_ctrl(p, op)
         if op <= 0x01 or op in (0x05, 0x0B, 0x0F, 0x19, 0x0A, 0xD1, 0xD3, 0xD4, 0x1A, 0x1B) or 0x45 <= op <= 0xC4:
             continue
         if op in (0x02, 0x03, 0x04, 0x06):
