@@ -3802,8 +3802,19 @@ void fn_8022E088(s32 player, s32 index, JGeometry::TVec3f* out) {
 }
 
 // The fallbacks return the address of a zeroed local (the original does: stfs 0.0f twice to
-// the frame, addi r3, r1).
+// the frame, addi r3, r1). The only caller (player_8023FBF0) reads x and y straight away, so
+// on the GameCube it read 0, 0 from the dead frame; under clang that read is undefined, so the
+// port returns a static zero vector instead.
 const JGeometry::TVec2f* fn_8022DFD4(s32 player) {
+#ifdef FSA_PORT
+    static const JGeometry::TVec2f zero(0.0f, 0.0f);
+    if (gPlayerManager_8053AC90 == NULL) {
+        return &zero;
+    }
+    if (!isPlayerActive_8023F264(player)) {
+        return &zero;
+    }
+#else
     if (gPlayerManager_8053AC90 == NULL) {
         JGeometry::TVec2f zero(0.0f, 0.0f);
         return &zero;
@@ -3812,6 +3823,7 @@ const JGeometry::TVec2f* fn_8022DFD4(s32 player) {
         JGeometry::TVec2f zero(0.0f, 0.0f);
         return &zero;
     }
+#endif
     return gPlayerManager_8053AC90->mPlayers[player]->fn_802422C4();
 }
 
