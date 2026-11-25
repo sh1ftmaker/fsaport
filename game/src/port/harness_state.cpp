@@ -299,8 +299,16 @@ extern "C" int fsa_harness_state(char* buf, int size, u32 n, const char* sync) {
 // at once), 6 "seed_on_stage" (when the next stage is built). Returns 0 for an
 // unknown id.
 extern "C" void fsa_harness_seed_on_stage(u32 seed);  // game_root_80134C04.cpp
+#if FSA_DIAG
+extern "C" int fsa_harness_diag_set(int id, double value);  // below
+#endif
 extern "C" int fsa_harness_set(int id, double value) {
     s32 v = (s32)value;
+#if FSA_DIAG
+    if (id >= 100) {
+        return fsa_harness_diag_set(id, value);
+    }
+#endif
     if (id == 5 && gGameRoot_8053AAF8 == NULL) {
         return 0;
     }
@@ -344,3 +352,229 @@ extern "C" int fsa_harness_global_value(int k, double* out) {
     *out = v;
     return 1;
 }
+
+#if FSA_DIAG
+// --- Diagnostic pokes (docs/HARNESS.md "Diagnostic pokes"), FSA_DIAG builds only -------
+// `set` keys with ids >= 100 (platform/web/fsa_harness.js DIAG_SETTABLE). They force game
+// states that a scripted run cannot reach (more players without GBAs, a faked GBA link, a
+// hit on an actor, a code path no caller takes), so that fntrace can see the paths. Normal
+// builds return 0 for them (the script's sync stream gets "set_ignored").
+#include "game/GbaClient.h"
+#include "game/Message.h"
+
+extern "C" void fsa_diag(const char* name, const char* json);
+extern "C" void fsa_harness_set_pads(u32 mask);  // platform/harness.cpp
+extern "C" u32 fsa_harness_reads();              // platform/harness.cpp
+
+// Bit 0: ActorBase::sweepMapBox_801F2618 passes flag = true (actor_base_801EE24C.cpp).
+extern "C" {
+u32 fsa_diag_force = 0;
+}
+
+namespace {
+u32 sPlayersOnStage = 0;  // the players mask (bits 0-3), applied at the next stage build
+s32 sKindsOnStage = -1;   // GameRoot field_0x83 then (-1: kind 2, a controller, per player)
+u32 sPads = 1;            // the ports the script connects (`pads`)
+u32 sGbaLink = 0;         // GBA clients forced to look linked at every pad read
+u32 sB9cMask = 0;         // players whose field_0xb9c is held set at every pad read
+s32 sTarget = -1;         // actor target: a slot (0..255) or an ActorId four-character code
+s32 sHitType = 0;
+s32 sHitStrength = 1;
+s32 sHitDy = 16;          // takeHit's `from` = the actor's position + (0, dy, 0)
+s32 sMsgWindow = 0;
+
+void poke_log(const char* what, s32 a, s32 b, s32 c) {
+    char line[160];
+    snprintf(line, sizeof(line), "{\"n\":%u,\"poke\":\"%s\",\"a\":%d,\"b\":%d,\"c\":%d}", fsa_harness_reads(), what,
+             (int)a, (int)b, (int)c);
+    fsa_diag("harness_poke", line);
+}
+
+// Calls f on every live actor sTarget names; returns how many.
+template <class F> int each_target(F f) {
+    GameRootSub04_801F856C* sub = stage_sub();
+    if (sub == NULL || sub->mActorManager == NULL || sTarget == -1) {
+        return 0;
+    }
+    ActorManager_804A5800* am = sub->mActorManager;
+    int n = 0;
+    for (s32 i = 0; i < am->getActorEnd(); i++) {
+        ActorBase_804A5770* a = am->getActor(i);
+        if (a == NULL || !a->mAlive) {
+            continue;
+        }
+        if (sTarget >= 0 && sTarget < 256 ? i != sTarget : a->mActorId != (u32)sTarget) {
+            continue;
+        }
+        f(i, a);
+        n++;
+    }
+    return n;
+}
+
+// Every message of the loaded BMG that starts with a conditional command
+// (fn_80383E2C's list): index, id, command, the command's bytes.
+int msg_scan() {
+    if (lbl_8053AD78 == NULL || lbl_8053AD78->mBmg == NULL) {
+        return 0;
+    }
+    MessageInf1_804AF070* inf1 = &lbl_8053AD78->mBmg->inf1;
+    u32 count = inf1->count;
+    int found = 0;
+    for (u32 i = 0; i < count; i++) {
+        u8 command;
+        const char* p = fn_80383E2C(i, &command);
+        if (p == NULL) {
+            continue;
+        }
+        char hex[2 * 40 + 1];
+        int len = (u8)p[1];
+        if (len > 40) {
+            len = 40;
+        }
+        for (int k = 0; k < len; k++) {
+            snprintf(hex + 2 * k, 3, "%02x", (u8)p[k]);
+        }
+        hex[2 * len] = '\0';
+        char line[200];
+        snprintf(line, sizeof(line), "{\"n\":%u,\"index\":%u,\"id\":%u,\"command\":%u,\"bytes\":\"%s\"}",
+                 fsa_harness_reads(), i, (unsigned)(u16)inf1->entries[i].id, command, hex);
+        fsa_diag("harness_msg", line);
+        found++;
+    }
+    poke_log("msg_scan", (s32)count, found, 0);
+    return 1;
+}
+}  // namespace
+
+extern "C" u32 fsa_harness_players_on_stage(u8* kinds) {
+    u32 m = sPlayersOnStage;
+    if (m != 0) {
+        u8 k = 0;
+        for (int i = 0; i < 4; i++) {
+            if ((m >> i) & 1) {
+                k |= (u8)(2 << (2 * i));
+            }
+        }
+        *kinds = sKindsOnStage >= 0 ? (u8)sKindsOnStage : k;
+    }
+    sPlayersOnStage = 0;
+    return m;
+}
+
+// The GBA-client pokes (`pads`, `gba_link`): at every pad read and again at the top of
+// cls_804AA8C8::pollInputs_8030A43C (tu_803099FC.cpp, FSA_DIAG), because the client thread,
+// woken by the previous poll's message, may run in between and undo them.
+extern "C" void fsa_harness_diag_clients() {
+    for (int i = 1; i < 4; i++) {
+        // A port the script connects (`pads`) and no GBA is linked on: the client's SI type
+        // a standard controller, as SIProbe gives on the console (the port's SIProbe answers
+        // only for a keyboard- or gamepad-bound port), so pollInputs_8030A43C reads its pad.
+        GbaClient_803007D0& c = lbl_804DB798[i];
+        if (((sPads >> i) & 1) && !((sGbaLink >> i) & 1) && c.mState == 0) {
+            c.mState = 0x09000000;  // SI_GC_CONTROLLER
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        if (!((sGbaLink >> i) & 1)) {
+            continue;
+        }
+        // What cls_804AA8C8::pollInputs_8030A43C and fn_8030A308 take for a linked GBA:
+        // state 0x40000, no error, linked, a key word received, the client thread idle.
+        GbaClient_803007D0& c = lbl_804DB798[i];
+        c.mState = 0x40000;
+        c.field_0xd3 = 0;
+        c.field_0xd8 = 1;
+        c.field_0xd6 = 1;
+        c.field_0xd1 = 0;
+        c.field_0xdc = 0;
+        // No key pressed; the top byte 2 acknowledges every file transfer (fn_80304FB0 waits
+        // for client->mKeys >> 24 == 2 after a transfer's last words); the low byte is the
+        // CRC of bytes 1 and 2.
+        u32 keys = 0x02000000;
+        c.mKeys = keys | fn_803006E8(((keys & 0xFF0000) >> 16) | (keys & 0xFF00));
+    }
+}
+
+// Every pad read in script mode (platform/harness.cpp), after the script's step.
+extern "C" void fsa_harness_diag_tick(u32 n) {
+    (void)n;
+    fsa_harness_diag_clients();
+    if (sB9cMask != 0 && gPlayerManager_8053AC90 != NULL) {
+        for (int i = 0; i < 4; i++) {
+            Player_804A6F38* pl = gPlayerManager_8053AC90->mPlayers[i];
+            if (pl != NULL && ((sB9cMask >> i) & 1)) {
+                pl->field_0xb9c = true;
+            }
+        }
+    }
+}
+
+extern "C" int fsa_harness_diag_set(int id, double value) {
+    s32 v = (s32)(s64)value;
+    switch (id) {
+    case 100: sPlayersOnStage = (u32)v & 0xF; break;        // players_on_stage
+    case 101: sKindsOnStage = v; break;                     // kinds_on_stage (field_0x83)
+    case 102: fsa_harness_set_pads((u32)v); sPads = (u32)v & 0xF; break;  // pads
+    case 103: sGbaLink = (u32)v & 0xF; break;               // gba_link
+    case 104: fsa_diag_force = (u32)v; break;               // force
+    case 110: sTarget = v; break;                           // target
+    case 111: sHitType = v; break;                          // hit_type
+    case 112: sHitStrength = v; break;                      // hit_strength
+    case 113: sHitDy = v; break;                            // hit_dy
+    case 114: {                                             // hit (attack)
+        int k = each_target([&](s32 slot, ActorBase_804A5770* a) {
+            JGeometry::TVec3f from(a->mPos.x, a->mPos.y + (f32)sHitDy, a->mPos.z);
+            bool r = a->takeHit_801F37AC(v, &from, sHitStrength, sHitType, 0);
+            poke_log("hit", slot, (s32)a->mActorId, r);
+        });
+        return k > 0;
+    }
+    case 115: {                                             // shake: fn_801F3780(v)
+        int k = each_target([&](s32 slot, ActorBase_804A5770* a) {
+            a->fn_801F3780(v);
+            poke_log("shake", slot, (s32)a->mActorId, v);
+        });
+        return k > 0;
+    }
+    case 116: {                                             // kill: fn_801A3C50(player v)
+        int k = each_target([&](s32 slot, ActorBase_804A5770* a) {
+            a->fn_801A3C50(v);
+            poke_log("kill", slot, (s32)a->mActorId, v);
+        });
+        return k > 0;
+    }
+    case 117: {                                             // layer: mLayer_0x4 = v
+        int k = each_target([&](s32 slot, ActorBase_804A5770* a) {
+            poke_log("layer", slot, (s32)a->mActorId, a->mLayer_0x4);
+            a->mLayer_0x4 = v;
+        });
+        return k > 0;
+    }
+    case 120:                                               // player_b9c (mask)
+        if (gPlayerManager_8053AC90 != NULL) {
+            for (int i = 0; i < 4; i++) {
+                Player_804A6F38* pl = gPlayerManager_8053AC90->mPlayers[i];
+                if (pl != NULL && ((sB9cMask >> i) & 1) && !((v >> i) & 1)) {
+                    pl->field_0xb9c = false;
+                }
+            }
+        }
+        sB9cMask = (u32)v & 0xF;
+        break;
+    case 130: return msg_scan();                            // msg_scan
+    case 131: sMsgWindow = v; break;                        // msg_window
+    case 132: {                                             // msg_eval: fn_80383EB0(window, index v)
+        if (lbl_8053AD78 == NULL || lbl_8053AD78->mBmg == NULL) {
+            return 0;
+        }
+        u32 r = fn_80383EB0(sMsgWindow, (u32)v);
+        poke_log("msg_eval", sMsgWindow, v, (s32)r);
+        return 1;
+    }
+    default: return 0;
+    }
+    poke_log("set", id, v, 0);
+    return 1;
+}
+#endif  // FSA_DIAG

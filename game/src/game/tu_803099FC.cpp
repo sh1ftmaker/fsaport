@@ -83,7 +83,13 @@ s32 getPlayerInputSlot_8030AAF4(s32 player) {
 // subf; srwi.) as main in tu_801344C0 does, where we emit cmplwi 4; and the target does not mask
 // fn_803006E8's result at the call (ours clrlwi), which suggests it returns a 32-bit value.
 // 0x8030A43C
+#if FSA_DIAG
+extern "C" void fsa_harness_diag_clients();  // game/src/port/harness_state.cpp (harness pokes)
+#endif
 void cls_804AA8C8::pollInputs_8030A43C() {
+#if FSA_DIAG
+    fsa_harness_diag_clients();
+#endif
     s32 i;
     for (i = 0; i < 4; i++) {
         field_0x14[i] = field_0x4[i];

@@ -669,6 +669,10 @@ allocated at selection time.
   growing. `touch build/diag/fsa.wasm`, or use a fresh profile.
 - What a run can show depends on the scene it reaches. Batch 1's
   sword-level NPC stayed in state 0 for a whole stage-1 run.
+  Paths that scripted play does not reach can be forced with the harness
+  diagnostic pokes (docs/HARNESS.md, "Diagnostic pokes": more players, faked
+  GBA links, hits on actors, forced flags, direct calls of the message
+  mapper); `tools/harness_scripts/batch3/` has the scripts of batch 3.
 
 ## Uninitialised reads (`uninit`)
 

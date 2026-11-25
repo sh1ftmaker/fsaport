@@ -1,0 +1,531 @@
+{
+ "version": 1,
+ "comment": "batch 3: player 0 on a controller, players 1-3 on faked linked GBAs (gba_link 14), stage 1-0",
+ "steps": [
+  {
+   "comment": "diagnostic pokes before the stage builds",
+   "set": {
+    "players_on_stage": 15,
+    "kinds_on_stage": 86,
+    "pads": 1,
+    "gba_link": 14
+   }
+  },
+  {
+   "wait": {
+    "mode": 7
+   },
+   "timeout": 6000
+  },
+  {
+   "wait_reads": 300
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "hold": [
+    "A"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 36
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 90
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 120
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    90,
+    90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "stick": [
+    -90,
+    -90
+   ],
+   "reads": 60
+  },
+  {
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "end": true
+  }
+ ]
+}

@@ -1684,12 +1684,30 @@ static u64 sFsaSeedOnStage = 0;
 extern "C" void fsa_harness_seed_on_stage(u32 seed) { sFsaSeedOnStage = (u64)seed | (1ull << 32); }
 #endif
 
+#if FSA_DIAG
+extern "C" u32 fsa_harness_players_on_stage(u8* kinds);  // game/src/port/harness_state.cpp
+#endif
+
 void GameRoot_8049EF20::createModeScreen_80135020(s32 mode) {
 #ifdef FSA_PORT
     if (mode == 7 && (sFsaSeedOnStage >> 32) != 0) {
         mRandom.setSeed((u32)sFsaSeedOnStage);
         OSReport("[harness] seed 0x%08x applied at stage build\n", (u32)sFsaSeedOnStage);
         sFsaSeedOnStage = 0;
+    }
+#endif
+#if FSA_DIAG
+    // Harness diagnostic poke "players_on_stage" (docs/HARNESS.md "Diagnostic pokes"):
+    // the players taking part, set before the stage builds.
+    if (mode == 7) {
+        u8 kinds;
+        u32 players = fsa_harness_players_on_stage(&kinds);
+        if (players != 0) {
+            mPlayerMask = (u8)((players & 0xF) | ((players & 0xF) << 4));
+            field_0x83 = kinds;
+            OSReport("[harness] players 0x%x (mask 0x%02x, kinds 0x%02x) at stage build\n", players & 0xF,
+                     mPlayerMask, field_0x83);
+        }
     }
 #endif
     switch (mode) {
