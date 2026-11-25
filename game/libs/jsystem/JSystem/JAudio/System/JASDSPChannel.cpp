@@ -224,12 +224,13 @@ JASDSPChannel *JASDSPChannel::getHandle(u32 index) {
     return &sDspChannels[index];
 }
 
-int JASDSPChannel::getNumUse() {}
+// The five below are stripped from the DOL (never called).
+int JASDSPChannel::getNumUse() { return 0; }
 
-int JASDSPChannel::getNumFree() {}
+int JASDSPChannel::getNumFree() { return 0; }
 
-int JASDSPChannel::getNumBreak() {}
+int JASDSPChannel::getNumBreak() { return 0; }
 
-u16 JASDSPChannel::getBlockCounter() const {}
+u16 JASDSPChannel::getBlockCounter() const { return 0; }
 
-u16 JASDSPChannel::getRemainSamples() const {}
+u16 JASDSPChannel::getRemainSamples() const { return 0; }

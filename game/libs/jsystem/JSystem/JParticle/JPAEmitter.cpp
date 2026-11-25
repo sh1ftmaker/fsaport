@@ -168,6 +168,7 @@ int JPABaseEmitter::getCurrentCreateNumber() const { return mManager->pWd->mCrea
 int JPABaseEmitter::getDrawCount() const
 {
     // UNUSED FUNCTION
+    return 0; // stripped from the DOL (never called)
 }
 
 void JPABaseEmitter::loadTexture(u8, _GXTexMapID)

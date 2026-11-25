@@ -235,7 +235,7 @@ void JASSolidHeap::freeAll() {
 }
 
 u32 JASSolidHeap::getRemain() {
-
+    return 0; // stripped from the DOL (never called)
 }
 
 JASGenericMemPool::JASGenericMemPool() {

@@ -1244,7 +1244,7 @@ const J2DAnmTransform* J2DPictureEx::animationPane(const J2DAnmTransform* animat
         }
     }
 
-    J2DPane::animationPane(animation);
+    return J2DPane::animationPane(animation); // original: tail result in r3
 }
 
 u8 J2DPictureEx::getUsableTlut(u8 id)

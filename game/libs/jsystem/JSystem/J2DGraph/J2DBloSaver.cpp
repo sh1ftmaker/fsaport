@@ -44,6 +44,7 @@ void J2DBloSaver::CTextureNameConnect::clear()
 
 const char* J2DBloSaver::CTextureNameConnect::get(const ResTIMG* tex) {
     // UNUSED
+    return nullptr; // stripped from the DOL (never called)
 }
 
 J2DBloSaver::CTextureNameConnect::TNC::TNC(const ResTIMG* tex, const char* name) {
