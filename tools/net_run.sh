@@ -25,7 +25,8 @@ done
 E="${E}console.log('REPORT '+window.fsaNetReport())@$((SECS-4));window.fsaDiagFlush()@$((SECS-2))"
 for ((i = 0; i < SEATS; i++)); do
   CDP=$CDP1; if [ $((i % 2)) -eq 1 ]; then CDP=$CDP2; fi
-  Q="iso=local.iso&nosave=1&room=$CODE&seat=$((i + 1))&name=b$((i + 1))&$PEERQ"
+  PQ=$PEERQ; if [ $i -eq 0 ]; then PQ=${PEERQ1:-}; fi  # seat 1 gets $PEERQ1 (default none), the others $PEERQ
+  Q="iso=local.iso&nosave=1&room=$CODE&seat=$((i + 1))&name=b$((i + 1))&$PQ"
   if [ $i -eq 0 ]; then Q="$Q&create=1&seats=$SEATS&autostart=$SEATS&$ROOMQ"; fi
   mkdir -p "$OUT/seat$((i + 1))"
   timeout $((SECS + 90)) node tools/web_run.mjs --cdp "$CDP" --url "http://127.0.0.1:$WEB/?$Q" \
@@ -37,5 +38,5 @@ echo "room $CODE"
 for ((i = 1; i <= SEATS; i++)); do
   echo "--- seat $i"
   grep -E "\[net\]|\[room\]|DESYNC|null function|RuntimeError" "$OUT/seat$i/console.log" | grep -v "Failed to load" | cut -c1-300 | head -8
-  grep REPORT "$OUT/seat$i/console.log" | tail -1 | cut -c1-900
+  grep "^\[log\] REPORT" "$OUT/seat$i/console.log" | tail -1 | cut -c1-1200
 done

@@ -19,6 +19,12 @@ Module.fsaNetLobby = async function () {
   if (!roomArg) return null;
   const log = (s) => (window.fsaLog || console.log)('[room] ' + s);
   const ui = netUi();
+  // Every browser must start from the same (empty) memory card.
+  if (q.get('nosave') !== '1') {
+    q.set('nosave', '1');
+    location.replace(location.pathname + '?' + q.toString());
+    await new Promise(() => {});
+  }
 
   // Which build and which disc: a room only takes browsers that agree on both.
   const sha = async (buf) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', buf))].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -163,6 +169,7 @@ Module.fsaNetLobby = async function () {
       }
       if (worst === -Infinity) return false;
       adv = adv * 0.9 + worst * 0.1;
+      S.advantage = adv;
       if (adv > 1.0) { adv -= 1; return true; }
       return false;
     };
@@ -251,3 +258,39 @@ function netUi() {
   window.fsaNetUi = api;
   return api;
 }
+
+// The start card's "Play online" box: create a room (seats 2-4) or join one by
+// its code. Both reload the page with ?room=...; the disc is chosen after.
+(function netEntry() {
+  const add = () => {
+    const card = document.querySelector('#curtain .card');
+    if (!card || document.getElementById('fsa-net-entry')) return;
+    const q = new URLSearchParams(location.search);
+    const box = document.createElement('div');
+    box.id = 'fsa-net-entry';
+    box.style.cssText = 'margin-top:14px;padding-top:10px;border-top:1px solid rgba(128,128,128,.4);font-size:14px';
+    const room = q.get('room');
+    if (room) {
+      box.innerHTML = `<b>Online</b>: ${room.toLowerCase() === 'new' ? 'a new room' : 'room ' + room.replace(/[^A-Za-z0-9]/g, '')} ` +
+        '&mdash; choose your disc to join. <a href="?" id="fsa-net-leave">Leave</a>';
+    } else {
+      box.innerHTML = '<b>Play online</b> (every player needs the disc)<br>' +
+        '<select id="fsa-net-seats" aria-label="Players"><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option></select> ' +
+        '<button type="button" id="fsa-net-create">Create room</button><br>' +
+        '<input id="fsa-net-code" placeholder="CODE" maxlength="12" size="7" autocapitalize="characters" aria-label="Room code" style="text-transform:uppercase"> ' +
+        '<button type="button" id="fsa-net-join">Join</button>';
+    }
+    card.appendChild(box);
+    const go = (params) => {
+      const u = new URL(location.href);
+      for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+      u.searchParams.set('nosave', '1');
+      location.href = u.toString();
+    };
+    const c = document.getElementById('fsa-net-create');
+    if (c) c.onclick = () => go({ room: 'new', seats: document.getElementById('fsa-net-seats').value });
+    const j = document.getElementById('fsa-net-join');
+    if (j) j.onclick = () => { const code = document.getElementById('fsa-net-code').value.trim().toUpperCase(); if (code) go({ room: code }); };
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add();
+})();

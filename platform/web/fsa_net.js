@@ -91,7 +91,7 @@ Module.fsaNetInit = async function () {
     cur: 0,
     stats: { rollbacks: 0, resimFrames: 0, maxDepth: 0, refused: 0, stalls: 0, stallMs: 0, stallMax: 0,
              snapMs: 0, snaps: 0, restoreMs: 0, resimMs: 0, desyncs: 0, mismatches: 0, checks: 0,
-             predicted: 0, mispredicted: 0, timeSyncWaits: 0, gatedFrames: 0, hashesSent: 0, hashesCompared: 0 },
+             predicted: 0, mispredicted: 0, timeSyncWaits: 0, gatedFrames: 0, leadSum: 0, leadN: 0, hashesSent: 0, hashesCompared: 0 },
     onLocalInputs: null, // (port, first, values[]) -> send
     onHash: null,        // (n, h) -> send
     waiters: [],
@@ -378,6 +378,7 @@ Module.fsaNetInit = async function () {
         if (S.onLocalInputs) S.onLocalInputs(p, first, vals, n);
       }
       S.head = n + 1;
+      S.stats.leadSum += n - S.frontier; S.stats.leadN++;
       if (rollback && !S.predictOk) S.stats.gatedFrames++;
       if (S.adaptive && S.adapt) S.adapt();
       // Wait while too far ahead: lockstep waits for every input of frame n;
@@ -396,8 +397,11 @@ Module.fsaNetInit = async function () {
         // of the others, it waits a frame now and then so that it does not
         // carry every rollback alone.
         if (S.timeSync(n)) {
+          // One retrace fewer: this browser loses one frame period, whether
+          // it keeps up with 60 Hz or runs behind (then the next owed retrace
+          // is the one left out).
           S.stats.timeSyncWaits++;
-          await new Promise((r) => setTimeout(r, FRAME_MS));
+          if (Module.fsaClock.skip < 2) Module.fsaClock.skip++;
         }
       }
     }
@@ -427,7 +431,8 @@ Module.fsaNetInit = async function () {
     const st = S.stats;
     return { mode, n: S.cur, head: S.head, frontier: S.frontier, delay: S.delay, seats: S.seats, local: S.local,
              ...st, snapAvgMs: st.snaps ? st.snapMs / st.snaps : 0, restoreAvgMs: st.rollbacks ? st.restoreMs / st.rollbacks : 0,
-             resimAvgMs: st.resimFrames ? st.resimMs / st.resimFrames : 0,
+             resimAvgMs: st.resimFrames ? st.resimMs / st.resimFrames : 0, leadAvg: st.leadN ? st.leadSum / st.leadN : 0,
+             advantage: S.advantage || 0,
              snapBytes: rollback ? Module._fsa_net_snapshot_bytes(0) : 0 };
   };
   window.fsaNetReport = () => JSON.stringify(S.report());

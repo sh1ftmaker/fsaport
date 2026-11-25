@@ -63,6 +63,7 @@ Module.fsaClock = {
   lockstep: false,
   fast: false,
   owed: false,
+  skip: 0,
   start() {
     this.next = performance.now() + this.period;
     const tick = (now) => {
@@ -73,7 +74,9 @@ Module.fsaClock = {
         // At most one retrace per animation frame; drop time we cannot catch up.
         this.next += this.period;
         if (now - this.next > this.period * 2) this.next = now + this.period;
-        this.deliver();
+        // Netplay time sync (fsa_net.js) asks for a retrace to be left out.
+        if (this.skip > 0) this.skip--;
+        else this.deliver();
       }
       requestAnimationFrame(tick);
     };
