@@ -1607,20 +1607,20 @@ void AdventureHud_804B13D4::fn_8041A868(bool arg) {
         dy += lbl_8053AED0->fn_8043D57C();
     }
     field_0x54->moveFromCentre_80402E08(
-        (f32)(dx + (lbl_8048E0B8[row][field_0x222] + lbl_8050DB0C.field_0x4c[0x143] + lbl_8048E108[row][field_0x222])),
+        (f32)(dx + lbl_8048E0B8[row][field_0x222] + lbl_8050DB0C.field_0x4c[0x143] + lbl_8048E108[row][field_0x222]),
         (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x144]);
     field_0x58->moveFromCentre_80402E08(
-        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8048E130[row][field_0x222],
-        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x145] + (f32)lbl_8050DB0C.field_0x4c[0x146]);
+        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x145] + (f32)lbl_8048E130[row][field_0x222],
+        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x146]);
     field_0x5c->moveFromCentre_80402E08(
-        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8048E130[row][field_0x222],
-        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x145] + (f32)lbl_8050DB0C.field_0x4c[0x146]);
+        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x145] + (f32)lbl_8048E130[row][field_0x222],
+        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x146]);
     field_0x6c->moveFromCentre_80402E08(
-        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8048E11C[row][field_0x222],
-        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x147] + (f32)lbl_8050DB0C.field_0x4c[0x148]);
+        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x147] + (f32)lbl_8048E11C[row][field_0x222],
+        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x148]);
     field_0x70->moveFromCentre_80402E08(
-        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8048E144[row][field_0x222],
-        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x149] + (f32)lbl_8050DB0C.field_0x4c[0x14A]);
+        (f32)dx + (field_0xf8[0] + (f32)lbl_8048E0B8[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x149] + (f32)lbl_8048E144[row][field_0x222],
+        (f32)dy + (field_0x108[0] + (f32)lbl_8048E0CC[row][field_0x222]) + (f32)lbl_8050DB0C.field_0x4c[0x14A]);
     fn_8037EB4C();
     if (!(field_0x28f & 1) || gGameRoot2_8053AB10->field_0x30->field_0x284 != 0 ||
         gGameRoot_8053AAF8->field_0x85 != 0 || field_0x222 == 4 || fadingOut) {
