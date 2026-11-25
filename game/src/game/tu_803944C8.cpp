@@ -6,6 +6,7 @@
 #include "game/GameView.h"
 #include "game/Message.h"
 #include "game/tu_803944C8.h"
+#include "portable/BigEndian.h"
 #include "game/save_data_803B8C74.h"
 #include "game/tu_80379F84.h"
 #include "game/act/act_small_key.h"
@@ -18,16 +19,6 @@
 #include "game/cls_804B20F8.h"
 #include "JSystem/JMessage/TParse.h"
 #include "JSystem/JMessage/TControl.h"
-
-// Port: control-code arguments are big-endian (and often unaligned) in the BMG file.
-#ifdef FSA_PORT
-#include "port/be.h"
-#define TAG_S32(ptr) ((s32)be32s(ptr))
-#define TAG_U16(ptr) ((u16)be16(ptr))
-#else
-#define TAG_S32(ptr) (*(const s32*)(ptr))
-#define TAG_U16(ptr) (*(const u16*)(ptr))
-#endif
 
 // The window frames' pane tags: 'PNar' per player (fn_80395BE8, fn_80398700).
 static const u64 lbl_80475768[5] = {'P1ar', 'P2ar', 'P3ar', 'P4ar', 'P5ar'};
@@ -557,7 +548,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         case 0x2000A:
         case 0x20012:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
             field_0x60->fn_803A3114();
             return true;
         case 0x20001:
@@ -566,15 +557,15 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30E4();
             return true;
         case 0x20011:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30F0();
             field_0x60->fn_803A30E4();
             return true;
         case 0x20009:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30F0();
             field_0x60->fn_803A30D0();
@@ -590,7 +581,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         case 0x2000C:
         case 0x20014:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
             field_0x60->fn_803A3114();
             return true;
         case 0x20003:
@@ -599,15 +590,15 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30E4();
             return true;
         case 0x20013:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30C4();
             field_0x60->fn_803A30E4();
             return true;
         case 0x2000B:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30C4();
             field_0x60->fn_803A30D0();
@@ -618,7 +609,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30D0();
             return true;
         case 0x20004:
-            field_0x4c = TAG_U16(data);
+            field_0x4c = be_read_u16(data);
             return true;
         case 0x20005:
             return true;
@@ -630,8 +621,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20007: {
-            work[0] = TAG_S32((p + 1));
-            work[1] = TAG_S32((p + 5));
+            work[0] = be_read_s32(p + 1);
+            work[1] = be_read_s32(p + 5);
             if (fn_8018E930(p[0])) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -654,7 +645,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x2000D: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             u8 who = p[5];
             u32 add = p[4];
             u32 keep = p[6];
@@ -742,8 +733,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20010: {
             u32 kind = p[0];
-            work[0] = TAG_S32((p + 1));
-            work[1] = TAG_S32((p + 5));
+            work[0] = be_read_s32(p + 1);
+            work[1] = be_read_s32(p + 5);
             u32 take = p[9];
             work[2] = work[1];
             switch (kind) {
@@ -842,7 +833,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20015: {
             u8 b = p[4];
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             if (b == 0) {
                 field_0x60->fn_803A30B0();
             }
@@ -865,17 +856,17 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20018: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
-            work[2] = TAG_S32((const s32*)data + (2));
-            work[3] = TAG_S32((const s32*)data + (3));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
+            work[2] = be_read_s32((const s32*)data + 2);
+            work[3] = be_read_s32((const s32*)data + 3);
             field_0x60->fn_803A30DC(work[fn_8018E89C() - 1]);
             return true;
         }
         case 0x2001D: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
-            work[2] = TAG_S32((const s32*)data + (2));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
+            work[2] = be_read_s32((const s32*)data + 2);
             if (fn_80236100(field_0x60->fn_803A30BC()) >= work[0]) {
                 field_0x60->fn_803A30DC(work[1]);
             } else {
@@ -888,12 +879,12 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2001F:
             return true;
         case 0x20020:
-            work[0] = TAG_S32((const s32*)data + (field_0x60->fn_803A30BC()));
+            work[0] = be_read_s32((const s32*)data + field_0x60->fn_803A30BC());
             field_0x60->fn_803A30DC(work[0]);
             return true;
         case 0x20021: {
-            work[0] = TAG_S32(data);
-            work[1] = TAG_S32(data);
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32(data);
             if (fn_8019CE40(fn_803A3210(), fn_803A3200())) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -903,7 +894,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20022: {
             u8 who = p[0];
-            s32 bit = TAG_U16((p + 1));
+            s32 bit = be_read_u16(p + 1);
             u8 set = p[3];
             if (who == 5) {
                 if (set != 0) {
@@ -934,9 +925,9 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20023: {
             u8 who = p[0];
-            work[0] = TAG_S32((p + 3));
-            work[1] = TAG_S32((p + 7));
-            u16 bit = TAG_U16((p + 1));
+            work[0] = be_read_s32(p + 3);
+            work[1] = be_read_s32(p + 7);
+            u16 bit = be_read_u16(p + 1);
             u8 player;
             if (who >= 1 && who <= 4) {
                 player = who - 1;
@@ -984,13 +975,13 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20025: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             field_0x60->fn_803A30A4(0, work[0]);
             field_0x60->fn_803A30B0();
             return true;
         }
         case 0x20026: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             u8 a = p[4];
             u8 b = p[5];
             if (!fn_803A300C()) {
@@ -1012,8 +1003,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A3070(p[0]);
             return true;
         case 0x2002C: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_8013997C(field_0x60->fn_803A30BC()) == 2) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1034,8 +1025,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2002F:
             return true;
         case 0x20030: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_8022CAF8(field_0x60->fn_803A30BC()) != 4) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1063,8 +1054,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20033: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_802373EC(getRepresentativePlayer_8022EA0C(field_0x60->fn_803A30BC())) == 1) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1140,7 +1131,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         case 0x2000A:
         case 0x20012:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
             field_0x60->fn_803A3114();
             return true;
         case 0x20001:
@@ -1149,8 +1140,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30E4();
             return true;
         case 0x20011:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30F0();
             field_0x60->fn_803A30E4();
@@ -1161,8 +1152,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30D0();
             return true;
         case 0x20009:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30F0();
             field_0x60->fn_803A30D0();
@@ -1173,7 +1164,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         case 0x2000C:
         case 0x20014:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
             field_0x60->fn_803A3114();
             return true;
         case 0x20003:
@@ -1182,8 +1173,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30E4();
             return true;
         case 0x20013:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30C4();
             field_0x60->fn_803A30E4();
@@ -1194,14 +1185,14 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A30D0();
             return true;
         case 0x2000B:
-            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), TAG_S32(data));
-            field_0x60->fn_803A30DC(TAG_S32(data));
+            field_0x60->fn_803A30FC(field_0x60->fn_803A310C(), be_read_s32(data));
+            field_0x60->fn_803A30DC(be_read_s32(data));
             field_0x60->fn_803A3114();
             field_0x60->fn_803A30C4();
             field_0x60->fn_803A30D0();
             return true;
         case 0x20004:
-            field_0x4c = TAG_U16(data);
+            field_0x4c = be_read_u16(data);
             return true;
         case 0x20005:
             return true;
@@ -1213,8 +1204,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20007: {
-            work[0] = TAG_S32((p + 1));
-            work[1] = TAG_S32((p + 5));
+            work[0] = be_read_s32(p + 1);
+            work[1] = be_read_s32(p + 5);
             if (fn_8018E930(p[0])) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1237,7 +1228,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x2000D: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             u8 who = p[5];
             u32 add = p[4];
             u32 keep = p[6];
@@ -1325,8 +1316,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20010: {
             u32 kind = p[0];
-            work[0] = TAG_S32((p + 1));
-            work[1] = TAG_S32((p + 5));
+            work[0] = be_read_s32(p + 1);
+            work[1] = be_read_s32(p + 5);
             u32 take = p[9];
             work[2] = work[1];
             switch (kind) {
@@ -1424,7 +1415,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20015:
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             field_0x60->fn_803A30A4(p[4], work[0]);
             return true;
         case 0x20016: {
@@ -1447,17 +1438,17 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20018: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
-            work[2] = TAG_S32((const s32*)data + (2));
-            work[3] = TAG_S32((const s32*)data + (3));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
+            work[2] = be_read_s32((const s32*)data + 2);
+            work[3] = be_read_s32((const s32*)data + 3);
             field_0x60->fn_803A30DC(work[fn_8018E89C() - 1]);
             return true;
         }
         case 0x2001D: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
-            work[2] = TAG_S32((const s32*)data + (2));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
+            work[2] = be_read_s32((const s32*)data + 2);
             if (fn_80236100(field_0x60->fn_803A30BC()) >= work[0]) {
                 field_0x60->fn_803A30DC(work[1]);
             } else {
@@ -1470,12 +1461,12 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2001F:
             return true;
         case 0x20020:
-            work[0] = TAG_S32((const s32*)data + (field_0x60->fn_803A30BC()));
+            work[0] = be_read_s32((const s32*)data + field_0x60->fn_803A30BC());
             field_0x60->fn_803A30DC(work[0]);
             return true;
         case 0x20021: {
-            work[0] = TAG_S32(data);
-            work[1] = TAG_S32(data);
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32(data);
             if (fn_8019CE40(fn_803A3210(), fn_803A3200())) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1485,7 +1476,7 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20022: {
             u8 who = p[0];
-            s32 bit = TAG_U16((p + 1));
+            s32 bit = be_read_u16(p + 1);
             u8 set = p[3];
             if (who == 5) {
                 if (set != 0) {
@@ -1516,9 +1507,9 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         }
         case 0x20023: {
             u8 who = p[0];
-            work[0] = TAG_S32((p + 3));
-            work[1] = TAG_S32((p + 7));
-            u16 bit = TAG_U16((p + 1));
+            work[0] = be_read_s32(p + 3);
+            work[1] = be_read_s32(p + 7);
+            u16 bit = be_read_u16(p + 1);
             u8 player;
             if (who >= 1 && who <= 4) {
                 player = who - 1;
@@ -1566,13 +1557,13 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             return true;
         }
         case 0x20025: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             field_0x60->fn_803A30A4(0, work[0]);
             field_0x60->fn_803A30B0();
             return true;
         }
         case 0x20026: {
-            work[0] = TAG_S32(data);
+            work[0] = be_read_s32(data);
             u8 a = p[4];
             u8 b = p[5];
             if (!fn_803A300C()) {
@@ -1594,8 +1585,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             field_0x60->fn_803A3070(p[0]);
             return true;
         case 0x2002C: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_8013997C(field_0x60->fn_803A30BC()) == 2) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1616,8 +1607,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
         case 0x2002F:
             return true;
         case 0x20030: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_8022CAF8(field_0x60->fn_803A30BC()) != 4) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
@@ -1645,8 +1636,8 @@ bool MessageSequenceProcessor_804AF774::do_tag(u32 tag, const void* data, u32) {
             }
             return true;
         case 0x20033: {
-            work[0] = TAG_S32((const s32*)data + (0));
-            work[1] = TAG_S32((const s32*)data + (1));
+            work[0] = be_read_s32(data);
+            work[1] = be_read_s32((const s32*)data + 1);
             if (fn_802373EC(getRepresentativePlayer_8022EA0C(field_0x60->fn_803A30BC())) == 1) {
                 field_0x60->fn_803A30DC(work[0]);
             } else {
