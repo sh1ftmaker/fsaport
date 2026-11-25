@@ -64,6 +64,7 @@ each unit's own flags (from `game/units.txt`):
 |---|---|
 | `--std=gnu++17` / `gnu99` | GNU modes: no trigraphs (the game spells resource types `'????'`, and `??'` is the trigraph for `^`). C++17 for the `BE<T>` file-struct wrapper (`game/libs/sdk/include/port/be.h`); `register` is allowed with `-Wno-register`. |
 | `-fno-strict-return` | MWCC-era functions that fall off the end without a return were compiled as unreachable code and hung. |
+| `-Werror=return-type` | ...but the value such a path returns is still undefined, and MWCC callers read what was left in r3/f1. A missing return is a build error; write the return the original has (see "Functions without a return" below). Every other warning stays off (`-Wno-everything`). |
 | `-gline-tables-only` | `tools/wasm_where.sh` maps a Chrome stack offset to a source line. |
 | `-nostdinc` | the units use the decomp's MSL headers for now (see "Open questions"). |
 | `-fsigned-char` | wasm's default too; stated so the 64-bit/ARM builds agree. |
@@ -240,7 +241,14 @@ Worth checking for in any code that misbehaves:
   4 bytes. `tools/fix_tag64.py` rewrote 4,475 of them as `FSA_TAG64("...")`.
 - **Raw big-endian reads** (`u32 info[2]; read(info, 8)`): any file field read
   into a plain integer is wrong on wasm.
-- **Functions without a return**: `-fno-strict-return` (above).
+- **Functions without a return**: `-fno-strict-return` (above) keeps the path,
+  `-Werror=return-type` makes it a build error. Read the original's asm
+  (`../fsadecomp/fsa-decomp/build/G4SE01/asm/...`) for what is in r3 (f1 for
+  floats) at its `blr`: often the last call's result (`return J2DPane::animationPane(...)`)
+  or the first argument (`fn_802340A0` returned `player`; dropping it lost the
+  player's Link in the GBA views). Functions stripped from the DOL get any
+  plain value. A switch that misses cases can return a register the function
+  never set (`BigMoldorm init`: r8 from the caller); match that in the port.
 - **Return-type mismatches between a declaration and the definition**: C++
   mangling hides them, `wasm-ld` turns the call into a trap or emits invalid
   code. Fixed where found (`fn_8017EC5C`, `CARDInit`, `GXSetArray`).

@@ -37,6 +37,11 @@ target_compile_options(fsa_game_flags INTERFACE
   # exploited aliasing rules); with them on, clang dropped stores.
   -fno-strict-aliasing
   -Wno-everything "SHELL:-include ${FSA_GAME}/port/port_prefix.h"
+  # ...but a missing return is still an error: -fno-strict-return keeps the
+  # path, yet the value is undefined (MWCC returned whatever was in r3/f1, and
+  # callers read it: fn_802340A0 lost the player's Link in the GBA views).
+  # Write the return the original has (docs/PORTING.md, "Missing returns").
+  -Werror=return-type
   $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>
   $<$<COMPILE_LANGUAGE:C>:-std=gnu99>)
 target_compile_definitions(fsa_game_flags INTERFACE FSA_PORT=1 $<$<BOOL:${FSA_TRACE}>:FSA_PORT_TRACE=1> $<$<BOOL:${FSA_NO_AUDIO}>:FSA_PORT_NO_AUDIO=1>)

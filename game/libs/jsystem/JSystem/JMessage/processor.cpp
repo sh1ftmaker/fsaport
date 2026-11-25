@@ -97,6 +97,7 @@ void TProcessor::pushCurrent(const char* newCurrent)
 const char* TProcessor::popCurrent()
 {
 	// UNUSED FUNCTION
+	return nullptr; // stripped from the DOL (never called)
 }
 
 /**
@@ -310,6 +311,7 @@ bool TProcessor::do_tag_(u32 tag, const void* data, u32 size)
 	default:
 		break;
 	}
+	return true; // port: MWCC fell off the end (r3: whatever was last there); no caller reads it
 }
 
 /**
@@ -467,6 +469,7 @@ const char* TProcessor::process_onSelect_(TProcessor* processor)
 const char* TSequenceProcessor::toString_status(int)
 {
 	// UNUSED FUNCTION
+	return nullptr; // stripped from the DOL (never called)
 }
 
 /**
@@ -477,6 +480,7 @@ const char* TSequenceProcessor::toString_status(int)
 int TSequenceProcessor::toValue_status(const char*)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -573,6 +577,7 @@ bool TSequenceProcessor::on_isReady()
 unknown TSequenceProcessor::on_jump_register(OnJumpRegisterCallBack*, const void*, u32)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -603,6 +608,7 @@ void TSequenceProcessor::on_jump(const void* p1, const char* p2)
 unknown TSequenceProcessor::on_branch_register(OnBranchRegisterCallBack*, const void*, const void*, u32)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -613,6 +619,7 @@ unknown TSequenceProcessor::on_branch_register(OnBranchRegisterCallBack*, const 
 unknown TSequenceProcessor::on_branch_query(u16)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -770,9 +777,9 @@ bool TSequenceProcessor::do_tag_(u32 tag, const void* data, u32 size)
 		do_branch_query(code);
 		break;
 	default:
-		TProcessor::do_tag_(tag, data, size);
-		break;
+		return TProcessor::do_tag_(tag, data, size); // original: its r3
 	}
+	return true; // port: MWCC fell off the end (r3: whatever was last there); no caller reads it
 }
 
 /**
@@ -811,6 +818,7 @@ void TSequenceProcessor::do_systemTagCode_(u16 p1, const void* p2, u32 p3)
 unknown TSequenceProcessor::process_setMessageIndex_reserved_(u16)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -821,6 +829,7 @@ unknown TSequenceProcessor::process_setMessageIndex_reserved_(u16)
 unknown TSequenceProcessor::process_setMessageCode_(const TSequenceProcessor*, u16, u16)
 {
 	// UNUSED FUNCTION
+	return 0; // stripped from the DOL (never called)
 }
 
 /**
@@ -951,8 +960,9 @@ bool TRenderingProcessor::do_tag_(u32 p1, const void* p2, u32 p3)
 {
 	int v1 = p1 >> 0x10 & 0xFF;
 	if ((v1 >= 0xFD) || (v1 < 0xF7)) {
-		TProcessor::do_tag_(p1, p2, p3);
+		return TProcessor::do_tag_(p1, p2, p3); // original: its r3
 	}
+	return true; // port: MWCC fell off the end (r3: whatever was last there); no caller reads it
 }
 
 /**

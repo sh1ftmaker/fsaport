@@ -44,6 +44,7 @@ JPAResource *JPAResourceManager::getResource(u16 idx) const
 bool JPAResourceManager::checkUserIndexDuplication(u16) const
 {
     // UNUSED, but exists in TP
+    return false; // stripped from the DOL (never called)
 }
 
 const ResTIMG *JPAResourceManager::swapTexture(const ResTIMG *img, const char *swapName)

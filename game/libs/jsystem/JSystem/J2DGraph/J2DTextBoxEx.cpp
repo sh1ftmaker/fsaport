@@ -342,7 +342,7 @@ bool J2DTextBoxEx::setBlack(JUTColor black)
         return false;
     }
 
-    setBlackWhite(black, currWhite);
+    return setBlackWhite(black, currWhite); // original: the virtual call's result in r3
 }
 
 bool J2DTextBoxEx::setWhite(JUTColor white)
@@ -354,7 +354,7 @@ bool J2DTextBoxEx::setWhite(JUTColor white)
         return false;
     }
 
-    setBlackWhite(currBlack, white);
+    return setBlackWhite(currBlack, white); // original: the virtual call's result in r3
 }
 
 bool J2DTextBoxEx::setBlackWhite(JUTColor black, JUTColor white)
@@ -529,5 +529,5 @@ const J2DAnmTransform* J2DTextBoxEx::animationPane(const J2DAnmTransform* anm)
             hide();
         }
     }
-    J2DPane::animationPane(anm);
+    return J2DPane::animationPane(anm); // original: tail result in r3
 }

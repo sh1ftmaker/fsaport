@@ -51,6 +51,9 @@ static inline u16 dirToAngle(s32 dir) {
     case 7:
         return 0xE000;
     }
+#ifdef FSA_PORT
+    return 0; // not reached: init handles dirs 8..14 itself (see there)
+#endif
 }
 
 // FIXME(shotgun): 99.95 %, reloc-name; behaviour drift.
@@ -90,7 +93,15 @@ void BigMoldorm_8049F6C8::init() {
     field_0x29c = -1;
     field_0x294 = 255.0f;
     field_0x196 = 1;
+#ifdef FSA_PORT
+    // mDir_0x98 is 0..14 but dirToAngle only covers 0..7: for 8..14 the
+    // original falls out of its switch and stores r8 untouched, which on the
+    // only path here (spawnActor_801F9484 -> init) is the last
+    // getEnemyParam_801F620C result, the "voic" column, i.e. mParamVoic_0x190.
+    field_0x284 = (u32)mDir_0x98 > 7 ? (u16)mParamVoic_0x190 : dirToAngle(mDir_0x98);
+#else
     field_0x284 = dirToAngle(mDir_0x98);
+#endif
     field_0x286 = field_0x284;
     for (u32 i = 0; i < 10; i++) {
         field_0x2c0[i].set(mPos);

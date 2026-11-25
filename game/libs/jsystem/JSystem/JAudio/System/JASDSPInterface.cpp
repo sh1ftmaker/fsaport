@@ -153,8 +153,9 @@ TChannel *getDSPHandle(int index) {
     return &CH_BUF[index];
 }
 
-TChannel *getDSPHandleNc(int) {
+TChannel *getDSPHandleNc(int index) {
     // UNUSED
+    return &CH_BUF[index]; // stripped from the DOL (never called)
 }
 
 void setFilterTable(s16 *dst, s16 *src, u32 n) {
@@ -194,12 +195,14 @@ void initBuffer() {
     flushBuffer();
 }
 
-Fxline &getFXHandle(u8) {
+Fxline &getFXHandle(u8 index) {
     // UNUSED
+    return FX_BUF[index]; // stripped from the DOL (never called)
 }
 
-Fxline &getFXHandleNc(u8) {
+Fxline &getFXHandleNc(u8 index) {
     // UNUSED
+    return FX_BUF[index]; // stripped from the DOL (never called)
 }
 
 bool setFXLine(u8 p1, s16 *buffer, FxlineConfig_ *config) {
@@ -289,10 +292,12 @@ bool TChannel::isFinish() const {
 
 u16 TChannel::getBlockCounter() const {
     // UNUSED
+    return 0; // stripped from the DOL (never called)
 }
 
 u16 TChannel::getRemainSamples() const {
     // UNUSED
+    return 0; // stripped from the DOL (never called)
 }
 
 void TChannel::setWaveInfo(const JASWaveInfo &waveInfo, u32 p2, u32 p3) {

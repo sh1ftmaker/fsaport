@@ -40,6 +40,7 @@ const char *JAUStreamFileTable::getFilePath_fromEntry(s32 entry) const
         return NULL;
 
     JUT_ASSERT(entry >= 0)
+    return NULL; // stripped from the DOL (never called)
 }
 
 s32 JAUStreamDataMgr_StreamFileTable::getStreamFileEntry(JAISoundID soundID)
