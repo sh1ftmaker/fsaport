@@ -5,6 +5,7 @@
 #include "../../gfx/texture.hpp"
 #include "../../window.hpp"
 #include "../../gfx/clear.hpp"
+#include "../../gx/fifo.hpp"
 #include "../../webgpu/gpu.hpp"
 #include "../vi/vi_internal.hpp"
 
@@ -148,6 +149,14 @@ void GXSetDispCopyGamma(GXGamma gamma) {}
 void GXCopyDisp(void* dest, GXBool clear) {}
 
 void GXCopyTex(void* dest, GXBool clear) {
+  // The copy is taken right away (resolve_pass ends the current render pass),
+  // but draws issued since the last drain may still sit in the FIFO: the
+  // game's GXEnd is an inline no-op, so immediate-mode GXBegin/GXEnd draws are
+  // only processed at the next drain (GXCallDisplayList, end of frame, ...).
+  // Without this, the copy missed them (e.g. the whole tile-map scene in the
+  // desert stages, so the heat-haze particles showed the clear colour) and the
+  // state read below (alpha/colour update, dst alpha, clear colour) was stale.
+  aurora::gx::fifo::drain();
   const auto rect = aurora::gx::map_logical_scissor(g_gxState.texCopySrc);
   const auto [dstWidth, dstHeight] = scale_copy_dst(g_gxState.texCopyDstWidth, g_gxState.texCopyDstHeight);
   const auto texCopyFmt = g_gxState.texCopyFmt;
