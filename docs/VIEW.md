@@ -53,7 +53,7 @@ Where the shape of the screen is written down, and what this mod does with each:
 | render mode `lbl_8049F090` (`tu_8013AAD4.cpp`) | the 608 x 448 EFB / XFB, shown 4:3 on a TV (non-square pixels) | unchanged: still the game's logical frame |
 | Aurora (`extern/aurora/lib/gx/gx.cpp` `logical_mapping`) | the logical frame stretched over the canvas | **pillarboxed**: 608 x 448 maps to a 4:3 box in the middle of a wider canvas (`AuroraSetContentAspect`); viewports, scissors and EFB copies all go through it |
 | the page (`index.html` `fit()`, SDL window 640 x 480) | the canvas: 4:3 | 480 x aspect by 480 pixels; CSS box of the same aspect |
-| camera `fn_8030CD18` | the box framing the players: aspect `efbH / fbW`, clamped to the area (`mVisibleBox_0x154`) with a minimum half width of 64-104 units | **unchanged** (the simulation) |
+| camera `fn_8030CD18` | the box framing the players: aspect `efbH / fbW`, clamped to the area (`mVisibleBox_0x154`), with a margin of 64-104 units around the players and a minimum half width of 130-142 (`lbl_804AA8E8`) | **unchanged** (the simulation) |
 | camera `fn_8030CB10` / `loadGXState_8030DFE8` | the ortho projection from the box, viewport / scissor = the screen rect (608 x 448) | **replaced at load time** by the render box (below) and the whole render target as viewport (`fsaViewLoadWorld`); only for the camera's own view on the full screen |
 | camera `fn_8030DD8C` | a box of its own: the map screen, the players' GBA panels | unchanged (left 4:3) |
 | `TileMap fn_802FC268` | the area's tile grid | nothing to do: draws the whole area |
@@ -129,7 +129,7 @@ at f9353c5 served the same way:
 
 | script | this branch | sync | state |
 |---|---|---|---|
-| `stage_1_0` | default view | 923/923 identical | 919/919 identical (`state.jsonl` byte-identical) |
+| `stage_1_0` | default view (2f4c66a; again at 7ec7f05) | 923/923 identical | 919/919 identical (`state.jsonl` byte-identical up to the shorter run) |
 | `stage_1_0` | `?aspect=16:9&zoom=1.25` | 922/922 identical | 918/918 identical |
 | `stage_1_0` | `?aspect=2.17&zoom=0.75&edge=free` | 923/923 identical | 919/919 identical |
 | `stage_5_0` (desert: heat haze, screen captures) | `?aspect=16:9` | 914/914 identical | 910/910 identical |
@@ -139,7 +139,7 @@ different reads after `script_end`.) So the mod does not change gameplay at
 the default, and does not change it in the other modes either: nothing it
 does is read back by the game. Run directories (main checkout, `logs/diag/`):
 main `20261125-221158-m9ircp7g` / `20261125-224318-eda0qpd3`, this branch
-`20261125-220919-ot785o9n` (default), `20261125-221455-s89hcso7` (16:9 x1.25),
+`20261125-220919-ot785o9n` and `20261125-224819-x8vdagip` (default), `20261125-221455-s89hcso7` (16:9 x1.25),
 `20261125-221719-g81doq9m` (2.17 x0.75 free), `20261125-222647-pyudgoby`
 (stage 5, 16:9).
 
@@ -178,9 +178,12 @@ Screenshots, 16:9 unless noted, from scripted runs of stages 1-0 to 7-0 and
   `tu_8015F454.cpp`) was not seen in these runs. Doing it properly means
   capturing the whole target and giving both users the wider texture
   coordinates.
-- **Players stay in the game's 4:3 box.** The camera keeps the players inside
-  its own box, so in a multiplayer formation the players cannot walk into the
-  extra width even though it is drawn. That is the game's rule, kept.
+- **Players are held in the game's own screen, not the picture.** Where the
+  game keeps players on screen (`player_8023FBF0` `fn_80241DD0`,
+  `fn_80241BA0`), the screen is still its 4:3 box. At an area's edge that box
+  sits to one side of the picture and the players can be in the extra width
+  (stage 2 above); in open ground the picture shows more on both sides than
+  the players are allowed to reach. That is the game's rule, kept.
 - **Actors that act only "on screen"** (`isOnScreen_8030C2A8`: doors, force
   gems, the thwomp switch) still use the 4:3 screen, so in the extra width they
   behave as off-screen. Not seen to look wrong in the stages tried.
@@ -189,12 +192,12 @@ Screenshots, 16:9 unless noted, from scripted runs of stages 1-0 to 7-0 and
   where the 4:3 view puts it.
 - **Area transitions**: the render box uses the union of both areas while
   the camera moves between them. Area changes happen in the 4-0 run, but
-  no transition was caught mid-way in a screenshot. The stage-entry fade was
-  (below); the room-to-room fade (`BlackFade`, 800 x 640) goes through the
+  no transition was caught mid-way in a screenshot. The stage-entry fade-in was (before
+  `fsa_view_cover` it left the left bar bright); the room-to-room fade (`BlackFade`, 800 x 640) goes through the
   same widening but was not caught on screen.
 - **Zoom at the area's top and bottom**: when the picture is cropped to fit
-  the area (16:9 with the camera fully zoomed out shows 512 x 288 of a
-  512 x 384 area), the players are kept in it but the rest of the top or
+  the area (16:9 with the camera fully zoomed out shows about 512 x 283
+  of a 512 x 384 area), the players are kept in it but the rest of the top or
   bottom is not shown.
 - Native (desktop) builds do not exist yet; the setting is the page's.
 
@@ -221,6 +224,9 @@ python3 tools/harness_compare.py logs/diag/<main run> logs/diag/<this run>
 
 Code: `platform/view.cpp`, `game/port/fsa_view.h`, `platform/web/view.js`;
 hooks under `#ifdef FSA_PORT` in `camera_8030C058.cpp`, `tu_8013AAD4.cpp`,
-`game_root_sub_24_8016A2B4.cpp`, `J2DOrthoGraph.cpp` and the four HUD units;
+`game_root_sub_24_8016A2B4.cpp`, `J2DOrthoGraph.cpp`, the fades
+(`tu_80118384.cpp`, `black_fade_802AC8AC.cpp`), `effect_system_8013C5C8.cpp`
+and the four HUD units (`adventure_hud`, `battle_hud`, `hud_mgr`,
+`rupee_digit_sprites`); the frame hook in `platform/vi.cpp`;
 Aurora's pillarbox mapping in `extern/aurora/lib/gx/gx.cpp`
 (`logical_mapping`) and `GXFrameBuffer.cpp`.
