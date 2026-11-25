@@ -348,8 +348,13 @@ static inline bool playerTouches(Frostare_804A4C58* boss, s32 i) {
 u8 Frostare_804A4C58::checkHitByPlayer_0x5C() {
     u8 hit = false;
     bool active = false;
-    if (mState == 5 || (mState >= 4 && mState < 8)) {
+    // States 4, 6 and 7 only (not 5, which this check itself enters).
+    switch (mState) {
+    case 4:
+    case 6:
+    case 7:
         active = true;
+        break;
     }
     s32 outFlag;
     if (active) {
@@ -358,7 +363,7 @@ u8 Frostare_804A4C58::checkHitByPlayer_0x5C() {
         mBox.i.y = -16.0f;
         mBox.f.x = 40.0f;
         mBox.f.y = 50.0f;
-        if (findOverlappingPlayer_801F285C(NULL, &outFlag, true, -1) >= 0) {
+        if (findOverlappingPlayer_801F285C(NULL, NULL, true, -1) >= 0) {
             setState_801D9C58(5);
         }
         mBox.set(saved);

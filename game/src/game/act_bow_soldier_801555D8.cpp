@@ -943,9 +943,8 @@ void BowSoldier_804A00C8::update() {
                             bomb->mDir_0x98 = mDir_0x98;
                         }
                     }
-                } else {
-                    field_0x238 += 10;
                 }
+                field_0x238 += 10;
             }
             if (field_0x25c == 2 && field_0x284 >= 0) {
                 ActorBase_804A5770* bomb = getActorManager_801F856C()->findActorBySerial_801F666C(field_0x284);

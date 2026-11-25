@@ -101,7 +101,7 @@ JGeometry::TVec2f lbl_804D5730[17] = {
     JGeometry::TVec2f(768.0f, 2850.0f),
     JGeometry::TVec2f(768.0f, 690.0f),
     JGeometry::TVec2f(768.0f, 1710.0f),
-    JGeometry::TVec2f(2200.0f, 1600.0f),
+    JGeometry::TVec2f(768.0f, 2200.0f),
     JGeometry::TVec2f(1600.0f, 1344.0f),
     JGeometry::TVec2f(1280.0f, 3215.0f),
     JGeometry::TVec2f(768.0f, 3700.0f),

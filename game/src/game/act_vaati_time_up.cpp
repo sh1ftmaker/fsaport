@@ -54,7 +54,7 @@ void VaatiTimeUp_804ACCC0::init() {
     field_0x2ec = -(0.4f * field_0x2dc) / 60.0f;
     field_0x2f0 = -(0.4f * field_0x2e0) / 60.0f;
     mVel_0x3c.x = -2.0f;
-    field_0x2b8 = 1;
+    field_0x2b8 = 0;
 }
 
 // FIXME: 96.07 %, missing/extra; behaviour drift.

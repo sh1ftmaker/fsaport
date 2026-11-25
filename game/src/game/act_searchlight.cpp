@@ -135,18 +135,21 @@ void Searchlight_804A0FF8::update() {
         break;
     case 2: {
         u8 points[0x20];
-        if (field_0x230.fn_800FE3EC(field_0x334, mPos, mLayer_0x4)) {
-            field_0x338 = field_0x230.fn_800FE21C(0xFF);
-            field_0x338 = field_0x338 * 60;
-            if (field_0x338 == 0) {
-                field_0x338 = 3;
-            }
-            field_0x33c = field_0x230.fn_800FD894(mLayer_0x4, points, 0x20);
-            field_0x314 = 0;
-            field_0x318 = 0;
-            field_0x2f8 = 3;
-            field_0x2fc = field_0x2f8;
+        // Waits in state 2 until fn_800FE3EC succeeds; only then falls into state 3
+        // (decomp 3ea9f4211).
+        if (!field_0x230.fn_800FE3EC(field_0x334, mPos, mLayer_0x4)) {
+            break;
         }
+        field_0x338 = field_0x230.fn_800FE21C(0xFF);
+        field_0x338 = field_0x338 * 60;
+        if (field_0x338 == 0) {
+            field_0x338 = 3;
+        }
+        field_0x33c = field_0x230.fn_800FD894(mLayer_0x4, points, 0x20);
+        field_0x314 = 0;
+        field_0x318 = 0;
+        field_0x2f8 = 3;
+        field_0x2fc = field_0x2f8;
     }
     case 3: {
         u8 points[0x20];

@@ -141,7 +141,7 @@ void AllEnemiesDefeated_804A2AB0::fn_8019DC5C() {
                 getActorManager_801F856C()->spawnActorSimple_801F8544(ACTOR_RUPY, mLayer_0x4, &lbl_804C1E30[j], 2);
                 break;
             case 1:
-                getActorManager_801F856C()->spawnActor_801F9484(ACTOR_ZASL, mLayer_0x4, &lbl_804C1E30[j], lbl_804C4E30[j], 0, -1);
+                getActorManager_801F856C()->spawnActor_801F9484(ACTOR_ZASL, mLayer_0x4, &lbl_804C1E30[j], 0, lbl_804C4E30[j], -1);
                 break;
             }
         }

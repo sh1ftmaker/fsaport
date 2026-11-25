@@ -822,8 +822,11 @@ void TennisShop_804A2BF4::fn_801A0F90() {
                             if (shop->field_0x24c[2] > 999) {
                                 shop->field_0x24c[2] = 999;
                             }
+                            break;
                         }
                     }
+                    // decomp 828eea7fe: no shop to count for -> dead too.
+                    dead = true;
                 } else {
                     dead = true;
                 }

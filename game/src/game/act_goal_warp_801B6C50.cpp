@@ -112,10 +112,14 @@ void GoalWarp_804A39DC::update() {
                 }
                 field_0x238 = 120;
                 field_0x230 = 1;
+                // Falls through into state 1 in the same frame, as in the original
+                // (decomp ba07d58e2).
+                goto state1;
             }
         }
         break;
     case 1:
+    state1:
         takeCamera();
         addCalc2_801F71A4(&field_0x260, 136.0f, 0.5f, 5.0f);
         if (field_0x238 == 0) {

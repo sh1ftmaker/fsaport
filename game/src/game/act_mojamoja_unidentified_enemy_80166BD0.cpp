@@ -51,7 +51,7 @@ void MojamojaUnidentifiedEnemy_804A0668::init() {
 // FIXME: only the .sdata2 literals differ (lbl_ names vs @NNN, not split into this unit).
 void MojamojaUnidentifiedEnemy_804A0668::update() {
     if (mEmitter26c != NULL) {
-        addCalc2_801F71A4(&field_0x254, 1.0f, 10.0f, 0.0f);
+        addCalc2_801F71A4(&field_0x254, 0.0f, 1.0f, 10.0f);
         mEmitter26c->setGlobalAlpha((s32)field_0x254);
     }
     if (updateHitReaction_801F3D94(1) != 0 || checkHits_801F305C()) {

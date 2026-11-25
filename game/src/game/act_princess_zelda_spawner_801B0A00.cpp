@@ -129,8 +129,7 @@ PrincessZeldaSpawner_804A35AC::~PrincessZeldaSpawner_804A35AC() {
     getGameView_802D6A9C()->fn_802D7440(true);
 }
 
-// 0x801B2138.
-// FIXME(shotgun): 96.26 %, missing/extra + reloc-name; behaviour clean.
+// 0x801B2138. Each state breaks (the fall-throughs were wrong; decomp ff3efb5b4, 100 %).
 void PrincessZeldaSpawner_804A35AC::fn_801B2138(s32 arg) {
     if (field_0x254 != arg) {
         field_0x254 = arg;
@@ -144,16 +143,16 @@ void PrincessZeldaSpawner_804A35AC::fn_801B2138(s32 arg) {
     switch (field_0x250) {
     case 0:
         field_0x24c = mDir_0x98 << 3;
-    // fall through
+        break;
     case 1:
         field_0x24c = (mDir_0x98 << 3) + field_0x240;
         field_0x234 = 5;
         field_0x240++;
         field_0x240 &= 7;
-    // fall through
+        break;
     case 2:
         field_0x24c = 2;
-    // fall through
+        break;
     case 3:
         field_0x24c = lbl_804A35A0[field_0x240];
         field_0x234 = 8;
@@ -167,7 +166,7 @@ void PrincessZeldaSpawner_804A35AC::fn_801B2138(s32 arg) {
         field_0x240 = 0;
         field_0x250 = 4;
         field_0x254 = field_0x250;
-    // fall through
+        break;
     case 4:
         switch (mDir_0x98) {
         case 0:

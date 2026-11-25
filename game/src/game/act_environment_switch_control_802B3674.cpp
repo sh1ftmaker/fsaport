@@ -146,7 +146,13 @@ void EnvironmentSwitchControl_804A8638::init() {
             field_0x24c = randInt_801CD664(100);
             field_0x250 = 0;
             field_0x234 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x254, 0x3A1, 1, 0, NULL, NULL, true, 1.0f);
+            if (field_0x234 != NULL) {
+                field_0x234->setRate(field_0x2c0[0]);
+            }
             field_0x238 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x254, 0x3A2, 1, 0, NULL, NULL, true, 1.0f);
+            if (field_0x238 != NULL) {
+                field_0x238->setRate(field_0x2c0[1]);
+            }
             getGameView_802D6A9C()->fn_802D6BF8(1);
             vfunc_0x60();
         } else {
@@ -163,7 +169,13 @@ void EnvironmentSwitchControl_804A8638::init() {
             field_0x24c = randInt_801CD664(100);
             field_0x250 = 0;
             field_0x234 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x254, 0x3A1, 1, 0, NULL, NULL, true, 1.0f);
+            if (field_0x234 != NULL) {
+                field_0x234->setRate(field_0x2c0[0]);
+            }
             field_0x238 = spawnEmitter_8013CC50(mLayer_0x4, &field_0x254, 0x3A2, 1, 0, NULL, NULL, true, 1.0f);
+            if (field_0x238 != NULL) {
+                field_0x238->setRate(field_0x2c0[1]);
+            }
             getGameView_802D6A9C()->fn_802D6BF8(1);
             vfunc_0x60();
         }

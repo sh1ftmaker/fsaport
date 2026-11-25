@@ -845,7 +845,7 @@ void CrystalBall_804AB308::update() {
                     field_0x2b0 = 0;
                     field_0xb0 = 0x2100A;
                     field_0x230 = 8;
-                    break;
+                    return; // decomp 81ddf618a: returns here, skipping fn_803226EC
                 }
             }
         }

@@ -143,7 +143,7 @@ void WoodenForceGem_804AB1F0::update() {
     }
     case 3:
         if (field_0x230 == 3 && mEmitter268 != NULL) {
-            mEmitter268->stopCreateParticle();
+            mEmitter268->becomeInvalidEmitter();
             mEmitter268 = NULL;
         }
         // fall through

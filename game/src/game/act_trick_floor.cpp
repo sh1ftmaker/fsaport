@@ -467,7 +467,7 @@ void TrickFloor_804A83A0::draw() {
     sp.field_0x21 = 1;
     sp.mMtx = m;
     switch (field_0x234) {
-    case 0:
+    default:
         drawSmp(this, &mPos, "floor_smp.bin", &sp);
         break;
     case 1:
@@ -498,7 +498,7 @@ void TrickFloor_804A83A0::draw() {
     }
     sp.mMtx = m;
     switch (field_0x234) {
-    case 0: {
+    default: {
         JGeometry::TVec3f pos(64.0f + mPos.x - 32.0f * JMath::sincosTable_.cosRadian(-field_0x248),
                               32.0f * JMath::sincosTable_.sinRadian(field_0x248) + mPos.y, mPos.z);
         drawSmp(this, &pos, "floor_smp.bin", &sp);

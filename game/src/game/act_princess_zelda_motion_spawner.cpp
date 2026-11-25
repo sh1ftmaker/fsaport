@@ -84,7 +84,7 @@ void PrincessZeldaMotionObjectSpawner_804A375C::update() {
                 field_0x248 = fn_8022FD8C(mSerial);
                 if (field_0x248 >= 0 && fn_802300EC(field_0x248)) {
                     JGeometry::TVec3f pos = mPos;
-                    pos.x -= 50.0f;
+                    pos.y -= 50.0f; // decomp 0e7a1adbd: y, not x
                     if (openMessage_8038AD24(field_0x248, lbl_804A3740[field_0x258], mSerial, mLayer_0x4, pos, 0)) {
                         mState = 3;
                     }

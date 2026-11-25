@@ -62,7 +62,7 @@ void PrincessZeldaSpawnerEscape_804A3698::init() {
     field_0x320 = 1;
     field_0x334 = field_0x338 = field_0x33c = 0.0f;
     mVel_0x3c.set(0.0f, 0.0f, 0.0f);
-    field_0x340 = mPos.z;
+    field_0x340 = mPos.y;
     lbl_8053ABEC = 0;
     field_0x2fc = 0;
     field_0x32d = 0;

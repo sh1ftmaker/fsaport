@@ -74,7 +74,7 @@ void ShadowLinkThwompMinor_804A6D00::fn_80223AD8(s32 state) {
             getGameView_802D6A9C()->fn_802D79E8(mLayer_0x4, 4.0f, 0.0f, false);
         }
         gGameRoot_8053AAF8->startRumble_80134DE4(1, 0);
-        JGeometry::TVec3f n(-mVel_0x3c.y, -mVel_0x3c.x, 0.0f);
+        JGeometry::TVec3f n(-mVel_0x3c.x, -mVel_0x3c.y, 0.0f);
         n.normalize();
         JGeometry::TVec3f at = mPos + off;
         if (mLayer_0x4 < 8) {

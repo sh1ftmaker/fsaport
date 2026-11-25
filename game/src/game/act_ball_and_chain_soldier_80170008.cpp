@@ -32,6 +32,7 @@ void BallAndChainSoldier_804A0810::init() {
     for (s32 i = 0; i < 10; i++) {
         field_0x29c[i] = mPos;
     }
+    field_0x314 = mPos;
     field_0x290[2] = 0.0f;
     field_0x290[1] = 0.0f;
     field_0x290[0] = 0.0f;
@@ -244,8 +245,8 @@ void BallAndChainSoldier_804A0810::update() {
                 center.x = right + 0.5f * (left - right);
                 center.y = bottom + 0.5f * (top - bottom);
                 if (fn_80237948(player, &center)) {
-                    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x117, 0, 1, NULL, NULL, false, 1.0f);
-                    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x118, 0, 1, NULL, NULL, false, 1.0f);
+                    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x117, 0, 1, NULL, NULL, true, 1.0f);
+                    spawnEmitter_8013CC50(mLayer_0x4, &mPos, 0x118, 0, 1, NULL, NULL, true, 1.0f);
                     startSound_801F0E34(0x400D1, 0);
                 }
             }

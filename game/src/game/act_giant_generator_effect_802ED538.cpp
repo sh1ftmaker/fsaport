@@ -145,10 +145,12 @@ static inline void armFlag() {
     }
 }
 
-static inline void stopEmitter(JPABaseEmitter*& emitter) {
-    if (emitter != NULL) {
+static inline void stopEmitter(JPABaseEmitter*& slot) {
+    if (slot != NULL) {
+        JPABaseEmitter* emitter = slot;
         emitter->stopCreateParticle();
-        emitter = NULL;
+        emitter->mMaxFrame = 1;
+        slot = NULL;
     }
 }
 
@@ -245,8 +247,8 @@ void GiantGeneratorEffect_804AA350::update() {
             notifySlr4(field_0x260[0], 0);
             notifySlr4(field_0x260[1], 0);
             field_0x24c++;
-            startSound_801F0E34(0x5005B, 0);
         }
+        startSound_801F0E34(0x5005B, 0);
         break;
     case 7:
         if (field_0x279) {
@@ -433,7 +435,7 @@ bool GiantGeneratorEffect_804AA350::fn_802ED538() {
             const JMath::TSinCosTable<11, f32>& sincos = JMath::sincosTable_;
             field_0x27c[p].mPos.x = mPos.x + field_0x27c[p].mDist * sincos.sinShort(field_0x27c[p].mAngle);
             field_0x27c[p].mPos.y = (32.0f + mPos.y) + field_0x27c[p].mDist * sincos.cosShort(field_0x27c[p].mAngle);
-            fn_802303FC(p, &field_0x27c[p].mPos, true);
+            fn_802303FC(p, &field_0x27c[p].mPos, 0xFF);
             if (field_0x27c[p].mDist < 1.0f) {
                 fn_80230224(p, 0);
             }

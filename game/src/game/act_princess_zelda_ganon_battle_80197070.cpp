@@ -423,9 +423,13 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
                 startSound_801F0E34(0x400B5, 0);
                 spawnEmitter_8013CC50(mLayer_0x4, &pos, 0x33B, 0, 1, NULL, NULL, true, 1.0f);
                 mState = 4;
+            } else {
+                break;
             }
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 4:
         fn_8017EB44(&mPos);
         fn_8017EB1C(0.05f);
@@ -550,8 +554,10 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
         fn_8022FE80(getRepresentativePlayer_8022EA0C(0), getLayer_8015461C(), getSerial_801545E8(), false, false);
         if (openMessage_8038AD24(getRepresentativePlayer_8022EA0C(0), 0x2D9, getSerial_801545E8(), getLayer_8015461C(), pos, 0x4102)) {
             mState = 11;
+        } else {
+            break;
         }
-        break;
+        // fall through
     }
     case 11:
         if (mTimers[0] == 0) {
@@ -567,8 +573,10 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
             field_0x248 = 0;
             field_0x24c = 0;
             mState = 12;
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 12:
         if (mTimers[0] == 0) {
             field_0x254 = lbl_804A2700[14 + field_0x244];
@@ -610,8 +618,10 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
                 field_0x264 = -1;
             }
             mState = 14;
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 14:
         if (mTimers[0] == 0) {
             field_0x254 = lbl_8053A0E8[field_0x244];
@@ -643,8 +653,10 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
             field_0x24c = 0x140;
             mDir_0x98 = 3;
             mState = 15;
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 15:
         startSound_801F0E34(0x30057, 0);
         field_0x24c--;
@@ -722,8 +734,10 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
             startSound_801F0E34(0x400B8, 0);
             copyVec3_8019CECC(&mPos, &pos);
             mState = 0x14;
+        } else {
+            break;
         }
-        break;
+        // fall through
     case 0x14: {
         copyVec3_8019CECC(&pos, &mPos);
         copyVec3_8019CECC(&mPos, static_cast<JGeometry::TVec3f*>(&field_0x280[0]));
@@ -1507,7 +1521,7 @@ void PrincessZeldaGanonBattle_804A2944::fn_80198828() {
         copyVec3_8019CECC(&pos, &mPos);
         addCalc2_801F71A4(&field_0x2d4[0].y, field_0x280[2].y, 0.3f, 1.0f);
         setPlayerFacing_80230BF4(0, 3);
-        fn_802303FC(0, &field_0x2d4[0], true);
+        fn_802303FC(0, &field_0x2d4[0], 0xFF);
         if (fabsf_8015436C(field_0x280[2].y - field_0x2d4[0].y) <= 1.0f) {
             mTimers[1] = 8;
             field_0x248 = 0;

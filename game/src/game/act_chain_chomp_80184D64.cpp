@@ -533,14 +533,14 @@ void ChainChomp_804A18E0::update() {
     }
 
     if (field_0x260 < 0) {
-        for (int i = 1; i < 9; i++) {
+        for (int i = 1; i < 10; i++) {
             field_0x30c[i - 1].x = field_0x30c[i].x;
             field_0x30c[i - 1].y = field_0x30c[i].y;
             field_0x30c[i - 1].z = field_0x30c[i].z;
         }
         for (int i = 1; i < 9; i++) {
-            f32 dx = field_0x294[i - 1].x - field_0x30c[i].x;
-            f32 dy = field_0x294[i - 1].y - field_0x30c[i].y;
+            f32 dx = field_0x294[i - 1].x - field_0x30c[i + 1].x;
+            f32 dy = field_0x294[i - 1].y - field_0x30c[i + 1].y;
             s16 ang = (s16)(JMath::atanTable_.atan2_(-dx, -dy) *
                             (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
             f32 tx = field_0x26c * JMath::sincosTable_.sinShort(ang) + field_0x294[i - 1].x;
@@ -551,7 +551,7 @@ void ChainChomp_804A18E0::update() {
             if (JGeometry::TUtil<f32>::abs(field_0x294[i].y - ty) >= 4.0f) {
                 addCalc2_801F71A4(&field_0x294[i].y, ty, 0.5f, 10.0f);
             }
-            field_0x294[i].z = field_0x30c[i].z * (0.1f * i);
+            field_0x294[i].z = field_0x30c[i + 1].z * (0.1f * i);
         }
     }
 

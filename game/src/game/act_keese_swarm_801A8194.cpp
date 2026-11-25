@@ -174,7 +174,7 @@ void KeeseSwarm_804A2EC0::update() {
             startSound_801F0E34(0x4000F, 0);
             startSound_801F0E34(0x400A9, 0);
             if (player >= 0) {
-                findTargetPlayer_801EEC98(mSerial, &field_0x268, NULL, NULL, NULL, 0, 2);
+                findTargetPlayer_801EEC98(mSerial, &field_0x268, NULL, NULL, NULL, player, 2);
                 field_0x268 += 0x8000;
             }
             field_0x230 = 1;
@@ -270,6 +270,7 @@ void KeeseSwarm_804A2EC0::draw() {
             mtx[2][0] = 0.0f;
             mtx[2][1] = 0.0f;
             mtx[2][2] = scale;
+            params.mMtx = mtx;
             frame--;
             if (frame < 0) {
                 frame = 2;
