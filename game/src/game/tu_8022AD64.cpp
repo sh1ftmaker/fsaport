@@ -3359,7 +3359,7 @@ bool fn_80230498(s32 player, const JGeometry::TVec3f* pos, s32 id, u8 a, s8 b, s
     return false;
 }
 
-bool fn_802303FC(s32 player, const JGeometry::TVec3f* pos, bool flag) {
+bool fn_802303FC(s32 player, const JGeometry::TVec3f* pos, u8 flag) {
     if (gPlayerManager_8053AC90 == NULL) {
         return false;
     }
@@ -3379,7 +3379,7 @@ bool fn_80230360(s32 player) {
     return false;
 }
 
-bool fn_802302C4(s32 player, s32 a, bool b) {
+bool fn_802302C4(s32 player, s32 a, u8 b) {
     if (gPlayerManager_8053AC90 == NULL) {
         return false;
     }

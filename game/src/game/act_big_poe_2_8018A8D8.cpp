@@ -1180,7 +1180,7 @@ void BigPoe2_804A1E50::update() {
     case 21:
         if (field_0x25c == 0) {
             if (field_0x27a == 0) {
-                fn_802303FC(field_0x254, getPlayerPos_8023E724(field_0x254), true);
+                fn_802303FC(field_0x254, getPlayerPos_8023E724(field_0x254), 0xFF); // alpha (li r5, 0xff)
                 break;
             }
             if (field_0x254 >= 0 && lbl_80539FC8 > -1 &&

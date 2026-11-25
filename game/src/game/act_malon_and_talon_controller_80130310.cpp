@@ -259,7 +259,7 @@ bool MalonAndTalonController_8049EA88::fn_80130370() {
             setPlayerFacing_80230BF4(i, 3);
             fn_80230498(i, getPlayerPos_8023E724(i), 0x3F, 0xFF, -0x80, -0x80, true);
         } else {
-            fn_802303FC(i, &p, true);
+            fn_802303FC(i, &p, 0xFF);
         }
     }
     return done;

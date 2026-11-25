@@ -91,11 +91,10 @@ void ShadowLinkCutscene_8049DB90::update() {
         hopDown();
         break;
     case 11:
-        // the original passes 0xFF as fn_802303FC's flag here and in states 20 and 22 (li r5, 0xff)
         for (s32 i = 0; i < 4; i++) {
             JGeometry::TVec3f pos(*getPlayerPos_8023E724(i));
             pos.add(field_0x26c);
-            fn_802303FC(i, &pos, true);
+            fn_802303FC(i, &pos, 0xFF);
         }
         break;
     case 16:
@@ -116,7 +115,7 @@ void ShadowLinkCutscene_8049DB90::update() {
             JGeometry::TVec3f pos(*getPlayerPos_8023E724(0));
             pos.y -= 1.6f;
             for (s32 i = 0; i < 4; i++) {
-                fn_802303FC(i, &pos, true);
+                fn_802303FC(i, &pos, 0xFF);
             }
         }
         break;
@@ -133,7 +132,7 @@ void ShadowLinkCutscene_8049DB90::update() {
             JGeometry::TVec3f pos(mPos);
             pos.y += 32.0f;
             for (s32 i = 0; i < 4; i++) {
-                fn_802303FC(i, &pos, true);
+                fn_802303FC(i, &pos, 0xFF);
             }
         }
         break;

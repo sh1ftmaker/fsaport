@@ -116,6 +116,7 @@ public:
     bool fn_80240B84() const; // via fn_80233EDC
     bool fn_80240D50(); // via fn_80234D94
     bool fn_80240D64(); // via fn_80234E30
+    u16 probeTileAt(f32 x, f32 y); // inline, tu_802684A4.cpp
     bool fn_80240DAC(); // via fn_80234ECC
     bool fn_80240DCC() const; // via fn_8022F64C
     bool fn_80240ED4(); // via fn_80234F68
@@ -1200,8 +1201,8 @@ public:
     bool fn_802604CC();
     bool fn_80260C08();
     void fn_80261480();
-    bool fn_8024DA64(s32 a, bool b); // via fn_802302C4
-    bool fn_8024D99C(const JGeometry::TVec3f* pos, bool flag); // via fn_802303FC
+    bool fn_8024DA64(s32 a, u8 b); // via fn_802302C4
+    bool fn_8024D99C(const JGeometry::TVec3f* pos, u8 flag); // via fn_802303FC
     bool fn_80272E98(const JGeometry::TBox2f* box, s32 layer); // via fn_80239C00
     bool fn_802724E0(const JGeometry::TBox2f* box, s32 layer); // via fn_80239C9C
     bool fn_802574CC(const JGeometry::TBox2f* box, s32 layer, JGeometry::TVec2f* out); // via fn_8023AC74
@@ -1992,8 +1993,8 @@ void dropPlayerForceGems_80236074(s32 player, s32 value, s32 arg);
 void fn_802362C4(s32 player, s32 value);
 bool fn_802378AC(s32 player, const JGeometry::TVec2f* pos);
 bool fn_8022F784(s32 player, s32 a, const JGeometry::TVec3f* pos);
-bool fn_802302C4(s32 player, s32 a, bool b);
-bool fn_802303FC(s32 player, const JGeometry::TVec3f* pos, bool flag);
+bool fn_802302C4(s32 player, s32 a, u8 b);
+bool fn_802303FC(s32 player, const JGeometry::TVec3f* pos, u8 flag);
 bool fn_80239878(s32 player, const JGeometry::TBox2f* box, s32 layer, s32 serial);
 bool fn_80239C00(s32 player, const JGeometry::TBox2f* box, s32 layer);
 bool fn_80239C9C(s32 player, const JGeometry::TBox2f* box, s32 layer);

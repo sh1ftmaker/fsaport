@@ -165,7 +165,7 @@ void KnightOfHyrule_804AABA8::update() {
         if (mTimer <= 0) {
             fn_80230498(field_0x244, &pos, 0x3F, 0xFF, -0x80, -0x80, true);
         } else {
-            fn_802303FC(field_0x244, &pos, true);
+            fn_802303FC(field_0x244, &pos, 0xFF);
         }
         if (mTimer <= 0) {
             mState = 5;
@@ -274,7 +274,7 @@ void KnightOfHyrule_804AABA8::update() {
         if (mTimer <= 0) {
             fn_80230498(field_0x244, &pos, 0x3F, 0xFF, -0x80, -0x80, true);
         } else {
-            fn_802303FC(field_0x244, &pos, true);
+            fn_802303FC(field_0x244, &pos, 0xFF);
         }
         if (mTimer < 60) {
             addCalc2_801F71A4(&mVel_0x3c.z, -0.2f, 0.02f, 0.01f);

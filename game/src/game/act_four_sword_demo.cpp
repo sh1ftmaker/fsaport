@@ -433,7 +433,7 @@ bool FourSwordCutscene_8049DA0C::raisePlayers() {
             pos.y = mPos.y + 80.0f;
             flag = true;
         }
-        fn_802303FC(i, &pos, true);
+        fn_802303FC(i, &pos, 0xFF);
     }
     return flag;
 }
