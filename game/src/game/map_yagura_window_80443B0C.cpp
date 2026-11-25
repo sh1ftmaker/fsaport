@@ -21,7 +21,7 @@ MapYaguraWindow_804B1B60::MapYaguraWindow_804B1B60() {
     mScreen->setPriority("map_yagura_window.blo", 0x1100000, lbl_80529DEC.mMapArchive_0x34);
 
     field_0x8 = new PaneCtrl_804AF86C();
-    field_0x8->setPane_80402F04(mScreen->search(FSA_TAG64("Nda01")));
+    field_0x8->setPane_80402F04(mScreen->search(FSA_TAG64("Ndata01")));
     field_0x8->moveFromCentre_80402E08(0.0f, -480.0f);
     field_0x8->field_0x22 = 0;
 
