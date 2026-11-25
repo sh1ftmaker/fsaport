@@ -6,6 +6,9 @@
 #include "game/GameGlobals.h"
 #include "JSystem/J2D/J2DPicture.h"
 #include "JSystem/JUtility/JUTVideo.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 #include "game/act/demo_actor_base_8010DF44.h"
 
 void spawnFadeEmitters();
@@ -245,8 +248,15 @@ void cls_80119E5C::fn_801194C4() {
             break;
         }
         field_0x2c->setAlpha(field_0x14);
+#ifdef FSA_PORT
+        // The picture mod (docs/VIEW.md): cover the side bars too.
+        f32 fadeX = 0.0f, fadeW = (s32)JUTVideo::sManager->getFbWidth();
+        fsa_view_cover(&fadeX, &fadeW, fadeW, (s32)JUTVideo::sManager->getEfbHeight());
+        field_0x2c->draw(fadeX, 0.0f, fadeW, (s32)JUTVideo::sManager->getEfbHeight(), false, false, false);
+#else
         field_0x2c->draw(0.0f, 0.0f, (s32)JUTVideo::sManager->getFbWidth(),
                          (s32)JUTVideo::sManager->getEfbHeight(), false, false, false);
+#endif
     }
 }
 

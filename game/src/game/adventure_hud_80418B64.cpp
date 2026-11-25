@@ -1,4 +1,7 @@
 #include "game/GameAudio.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 #include "game/cls_804B13D4.h"
 #include "game/GameState.h"
 #include "game/GameView.h"
@@ -691,6 +694,9 @@ void AdventureHud_804B13D4::fn_8041F720() {
             Vec screen;
             if (field_0x21a[i] > 0 && lbl_8050EC80.getCurrentFile().field_0x68 != 0) {
                 gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(getRepresentativePlayer_8022EA0C(i)), false, false, &screen);
+#ifdef FSA_PORT
+                FSA_VIEW_HUD_POINT(screen);
+#endif
                 f32 px = sx * (screen.x / (s32)JUTVideo::getManager()->getRenderMode()->fbWidth);
                 f32 py = sy * (screen.y / (s32)JUTVideo::getManager()->getRenderMode()->efbHeight);
                 f32 x = px - (s32)JUTVideo::getManager()->getRenderMode()->fbWidth / 2.0f;
@@ -701,6 +707,9 @@ void AdventureHud_804B13D4::fn_8041F720() {
                 field_0x234[i] = 0;
             } else if (!isPaused() && fn_802366CC(getRepresentativePlayer_8022EA0C(i)) > 0 && fn_802366CC(getRepresentativePlayer_8022EA0C(i)) < 300) {
                 gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(getRepresentativePlayer_8022EA0C(i)), false, false, &screen);
+#ifdef FSA_PORT
+                FSA_VIEW_HUD_POINT(screen);
+#endif
                 f32 px = sx * (screen.x / (s32)JUTVideo::getManager()->getRenderMode()->fbWidth);
                 f32 py = sy * (screen.y / (s32)JUTVideo::getManager()->getRenderMode()->efbHeight);
                 f32 x = px - (s32)JUTVideo::getManager()->getRenderMode()->fbWidth / 2.0f;

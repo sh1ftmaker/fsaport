@@ -13,6 +13,9 @@
 #include "JSystem/JUtility/JUTTexture.h"
 #include "JSystem/JUtility/JUTVideo.h"
 #include "JSystem/J2D/J2DGrafContext.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 
 // The file spawns through one helper of its own: its arguments are evaluated before
 // getActorManager_801F856C is called (docs/analysis/INLINE_LEADS.md, round 2).
@@ -244,9 +247,18 @@ void EffectSystem_8049F178::fn_8013D6E4() {
         mEmitterManager->draw(&info, 0);
         mEmitterManager->draw(&info, 3);
         gGameRoot2_8053AB10->field_0x34->capture(0, 0);
+#ifdef FSA_PORT
+        // The picture mod (docs/VIEW.md): this group (the heat haze) samples
+        // the capture just taken, which holds the 4:3 middle only; drawn into
+        // the side bars it would smear the capture's edge. Keep it in the middle.
+        fsa_view_bleed_suppress(1);
+#endif
         gGameRoot2_8053AB10->setPort_8013B490();
         pool_8053CE10(info2d);
         mEmitterManager->draw(&info2d, 5);
+#ifdef FSA_PORT
+        fsa_view_bleed_suppress(0);
+#endif
         gGameRoot2_8053AB10->fn_8013B438();
         GXSetAlphaUpdate(GX_FALSE);
         mEmitterManager->draw(&info, 1);

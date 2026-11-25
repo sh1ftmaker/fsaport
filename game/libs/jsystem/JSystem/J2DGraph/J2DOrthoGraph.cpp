@@ -1,5 +1,8 @@
 #include "types.h"
 #include "JSystem/J2D/J2DGrafContext.h"
+#ifdef FSA_PORT
+#include "../../../../port/fsa_view.h"
+#endif
 
 J2DOrthoGraph::J2DOrthoGraph()
     : J2DGrafContext(0.0f, 0.0f, 0.0f, 0.0f)
@@ -21,6 +24,27 @@ void J2DOrthoGraph::setPort()
     J2DGrafContext::setPort(); // thiscall
     C_MTXOrtho(mMtx44, mOrtho.i.y, mOrtho.f.y, mOrtho.i.x, mOrtho.f.x, mNear, mFar);
     GXSetProjection(mMtx44, GX_ORTHOGRAPHIC);
+#ifdef FSA_PORT
+    // The picture mod (docs/VIEW.md): while the world is drawn wider than 4:3,
+    // the game's full-screen port also reaches into the side bars, so a fade
+    // (drawn larger than the screen) covers the whole picture. Its 0..608 still
+    // lands on the 4:3 box in the middle, exactly where it would otherwise.
+    if (this == fsa_view_bleed_graf && fsa_view_bleed() && mOrtho.i.x == 0.0f && mOrtho.i.y == 0.0f &&
+        mBounds.i.x == 0.0f && mBounds.i.y == 0.0f && mBounds.f.x == mOrtho.f.x && mBounds.f.y == mOrtho.f.y) {
+        f32 x0, x1;
+        fsa_view_bleed_range(mOrtho.f.x, mOrtho.f.y, &x0, &x1);
+        Mtx44 wide;
+        C_MTXOrtho(wide, mOrtho.i.y, mOrtho.f.y, x0, x1, mNear, mFar);
+        GXSetProjection(wide, GX_ORTHOGRAPHIC);
+        unsigned tw, th;
+        fsa_view_target_size(&tw, &th);
+        GXSetViewportRender(0.0f, 0.0f, (f32)tw, (f32)th, 0.0f, 1.0f);
+        if (mScissorBounds.i.x <= 0.0f && mScissorBounds.i.y <= 0.0f && mScissorBounds.f.x >= mOrtho.f.x &&
+            mScissorBounds.f.y >= mOrtho.f.y) {
+            GXSetScissorRender(0, 0, tw, th);
+        }
+    }
+#endif
 }
 
 

@@ -5,6 +5,10 @@
 // fn_804556A4 draws through the digit's picture.
 
 #include "game/GameAudio.h"
+#ifdef FSA_PORT
+#include "JSystem/JUtility/JUTVideo.h"
+#include "../../port/fsa_view.h"
+#endif
 #include "game/GameGlobals.h"
 #include "game/Camera.h"
 #include "game/GameState.h"
@@ -42,6 +46,9 @@ void RupeeDigitSprites_804B1E1C::fn_80455770(f32 scale, s32 digit, const Vec* po
     f32 baseSize = 48.0f * camera->mZoom_0x858;
     Vec screen;
     camera->worldToScreen_8030C5F0(pos, false, false, &screen);
+#ifdef FSA_PORT
+    FSA_VIEW_HUD_POINT(screen);
+#endif
     for (int i = 0; i < 128; i++) {
         if (!mSprites[i].active) {
             mSprites[i].active = 1;

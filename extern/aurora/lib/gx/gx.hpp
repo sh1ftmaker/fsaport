@@ -322,6 +322,10 @@ struct GXState {
   std::array<GXTexObj_, MaxTextures> loadedTextures;
   std::array<GXTlutObj_, MaxTluts> loadedTluts;
   AuroraViewportPolicy viewportPolicy = AURORA_VIEWPORT_FIT;
+  // fsaport change: when > 0, logical (EFB) coordinates map to a box of this
+  // display aspect centred in the render target (pillarbox) instead of being
+  // stretched over the whole target. See AuroraSetContentAspect.
+  float contentAspect = 0.f;
   gfx::Viewport logicalViewport{0.f, 0.f, 640.f, 480.f, 0.f, 1.f};
   gfx::Viewport renderViewport{0.f, 0.f, 640.f, 480.f, 0.f, 1.f};
   gfx::ClipRect logicalScissor{0, 0, 640, 480};
@@ -394,6 +398,13 @@ void sweep_texture_cache() noexcept;
 void evict_tlut_object(u32 tlutObjId) noexcept;
 Vec2<uint32_t> logical_fb_size() noexcept;
 gfx::Viewport map_logical_viewport(const gfx::Viewport& logicalViewport) noexcept;
+// fsaport change: the logical -> render target mapping (x' = x * scaleX + offsetX, y' = y * scaleY).
+struct LogicalMapping {
+  float scaleX = 1.f;
+  float scaleY = 1.f;
+  float offsetX = 0.f;
+};
+LogicalMapping logical_mapping(Vec2<uint32_t> logicalSize, Vec2<uint32_t> targetSize) noexcept;
 gfx::ClipRect map_logical_scissor(const gfx::ClipRect& logicalScissor) noexcept;
 void set_logical_viewport(const gfx::Viewport& viewport) noexcept;
 void set_render_viewport(const gfx::Viewport& viewport) noexcept;

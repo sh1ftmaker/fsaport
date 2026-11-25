@@ -49,10 +49,13 @@ void platform_retrace() {
   platform_service_interrupts();
 }
 
+extern "C" void fsa_view_frame_begin();  // platform/view.cpp: applies a pending picture change
+
 void platform_frame_begin() {
   if (g_inFrame)
     return;
   HostAllocScope host;
+  fsa_view_frame_begin();
   if (g_framesBegun++ < 3)
     platform_log("[vi] frame %u begin\n", g_framesBegun);
   double tb = emscripten_get_now();

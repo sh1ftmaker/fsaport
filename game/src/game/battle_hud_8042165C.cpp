@@ -1,4 +1,7 @@
 #include "game/GameAudio.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 #include "game/cls_804B146C.h"
 #include "game/GameState.h"
 #include "game/GameView.h"
@@ -561,6 +564,9 @@ void BattleHud_804B146C::fn_80425F6C() {
         f32 y;
         if (field_0x1e8[i] > 0 && lbl_8050EC80.getCurrentFile().field_0x69 != 0) {
             gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(getRepresentativePlayer_8022EA0C(i)), false, false, &screen);
+#ifdef FSA_PORT
+            FSA_VIEW_HUD_POINT(screen);
+#endif
             pool_80543A58(screen, sx, sy, &x, &y);
             field_0x4c->setOrtho(0.0f, 0.0f, sx, sy, -10000.0f, 10000.0f);
             field_0x4c->setPort();
@@ -568,6 +574,9 @@ void BattleHud_804B146C::fn_80425F6C() {
             field_0x208[i] = 0;
         } else if (!isPaused() && fn_802366CC(getRepresentativePlayer_8022EA0C(i)) > 0 && fn_802366CC(getRepresentativePlayer_8022EA0C(i)) < 300) {
             gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(getRepresentativePlayer_8022EA0C(i)), false, false, &screen);
+#ifdef FSA_PORT
+            FSA_VIEW_HUD_POINT(screen);
+#endif
             pool_80543A58(screen, sx, sy, &x, &y);
             field_0x4c->setOrtho(0.0f, 0.0f, sx, sy, -10000.0f, 10000.0f);
             field_0x4c->setPort();
@@ -1512,6 +1521,9 @@ void BattleHud_804B146C::fn_8042165C() {
             if (getPlayerLayer_8023DE58(i) < 8) {
                 Vec screen;
                 gGameRoot2_8053AB10->field_0x24->worldToScreen_8030C5F0(getPlayerPos_8023E724(i), false, false, &screen);
+#ifdef FSA_PORT
+                FSA_VIEW_HUD_POINT(screen);
+#endif
                 for (s32 j = 0; j < 10; j++) {
                     if (!lbl_8053AED0->fn_8043DF24(lbl_8048F188[j], lbl_8048F1B0[j], screen.x, screen.y, 0.0f)) {
                         for (s32 k = 0; k < 4; k++) {

@@ -14,6 +14,9 @@
 #include "JSystem/JUtility/JUTTexture.h"
 #include "JSystem/JUtility/JUTFont.h"
 #include "JSystem/JUtility/JUTVideo.h"
+#ifdef FSA_PORT
+#include "../../port/fsa_view.h"
+#endif
 
 // The two 640x448 render modes (NTSC interlaced / progressive) that
 // fn_8013AAD4 / fn_8013AB00 hand to the video manager.
@@ -54,6 +57,9 @@ GameRoot2_8049F108::GameRoot2_8049F108(JKRHeap* heap) {
                                              (f32)(s32)JUTVideo::sManager->getEfbHeight(), -10000.0f, 10000.0f);
     field_0x14 = new (heap, 0) J2DOrthoGraph(0.0f, 0.0f, (f32)(s32)JUTVideo::sManager->getFbWidth(),
                                              (f32)(s32)JUTVideo::sManager->getEfbHeight(), -10000.0f, 10000.0f);
+#ifdef FSA_PORT
+    fsa_view_bleed_graf = field_0x10;  // the full-screen 2D port: fades may cover the side bars
+#endif
     JUTFont* font = lbl_8053AD78->mFont;
     field_0x18 = new (heap, 0) J2DPrint(font, 0.0f, font->getHeight());
     field_0x34 = new (heap, 0) JUTTexture(JUTVideo::sManager->getFbWidth(),
@@ -69,6 +75,9 @@ GameRoot2_8049F108::GameRoot2_8049F108(JKRHeap* heap) {
 }
 
 GameRoot2_8049F108::~GameRoot2_8049F108() {
+#ifdef FSA_PORT
+    fsa_view_bleed_graf = NULL;
+#endif
     delete field_0x1c;
     delete field_0x30;
     delete field_0x2c;
@@ -216,6 +225,17 @@ void GameRoot2_8049F108::setPort_8013B490() {
 
 void GameRoot2_8049F108::fn_8013B460() {
     field_0x14->setPort();
+#ifdef FSA_PORT
+    // The picture mod (docs/VIEW.md): the world overlays drawn on this port
+    // (game_root_sub_24) take their texture coordinates from the render box
+    // (pool_8053D938), so their screen quad goes over the whole render target.
+    if (fsa_view_last_boxes(NULL, NULL)) {
+        unsigned tw, th;
+        fsa_view_target_size(&tw, &th);
+        GXSetViewportRender(0.0f, 0.0f, (f32)tw, (f32)th, 0.0f, 1.0f);
+        GXSetScissorRender(0, 0, tw, th);
+    }
+#endif
 }
 
 void GameRoot2_8049F108::fn_8013B438() {
