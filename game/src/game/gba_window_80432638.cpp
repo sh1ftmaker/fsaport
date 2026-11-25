@@ -61,15 +61,17 @@ GbaWindow_804B1668::GbaWindow_804B1668() {
     f32 centreY = field_0x18[2]->field_0x14;
     field_0x40[0].y = (centreY + field_0x4[0]->search(FSA_TAG64("Ndata01"))->getBounds()->i.y) - height / 2.0f;
     field_0x40[0].z = 0.0f;
+    // Heights go to field_0x78 / field_0x88 (the decomp wrote field_0x70[2..3] and
+    // field_0x80[2..3], past the two-element arrays onto the same addresses).
     field_0x70[0] = field_0x18[2]->mPane->getWidth();
-    field_0x70[2] = field_0x18[2]->mPane->getHeight();
+    field_0x78[0] = field_0x18[2]->mPane->getHeight();
     f32 leftX = field_0x18[0]->field_0x8;
     field_0x58[0].x = leftX + field_0x4[0]->search(FSA_TAG64("Ndata01"))->getBounds()->i.x;
     f32 topY = field_0x18[0]->field_0xc;
     field_0x58[0].y = topY + field_0x4[0]->search(FSA_TAG64("Ndata01"))->getBounds()->i.y;
     field_0x58[0].z = 0.0f;
     field_0x80[0] = field_0x18[0]->mPane->getWidth();
-    field_0x80[2] = field_0x18[0]->mPane->getHeight();
+    field_0x88[0] = field_0x18[0]->mPane->getHeight();
     field_0x4[1] = new J2DScreen;
     field_0x4[1]->setPriority("main_gba_window_s.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
     field_0x10[1] = static_cast<J2DAnmTextureSRTKey*>(
@@ -89,14 +91,14 @@ GbaWindow_804B1668::GbaWindow_804B1668() {
     field_0x40[1].y = (centreY + field_0x4[1]->search(FSA_TAG64("Ndata01"))->getBounds()->i.y) - height / 2.0f;
     field_0x40[1].z = 0.0f;
     field_0x70[1] = field_0x28[1]->mPane->getWidth();
-    field_0x70[3] = field_0x28[1]->mPane->getHeight();
+    field_0x78[1] = field_0x28[1]->mPane->getHeight();
     leftX = field_0x28[0]->field_0x8;
     field_0x58[1].x = leftX + field_0x4[1]->search(FSA_TAG64("Ndata01"))->getBounds()->i.x;
     topY = field_0x28[0]->field_0xc;
     field_0x58[1].y = topY + field_0x4[1]->search(FSA_TAG64("Ndata01"))->getBounds()->i.y;
     field_0x58[1].z = 0.0f;
     field_0x80[1] = field_0x28[0]->mPane->getWidth();
-    field_0x80[3] = field_0x28[0]->mPane->getHeight();
+    field_0x88[1] = field_0x28[0]->mPane->getHeight();
     field_0xc = new J2DScreen;
     field_0xc->setPriority("main_diving.blo", 0x1100000, lbl_80529DEC.mMain2DArchive_0x20);
     field_0x3c = new PaneCtrl_804AF86C;
