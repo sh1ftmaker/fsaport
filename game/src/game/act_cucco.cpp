@@ -1,4 +1,5 @@
 #include "game/ActorId.h"
+#include "portable/FloatConv.h"
 #include "game/ActorManager.h"
 #include "game/Effect.h"
 #include "game/GameView.h"
@@ -1503,7 +1504,7 @@ void Cucco_804AB8C0::fn_8032F148(s32 serial, u16* outAngle, s32* outDir, f32* ou
             dy = actor->mPos.y - (getPlayerPos_8023E724(player)->y - box.i.y);
         }
         dist = std::sqrtf(dx * dx + dy * dy);
-        angle = (u16)(s32)(JMath::atanTable_.atan2_(-dx, -dy) * (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
+        angle = gc_f32_to_u16(JMath::atanTable_.atan2_(-dx, -dy) * (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
         found = player;
     }
     if (found < 0) {

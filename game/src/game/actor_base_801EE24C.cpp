@@ -1,6 +1,7 @@
 // The actor base class (include/game/ActorBase.h) and the code around it.
 
 #include "game/ActorBase.h"
+#include "portable/FloatConv.h"
 #include "game/ActorId.h"
 #include "game/ActorManager.h"
 #include "game/EmitterDelete.h"
@@ -2077,15 +2078,6 @@ void ActorBase_804A5770::fn_801EF510() {
     checkActorHit_801F2DB4('NULL', 'NULL', list);
 }
 
-// Port: the float angle goes to u16 through s32, as the GameCube's fctiwz
-// does; wasm saturates a negative float to 0 for an unsigned target, so every
-// player to the left of the actor (a negative atan2) gave angle 0.
-#ifdef FSA_PORT
-#define FSA_ANGLE_U16(x) (u16)(s32)(x)
-#else
-#define FSA_ANGLE_U16(x) (u16)(x)
-#endif
-
 // The player picked by `mode` relative to the actor `serial`, looked up
 // through the manager (r3 is never read): modes 0 and 2 the nearest (2 only
 // `player`), 1 and 3 the highest fn_80236228 (3 skipping `player`), 4 and 5
@@ -2142,12 +2134,12 @@ void ActorBase_804A5770::findTargetPlayer_801EEC98(s32 serial, u16* outAngle, s3
             if (mode == 0 || mode == 2) {
                 if (bestDist == -1.0f) {
                     bestDist = std::sqrtf(dx * dx + dy * dy);
-                    angle = FSA_ANGLE_U16(JMath::atanTable_.atan2_(-dx, -dy) *
+                    angle = gc_f32_to_u16(JMath::atanTable_.atan2_(-dx, -dy) *
                             (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
                     found = i;
                 } else if (bestDist > std::sqrtf(dx * dx + dy * dy)) {
                     bestDist = std::sqrtf(dx * dx + dy * dy);
-                    angle = FSA_ANGLE_U16(JMath::atanTable_.atan2_(-dx, -dy) *
+                    angle = gc_f32_to_u16(JMath::atanTable_.atan2_(-dx, -dy) *
                             (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
                     found = i;
                 }
@@ -2157,7 +2149,7 @@ void ActorBase_804A5770::findTargetPlayer_801EEC98(s32 serial, u16* outAngle, s3
             {
                 bestA = fn_80236228(i);
                 bestDist = std::sqrtf(dx * dx + dy * dy);
-                angle = FSA_ANGLE_U16(JMath::atanTable_.atan2_(-dx, -dy) *
+                angle = gc_f32_to_u16(JMath::atanTable_.atan2_(-dx, -dy) *
                         (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
                 found = i;
             }
@@ -2166,7 +2158,7 @@ void ActorBase_804A5770::findTargetPlayer_801EEC98(s32 serial, u16* outAngle, s3
             {
                 bestB = getPlayerLife_80237774(i);
                 bestDist = std::sqrtf(dx * dx + dy * dy);
-                angle = FSA_ANGLE_U16(JMath::atanTable_.atan2_(-dx, -dy) *
+                angle = gc_f32_to_u16(JMath::atanTable_.atan2_(-dx, -dy) *
                         (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
                 found = i;
             }
