@@ -352,8 +352,8 @@ MapScreen_804B1288::MapScreen_804B1288() {
     for (s32 i = 0; i < 8; i++) {
         getMessageText_803832BC(mStageNames_0x474[i], lbl_8048C1F8[i], 0, NULL, NULL);
     }
-    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt02")))->setFont(lbl_8053AD78->mFont);
-    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt01")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmmt02")))->setFont(lbl_8053AD78->mFont);
+    static_cast<J2DTextBox*>(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmmt01")))->setFont(lbl_8053AD78->mFont);
     field_0x404 = mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->getBounds()->i.x - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.x;
     field_0x408 = mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->getBounds()->i.y - mMapAreaScreen_0x10->search(lbl_8048C658[3])->getBounds()->i.y;
     mMapAreaScreen_0x10->search(FSA_TAG64("Plvcu"))->setAlpha(0);
@@ -444,9 +444,9 @@ MapScreen_804B1288::MapScreen_804B1288() {
     mMessageWindowPanes_0x240[11]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Pmmtp")));
     static_cast<J2DPicture*>(mMessageWindowPanes_0x240[11]->mPane)->setBlackWhite(JUtility::TColor(0), JUtility::TColor(0));
     mMessageTextPanes_0x270[0] = new PaneCtrl_804AF86C;
-    mMessageTextPanes_0x270[0]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt01")));
+    mMessageTextPanes_0x270[0]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmmt01")));
     mMessageTextPanes_0x270[1] = new PaneCtrl_804AF86C;
-    mMessageTextPanes_0x270[1]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmt02")));
+    mMessageTextPanes_0x270[1]->setPane_80402F04(mMessageWindowScreen_0x18->search(FSA_TAG64("Tmmt02")));
     mMessageTimer_0x42a = 0;
     field_0x42c = 0;
     mMessageState_0x659 = 0;

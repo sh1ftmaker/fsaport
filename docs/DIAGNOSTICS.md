@@ -389,17 +389,20 @@ In the merged TSV, 1756 of the 6166 functions with a symbol are entered,
 and 953 of those have regions that never ran. The 2089 entered functions have
 27357 `untaken` items.
 
-stage_2_0 does not reach the stage. At read 4044, in the map select
-(`MapSelect`), the normal build and the coverage build both stop with
-`RuntimeError: null function` in `cls_804AF480::cls_804AF480()`
-(`tu_8039003C.cpp`, inlined into `GameRoot::applyRequestedMode_80135494`).
-Its counters show where. `MapScreen_804B1288::MapScreen_804B1288()`
-(`map_screen_80403D84.cpp:288`) runs to its end (line 709), but the
-pane-building loops at lines 366, 370, 376, 390, 400, 410, 414, ... report
-their condition false at the first test (`i < 3` with `i = 0`). That only
-happens if the compiler removed those loops. The code between them ran. The
-`cls_804AF480` constructor never reaches line 42, the code after
-`new MapScreen_804B1288`. The decomp has the details.
+stage_2_0 stopped at read 4044 (these figures are from that run), in the
+map select, with `RuntimeError: null function`: `MapScreen_804B1288`'s
+constructor (`map_screen_80403D84.cpp:355`, inlined through
+`cls_804AF480::cls_804AF480()` into `GameRoot::applyRequestedMode_80135494`)
+searched `main_message_window.blo` for `Tmt02`, a tag the decomp source had
+wrong (the panes are `Tmmt01`/`Tmmt02`). `search()` returned NULL, and the
+`setFont()` virtual call through it trapped. That is fixed. **Reading the
+counters of a function that trapped:** clang stores one counter per loop body
+and branch arm, and works out the rest (the code after a loop, the false side
+of a condition) by subtracting from the function's entry count. A function
+that stops partway leaves its later body counters at 0, so the code after each
+loop seems to have run and each loop seems to have failed its first test. That
+is what this run's report showed for the constructor. Trust the stack, not
+those counts.
 
 The coverage build plays every script exactly as the normal build does.
 `tools/harness_compare.py <coverage run> <normal run>` on each pair gives
