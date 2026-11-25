@@ -1550,6 +1550,12 @@ s32 fn_8023885C(s32 serial) {
 // instructions) and returns `mr`. A copy-constructed offset (`offset(*pos)`)
 // compiles the same; a u8 return gives the clrlwi but breaks the bool
 // wrappers fn_80271038 / fn_80271068 / fn_80271098 / hitOwnGroup_80272160 (100 -> 55-67 %).
+#ifdef FSA_PORT
+// fn_802710C8's kinds 0xd/0xe/0xf leave its `requested` unset; the original then reads r29,
+// which it never wrote and so still holds this function's `hit` (its only caller). The
+// port hands that value over here (player_8026FC20.cpp).
+bool fsa_port_hitPlayerGroup_hit;
+#endif
 bool hitPlayerGroup_80238548(s32 player, s32 damage, const JGeometry::TVec2f* pos, s32 arg) {
     if (gPlayerManager_8053AC90 == NULL) {
         return false;
@@ -1567,6 +1573,9 @@ bool hitPlayerGroup_80238548(s32 player, s32 damage, const JGeometry::TVec2f* po
             const JGeometry::TVec3f* own = getPlayerPos_8023E724(i);
             JGeometry::TVec2f at(own->x, own->y);
             at.add(offset);
+#ifdef FSA_PORT
+            fsa_port_hitPlayerGroup_hit = hit;
+#endif
             if (gPlayerManager_8053AC90->mPlayers[i]->fn_802710C8(player, damage, &at, arg)) {
                 gPlayerManager_8053AC90->mPlayers[i]->endFormActor_80248FF0();
                 if (i == player) {
@@ -3802,8 +3811,19 @@ void fn_8022E088(s32 player, s32 index, JGeometry::TVec3f* out) {
 }
 
 // The fallbacks return the address of a zeroed local (the original does: stfs 0.0f twice to
-// the frame, addi r3, r1).
+// the frame, addi r3, r1). The only caller (player_8023FBF0) reads x and y straight away, so
+// on the GameCube it read 0, 0 from the dead frame; under clang that read is undefined, so the
+// port returns a static zero vector instead.
 const JGeometry::TVec2f* fn_8022DFD4(s32 player) {
+#ifdef FSA_PORT
+    static const JGeometry::TVec2f zero(0.0f, 0.0f);
+    if (gPlayerManager_8053AC90 == NULL) {
+        return &zero;
+    }
+    if (!isPlayerActive_8023F264(player)) {
+        return &zero;
+    }
+#else
     if (gPlayerManager_8053AC90 == NULL) {
         JGeometry::TVec2f zero(0.0f, 0.0f);
         return &zero;
@@ -3812,6 +3832,7 @@ const JGeometry::TVec2f* fn_8022DFD4(s32 player) {
         JGeometry::TVec2f zero(0.0f, 0.0f);
         return &zero;
     }
+#endif
     return gPlayerManager_8053AC90->mPlayers[player]->fn_802422C4();
 }
 

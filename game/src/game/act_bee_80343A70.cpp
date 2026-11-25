@@ -369,7 +369,15 @@ void Bee_804AC600::draw() {
 
 // 0x80343AD0.
 void Bee_804AC600::die_0x24() {
+#ifdef FSA_PORT
+    // field_0x274 is 0 when the bee dies without a bomb (1) or a field_0x168 == 5 hit (2)
+    // having set it. The original then ORs in r31 unchanged, the caller's (die_0x24 has
+    // several callers, each with its own r31, often a pointer), so the RUPY parameter is
+    // garbage there. The port uses kind 0.
+    s32 kind = 0;
+#else
     s32 kind;
+#endif
     if (field_0x274 == 1) {
         kind = 3;
     } else if (field_0x274 == 2) {

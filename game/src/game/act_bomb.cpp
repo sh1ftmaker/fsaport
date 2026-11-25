@@ -916,7 +916,13 @@ void Bomb_8049F784::draw() {
 
     s32 flag;
     s32 frame;
+#ifdef FSA_PORT
+    // Unset only for spawn parameter 8/9 in state 5, where the matrix it scales is not
+    // drawn (no drawSprite in state 5; showGbaSprite takes no matrix). Any value will do.
+    f32 scale = field_0x274;
+#else
     f32 scale;
+#endif
     if (mSpawnParam_0x90 == 8 || mSpawnParam_0x90 == 9) {
         if (field_0x230 != 5) {
             flag = 0;

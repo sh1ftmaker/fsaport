@@ -283,7 +283,13 @@ void BgRewrite_804A7C98::fn_802A20F0(const JGeometry::TVec3f* pos, s32 player, s
             }
         } else {
             gBgRewrite_8053AC98->fn_802A3948(pos, 0, layer, 0x79);
+#ifdef FSA_PORT
+            // Always set below: field_0x24 is 0x70, 0x75 or 0x6B here (fn_802A3948 does not
+            // change it). The initialiser only tells clang so.
+            s32 serial = -1;
+#else
             s32 serial;
+#endif
             if (field_0x24 == 0x70) {
                 serial = getActorManager_801F856C()->spawnActor_801F9484('GRAS', layer, pos, a, -1, -1);
             } else if (field_0x24 == 0x75) {
@@ -943,7 +949,13 @@ u8 BgRewrite_804A7C98::fn_8029EDB8(const JGeometry::TVec3f* pos, s32 player, s32
                 u32 tile = gGameRoot2_8053AB10->field_0x20->getTile_802F9908(layer, cell);
                 JGeometry::TVec3f cellPos;
                 cellToPos_80226CA8(cell, layer, &cellPos);
+#ifdef FSA_PORT
+                // Every path that reads it sets it first (the 0x70/0x75/0x6B branch covers all
+                // three values). The initialiser only tells clang so.
+                s32 serial = -1;
+#else
                 s32 serial;
+#endif
                 if (tile >= 0x40 && tile <= 0x44) {
                     if (tile == 0x41) {
                         gBgRewrite_8053AC98->writeTileMarkView_802A3884(&p, 0, layer, 0x12);

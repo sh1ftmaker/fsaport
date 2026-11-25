@@ -92,20 +92,39 @@ void ZoraEscortGoalList_80128460::fn_80128074() {
     }
 }
 
+// Both results are locals of this frame (the original: addi r3, r1, 0x14 / 0x8). The only
+// caller (ZoraEscortGoal setState case 13) copies the vector straight away, so on the GameCube
+// it read the values from the dead frame; under clang that read is undefined, so the port
+// returns static storage holding the same values.
 const JGeometry::TVec3f* ZoraEscortGoalList_80128460::fn_80127F90() {
+#ifdef FSA_PORT
+    static JGeometry::TVec3f result;
+    if (mCount <= 1) {
+        result.set(0.0f, 0.0f, 0.0f);
+        return &result;
+    }
+    // A goal that is not found leaves its pos[] stack garbage in the original; zero here.
+    JGeometry::TVec3f pos[2] = {JGeometry::TVec3f(0.0f, 0.0f, 0.0f), JGeometry::TVec3f(0.0f, 0.0f, 0.0f)};
+#else
     if (mCount <= 1) {
         JGeometry::TVec3f zero(0.0f, 0.0f, 0.0f);
         return &zero;
     }
     JGeometry::TVec3f pos[2];
+#endif
     for (s32 i = 0; i < 2; i++) {
         ActorBase_804A5770* actor = getActorManager_801F856C()->findActorBySerial_801F666C(mSerials[i]);
         if (actor != NULL && actor->mActorId == ACTOR_FZRA) {
             pos[i] = actor->mPos;
         }
     }
+#ifdef FSA_PORT
+    result.set((pos[0].x + pos[1].x) / 2, (pos[0].y + pos[1].y) / 2, 0.0f);
+    return &result;
+#else
     JGeometry::TVec3f center((pos[0].x + pos[1].x) / 2, (pos[0].y + pos[1].y) / 2, 0.0f);
     return &center;
+#endif
 }
 
 void ZoraEscortGoalList_80128460::fn_80127ED8(const JGeometry::TVec3f* pos) {

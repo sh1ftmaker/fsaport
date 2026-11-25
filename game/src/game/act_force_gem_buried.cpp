@@ -95,7 +95,15 @@ void BuriedForceGem_804AB258::update() {
                 vel.y = -1.0f;
                 vel.z = 3.0f;
             }
+#ifdef FSA_PORT
+            // field_0x248 (spawn parameter bits 8..15) other than 0 or 1 spawns nothing. The
+            // original then reads r31, which update() has not written: the actor manager's
+            // (fn_801F871C) loop pointer, an 0x80xxxxxx address, negative as s32, so the
+            // `serial >= 0` test fails. -1 does the same.
+            s32 serial = -1;
+#else
             s32 serial;
+#endif
             if (field_0x248 == 0) {
                 serial = getActorManager_801F856C()->spawnActorSimple_801F8544(ACTOR_RUPY, mLayer_0x4, &pos, field_0x244 + 4);
             } else if (field_0x248 == 1) {

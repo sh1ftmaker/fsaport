@@ -3827,7 +3827,15 @@ bool Player_804A6F38::fn_802710C8(s32 attacker, s32 damage, const JGeometry::TVe
         knockback.z = 2.0f;
     }
 
+#ifdef FSA_PORT
+    // Kinds 0xd/0xe/0xf below never set `requested` (their requestState results are dropped).
+    // The original keeps it in r29, which this function has not written by then, so it
+    // reads the caller's r29: hitPlayerGroup_80238548's `hit` (the only caller).
+    extern bool fsa_port_hitPlayerGroup_hit;
+    bool requested = fsa_port_hitPlayerGroup_hit;
+#else
     bool requested;
+#endif
     if (kind == 0xa) {
         field_0x464 = 60;
         requested = requestState_80251AEC(0x35);

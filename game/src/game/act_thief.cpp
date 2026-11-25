@@ -501,7 +501,13 @@ void Thief_804A5A30::updateState_0x90(u8 mapHit) {
     case 4:
         if (mPos.z <= 0.0f) {
             while (field_0x344 != 0) {
+#ifdef FSA_PORT
+                // The loop always sets it: field_0x344 is a non-zero u32 here and entry 0's
+                // amount is 1. The initialiser only tells clang so.
+                u32 gemType = lbl_8046A288[0].type;
+#else
                 u32 gemType;
+#endif
                 for (s32 i = 11; i >= 0; i--) {
                     if (field_0x344 >= lbl_8046A288[i].amount) {
                         gemType = lbl_8046A288[i].type;

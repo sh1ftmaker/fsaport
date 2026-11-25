@@ -146,7 +146,7 @@ GameState_804B0FE0::GameState_804B0FE0() {
     field_0x247 = 0;
     field_0x249[0] = 0;
     field_0x248 = 0xFF;
-    field_0x249[1] = 0;
+    field_0x24a = 0; // decomp: field_0x249[1], one past the array, the same byte
     field_0x24b = 0;
     field_0x24c = 0;
     field_0x24d = 0;
@@ -214,7 +214,7 @@ void GameState_804B0FE0::fn_80403680() {
     field_0x243[0] = 0;
     field_0x23e[0] = 0;
     field_0x240 = 0;
-    field_0x249[1] = 0;
+    field_0x24a = 0; // decomp: field_0x249[1], one past the array, the same byte
     field_0x24b = 0;
     field_0x24e = 0;
     field_0x24f = 0;

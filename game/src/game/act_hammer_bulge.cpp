@@ -151,7 +151,16 @@ void HammerBulge_804A88E8::update() {
                                 getActorManager_801F856C()->spawnActor_801F9484('JIJI', mLayer_0x4, &pos, ((msg - 0x12b) | 0x02110000), -1, -1);
                             }
                         } else {
+#ifdef FSA_PORT
+                            // Contents 10..15 (spawn parameter & 0xF) set neither. The
+                            // original keeps it in r28, which update() has not written on
+                            // this path, so it spawns TKTA with the actor manager's r28
+                            // (fn_801F871C's `paused`, 0 whenever this update runs outside
+                            // a transition).
+                            s32 tkta = 0;
+#else
                             s32 tkta;
+#endif
                             if (field_0x234 == 0) {
                                 tkta = 4;
                             } else if (field_0x234 == 9) {

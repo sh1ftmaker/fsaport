@@ -64,7 +64,8 @@ each unit's own flags (from `game/units.txt`):
 |---|---|
 | `--std=gnu++17` / `gnu99` | GNU modes: no trigraphs (the game spells resource types `'????'`, and `??'` is the trigraph for `^`). C++17 for the `BE<T>` file-struct wrapper (`game/libs/sdk/include/port/be.h`); `register` is allowed with `-Wno-register`. |
 | `-fno-strict-return` | MWCC-era functions that fall off the end without a return were compiled as unreachable code and hung. |
-| `-Werror=return-type` | ...but the value such a path returns is still undefined, and MWCC callers read what was left in r3/f1. A missing return is a build error; write the return the original has (see "Functions without a return" below). Every other warning stays off (`-Wno-everything`). |
+| `-Werror=return-type` | ...but the value such a path returns is still undefined, and MWCC callers read what was left in r3/f1. A missing return is a build error; write the return the original has (see "Functions without a return" below). Every other warning stays off (`-Wno-everything`), except: |
+| `-Werror=return-stack-address`, `=sometimes-uninitialized`, `=infinite-recursion`, `=array-bounds` | the other undefined behaviour MWCC's codegen made work by accident; build errors (see "Other undefined behaviour" below). |
 | `-gline-tables-only` | `tools/wasm_where.sh` maps a Chrome stack offset to a source line. |
 | `-nostdinc` | the units use the decomp's MSL headers for now (see "Open questions"). |
 | `-fsigned-char` | wasm's default too; stated so the 64-bit/ARM builds agree. |
@@ -249,6 +250,22 @@ Worth checking for in any code that misbehaves:
   player's Link in the GBA views). Functions stripped from the DOL get any
   plain value. A switch that misses cases can return a register the function
   never set (`BigMoldorm init`: r8 from the caller); match that in the port.
+- **Other undefined behaviour** (each class a build error, flags above):
+  - *A pointer to a local returned* (`fn_8022DFD4`, `ZoraEscortGoalList::fn_80127F90`):
+    MWCC callers copied the vector out of the dead frame; clang dropped the
+    stores, so the callers read stale stack. Return static storage holding the
+    same value.
+  - *A local read on a path that never set it*: read the asm for the register
+    or stack slot on that path. Usually the path cannot happen (say so in a
+    comment and initialise to anything); otherwise it is a callee-saved
+    register still holding the caller's value (`fn_802710C8`'s `requested` is
+    r29 = `hitPlayerGroup_80238548`'s `hit`, handed over in a port global;
+    `BuriedForceGem` serial: r31, a negative pointer, so no gem; `HammerBulge`
+    TKTA: r28, the actor manager's `paused`).
+  - *Indexing past an array onto the next field* (`f32 field_0x70[2]` written
+    at [2], [3]): name the field it lands on. The layout stays as is.
+  - *A function calling itself* (`TResourceContainer::getResource_groupID`
+    const): call the overload it meant.
 - **Return-type mismatches between a declaration and the definition**: C++
   mangling hides them, `wasm-ld` turns the call into a trap or emits invalid
   code. Fixed where found (`fn_8017EC5C`, `CARDInit`, `GXSetArray`).
