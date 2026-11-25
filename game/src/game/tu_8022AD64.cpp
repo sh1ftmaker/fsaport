@@ -2497,6 +2497,13 @@ s32 fn_802340A0(s32 player) {
     if (isPlayerActive_8023F264(player)) {
         return gPlayerManager_8053AC90->mPlayers[player]->fn_80240868();
     }
+#ifdef FSA_PORT
+    // The original returns `player` here (r3 untouched). Without it clang's value
+    // is undefined (0 in practice), so cls_804AA8B8::fn_80306A94 wrote every
+    // inactive player's hidden mark over mark 0: the player's own Link vanished
+    // from the GBA view and from single-player's GBA-style window on the TV.
+    return player;
+#endif
 }
 
 s32 fn_80234004(s32 player) {
