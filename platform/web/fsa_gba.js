@@ -3,7 +3,9 @@
 //
 //   ?gba=N         plug a GBA (local peer) into ports 0..N-1 (N = 1..4)
 //   ?gba=0,2       ... or into the listed ports
-//   ?gbaview=0     no panel (the GBAs still work); ?gbaview=S: panel scale S (default 2/3)
+//   ?gbaview=0     no panel (the GBAs still work)
+//   ?gbaview=native|gc|both  how the panel draws each GBA screen (below); ?gbascale=S (or ?gbaview=S): its scale
+//   ?gbashots=1    log a native / GameCube side-by-side shot of each screen when it settles (tools/gba_shots.py)
 //
 // Each GBA's buttons are the pad of its port (keyboard / gamepad / the harness's
 // four pads), plus these keys for ports 1-3 in live play:
@@ -79,42 +81,199 @@ Module.fsaGbaInit = function () {
   window.addEventListener('keyup', onKey(false));
 
   if (q.get('gbaview') === '0') return;
+  // The panel: each GBA's screen, drawn natively from what the game sends it
+  // (platform/gba_view.cpp, approach A) or by the game's own GameCube renderer
+  // (game/src/port/gba_gcview.cpp, approach B; rooms only, the overworld falls
+  // back to the native view), or both side by side.
+  //   ?gbaview=native|gc|both   the mode (default native); a button per panel cycles it
+  //   ?gbaview=S / ?gbascale=S  the panel's scale (default 2/3; 1 = the GBA's 240 x 160)
+  const VIEWMODES = ['native', 'gc', 'both'];
+  const arg2 = q.get('gbaview') || '';
+  let mode = VIEWMODES.includes(arg2) ? arg2 : 'native';
+  const scale = Number(q.get('gbascale')) || Number(arg2) || 2 / 3;
+  const setGc = () => Module._fsa_gba_gcview(mode === 'native' ? 0 : ports.reduce((m, p) => m | (1 << p), 0));
+  setGc();
   const panel = document.createElement('div');
   panel.id = 'gbapanel';
   panel.style.cssText = 'position:fixed;left:4px;bottom:4px;z-index:50;display:flex;flex-wrap:wrap;gap:4px;' +
     'pointer-events:none;font:9px/1.25 ui-monospace,monospace;color:#ddd;opacity:.92';
+  const serialBuf = Module._malloc(4);
+  // The GameCube-drawn panel of port p (240 x 160 RGBA) or null (not in a room / not on).
+  const gcPixels = (p) => {
+    if (mode === 'native') return null;
+    const ptr = Module._fsa_gba_gcview_pixels(p, serialBuf);
+    return ptr ? HEAPU8.subarray(ptr, ptr + 240 * 160 * 4) : null;
+  };
+  const nativePixels = (p) => {
+    const ptr = Module._fsa_gba_render(p);
+    return HEAPU8.subarray(ptr, ptr + 240 * 160 * 4);
+  };
   const views = ports.map((p) => {
     const box = document.createElement('div');
     box.style.cssText = 'background:rgba(0,0,0,.75);padding:4px;border-radius:4px';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:3px';
+    const mk = () => {
+      const c = document.createElement('canvas');
+      c.width = 240;
+      c.height = 160;
+      c.style.cssText = `display:block;width:${240 * scale}px;height:${160 * scale}px;image-rendering:pixelated`;
+      row.append(c);
+      return { c, ctx: c.getContext('2d'), img: new ImageData(240, 160) };
+    };
+    const a = mk(), b = mk();
+    const head = document.createElement('div');
+    head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:4px';
+    const t = document.createElement('div');
+    t.style.cssText = `white-space:pre;overflow:hidden`;
+    const btn = document.createElement('button');
+    btn.style.cssText = 'pointer-events:auto;font:inherit;padding:1px 5px;border-radius:3px;border:1px solid #666;background:#222;color:#ddd;cursor:pointer';
+    btn.title = 'GBA screen: native rebuild / GameCube-drawn / both';
+    btn.onclick = () => window.fsaGba.mode(VIEWMODES[(VIEWMODES.indexOf(mode) + 1) % VIEWMODES.length]);
+    head.append(t, btn);
+    box.append(row, head);
+    panel.append(box);
+    return { p, a, b, text: t, btn };
+  });
+  document.body.append(panel);
+  window.fsaGba.mode = (m) => {
+    if (m !== undefined && VIEWMODES.includes(m)) {
+      mode = m;
+      setGc();
+      draw();
+    }
+    return mode;
+  };
+  window.fsaGba.native = (p) => nativePixels(p).slice();
+  window.fsaGba.gc = (p) => { const px = gcPixels(p); return px ? px.slice() : null; };
+  // A PNG (data URL) of port p's screen, 'native' or 'gc' (null when the GameCube drew none).
+  window.fsaGba.png = (p, which = 'native') => {
+    const px = which === 'gc' ? gcPixels(p) : nativePixels(p);
+    if (!px) return null;
     const c = document.createElement('canvas');
     c.width = 240;
     c.height = 160;
-    // ?gbaview=S: the panel's scale (default 2/3; 1 = the GBA's 240 x 160).
-    const scale = Number(q.get('gbaview')) || 2 / 3;
-    c.style.cssText = `display:block;width:${240 * scale}px;height:${160 * scale}px;image-rendering:pixelated`;
-    const t = document.createElement('div');
-    t.style.cssText = `white-space:pre;width:${240 * scale}px;overflow:hidden`;
-    box.append(c, t);
-    panel.append(box);
-    return { p, ctx: c.getContext('2d'), img: new ImageData(240, 160), text: t };
-  });
-  document.body.append(panel);
+    const img = new ImageData(240, 160);
+    img.data.set(px);
+    c.getContext('2d').putImageData(img, 0, 0);
+    return c.toDataURL('image/png');
+  };
+  // Side by side for comparisons (docs/MULTIPLAYER.md, "GBA screen"): port p's
+  // native and GameCube-drawn screens of the same frame and their difference
+  // (pixels whose colour differs by more than 24 in a channel, in magenta), at
+  // scale 2, as a PNG data URL plus the count of differing pixels. Logged as one
+  // "GBASHOT <name> <port> <json>" line by fsaGba.logShot (tools/gba_shots.py
+  // turns such lines into files).
+  window.fsaGba.shot = (p) => {
+    // The GameCube panel arrives a few frames late: compare it with the native
+    // screen of its own frame (kept by game/src/port/gba_gcview.cpp).
+    const g = gcPixels(p);
+    const b = g ? g.slice() : null;
+    const nf = b ? Module._fsa_gba_gcview_frame_native(p) : 0;
+    const a = nf ? HEAPU8.slice(nf, nf + 240 * 160 * 4) : nativePixels(p).slice();
+    const S = 2, W = 240 * S, H = 160 * S, gap = 6;
+    const c = document.createElement('canvas');
+    c.width = W * 3 + gap * 2;
+    c.height = H;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.imageSmoothingEnabled = false;
+    const put = (px, x) => {
+      const t = document.createElement('canvas');
+      t.width = 240;
+      t.height = 160;
+      const img = new ImageData(240, 160);
+      img.data.set(px);
+      t.getContext('2d').putImageData(img, 0, 0);
+      ctx.drawImage(t, x, 0, W, H);
+    };
+    put(a, 0);
+    let diff = -1;
+    if (b) {
+      put(b, W + gap);
+      const d = new Uint8ClampedArray(240 * 160 * 4);
+      diff = 0;
+      for (let i = 0; i < 240 * 160; i++) {
+        const k = i * 4;
+        const off = Math.abs(a[k] - b[k]) > 24 || Math.abs(a[k + 1] - b[k + 1]) > 24 || Math.abs(a[k + 2] - b[k + 2]) > 24;
+        if (off) diff++;
+        const grey = (a[k] + a[k + 1] + a[k + 2]) / 9;
+        d[k] = off ? 255 : grey;
+        d[k + 1] = off ? 0 : grey;
+        d[k + 2] = off ? 255 : grey;
+        d[k + 3] = 255;
+      }
+      put(d, 2 * (W + gap));
+    }
+    const single = (px) => {
+      if (!px) return null;
+      const t = document.createElement('canvas');
+      t.width = 240;
+      t.height = 160;
+      const img = new ImageData(240, 160);
+      img.data.set(px);
+      t.getContext('2d').putImageData(img, 0, 0);
+      return t.toDataURL('image/png');
+    };
+    return { port: p, reads: Module._fsa_harness_reads(), sameFrame: !!nf, diff, total: 240 * 160,
+             png: c.toDataURL('image/png'), native: single(a), gc: single(b) };
+  };
+  window.fsaGba.logShot = (name, p) => {
+    const r = window.fsaGba.shot(p);
+    console.log('GBASHOT ' + name + ' ' + p + ' ' + JSON.stringify(r));
+    return r.diff;
+  };
   const MODES = ['off', 'code', 'disc-id', 'cmd', 'packet', 'frame'];
-  setInterval(() => {
+  function draw() {
     for (const v of views) {
-      const ptr = Module._fsa_gba_render(v.p);
-      v.img.data.set(HEAPU8.subarray(ptr, ptr + 240 * 160 * 4));
-      v.ctx.putImageData(v.img, 0, 0);
+      const gc = gcPixels(v.p);
+      const first = mode === 'gc' && gc ? gc : nativePixels(v.p);
+      v.a.img.data.set(first);
+      v.a.ctx.putImageData(v.a.img, 0, 0);
+      v.b.c.style.display = mode === 'both' ? 'block' : 'none';
+      if (mode === 'both') {
+        if (gc) v.b.img.data.set(gc);
+        else v.b.img.data.fill(0);
+        v.b.ctx.putImageData(v.b.img, 0, 0);
+      }
       const l = window.fsaGba.link(v.p);
       const d = decodeView(v.p);
       const kind = d.record.length ? (d.record[0] >>> 24) & 15 : -1;
       const valid = d.record.length ? (d.record[0] >>> 19) & 7 : 0;
       const kw = l[7] >>> 0, gk = ((kw >>> 16) & 0xFF) | (kw & 0x300);
       const held = Object.keys(GBA).filter((n) => gk & GBA[n]).join(' ') || '-';
+      const shown = mode === 'native' ? 'native' : mode === 'both' ? 'native | GameCube' : gc ? 'GameCube-drawn' : 'native (GameCube draws rooms only)';
+      v.btn.textContent = mode;
       v.text.textContent =
         `P${v.p + 1} ${l[1] ? 'linked' : 'plugged'} ${MODES[l[2]]} frames ${l[4]} files ${l[5]}\n` +
-        `record ${kind}${kind === 5 ? (valid ? ' room' : ' overworld (tile sheet)') : ''}, ${d.record.length} words\n` +
-        `keys ${held}`;
+        `record ${kind}${kind === 5 ? (valid ? ' room' : ' overworld') : ''}, ${d.record.length} words\n` +
+        `${shown}; keys ${held}`;
     }
-  }, 100);
+  }
+  setInterval(draw, 100);
+
+  // ?gbashots=1: log a side-by-side shot (fsaGba.logShot) of each port once its
+  // screen has settled in a new state (overworld / room) for 90 pad reads, so a
+  // scripted run records comparable frames by itself (tools/gba_shots.py).
+  if (q.get('gbashots')) {
+    const seen = ports.map(() => ({ state: '', since: 0, done: '' }));
+    setInterval(() => {
+      const n = Module._fsa_harness_reads();
+      ports.forEach((p, i) => {
+        const d = decodeView(p);
+        if (!d.record.length) return;
+        const kind = (d.record[0] >>> 24) & 15;
+        const valid = (d.record[0] >>> 19) & 7;
+        if (kind !== 5 && kind !== 14) return;
+        const state = valid ? 'room' + valid : 'overworld';
+        const s = seen[i];
+        if (state !== s.state) { s.state = state; s.since = n; return; }
+        if (n - s.since >= 90 && s.done !== state + s.since) {
+          s.done = state + s.since;
+          window.fsaGba.logShot(state + '-' + n, p);
+        }
+      });
+    }, 250);
+  }
 };

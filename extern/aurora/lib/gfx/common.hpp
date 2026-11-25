@@ -235,6 +235,12 @@ void resolve_pass(TextureHandle texture, ClipRect rect, bool clearColor, bool cl
 void begin_offscreen(uint32_t width, uint32_t height);
 void end_offscreen();
 bool is_offscreen() noexcept;
+// fsaport: read back `rect` of the current offscreen pass's colour at the end of
+// the frame, labelled `tag`; readback_latest copies the newest result (tight
+// RGBA8) and its tag and returns its serial (0: none yet).
+void request_readback(ClipRect rect, uint32_t tag);
+bool readback_pending();
+uint32_t readback_latest(uint8_t* rgba, uint32_t capacity, uint32_t* width, uint32_t* height, uint32_t* tag);
 uint32_t get_sample_count() noexcept;
 void clear_caches() noexcept;
 

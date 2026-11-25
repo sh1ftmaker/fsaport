@@ -67,9 +67,12 @@ void platform_frame_begin() {
     platform_log("[vi] frame %u begun=%d\n", g_framesBegun, (int)g_inFrame);
 }
 
+extern "C" void fsa_gba_gcview_frame(void);  // game/src/port/gba_gcview.cpp (deluxe; off by default)
+
 void platform_frame_end() {
   if (!g_inFrame)
     return;
+  fsa_gba_gcview_frame();  // GBA views drawn by the game's renderer, when the page asked for them
   HostAllocScope host;
   if (g_framesDrawn < 3)
     platform_log("[vi] frame %u: game drawing done, aurora_end_frame\n", g_framesDrawn + 1);

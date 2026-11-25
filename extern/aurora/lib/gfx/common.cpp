@@ -16,7 +16,9 @@
 #include "texture.hpp"
 #include "../window.hpp"
 
+#include <array>
 #include <atomic>
+#include <vector>
 #include <optional>
 #include <ranges>
 
@@ -156,6 +158,11 @@ struct RenderPass {
   bool clearColor = true;
   bool clearDepth = true;
   std::vector<tex_palette_conv::ConvRequest> paletteConvs;
+  // fsaport: copy this rect of the pass's colour target to the CPU at the end of
+  // the frame (request_readback; an offscreen pass only).
+  bool readback = false;
+  ClipRect readbackRect{};
+  uint32_t readbackTag = 0;
 };
 static std::vector<RenderPass> g_renderPasses;
 static u32 g_currentRenderPass = UINT32_MAX;
@@ -387,6 +394,154 @@ static OffscreenCacheEntry get_offscreen_textures(uint32_t width, uint32_t heigh
   };
   auto [insertIt, _] = g_offscreenCache.emplace(key, std::move(entry));
   return insertIt->second;
+}
+
+// --- fsaport: CPU readback of an offscreen pass (request_readback) -------------
+// One rect per frame at most; two buffers so a frame can be copied while the
+// previous one is still being mapped. The latest result is kept as tight RGBA8.
+namespace {
+struct ReadbackSlot {
+  wgpu::Buffer buffer;
+  uint32_t width = 0, height = 0, bytesPerRow = 0;
+  bool bgra = false;
+  uint32_t tag = 0;
+  int state = 0;  // 0 free, 1 copy encoded, 2 map pending
+};
+std::array<ReadbackSlot, 2> g_readbackSlots;
+std::vector<uint8_t> g_readbackLatest;
+uint32_t g_readbackWidth = 0, g_readbackHeight = 0, g_readbackSerial = 0, g_readbackTag = 0;
+}  // namespace
+
+static void encode_readback(const wgpu::CommandEncoder& cmd, const wgpu::Texture& texture, ClipRect rect, uint32_t tag) {
+  if (!texture || rect.width <= 0 || rect.height <= 0) {
+    return;
+  }
+  ReadbackSlot* slot = nullptr;
+  for (auto& s : g_readbackSlots) {
+    if (s.state == 0) {
+      slot = &s;
+      break;
+    }
+  }
+  if (slot == nullptr) {
+    return;  // both still in flight: skip this frame
+  }
+  const uint32_t w = rect.width, h = rect.height;
+  const uint32_t bytesPerRow = (w * 4 + 255) & ~255u;
+  if (!slot->buffer || slot->width != w || slot->height != h) {
+    const wgpu::BufferDescriptor desc{
+        .label = "Readback Buffer",
+        .usage = wgpu::BufferUsage::MapRead | wgpu::BufferUsage::CopyDst,
+        .size = static_cast<uint64_t>(bytesPerRow) * h,
+    };
+    slot->buffer = g_device.CreateBuffer(&desc);
+    slot->width = w;
+    slot->height = h;
+    slot->bytesPerRow = bytesPerRow;
+  }
+  const auto format = texture.GetFormat();
+  slot->bgra = format == wgpu::TextureFormat::BGRA8Unorm || format == wgpu::TextureFormat::BGRA8UnormSrgb;
+  const wgpu::TexelCopyTextureInfo src{
+      .texture = texture,
+      .origin = wgpu::Origin3D{.x = static_cast<uint32_t>(rect.x), .y = static_cast<uint32_t>(rect.y)},
+  };
+  const wgpu::TexelCopyBufferInfo dst{
+      .layout = wgpu::TexelCopyBufferLayout{.offset = 0, .bytesPerRow = bytesPerRow, .rowsPerImage = h},
+      .buffer = slot->buffer,
+  };
+  const wgpu::Extent3D size{.width = w, .height = h, .depthOrArrayLayers = 1};
+  cmd.CopyTextureToBuffer(&src, &dst, &size);
+  slot->tag = tag;
+  slot->state = 1;
+}
+
+static void readback_after_submit() {
+  for (size_t i = 0; i < g_readbackSlots.size(); ++i) {
+    auto& slot = g_readbackSlots[i];
+    if (slot.state != 1) {
+      continue;
+    }
+    slot.state = 2;
+    slot.buffer.MapAsync(wgpu::MapMode::Read, 0, static_cast<uint64_t>(slot.bytesPerRow) * slot.height,
+                         wgpu::CallbackMode::AllowProcessEvents,
+                         [i](wgpu::MapAsyncStatus status, wgpu::StringView) {
+                           auto& s = g_readbackSlots[i];
+                           if (status == wgpu::MapAsyncStatus::Success) {
+                             const auto* src = static_cast<const uint8_t*>(
+                                 s.buffer.GetConstMappedRange(0, static_cast<size_t>(s.bytesPerRow) * s.height));
+                             if (src != nullptr) {
+                               g_readbackLatest.resize(static_cast<size_t>(s.width) * s.height * 4);
+                               for (uint32_t y = 0; y < s.height; ++y) {
+                                 const uint8_t* row = src + static_cast<size_t>(y) * s.bytesPerRow;
+                                 uint8_t* out = g_readbackLatest.data() + static_cast<size_t>(y) * s.width * 4;
+                                 for (uint32_t x = 0; x < s.width; ++x) {
+                                   out[x * 4 + 0] = row[x * 4 + (s.bgra ? 2 : 0)];
+                                   out[x * 4 + 1] = row[x * 4 + 1];
+                                   out[x * 4 + 2] = row[x * 4 + (s.bgra ? 0 : 2)];
+                                   out[x * 4 + 3] = 0xFF;
+                                 }
+                               }
+                               g_readbackWidth = s.width;
+                               g_readbackHeight = s.height;
+                               g_readbackTag = s.tag;
+                               ++g_readbackSerial;
+                             }
+                             s.buffer.Unmap();
+                           }
+                           s.state = 0;
+                         });
+  }
+}
+
+// Under emscripten nothing else pumps WebGPU callbacks (begin_frame's
+// ProcessEvents is native-only), so the readback does while a map is pending.
+static void readback_poll() {
+  for (const auto& s : g_readbackSlots) {
+    if (s.state == 2) {
+      g_instance.ProcessEvents();
+      return;
+    }
+  }
+}
+
+bool readback_pending() {
+  readback_poll();
+  for (const auto& s : g_readbackSlots) {
+    if (s.state != 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void request_readback(ClipRect rect, uint32_t tag) {
+  CHECK(g_inOffscreen, "request_readback outside of an offscreen pass");
+  readback_poll();
+  auto& pass = g_renderPasses[g_currentRenderPass];
+  pass.readback = true;
+  pass.readbackRect = rect;
+  pass.readbackTag = tag;
+}
+
+uint32_t readback_latest(uint8_t* rgba, uint32_t capacity, uint32_t* width, uint32_t* height, uint32_t* tag) {
+  readback_poll();
+  if (g_readbackSerial == 0) {
+    return 0;
+  }
+  const size_t bytes = g_readbackLatest.size();
+  if (rgba != nullptr && capacity >= bytes) {
+    memcpy(rgba, g_readbackLatest.data(), bytes);
+  }
+  if (width != nullptr) {
+    *width = g_readbackWidth;
+  }
+  if (height != nullptr) {
+    *height = g_readbackHeight;
+  }
+  if (tag != nullptr) {
+    *tag = g_readbackTag;
+  }
+  return g_readbackSerial;
 }
 
 void begin_offscreen(uint32_t width, uint32_t height) {
@@ -909,7 +1064,7 @@ void render(wgpu::CommandEncoder& cmd) {
     }
     if (i == g_renderPasses.size() - 1) {
       ASSERT(!passInfo.resolveTarget, "Final render pass must not have resolve target");
-    } else if (!passInfo.resolveTarget) {
+    } else if (!passInfo.resolveTarget && !passInfo.readback) {
       // Skip intermediate render passes without resolve target
       continue;
     }
@@ -949,6 +1104,9 @@ void render(wgpu::CommandEncoder& cmd) {
 
     if (i == g_renderPasses.size() - 1) {
       depth_peek::encode_frame_snapshot(cmd, passInfo.copySourceDepthView, passInfo.targetSize, passInfo.msaaSamples);
+    }
+    if (passInfo.readback) {
+      encode_readback(cmd, passInfo.copySourceTexture, passInfo.readbackRect, passInfo.readbackTag);
     }
 
     if (passInfo.resolveTarget) {
@@ -1009,7 +1167,10 @@ void render(wgpu::CommandEncoder& cmd) {
 #endif
 }
 
-void after_submit() noexcept { depth_peek::after_submit(); }
+void after_submit() noexcept {
+  depth_peek::after_submit();
+  readback_after_submit();
+}
 
 void render_pass(const wgpu::RenderPassEncoder& pass, u32 idx) {
   g_currentPipeline = UINTPTR_MAX;

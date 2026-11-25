@@ -1,0 +1,291 @@
+{
+ "version": 1,
+ "comment": "opening.json up to the player count, the 2-player game, stage 1-2; player 1 walks into the cave north of the start, player 2 into the house south of it (needs ?gba=2; deluxe, docs/MULTIPLAYER.md 'GBA screen')",
+ "steps": [
+  {
+   "comment": "0: boot loader until the title (mode 1)",
+   "wait": {
+    "mode": 1
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "1: title: START until the main menu (mode 2)",
+   "press": [
+    "START"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 2
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "2: main menu: A on Hyrulean Adventure, then A on its START! button, until the file select (mode 3)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 3
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "3: file select: wait for the 'create a file for this game on the Memory Card in Slot A?' prompt (state 7)",
+   "wait": {
+    "lbl_8053ADB0->mState": 7
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "4: move its cursor to Yes (field_0x114 0)",
+   "press": [
+    "LEFT"
+   ],
+   "every": 10,
+   "until": {
+    "lbl_8053ADB0->field_0x114": 0
+   },
+   "timeout": 300
+  },
+  {
+   "comment": "5: A on Yes: state 8 writes the file, state 9 waits for the card",
+   "press": [
+    "A"
+   ],
+   "every": 10,
+   "until": {
+    "lbl_8053ADB0->mState": [
+     8,
+     9,
+     10
+    ]
+   },
+   "timeout": 300
+  },
+  {
+   "comment": "6: until the card write is done ('file created' message, state 10)",
+   "wait": {
+    "lbl_8053ADB0->mState": 10
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "7: the message closes by itself; wait for the file rows (state 5, picking a file)",
+   "wait": {
+    "lbl_8053ADB0->mState": 5
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "8: A on file 1, then A on its menu, until the stage loader (mode 4)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 4
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "player count (mode 4): wait for its menu (state 3) with every GBA counted as connected",
+   "wait": {
+    "lbl_8053AD98->field_0x4->field_0x1d4": 3,
+    "lbl_8053AD98->field_0x4->field_0x1d0": 2
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "DOWN until the cursor is on the 2-player game",
+   "press": [
+    "DOWN"
+   ],
+   "every": 20,
+   "until": {
+    "lbl_8053AD98->field_0x4->field_0x1bc": 1
+   },
+   "timeout": 600
+  },
+  {
+   "comment": "A on the 2-player game and what follows until the stage is chosen (8-3, the opening)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "stage": 8,
+    "level": 3
+   },
+   "timeout": 1500
+  },
+  {
+   "comment": "enter stage 1-2 (a cave and a house next to the start) instead of the opening",
+   "set": {
+    "lbl_80529DEC.mStage_0x118": 1,
+    "lbl_80529DEC.field_0x128": 1,
+    "lbl_80529DEC.mLevel_0x11c": 2,
+    "lbl_80529DEC.field_0x12c": 2,
+    "seed_on_stage": 12345
+   }
+  },
+  {
+   "wait": {
+    "mode": 7,
+    "stage": 1,
+    "level": 2
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "settle (both players on the overworld)",
+   "wait_reads": 400
+  },
+  {
+   "comment": "pad 0 (player 1): up to the cliff, right to the cave (warp 1216,3496 -> layer 12), into it",
+   "pad": 0,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 30
+  },
+  {
+   "pad": 0,
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 13
+  },
+  {
+   "pad": 0,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "wait_reads": 400
+  },
+  {
+   "comment": "pad 0: walk into the cave",
+   "pad": 0,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 40
+  },
+  {
+   "pad": 0,
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 40
+  },
+  {
+   "comment": "pad 1 (player 2): down past the posts, round the house's right side, up into its door (warp 1200,3768 -> layer 9)",
+   "pad": 1,
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 80
+  },
+  {
+   "pad": 1,
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 54
+  },
+  {
+   "pad": 1,
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 100
+  },
+  {
+   "pad": 1,
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 54
+  },
+  {
+   "pad": 1,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 40
+  },
+  {
+   "pad": 1,
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 3
+  },
+  {
+   "pad": 1,
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 56
+  },
+  {
+   "pad": 1,
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 24
+  },
+  {
+   "pad": 1,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 40
+  },
+  {
+   "comment": "both in their rooms",
+   "wait_reads": 600
+  },
+  {
+   "comment": "pad 1: walk about the house",
+   "pad": 1,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 30
+  },
+  {
+   "pad": 1,
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 30
+  },
+  {
+   "wait_reads": 600
+  },
+  {
+   "end": true
+  }
+ ]
+}
