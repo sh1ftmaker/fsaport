@@ -333,7 +333,7 @@ void ResultScreen_804AF9A0::fn_803B6768() {
     gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[2] = 0;
     gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[3] = 0;
     fn_80128C58(0xFF);
-    u32 color = 0xFFFFFF00;
+    JUtility::TColor color = 0xFFFFFF00;
     fn_8013A884(&color);
 }
 
@@ -3078,7 +3078,7 @@ void ResultScreen_804AF9A0::fn_803A9830() {
             gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[2] = 0;
             gGameRoot2_8053AB10->field_0x20->mLayerVisible_0x235c[3] = 0;
             fn_80128C58(0xFF);
-            u32 color = 0xFFFFFF00;
+            JUtility::TColor color = 0xFFFFFF00;
             fn_8013A884(&color);
         }
         break;

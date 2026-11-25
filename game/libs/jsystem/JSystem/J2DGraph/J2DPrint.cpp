@@ -291,7 +291,7 @@ f32 J2DPrint::parse(const u8* inputString, int inputLength, int maxWidth, u16* o
             // If not currently drawing and the output buffer exists
             if (!isDrawing && outputBuffer) {
                 // Add the maximum line width to the current position in the output buffer.
-                outputBuffer[outputBufferPos] = 0.5f + maxLineWidth;
+                outputBuffer[outputBufferPos] = (u16)(s32)(0.5f + maxLineWidth);
             }
 
             outputBufferPos++;
@@ -308,7 +308,7 @@ f32 J2DPrint::parse(const u8* inputString, int inputLength, int maxWidth, u16* o
                     u16 escapeCode = doEscapeCode(&inputString, alpha);
                     if (escapeCode == 'HM') {
                         if (!isDrawing && outputBuffer) {
-                            outputBuffer[outputBufferPos] = 0.5f + maxLineWidth;
+                            outputBuffer[outputBufferPos] = (u16)(s32)(0.5f + maxLineWidth);
                         }
 
                         mCursorX = initialCursorX;
@@ -329,7 +329,7 @@ f32 J2DPrint::parse(const u8* inputString, int inputLength, int maxWidth, u16* o
                     isPrintable = false;
                     if (currentChar == 10) {
                         if (!isDrawing && outputBuffer) {
-                            outputBuffer[outputBufferPos] = 0.5f + maxLineWidth;
+                            outputBuffer[outputBufferPos] = (u16)(s32)(0.5f + maxLineWidth);
                         }
                         outputBufferPos++;
                         if (outputBufferPos == 0x100) {
@@ -341,7 +341,7 @@ f32 J2DPrint::parse(const u8* inputString, int inputLength, int maxWidth, u16* o
 
             } else if (isMultiByteChar && ((u32)inputString - (u32)originalInput > (u32)inputLength)) {
                 if (!isDrawing && outputBuffer) {
-                    outputBuffer[outputBufferPos] = 0.5f + maxLineWidth;
+                    outputBuffer[outputBufferPos] = (u16)(s32)(0.5f + maxLineWidth);
                 }
                 outputBufferPos++;
                 break;
@@ -369,7 +369,7 @@ f32 J2DPrint::parse(const u8* inputString, int inputLength, int maxWidth, u16* o
                     inputString -= inputOffset;
                     mCursorY += mActiveScaleY;
                     if (!isDrawing && (outputBuffer != nullptr)) {
-                        outputBuffer[outputBufferPos] = 0.5f + maxLineWidth;
+                        outputBuffer[outputBufferPos] = (u16)(s32)(0.5f + maxLineWidth);
                     }
                     outputBufferPos++;
                     if (outputBufferPos == 0x100) {

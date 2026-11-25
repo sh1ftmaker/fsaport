@@ -7,6 +7,7 @@
 
 #include "types.h"
 #include "game/ActorBase.h"
+#include "JSystem/JUtility/TColor.h"
 
 // Owned by other units (not written yet). fn_80128C58 has C++ linkage
 // (fn_80128C58__Fl; game/act/act_opening_narration_801286C0.h declares it the same way).
@@ -15,7 +16,7 @@
 // returns that object's byte at 0xC. getShadowColor_8018330C is in game/act_leever_80182914.h.
 void fn_80128C58(s32 value);
 extern "C" {
-void fn_8013A884(u32* color);
+void fn_8013A884(const JUtility::TColor* color);
 u8 fn_801B7550(void);
 }
 
