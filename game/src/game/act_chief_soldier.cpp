@@ -478,9 +478,18 @@ void ChiefSoldier_804A0B90::fn_80174220() {
     if (getType() == 8 && field_0x23c != 0) {
         index = dir + 4;
     }
+#ifdef FSA_PORT
+    // index >= 4 (the type-8 partner with field_0x23c set) never saves the position, yet the
+    // end restores it: the original stores f31/f30/f29 as the caller chain left them (not
+    // knowable). The port keeps the position where it is.
+    f32 x = mPos.x;
+    f32 y = mPos.y;
+    f32 z = mPos.z;
+#else
     f32 x;
     f32 y;
     f32 z;
+#endif
     if (index < 4) {
         x = mPos.x;
         y = mPos.y;
