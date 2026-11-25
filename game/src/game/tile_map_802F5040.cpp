@@ -85,44 +85,30 @@ struct SpriteObj_802F86CC {
 
 // A 6-byte entry of a "SOB " frame: the GBA OAM attributes 0-2 as stored
 // (little-endian halfwords, so each byte's fields from the high bits down).
-// Port: MWCC allocates bit fields from a byte's high bits, clang from its low
-// bits, so each byte's fields are declared in reverse order here.
+// The packed bytes are read with shifts and masks, not bit fields: bit-field
+// allocation order is the compiler's choice (MWCC fills a byte from its high
+// bits, clang from its low bits), and this layout is file data.
 struct SobObj_802F86CC {
-#ifndef FSA_PORT
     /* 0x0 */ u8 mY;
-    /* 0x1 */ u8 mShape : 2;
-    u8 mColor256 : 1;
-    u8 mMosaic : 1;
-    u8 mMode : 2;
-    u8 mAffine : 2;
+    /* 0x1 */ u8 mAttr0High; // shape:2 color256:1 mosaic:1 mode:2 affine:2
     /* 0x2 */ u8 mX;
-    /* 0x3 */ u8 mSize : 2;
-    u8 mVFlip : 1;
-    u8 mHFlip : 1;
-    u8 mAffineIndex : 3;
-    u8 : 1; // bit 8 of x: copied from mX's bit 7 instead (sign extension)
+    /* 0x3 */ u8 mAttr1High; // size:2 vflip:1 hflip:1 affineIndex:3, then bit 8
+                             // of x (copied from mX's bit 7 instead: sign extension)
     /* 0x4 */ u8 mTileLow;
-    /* 0x5 */ u8 mPalette : 4;
-    u8 mPriority : 2;
-    u8 mTileHigh : 2;
-#else
-    /* 0x0 */ u8 mY;
-    /* 0x1 */ u8 mAffine : 2;
-    u8 mMode : 2;
-    u8 mMosaic : 1;
-    u8 mColor256 : 1;
-    u8 mShape : 2;
-    /* 0x2 */ u8 mX;
-    /* 0x3 */ u8 : 1;
-    u8 mAffineIndex : 3;
-    u8 mHFlip : 1;
-    u8 mVFlip : 1;
-    u8 mSize : 2;
-    /* 0x4 */ u8 mTileLow;
-    /* 0x5 */ u8 mTileHigh : 2;
-    u8 mPriority : 2;
-    u8 mPalette : 4;
-#endif
+    /* 0x5 */ u8 mAttr2High; // palette:4 priority:2 tileHigh:2
+
+    u32 shape() const { return (mAttr0High >> 6) & 3; }
+    u32 color256() const { return (mAttr0High >> 5) & 1; }
+    u32 mosaic() const { return (mAttr0High >> 4) & 1; }
+    u32 mode() const { return (mAttr0High >> 2) & 3; }
+    u32 affine() const { return mAttr0High & 3; }
+    u32 size() const { return (mAttr1High >> 6) & 3; }
+    u32 vflip() const { return (mAttr1High >> 5) & 1; }
+    u32 hflip() const { return (mAttr1High >> 4) & 1; }
+    u32 affineIndex() const { return (mAttr1High >> 1) & 7; }
+    u32 palette() const { return (mAttr2High >> 4) & 0xF; }
+    u32 priority() const { return (mAttr2High >> 2) & 3; }
+    u32 tileHigh() const { return mAttr2High & 3; }
 }; // Size: 0x6
 
 // One 5-bit colour channel times scale plus offset, clamped to 0-31
@@ -2390,26 +2376,26 @@ void TileMap_804AA858::drawSobSprite_802F86CC(const JGeometry::TVec3f* pos, void
     for (s32 i = count - 1; i >= 0; i--) {
         SobObj_802F86CC* entry = (SobObj_802F86CC*)(data + start) + i;
         obj.mY = entry->mY;
-        obj.mAffine = entry->mAffine;
-        obj.mMode = entry->mMode;
-        obj.mMosaic = entry->mMosaic;
-        obj.mColor256 = entry->mColor256;
-        obj.mShape = entry->mShape;
+        obj.mAffine = entry->affine();
+        obj.mMode = entry->mode();
+        obj.mMosaic = entry->mosaic();
+        obj.mColor256 = entry->color256();
+        obj.mShape = entry->shape();
         obj.mX = entry->mX | (entry->mX & 0x80) << 1;
         if (i != 0) {
             obj.mY += dy;
             obj.mX += dx;
         }
-        obj.mAffineIndex = entry->mAffineIndex;
-        obj.mHFlip = entry->mHFlip;
-        obj.mVFlip = entry->mVFlip;
-        obj.mSize = entry->mSize;
-        obj.mTile = entry->mTileLow | entry->mTileHigh << 8;
-        obj.mPriority = entry->mPriority;
+        obj.mAffineIndex = entry->affineIndex();
+        obj.mHFlip = entry->hflip();
+        obj.mVFlip = entry->vflip();
+        obj.mSize = entry->size();
+        obj.mTile = entry->mTileLow | entry->tileHigh() << 8;
+        obj.mPriority = entry->priority();
         if (outParams != NULL) {
-            obj.mPalette = outParams->field_0x0[entry->mPalette];
+            obj.mPalette = outParams->field_0x0[entry->palette()];
         } else {
-            obj.mPalette = entry->mPalette;
+            obj.mPalette = entry->palette();
         }
         obj.mAffineParam = 0;
         s32 priority = obj.mPriority;
