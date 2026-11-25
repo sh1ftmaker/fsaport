@@ -41,6 +41,14 @@ void fsa_view_target_size(unsigned* width, unsigned* height);
 // Whether 2D drawn on the game's full-screen port may bleed into the side bars
 // (fades and other full-screen quads): only while the world is widened.
 int fsa_view_bleed(void);
+// While non-zero, fsa_view_bleed() says no (2D that must stay in the 4:3 middle).
+void fsa_view_bleed_suppress(int on);
+// A full-screen 2D quad starting at *x, *w wide (in the full-screen port's
+// logical units), widened to the whole picture while the port bleeds, when it
+// covered the logical frame's width (*x <= 0 and *x + *w >= logicalWidth).
+// For the game's fades, which start at x = 0 and so leave the left bar uncovered.
+void fsa_view_cover(float* x, float* w, float logicalWidth, float logicalHeight);
+
 // The J2DOrthoGraph that bleeds: GameRoot2's full-screen port (field_0x10).
 extern void* fsa_view_bleed_graf;
 

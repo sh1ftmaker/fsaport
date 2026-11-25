@@ -9,6 +9,18 @@
 #include "game/cls_804A8390.h"
 #include "game/GameState.h"
 #include "JSystem/J2D/J2DPicture.h"
+#ifdef FSA_PORT
+#include "JSystem/JUtility/JUTVideo.h"
+#include "../../port/fsa_view.h"
+
+// The picture mod (docs/VIEW.md): the 800 x 640 fade starts at x = 0, so it
+// leaves the left side bar uncovered; widen it there too.
+static void drawFade(J2DPicture* picture) {
+    f32 x = 0.0f, w = 800.0f;
+    fsa_view_cover(&x, &w, (s32)JUTVideo::getManager()->getFbWidth(), (s32)JUTVideo::getManager()->getEfbHeight());
+    picture->draw(x, 0.0f, w, 640.0f, false, false, false);
+}
+#endif
 
 BlackFade_804A8390::BlackFade_804A8390() {
     lbl_8053ACA0 = this;
@@ -38,7 +50,11 @@ void BlackFade_804A8390::fn_802ACA64() {
         mPicture->setBlackWhite(JUtility::TColor(0xFFFFFFFF), JUtility::TColor(0xFFFFFF00));
     }
     mPicture->setAlpha(mAlpha);
+#ifdef FSA_PORT
+    drawFade(mPicture);
+#else
     mPicture->draw(0.0f, 0.0f, 800.0f, 640.0f, false, false, false);
+#endif
 }
 
 void BlackFade_804A8390::fn_802AC98C() {
@@ -51,7 +67,11 @@ void BlackFade_804A8390::fn_802AC98C() {
         gGameRoot2_8053AB10->setPort_8013B490();
         mPicture->setBlackWhite(JUtility::TColor(0xFF), JUtility::TColor(0));
         mPicture->setAlpha(field_0x10);
+#ifdef FSA_PORT
+        drawFade(mPicture);
+#else
         mPicture->draw(0.0f, 0.0f, 800.0f, 640.0f, false, false, false);
+#endif
     }
 }
 

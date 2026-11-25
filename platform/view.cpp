@@ -209,8 +209,20 @@ void fsa_view_hud_point(float* x, float* y, float logicalWidth, float logicalHei
   *y = py * logicalHeight / (float)th;
 }
 
+static int g_bleedSuppressed = 0;
+void fsa_view_bleed_suppress(int on) { g_bleedSuppressed = on; }
+
 int fsa_view_bleed(void) {
-  return g_active && g_width != 640 && g_lastWidenFrame != ~0u && g_framesBegun - g_lastWidenFrame <= 1;
+  return !g_bleedSuppressed && g_active && g_width != 640 && g_lastWidenFrame != ~0u && g_framesBegun - g_lastWidenFrame <= 1;
+}
+
+void fsa_view_cover(float* x, float* w, float logicalWidth, float logicalHeight) {
+  if (!fsa_view_bleed() || *x > 0.0f || *x + *w < logicalWidth)
+    return;
+  float x0, x1;
+  fsa_view_bleed_range(logicalWidth, logicalHeight, &x0, &x1);
+  *x = std::min(*x, x0);
+  *w = std::max(*x + *w, x1) - *x;
 }
 
 void fsa_view_bleed_range(float logicalWidth, float, float* x0, float* x1) {
