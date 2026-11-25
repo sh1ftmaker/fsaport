@@ -317,7 +317,7 @@ inline void SpecialConversationNPC_804AAFB8::updateFacing() {
             getNearestPlayerDir_801EE558(&dir, &dist, mPlayer + 1);
         }
         if (dist < 80.0f) {
-            u32 angle = (u16)(JMath::atanTable_.atan2_(-dir.x, -dir.y) *
+            u32 angle = (u16)(s32)(JMath::atanTable_.atan2_(-dir.x, -dir.y) *
                               (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
             if (angle < 0x2000 || angle >= 0xE000) {
                 field_0x264 = 3;

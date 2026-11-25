@@ -177,7 +177,7 @@ void VaatiTimeUp_804ACCC0::draw() {
 void VaatiTimeUp_804ACCC0::steer() {
     if (field_0x2c4 <= 0 || (field_0x2c0 <= 0 && mPos.x >= field_0x290 && mPos.y >= field_0x294)) {
         pickTarget();
-        field_0x2d0 = (u16)(10430.378f * JMath::atanTable_.atan2_(field_0x290 - mPos.x, field_0x294 - mPos.y));
+        field_0x2d0 = (u16)(s32)(10430.378f * JMath::atanTable_.atan2_(field_0x290 - mPos.x, field_0x294 - mPos.y));
         field_0x2c4 = 6;
     }
     addCalcAngle2_801F714C(&field_0x2cc, field_0x2d0, 20, 0x1000);

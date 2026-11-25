@@ -31,7 +31,7 @@ static inline void faceTalker(DiggingGameKeeper_8049C970* self) {
     f32 dist;
     self->getNearestPlayerDir_801EE8F4(&diff, &dist, self->field_0x23c + 1);
     if (dist < 100.0f) {
-        u32 angle = (u16)(JMath::atanTable_.atan2_(-diff.x, -diff.y) *
+        u32 angle = (u16)(s32)(JMath::atanTable_.atan2_(-diff.x, -diff.y) *
                           (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
         if (angle < 0x2000 || angle >= 0xe000) {
             self->field_0x235 = 3;

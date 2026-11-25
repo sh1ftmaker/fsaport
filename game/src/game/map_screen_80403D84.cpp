@@ -1520,7 +1520,7 @@ void MapScreen_804B1288::fn_8040E3A0() {
     if (mCursorX_0x394 == x) {
         field_0x360 = 0x10;
     } else {
-        u32 angle = (u16)(JMath::atanTable_.atan2_(-dx, -dy) *
+        u32 angle = (u16)(s32)(JMath::atanTable_.atan2_(-dx, -dy) *
                           (32768.0f / JMath::TAngleConstant_<f32>::RADIAN_DEG180()));
         if (angle < 0x2000 || angle >= 0xE000) {
             field_0x360 = 0x18;
