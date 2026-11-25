@@ -126,6 +126,28 @@ if(FSA_SANITIZE)
     COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/san_symtab.py ${CMAKE_BINARY_DIR}/fsa.map ${FSA_GAME}/units.txt
             ${CMAKE_BINARY_DIR}/fsa_symtab.json ${FSA_DECOMP_SYMBOLS})
 endif()
+# --- Branch coverage (diagnostics; docs/DIAGNOSTICS.md, "Branch coverage") -----
+# clang source-based coverage of the game's own code: the matching units get
+# -fprofile-instr-generate -fcoverage-mapping (a counter increment per region,
+# the region map in the wasm's __llvm_covmap/__llvm_covfun custom sections).
+# platform/coverage/profile_dump.cpp posts the counters (a .profraw image) to
+# the coverage_profraw stream; tools/coverage_report.py turns them into TSV.
+option(FSA_COVERAGE "branch coverage build: clang source-based coverage of the game code (diagnostics only)" OFF)
+set(FSA_COVERAGE_UNITS "/game/src/game/" CACHE STRING "regex of the source paths the coverage build instruments")
+if(FSA_COVERAGE)
+  foreach(lib ${FSA_UNIT_LIBS})
+    get_target_property(srcs ${lib} SOURCES)
+    foreach(s ${srcs})
+      if(s MATCHES "${FSA_COVERAGE_UNITS}")
+        set_property(SOURCE ${s} APPEND PROPERTY COMPILE_OPTIONS "-fprofile-instr-generate;-fcoverage-mapping")
+      endif()
+    endforeach()
+  endforeach()
+  target_sources(fsa PRIVATE platform/coverage/profile_dump.cpp)
+  set_source_files_properties(platform/coverage/profile_dump.cpp PROPERTIES COMPILE_OPTIONS "-Wno-everything")
+  # compiler-rt's profile runtime (in emscripten's libcompiler_rt).
+  target_link_options(fsa PRIVATE -fprofile-instr-generate)
+endif()
 if(FSA_SANITIZE STREQUAL "address")
   # Shadow memory is 1/8 of the address space; the redzones grow every block.
   set(FSA_INITIAL_MEMORY 1073741824)

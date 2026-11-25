@@ -350,11 +350,17 @@
     if (!diag.on) return;
     for (const [name, lines] of diag.bufs) {
       if (!lines.length) continue;
-      const body = `${diag.run}\t${name}\n${lines.join('\n')}\n`;
       diag.bufs.set(name, []);
-      if (beacon && navigator.sendBeacon) { navigator.sendBeacon('diag', body); continue; }
-      fetch('diag', { method: 'POST', body })
-        .then((r) => { if (r.status === 404 || r.status === 501) diag.on = false; }).catch(() => {});
+      // At most ~6 MB per POST (serve.py takes 8 MB); a single line is never split.
+      for (let i = 0; i < lines.length;) {
+        let j = i, len = 0;
+        do { len += lines[j].length + 1; j++; } while (j < lines.length && len + lines[j].length < 6e6);
+        const body = `${diag.run}\t${name}\n${lines.slice(i, j).join('\n')}\n`;
+        i = j;
+        if (beacon && navigator.sendBeacon) { navigator.sendBeacon('diag', body); continue; }
+        fetch('diag', { method: 'POST', body })
+          .then((r) => { if (r.status === 404 || r.status === 501) diag.on = false; }).catch(() => {});
+      }
     }
   }
   window.fsaDiag = (name, line) => {
@@ -364,7 +370,11 @@
     if (!diag.timer) diag.timer = setTimeout(diagFlush, 2000);
   };
   // The diagnostics build (docs/DIAGNOSTICS.md) also writes out its counters.
-  const diagFinal = () => { try { if (Module._fsa_diag_flush_all) Module._fsa_diag_flush_all(); } catch (e) {} };
+  const diagFinal = () => {
+    try { if (Module._fsa_diag_flush_all) Module._fsa_diag_flush_all(); } catch (e) {}
+    // The branch coverage build: its counters as a .profraw image.
+    try { if (Module._fsa_cov_dump) Module._fsa_cov_dump(); } catch (e) {}
+  };
   window.fsaDiagFlush = () => { diagFinal(); diagFlush(false); };
   addEventListener('pagehide', () => { diagFinal(); diagFlush(true); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { diagFinal(); diagFlush(true); } });

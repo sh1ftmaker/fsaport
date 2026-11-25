@@ -695,6 +695,70 @@ def jesc(s):
     return json.dumps(s)[1:-1].replace('\t', '\\t')
 
 
+def short(qual):
+    return re.sub(r'^\(anonymous namespace\)::', '', qual)
+
+
+def qualname(d):
+    # 'A::B<int>::f(int) const' -> 'A::B<int>::f'
+    depth = 0
+    for i, ch in enumerate(d):
+        if ch in '<':
+            depth += 1
+        elif ch == '>':
+            depth -= 1
+        elif ch == '(' and depth == 0 and i > 0 and not d[:i].endswith('operator'):
+            return d[:i]
+    return d
+
+
+def join_sym(nm, q, file, syms, byaddr, bykey):
+    """The join key (docs/DIAGNOSTICS.md): clang symbol nm, its demangled
+    qualified name q (short(qualname(demangled))), the unit file ->
+    (sym, match, mwcc_guess). Also used by tools/coverage_report.py."""
+    # --- join key
+    sym, match, mw = '', 'none', None
+    if not nm.startswith('_Z'):
+        if nm in syms:
+            sym, match = nm, 'c'
+        # static initialisers: _GLOBAL__sub_I_foo.cpp -> __sinit_foo_cpp
+        m = re.match(r'_GLOBAL__sub_I_(.+)$', nm)
+        if m and '__sinit_' + m.group(1).replace('.', '_') in syms:
+            sym, match = '__sinit_' + m.group(1).replace('.', '_'), 'name'
+    else:
+        try:
+            mw, key = mwcc_mangle(nm, file)
+            if mw in syms:
+                sym, match = mw, 'exact'
+        except Fail:
+            mw, key = None, q
+        except (IndexError, ValueError, RecursionError):
+            mw, key = None, q
+        if not sym:
+            cands = bykey.get(key) or bykey.get(q) or []
+            if len(cands) == 1:
+                sym, match = cands[0], 'name'
+            elif len(cands) > 1:
+                match = 'ambiguous'
+    if not sym:
+        # The decomp's names carry the original's address (fn_8023FBF0,
+        # moveTempo_80458508): accept the function symbols.txt has there
+        # if it is a member of the same scope. Not for ctors/dtors (their
+        # name is the class's) or inl_* (pieces inlined into that function).
+        parts = q.split('::')
+        leaf = parts[-1]
+        am = re.search(r'_(8[0-9A-Fa-f]{7})(?![0-9A-Fa-f])', leaf)
+        if am and not leaf.startswith(('inl_', '~')) and not (len(parts) > 1 and leaf == parts[-2]):
+            addr = int(am.group(1), 16)
+            scope = '::'.join(parts[:-1])
+            for c in byaddr.get(addr, []):
+                ck = (mwcc_key(c) or c).split('::')
+                if '::'.join(ck[:-1]) == scope:
+                    sym, match = c, 'addr'
+                    break
+    return sym, match, mw
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--build', required=True)
@@ -765,21 +829,6 @@ def main():
                 if h:
                     asm_units[rel] = h
 
-    def short(qual):
-        return re.sub(r'^\(anonymous namespace\)::', '', qual)
-
-    def qualname(d):
-        # 'A::B<int>::f(int) const' -> 'A::B<int>::f'
-        depth = 0
-        for i, ch in enumerate(d):
-            if ch in '<':
-                depth += 1
-            elif ch == '>':
-                depth -= 1
-            elif ch == '(' and depth == 0 and i > 0 and not d[:i].endswith('operator'):
-                return d[:i]
-        return d
-
     recs = []
     a_out = a.out
     min_body = min((bodies.get(e[1], 1 << 30) for e in entries), default=0)
@@ -787,46 +836,7 @@ def main():
         d = d.strip() or nm
         q = short(qualname(d))
         file = unit.split(':')[-1]
-        # --- join key
-        sym, match, mw = '', 'none', None
-        if not nm.startswith('_Z'):
-            if nm in syms:
-                sym, match = nm, 'c'
-            # static initialisers: _GLOBAL__sub_I_foo.cpp -> __sinit_foo_cpp
-            m = re.match(r'_GLOBAL__sub_I_(.+)$', nm)
-            if m and '__sinit_' + m.group(1).replace('.', '_') in syms:
-                sym, match = '__sinit_' + m.group(1).replace('.', '_'), 'name'
-        else:
-            try:
-                mw, key = mwcc_mangle(nm, file)
-                if mw in syms:
-                    sym, match = mw, 'exact'
-            except Fail:
-                mw, key = None, q
-            except (IndexError, ValueError, RecursionError):
-                mw, key = None, q
-            if not sym:
-                cands = bykey.get(key) or bykey.get(q) or []
-                if len(cands) == 1:
-                    sym, match = cands[0], 'name'
-                elif len(cands) > 1:
-                    match = 'ambiguous'
-        if not sym:
-            # The decomp's names carry the original's address (fn_8023FBF0,
-            # moveTempo_80458508): accept the function symbols.txt has there
-            # if it is a member of the same scope. Not for ctors/dtors (their
-            # name is the class's) or inl_* (pieces inlined into that function).
-            parts = q.split('::')
-            leaf = parts[-1]
-            am = re.search(r'_(8[0-9A-Fa-f]{7})(?![0-9A-Fa-f])', leaf)
-            if am and not leaf.startswith(('inl_', '~')) and not (len(parts) > 1 and leaf == parts[-2]):
-                addr = int(am.group(1), 16)
-                scope = '::'.join(parts[:-1])
-                for c in byaddr.get(addr, []):
-                    ck = (mwcc_key(c) or c).split('::')
-                    if '::'.join(ck[:-1]) == scope:
-                        sym, match = c, 'addr'
-                        break
+        sym, match, mw = join_sym(nm, q, file, syms, byaddr, bykey)
         # --- kind
         kind = ''
         if file == 'platform/hw_stubs.cpp':

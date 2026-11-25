@@ -7,7 +7,8 @@ per page load.
 
 Two diagnostics builds exist: coverage, stub hits, the virtual dispatch
 audit and function traces (`-DFSA_DIAG=ON`) and uninitialised reads (`-DFSA_DIAG_UNINIT=ON`). Use a separate build directory for
-each; the normal build is unchanged when they are off.
+each; the normal build is unchanged when they are off. Further builds below:
+branch coverage (`-DFSA_COVERAGE=ON`), the endian trap, the sanitizers.
 
 ## Coverage and stub hits (`coverage`, `scenes`, `stubs`)
 
@@ -246,6 +247,198 @@ Keep an enter hook cheap: it runs on every call of every instrumented
 function (hundreds of thousands per frame on stage 1). The virtual dispatch
 audit below is built on these hooks.
 
+
+## Branch coverage (`coverage_profraw`)
+
+Which branches and regions of the game code a run took, per decomp
+function. The A/B comparisons only test the code that runs; this shows what
+did not. A separate build, `-DFSA_COVERAGE=ON`; the normal build is
+unchanged when it is off.
+
+### Why clang source-based coverage
+
+The game units are compiled with `-fprofile-instr-generate
+-fcoverage-mapping`. Each source region (a function body, each arm of an
+`if`/`switch`/loop, the code after a `return`/`break`, each operand of `&&`,
+`||` and `?:`) gets a 64-bit counter in the wasm data (`__llvm_prf_cnts`).
+Clang increments it inline, with no call. The region map with file:line
+ranges and branch conditions goes into two wasm custom sections,
+`__llvm_covmap` and `__llvm_covfun`.
+
+This works under emscripten: compiler-rt's profile runtime is part of
+emscripten's `libcompiler_rt`, and `__llvm_profile_write_buffer` serialises
+the counters as a `.profraw` image in memory. `llvm-profdata` and `llvm-cov`
+come with emsdk. The one gap is that `llvm-cov` does not read the coverage
+mapping from a wasm file ("no coverage data found"). The report tool copies
+the two sections, and the name table from the profile, into a small x86-64
+ELF object, which `llvm-cov` reads.
+
+`-fsanitize-coverage=trace-pc-guard,pc-table` was not chosen. It gives
+basic-block guards but no source map. Turning a guard into file:line needs
+each block's code offset and the DWARF line table (the endian trap gets the
+offset from a JS stack, once per site). It also calls a function per block,
+and it says nothing about which side of a condition was taken. Source-based
+coverage gives regions, branch sides, and lines directly.
+
+### Build
+
+```sh
+source ../fsadecomp/tools/emsdk/emsdk_env.sh
+emcmake cmake -S . -B build/coverage -G Ninja -DCMAKE_BUILD_TYPE=Release -DFSA_COVERAGE=ON \
+  -DFSA_ASSETS=... -DFSA_GENERATED=... \
+  -DFSA_DECOMP_SYMBOLS=../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt
+ninja -C build/coverage fsa
+cp build/web/disc-manifest.json build/coverage/   # optional, as for the other builds
+```
+
+- `FSA_COVERAGE_UNITS` (a regex over source paths, default
+  `/game/src/game/`) chooses the instrumented units: the 528 units of
+  `game/src/game`. JSystem, the SDK, `game/src/port`, Aurora and the
+  platform layer are not instrumented.
+- Inline functions from headers that those units use are instrumented too.
+  The report lists only functions defined in `game/src/game` or
+  `game/include/game`. JSystem/SDK inlines are counted only when called from
+  game units, so they are left out (`--all` shows them).
+- `platform/coverage/profile_dump.cpp` (linked only into this build) has
+  `fsa_cov_dump()`. The page calls it from `fsaDiagFlush()` and on pagehide
+  (`index.html`, guarded by `Module._fsa_cov_dump`). It writes the profile to
+  the stream `coverage_profraw`, base64 in 1.5 MB chunks:
+  `{"dump":k,"part":i,"parts":n,"size":S,"reads":R,"b64":"..."}`. `reads`
+  is the harness pad-read count at the dump. Counts are cumulative from the
+  page load. `tools/web_run.mjs` calls `fsaDiagFlush()` at the end of every
+  run and waits 6 s for the upload in this build.
+
+### Run
+
+```sh
+python3 tools/serve.py --port 8841 --dir build/coverage --iso G4SE01.iso --diag logs/coverage/runs
+mkdir -p build/coverage/harness_scripts && cp ../fsadecomp/.../harness_scripts/stage_1_0.json build/coverage/harness_scripts/
+node tools/web_run.mjs --cdp 9361 --url 'http://127.0.0.1:8841/?iso=local.iso&nosave=1&fast=1&script=harness_scripts/stage_1_0.json' \
+     --seconds 1800 --until-script --after 2 --out build/web-run/cov-stage_1_0 --quiet
+python3 tools/coverage_report.py logs/coverage/runs/<run> --build build/coverage --out logs/coverage/stage_1_0.tsv
+python3 tools/coverage_report.py logs/coverage/runs/<run1> <run2> ... --build build/coverage --out logs/coverage/merged.tsv
+```
+
+`--until-script` (new in `web_run.mjs`, for any build) ends the run once the
+script writes `script_end` or `script_timeout`. It wraps `Module.fsaDiag` to
+see the sync line. `--after S` keeps the run going S more seconds.
+`--seconds` stays the upper limit.
+
+`tools/coverage_report.py` takes the last complete dump of each run and
+writes it to `<run>/coverage.profraw`. With several runs it merges them with
+`llvm-profdata merge`, so counts add up and a region counts as hit if any run
+hit it. It then runs `llvm-cov export` and joins each function to the
+decomp's symbol. It finds `llvm-*` and `symbols.txt` through the build's
+`CMakeCache.txt`. Every run must come from the `--build` it is given: the
+counters belong to that binary.
+
+### TSV (`logs/coverage/<name>.tsv`)
+
+One header line, then one line per function, sorted by file and line:
+
+| column | |
+|---|---|
+| `sym` | the decomp's symbol, spelled as in `symbols.txt`. The join key is the one `fsa.diag.tsv` uses (`join_sym` in `tools/diag_symtab.py`: `exact`, `c`, `name`, `addr`). Without a match it is the clang symbol (`match` is `none` or `ambiguous`). |
+| `blocks_hit` | code regions executed at least once |
+| `blocks_total` | code regions in the function (clang's regions, the "blocks" of this report) |
+| `untaken` | comma-separated, game paths: `F:L` (a code region starting at line L never ran), `F:L(T)` / `F:L(F)` (the condition at L was never true / never false), `F:L0-L1` (the function never ran: its whole extent) |
+| `entries` | how often the function was entered |
+| `branches_hit` / `branches_total` | branch sides taken: each condition (`if`, loop, `case`, `&&` operand ...) has a true and a false side |
+| `match` | how `sym` was found |
+| `name` | the port function, demangled |
+| `file` | `file:line` of its definition |
+
+The port functions that share a `sym` are merged into one line, such as the
+complete and base variants of a constructor or destructor. A region counts as
+hit if any of them hit it, and `entries` is their sum. The JSON next to the
+TSV (`<name>.json`) has the totals and the runs with their read counts.
+
+Caveats:
+
+- A function the port never compiled (an `inline` or `static` function with
+  no caller in its unit) has a region map but no counters. It is listed as
+  never entered.
+- An inline function from a game header is counted in the copy the linker
+  kept. If that copy came from an uninstrumented unit (`game/src/port`), the
+  function would show as never entered. No such case is in the current build:
+  every game function without a profile record is also absent from
+  `fsa.wasm`.
+- Clang's regions follow the C++ source, not MWCC's basic blocks. A
+  `F:L(T)` / `F:L(F)` is a source condition that went one way only.
+- Code the port compiled out (`#ifdef __MWERKS__` asm, `#if 0`) has no
+  regions. Clang reports it as skipped regions, which the report ignores.
+
+### Results (2026-11-25)
+
+These are the decomp's harness scripts (`fsa-wt/g2-harness/tools/harness_scripts/`),
+each run with `?fast=1&nosave=1&script=...` and `--until-script --after 2`.
+The game's own code has 7202 functions; 6166 of them have a decomp symbol.
+The TSVs and their `.json` summaries are in `logs/coverage/`, and the runs
+(with `coverage.profraw`) are in `logs/coverage/runs/`.
+
+| script | reads | functions entered | never entered | blocks hit / total | blocks in entered functions | branch sides |
+|---|---|---|---|---|---|---|
+| opening | 1838 (script_end) | 1357 | 5845 | 12076 / 125082 (9.7%) | 12076 / 24657 (49.0%) | 7480 / 109214 |
+| castle | 27940 (script_timeout, by design) | 1701 | 5501 | 16073 (12.8%) | 16073 / 30855 (52.1%) | 10641 |
+| stage_1_0 | 27818 | 1671 | 5531 | 16453 (13.2%) | 16453 / 32888 (50.0%) | 10695 |
+| stage_1_1 | 27818 | 1419 | 5783 | 13389 (10.7%) | 13389 / 25275 (53.0%) | 8350 |
+| stage_2_0 | 4044 (crash, below) | 1778 | 5424 | 18485 (14.8%) | 18485 / 35207 (52.5%) | 11965 |
+| **merged** (`merged.tsv`) | | **2089** | **5113** | **21984 (17.6%)** | **21984 / 40361 (54.5%)** | **14873 (13.6%)** |
+
+In the merged TSV, 1756 of the 6166 functions with a symbol are entered,
+and 953 of those have regions that never ran. The 2089 entered functions have
+27357 `untaken` items.
+
+stage_2_0 does not reach the stage. At read 4044, in the map select
+(`MapSelect`), the normal build and the coverage build both stop with
+`RuntimeError: null function` in `cls_804AF480::cls_804AF480()`
+(`tu_8039003C.cpp`, inlined into `GameRoot::applyRequestedMode_80135494`).
+Its counters show where. `MapScreen_804B1288::MapScreen_804B1288()`
+(`map_screen_80403D84.cpp:288`) runs to its end (line 709), but the
+pane-building loops at lines 366, 370, 376, 390, 400, 410, 414, ... report
+their condition false at the first test (`i < 3` with `i = 0`). That only
+happens if the compiler removed those loops. The code between them ran. The
+`cls_804AF480` constructor never reaches line 42, the code after
+`new MapScreen_804B1288`. The decomp has the details.
+
+The coverage build plays every script exactly as the normal build does.
+`tools/harness_compare.py <coverage run> <normal run>` on each pair gives
+sync and state records identical, 0 differ: opening 52/48, castle 507/503,
+stage_1_0 922/918, stage_1_1 922/918, stage_2_0 131/128 (up to the crash).
+
+### Behaviour and cost
+
+The instrumentation must not change what the game does. Counter increments
+do not touch game state, but static data moves, and code that relies on
+undefined behaviour could compile differently. Check this with the harness
+for each script: run it in the normal build and in the coverage build, then
+compare with `harness_compare.py`. The results above all match.
+
+Cost, from the `[vi]` game time per frame (mean after retrace 1200, `fast=1`,
+on a shared machine):
+
+| script | normal | coverage |
+|---|---|---|
+| castle | 1.23 ms | 1.30 ms |
+| stage_1_0 | 0.74 ms | 0.85 ms |
+
+That is about 5-15%. A stage script takes 126 s instead of 121 s of wall
+time. `fsa.wasm` is 22.6 MB instead of 7.9 MB: the counters and profile data
+add 8 MB of data, and the coverage map adds 4.4 MB of custom sections. Each
+dump is a 7.8 MB profile, which is 10.4 MB of JSON lines in
+`coverage_profraw.jsonl`. `index.html` now splits a stream's POST at about
+6 MB, because `serve.py` takes 8 MB per request. The report takes about 1 s
+per run and about 2 s for the merge.
+
+Running headless: start the Chromium with
+`--disable-backgrounding-occluded-windows --disable-renderer-backgrounding
+--disable-background-timer-throttling`. On the shared Xvfb `:99`, another
+window can cover the tab, and Chrome then marks the page hidden (`[page]
+hidden` in the log). Lockstep then nearly stops. Separately, when one port
+serves both builds, `touch` the `fsa.js` / `fsa.wasm` of the build you
+switch to. Builds made in the same minute have the same modification time,
+and the browser keeps the other build's files (see the caveat in the
+vdispatch section).
 
 ## Virtual dispatch audit (`vdispatch`)
 

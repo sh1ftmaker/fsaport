@@ -7,6 +7,7 @@
 //        --seconds 60 --every 10 --out build/web-run [--keys 'Enter@30,KeyX@40'] [--freeze 40:20]
 //        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
 //        [--wav FILE]  (with ?audiorec=S in the URL: save the game's sound as a WAV)
+//        [--until-script [--after S]]  (stop early when the ?script= run ends)
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -79,9 +80,26 @@ if (args.throttle && args.throttle !== 'true') {
 // and wakes it D s later.
 const freeze = args.freeze && args.freeze !== 'true' ? args.freeze.split(':').map(Number) : null;
 let frozen = 0;
+// --until-script: end the run (before --seconds) once a harness script
+// (?script=) has written script_end or script_timeout to its sync stream;
+// the page's Module.fsaDiag is wrapped to see it. --after S waits S s more.
+const untilScript = args['until-script'] === 'true';
+const after = Number(args.after || 0);
+const hookScript = `(() => { if (typeof Module === 'undefined' || !Module.fsaDiag) return null;
+  if (!Module.fsaDiag.__untilHook) { const o = Module.fsaDiag;
+    Module.fsaDiag = (n, l) => { if (n === 'sync' && /"sync":"script_(end|timeout)"/.test(l)) window.__fsaScriptDone = l; return o(n, l); };
+    Module.fsaDiag.__untilHook = 1; }
+  return window.__fsaScriptDone || null; })()`;
+let scriptDoneAt = 0, lastPoll = 0;
 while (Date.now() - t0 < seconds * 1000) {
   await sleep(250);
   const t = (Date.now() - t0) / 1000;
+  if (untilScript && t - lastPoll >= 1) {
+    lastPoll = t;
+    const done = scriptDoneAt ? null : await evalJs(hookScript);
+    if (done) { scriptDoneAt = t; log(`[until-script] ${done} at ${t.toFixed(1)} s`); }
+    if (scriptDoneAt && t >= scriptDoneAt + after) break;
+  }
   for (const k of keys) {
     if (!k.done && t >= k.t) {
       k.done = true;
@@ -136,7 +154,8 @@ if (args.wav && args.wav !== 'true') {
 // what is buffered before the tab goes.
 if (await evalJs('typeof window.fsaDiagFlush') === 'function') {
   await evalJs('window.fsaDiagFlush()');
-  await sleep(1500);
+  // The coverage build posts a few MB (its counters); give it time.
+  await sleep(await evalJs('typeof Module._fsa_cov_dump') === 'function' ? 6000 : 1500);
 }
 await fetch(`http://127.0.0.1:${cdp}/json/close/${tab.id}`);
 ws.close();
