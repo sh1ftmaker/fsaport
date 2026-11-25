@@ -1158,7 +1158,15 @@ void MovingHouse_804A7AE0::update() {
                     if (!field_0x250.isZero()) {
                         if (field_0x244 == 1) {
                             if (mEmitters2[0] == NULL) {
+#ifdef FSA_PORT
+                                // Not reached unset: field_0x250 only turns non-zero after
+                                // getPushDir/getPullDir set field_0x2cc to +-1, and both go
+                                // back to 0 together. (Unset, the original would pass the low
+                                // half of r30, the caller's &mActors[slot] - 8.)
+                                u16 effId = 0x316;
+#else
                                 u16 effId;
+#endif
                                 if ((field_0x250.x > 0.0f && field_0x2cc == 1) ||
                                     (field_0x250.x < 0.0f && field_0x2cc == -1)) {
                                     effId = 0x316;
