@@ -68,8 +68,18 @@ void JPAVolumeSphere(JPAEmitterWorkData* workData)
     s16 theta; // r4
     if (workData->mEmitter->checkDynFlag(JPADYN_FixedInterval)) {
 
+#ifdef FSA_PORT
+        // The ring's first point (mVolumeAngleMax 1, from calcWorkData_c) and
+        // a one-ring sphere (mDivNumber 1) divide 0 by 0. PowerPC's divw gives
+        // 0 there (for a non-negative dividend, as these are); wasm traps.
+        int angleDiv = workData->mVolumeAngleMax - 1;
+        int xDiv     = workData->mDivNumber - 1;
+        u16 preTheta = angleDiv != 0 ? (workData->mVolumeAngleNum << 16) / angleDiv : 0;
+        phi          = u16((xDiv != 0 ? (workData->mVolumeX << 15) / xDiv : 0) + 0x4000);
+#else
         u16 preTheta = (workData->mVolumeAngleNum << 16) / (workData->mVolumeAngleMax - 1);
         phi          = u16((workData->mVolumeX << 15) / (workData->mDivNumber - 1) + 0x4000);
+#endif
         theta        = f32(preTheta) * workData->mVolumeSweep + 32768.0f;
         workData->mVolumeAngleNum++;
         if (workData->mVolumeAngleNum == workData->mVolumeAngleMax) {
