@@ -298,7 +298,7 @@ void BowSoldier_804A00C8::update() {
                 Bomb_8049F784* bomb = static_cast<Bomb_8049F784*>(getActorManager_801F856C()->findActorBySerial_801F666C(field_0x284));
                 if (bomb != NULL) {
                     if (bomb->field_0x238 != 0 && (u16)bomb->field_0x94 == 0) {
-                        mDir_0x98 = angleToDir_801F681C((u16)(10430.378f * JMath::atanTable_.atan2_(bomb->mPos.x - mPos.x, bomb->mPos.y - mPos.y)));
+                        mDir_0x98 = angleToDir_801F681C((u16)(s32)(10430.378f * JMath::atanTable_.atan2_(bomb->mPos.x - mPos.x, bomb->mPos.y - mPos.y)));
                         fn_801583E4(&pos, &mPos);
                         pos.x += lbl_8049FDA8[mDir_0x98][0];
                         pos.z += lbl_8049FDA8[mDir_0x98][1];
