@@ -8,6 +8,7 @@
 //        [--evals 'Module._fsa_dump_threads()@70;...'] (JS run in the page at a time)
 //        [--wav FILE]  (with ?audiorec=S in the URL: save the game's sound as a WAV)
 //        [--until-script [--after S]]  (stop early when the ?script= run ends)
+//        [--hide 'T:D[:WxH][:fake],...']  (cover the tab with another for D s at T s)
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -80,6 +81,23 @@ if (args.throttle && args.throttle !== 'true') {
 // and wakes it D s later.
 const freeze = args.freeze && args.freeze !== 'true' ? args.freeze.split(':').map(Number) : null;
 let frozen = 0;
+// --hide 'T:D[:WxH][:fake],...' hides the page for D s at T s by opening a
+// second tab over it in the same window (as switching tabs or apps does), then
+// brings it back. With WxH the window is resized to that size while hidden
+// (the page comes back at a different size). With fake the tab stays in front
+// and the page is only told it is hidden (document.hidden / visibilityState
+// overridden, visibilitychange dispatched): it keeps animating, so the game
+// reliably begins frames while SDL sees a hidden window, which a real hidden
+// tab only does now and then (Chrome stops animation frames at once).
+const fakeHidden = `(Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }),
+  Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' }),
+  document.dispatchEvent(new Event('visibilitychange')), document.visibilityState)`;
+const fakeVisible = `(delete document.hidden, delete document.visibilityState,
+  document.dispatchEvent(new Event('visibilitychange')), document.visibilityState)`;
+const hides = (args.hide && args.hide !== 'true' ? args.hide.split(',') : []).map((s) => {
+  const [t, d, size, mode] = s.split(':');
+  return { t: Number(t), d: Number(d), size: size ? size.split('x').map(Number) : null, fake: mode === 'fake', state: 0 };
+});
 // --until-script: end the run (before --seconds) once a harness script
 // (?script=) has written script_end or script_timeout to its sync stream;
 // the page's Module.fsaDiag is wrapped to see it. --after S waits S s more.
@@ -119,6 +137,34 @@ while (Date.now() - t0 < seconds * 1000) {
     await send('Page.setWebLifecycleState', { state: 'active' });
     log(`[freeze] page woken at ${t.toFixed(1)} s`);
   }
+  for (const h of hides) {
+    if (h.state === 0 && t >= h.t) {
+      h.state = 1;
+      if (h.fake) {
+        await evalJs(fakeHidden);
+      } else {
+        h.other = await (await fetch(`http://127.0.0.1:${cdp}/json/new?about:blank`, { method: 'PUT' })).json();
+        await fetch(`http://127.0.0.1:${cdp}/json/activate/${h.other.id}`);
+      }
+      if (h.size) {
+        const w = await send('Browser.getWindowForTarget', {});
+        const r = await send('Browser.setWindowBounds', { windowId: w.result.windowId,
+          bounds: { windowState: 'normal', width: h.size[0], height: h.size[1] } });
+        log(`[hide] window resized to ${h.size.join('x')}${r.error ? ' failed: ' + r.error.message : ''}`);
+      }
+      log(`[hide] page hidden at ${t.toFixed(1)} s (${await evalJs('document.visibilityState')}${h.fake ? ', fake' : ''})`);
+    } else if (h.state === 1 && t >= h.t + h.d) {
+      h.state = 2;
+      if (h.fake) {
+        await evalJs(fakeVisible);
+      } else {
+        await fetch(`http://127.0.0.1:${cdp}/json/activate/${tab.id}`);
+        await fetch(`http://127.0.0.1:${cdp}/json/close/${h.other.id}`);
+      }
+      await sleep(100);
+      log(`[hide] page shown at ${t.toFixed(1)} s (${await evalJs('document.visibilityState')})`);
+    }
+  }
   for (const e of evals) {
     if (!e.done && t >= e.t) {
       e.done = true;
@@ -127,6 +173,8 @@ while (Date.now() - t0 < seconds * 1000) {
   }
   if (t >= (shot + 1) * every) {
     shot++;
+    // A screenshot of a hidden tab waits for a frame that never comes.
+    if (hides.some((h) => h.state === 1 && !h.fake)) continue;
     const r = await send('Page.captureScreenshot', { format: 'png' });
     if (r.result) fs.writeFileSync(path.join(out, `shot-${String(shot * every).padStart(3, '0')}s.png`), Buffer.from(r.result.data, 'base64'));
     const stats = await evalJs('JSON.stringify(window.fsaStats ? window.fsaStats() : null)');

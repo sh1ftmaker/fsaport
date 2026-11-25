@@ -784,6 +784,21 @@ bool begin_frame() {
 
   g_stats.drawCallCount = 0;
   g_stats.mergedDrawCallCount = 0;
+  if (g_currentRenderPass != UINT32_MAX || !g_renderPasses.empty()) {
+    // The previous frame was begun but never ended (a caller skipped
+    // end_frame). Drop what it recorded: appending to it would leave
+    // default-constructed passes with null views at the end of the list.
+    static bool warned = false;
+    if (!warned) {
+      warned = true;
+      Log.warn("begin_frame: previous frame was not ended; discarding {} render passes", g_renderPasses.size());
+    }
+    g_renderPasses.clear();
+    g_inOffscreen = false;
+    g_offscreenColor = {};
+    g_offscreenDepth = {};
+    g_textureUploads.clear();
+  }
   g_suspendedEfbPass.reset();
 
   g_renderPasses.emplace_back();
