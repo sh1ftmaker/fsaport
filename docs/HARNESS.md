@@ -275,6 +275,14 @@ the scripted opening: 40/54 state records identical within segments (6/54
 raw); the rest differ by ±1-2 advances that swing both ways without growing,
 i.e. a random call landing a frame earlier or later, not a missing call.
 
+`--ftol REL` (off by default) tolerates float fields within REL relative error
+and reports those records separately ("N within --ftol (max rel E)"), never
+as identical. For port vs Dolphin only: MWCC builds game code with fused
+multiply-add (one rounding) and wasm has no scalar FMA, so positions can drift
+in the last bits and reconverge. Dolphin vs Dolphin must stay bit-exact. Port
+vs Dolphin, seeded stage_1_0 over 25k reads: 804/808 state identical, the 4
+others within --ftol 1e-5 (max rel 2.6e-6).
+
 `Module._fsa_harness_reads()` in the page gives the current read count. The
 page batches each stream and posts it every 2 s, so call
 `window.fsaDiagFlush()` before closing a tab.

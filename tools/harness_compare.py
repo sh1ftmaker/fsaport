@@ -61,6 +61,29 @@ def diff(a, b, path=''):
         yield (path, a, b)
 
 
+FTOL = None  # --ftol: relative tolerance for float fields (off by default)
+
+
+def split_diffs(d):
+    """(real differences, tolerated count, max relative error of the tolerated
+    ones): with --ftol, a field where both sides are numbers, at least one not
+    an integer, within FTOL relative error, is tolerated (float rounding, e.g.
+    MWCC's fused multiply-add vs wasm's separate rounding), not a difference."""
+    if FTOL is None:
+        return d, 0, 0.0
+    real, tol, worst = [], 0, 0.0
+    for p, x, y in d:
+        if (isinstance(x, (int, float)) and isinstance(y, (int, float)) and not isinstance(x, bool)
+                and not isinstance(y, bool) and not (float(x).is_integer() and float(y).is_integer())):
+            rel = abs(x - y) / max(abs(x), abs(y), 1e-30)
+            if rel <= FTOL:
+                tol += 1
+                worst = max(worst, rel)
+                continue
+        real.append((p, x, y))
+    return real, tol, worst
+
+
 def load_list(run, stream):
     """The stream's records in file order (without "start" / "inputs_end")."""
     path = os.path.join(run, stream + '.jsonl')
@@ -195,6 +218,7 @@ def compare_anchored(args):
             only_a += range(i1, i2)
             only_b += range(j1, j2)
     totals = {s: [0, 0, 0, 0] for s in ('sync', 'state')}  # identical, differ, only A, only B
+    tolerated = {s: [0, 0.0] for s in ('sync', 'state')}  # records with only --ftol float drift, max rel error
     shown = 0
     print(f'anchors: A {len(ida)}, B {len(idb)}; {len(pairs)} matched, {len(only_a)} only in A, {len(only_b)} only in B')
     for i, j in pairs:
@@ -212,10 +236,13 @@ def compare_anchored(args):
                     c[3] += 1
                     diffs.append((stream, key, 'only in B', []))
                 else:
-                    d = list(diff(sa[key], sb[key]))
+                    d, ntol, worst = split_diffs(list(diff(sa[key], sb[key])))
                     if d:
                         c[1] += 1
                         diffs.append((stream, key, f'{len(d)} fields differ', d))
+                    elif ntol:
+                        tolerated[stream][0] += 1
+                        tolerated[stream][1] = max(tolerated[stream][1], worst)
                     else:
                         c[0] += 1
             counts[stream] = c
@@ -247,7 +274,8 @@ def compare_anchored(args):
     for stream in ('sync', 'state'):
         t = totals[stream]
         bad += t[1] + t[2] + t[3]
-        print(f'{stream}: {t[0]} identical, {t[1]} differ, {t[2]} only in A, {t[3]} only in B (matched anchors, up to the shorter segment)')
+        tol = f', {tolerated[stream][0]} within --ftol (max rel {tolerated[stream][1]:.3g})' if FTOL is not None else ''
+        print(f'{stream}: {t[0]} identical, {t[1]} differ{tol}, {t[2]} only in A, {t[3]} only in B (matched anchors, up to the shorter segment)')
     sys.exit(1 if bad else 0)
 
 
@@ -260,7 +288,13 @@ def main():
     ap.add_argument('--anchor', choices=['scene'], help='scene-anchored comparison (see above)')
     ap.add_argument('--seed', choices=['within', 'raw'], default='within',
                     help='with --anchor scene: compare the RNG seed as advances within each segment (default) or raw')
+    ap.add_argument('--ftol', type=float, metavar='REL',
+                    help='tolerate float fields within this relative error (e.g. 1e-5 for port vs Dolphin: '
+                         'MWCC fuses a*b+c, wasm rounds twice); reported separately, never counted as identical. '
+                         'Off by default: Dolphin vs Dolphin must stay bit-exact')
     args = ap.parse_args()
+    global FTOL
+    FTOL = args.ftol
     if args.anchor:
         compare_anchored(args)
     bad = 0
@@ -273,7 +307,8 @@ def main():
         if args.upto is not None:
             last = min(last, args.upto)
         keys = sorted({k for k in set(A) | set(B) if k[0] is not None and k[0] <= last})
-        same = only_a = only_b = differ = 0
+        same = only_a = only_b = differ = tolerated = 0
+        tol_worst = 0.0
         shown = 0
         for k in keys:
             if k not in B:
@@ -288,9 +323,13 @@ def main():
                     print(f'  {stream} n={k[0]} {k[1]}: only in B')
                     shown += 1
                 continue
-            d = list(diff(A[k], B[k]))
+            d, ntol, worst = split_diffs(list(diff(A[k], B[k])))
             if not d:
-                same += 1
+                if ntol:
+                    tolerated += 1
+                    tol_worst = max(tol_worst, worst)
+                else:
+                    same += 1
                 continue
             differ += 1
             if shown < args.show:
@@ -299,7 +338,8 @@ def main():
                 for p, x, y in d[:8]:
                     print(f'    {p}: {json.dumps(x)} vs {json.dumps(y)}')
         bad += only_a + only_b + differ
-        print(f'{stream}: reads 0..{last}: {same} identical, {differ} differ, {only_a} only in A, {only_b} only in B')
+        tol = f', {tolerated} within --ftol (max rel {tol_worst:.3g})' if FTOL is not None else ''
+        print(f'{stream}: reads 0..{last}: {same} identical, {differ} differ{tol}, {only_a} only in A, {only_b} only in B')
     sys.exit(1 if bad else 0)
 
 
