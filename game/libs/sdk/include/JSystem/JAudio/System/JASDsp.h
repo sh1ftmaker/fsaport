@@ -94,8 +94,8 @@ namespace JASDsp
         u16 _0A;                 // _0A
         u16 mPauseFlag;          // _0C
         u16 mMixerInitDelayMax;  // _0E
-        Mixer _10[4];            // _10
-        u8 _30[0x20];            // _30
+        Mixer _10[6];            // _10: six output channels (TP JASDSPInterface.h mOutputChannels[6]; setMixer* index to 5)
+        u8 _40[0x10];            // _40
         u16 _50;                 // _50
         u16 _52;                 // _52
         u16 _54;                 // _54
