@@ -226,7 +226,76 @@ const PlayerField kPlayerFields[] = {
 
 } // namespace
 
-// The scene the sync points watch: gGameRoot_8053AAF8->field_0x4c (-1 before
+// ?allocprobe=1 (platform/alloc_probe.cpp, docs/DIAGNOSTICS.md): at every sync
+// point, one "heap" diagnostics record with the JKR heap tree (each heap's
+// address, depth, size, total free and largest free block, preorder from the
+// root heap) and the probe's counts of host allocations that went to a JKR heap.
+extern "C" int fsa_alloc_probe_on;
+extern "C" u32 fsa_alloc_probe_hits, fsa_alloc_probe_bytes, fsa_alloc_probe_stacks;
+extern "C" void fsa_diag(const char* name, const char* json);
+#include "JSystem/JKernel/JKRHeap.h"
+
+namespace {
+void heap_tree(Json& j, JKRHeap* heap, int depth, u32* totalFree) {
+    char t[32];
+    j.open('{');
+    j.key("heap");
+    snprintf(t, sizeof(t), "0x%08x", (unsigned)(u32)(size_t)heap);
+    j.str(t);
+    j.key("depth");
+    j.i(depth);
+    j.key("size");
+    j.u(heap->getHeapSize());
+    u32 freeTotal = (u32)heap->getTotalFreeSize();
+    *totalFree += freeTotal;
+    j.key("free");
+    j.u(freeTotal);
+    j.key("maxfree");
+    j.u((u32)heap->getFreeSize());
+    if (heap == JKRHeap::getCurrentHeap()) {
+        j.key("current");
+        j.b(true);
+    }
+    j.close('}');
+    for (JSUTree<JKRHeap>* c = heap->getHeapTree().getFirstChild(); c != NULL; c = c->getNextChild())
+        heap_tree(j, c->getObject(), depth + 1, totalFree);
+}
+
+char sHeapBuf[16384];
+
+void heap_record(u32 n, const char* sync) {
+    if (!fsa_alloc_probe_on || JKRHeap::getRootHeap() == NULL)
+        return;
+    Json j = {sHeapBuf, (int)sizeof(sHeapBuf), 0, false};
+    sHeapBuf[0] = '\0';
+    u32 totalFree = 0;
+    j.open('{');
+    j.key("n");
+    j.u(n);
+    j.key("sync");
+    j.str(sync);
+    j.key("heaps");
+    j.open('[');
+    heap_tree(j, JKRHeap::getRootHeap(), 0, &totalFree);
+    j.close(']');
+    j.key("free_sum");
+    j.u(totalFree);
+    j.key("probe");
+    j.open('{');
+    j.key("hits");
+    j.u(fsa_alloc_probe_hits);
+    j.key("bytes");
+    j.u(fsa_alloc_probe_bytes);
+    j.key("stacks");
+    j.u(fsa_alloc_probe_stacks);
+    j.close('}');
+    j.close('}');
+    if (j.len < (int)sizeof(sHeapBuf))
+        fsa_diag("heap", sHeapBuf);
+}
+} // namespace
+
+// The scene the sync points watch:gGameRoot_8053AAF8->field_0x4c (-1 before
 // the root exists), lbl_80529DEC.mStage_0x118 and .mLevel_0x11c.
 extern "C" void fsa_harness_scene(s32* out) {
     out[0] = root() ? root()->field_0x4c : -1;
@@ -237,6 +306,7 @@ extern "C" void fsa_harness_scene(s32* out) {
 // One "state" record (no newline) into buf; returns its length, or -1 when it
 // did not fit.
 extern "C" int fsa_harness_state(char* buf, int size, u32 n, const char* sync) {
+    heap_record(n, sync);
     Json j = {buf, size, 0, false};
     buf[0] = '\0';
     j.open('{');

@@ -1334,3 +1334,45 @@ Stage 1: game time 3.2 ms/frame with UBSan and 4.6 ms/frame with ASan, against
 60 fps. `fsa.wasm` is 15 MB (UBSan) and 18 MB plus a 4 MB source map (ASan)
 against 8 MB. The ASan build starts with 1 GB of memory (the shadow is 1/8 of
 the 2 GB maximum).
+
+## Host allocations in the game's heaps (`?allocprobe=1`, `heap`)
+
+JSystem's global `operator new` (JKRHeap.cpp) serves the whole module. While
+`fsa_host_alloc_depth` is 0, an allocation goes to the game's current JKR heap,
+whoever makes it. The platform layer holds `HostAllocScope` and Aurora's entry
+points hold `AURORA_HOST_ALLOC` (`extern/aurora/lib/host_alloc.hpp`), so their
+allocations go to `malloc` instead. This check finds host code that does not
+do that. It is in every build and stays off unless the URL has
+`?allocprobe=1`. In a normal run it only tests a null hook on each
+`operator new`. It needs the harness (`?script=` or `?inputs=`), which supplies
+the sync points:
+
+- `platform/alloc_probe.cpp` counts each allocation that goes to a JKR heap
+  while an `aurora` or `std::` function is on the call stack. It logs each
+  distinct call stack to the console once (`[allocprobe] host allocation of N
+  bytes in a JKR heap (stack K):`, followed by the stack).
+  `Module._fsa_alloc_probe_report()` prints the totals.
+- The `heap` stream has one record per harness sync point
+  (`game/src/port/harness_state.cpp`):
+  `{"n","sync","heaps":[{"heap","depth","size","free","maxfree","current"?}...],"free_sum","probe":{"hits","bytes","stacks"}}`.
+  `heaps` is the JKR heap tree in preorder from the root. `free` is
+  `getTotalFreeSize`, `maxfree` is the largest free block, and `free_sum` is
+  the sum of `free` over the tree. `bytes` is the total allocated, not the live
+  bytes. Heap addresses appear only in this stream, never in `state`.
+
+Run it like any harness run, e.g.
+`?iso=local.iso&nosave=1&allocprobe=1&script=harness_scripts/stage_1_0.json`.
+The probe captures each call stack with `emscripten_get_callstack`, which is
+slow during loads. Lockstep keeps the run identical; it only runs slower.
+
+Before the Aurora scopes (2026-11-25), the scripted opening logged 287 distinct
+stacks and 57k allocations (100 MB allocated in all, about 2.3 MB every 60
+frames during the narration). The biggest sources were `fifo::handle_draw`,
+`find_pipeline_impl`, `CARDWrite`/`CARDRead`/`CardGciFolder`,
+`GXCallDisplayList`, `fifo::drain` and bind-group creation. stage_1_0 logged
+300 stacks and 3.0M allocations over 28k reads, about 110 every frame in
+play. With the scopes, both scripts log 0. The JKR tree's free space
+(`free_sum`) is 211 KB higher at the end of the opening and 800 KB higher
+throughout stage 1-0. The game heap's largest free block there grows from
+49.71 MB to 51.01 MB. `state` is identical: 45/45 records in the opening and
+906/906 in stage 1-0.
