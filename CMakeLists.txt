@@ -1,9 +1,12 @@
 # fsaport: Four Swords Adventures on WebAssembly + WebGPU.
 #
 #   source ../fsadecomp/tools/emsdk/emsdk_env.sh
-#   python3 tools/extract_assets.py path/to/main.dol build/assets
 #   emcmake cmake -S . -B build/web -G Ninja -DCMAKE_BUILD_TYPE=Release
 #   ninja -C build/web fsa
+#
+# The build carries no game data: the game's data that has no source form is
+# copied from main.dol on the player's disc at startup (tools/gen_globals.py,
+# platform/dol_data.cpp, platform/web/fsa_disc.js).
 cmake_minimum_required(VERSION 3.25)
 project(fsaport C CXX)
 
@@ -11,7 +14,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FSA_GAME ${CMAKE_SOURCE_DIR}/game)
 option(FSA_DEBUG_LINES "keep DWARF line tables in fsa.wasm (llvm-symbolizer; links with -O1)" OFF)
-set(FSA_ASSETS ${CMAKE_SOURCE_DIR}/build/assets CACHE PATH "assets extracted by tools/extract_assets.py")
 
 # The emscripten toolchain can leave CMAKE_AR empty in subdirectory scopes
 # ("" qc ... -> exit 127); Aurora's CMakeLists reads it back from the cache.
@@ -79,6 +81,14 @@ elseif(NOT FSA_SANITIZE STREQUAL "")
   message(FATAL_ERROR "FSA_SANITIZE must be undefined, address or empty")
 endif()
 
+# The storage of the game's global data that no unit defines (and of the byte
+# blobs the sources declare), from tools/globals_layout.json; zero-filled, filled
+# from the player's main.dol at startup (platform/dol_data.cpp).
+set(FSA_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated)
+add_custom_command(OUTPUT ${FSA_GENERATED_DIR}/globals.c
+  COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/gen_globals.py emit ${FSA_GENERATED_DIR}
+  DEPENDS ${CMAKE_SOURCE_DIR}/tools/gen_globals.py ${CMAKE_SOURCE_DIR}/tools/globals_layout.json
+  VERBATIM)
 execute_process(COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/gen_units_cmake.py
                 ${FSA_GAME}/units.txt ${CMAKE_BINARY_DIR}/fsa_units.cmake)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${FSA_GAME}/units.txt)
@@ -88,6 +98,8 @@ include(${CMAKE_BINARY_DIR}/fsa_units.cmake)
 
 # --- Platform layer: what the GameCube SDK did, for the browser -----------------
 file(GLOB FSA_PLATFORM_SOURCES CONFIGURE_DEPENDS platform/*.cpp platform/*.c)
+# Linked into fsa itself (below): nothing references its constructor.
+list(REMOVE_ITEM FSA_PLATFORM_SOURCES ${CMAKE_SOURCE_DIR}/platform/dol_data.cpp)
 add_library(fsa_platform STATIC ${FSA_PLATFORM_SOURCES})
 target_include_directories(fsa_platform PRIVATE platform
   ${FSA_GAME}/libs/sdk/include ${FSA_GAME}/include)
@@ -121,7 +133,8 @@ target_link_libraries(fsa_glue PRIVATE aurora::core aurora::gx)
 # The game calls the paired-single matrix names; Aurora provides them with this.
 target_compile_definitions(aurora_mtx PRIVATE MTX_USE_PS=1)
 
-add_executable(fsa platform/web/empty.c)
+add_executable(fsa platform/web/empty.c platform/dol_data.cpp)
+set_source_files_properties(platform/dol_data.cpp PROPERTIES COMPILE_OPTIONS "-Wno-everything")
 target_link_libraries(fsa PRIVATE
   -Wl,--start-group ${FSA_UNIT_LIBS} fsa_platform fsa_glue -Wl,--end-group
   aurora::core aurora::gx aurora::gd aurora::si aurora::vi aurora::pad aurora::mtx aurora::os aurora::card)

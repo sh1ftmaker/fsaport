@@ -178,557 +178,557 @@ libs/jsystem/JSystem/JSupport/JSUInputStream.cpp	-Ilibs/sdk/include -Ilibs/sdk/m
 libs/jsystem/JSystem/JSupport/JSUList.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
 libs/jsystem/JSystem/JSupport/JSUMemoryStream.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
 libs/jsystem/JSystem/JSupport/JSUOutputStream.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
-libs/jsystem/JSystem/JUtility/JUTAssert.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTConsole.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTDbPrint.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTDirectFile.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTDirectPrint.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTException.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTFont.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTFontData_Ascfont_fix12.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTGamePad.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTGraphFifo.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTNameTab.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTPalette.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTProcBar.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTResFont.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTResource.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTTexture.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTVideo.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-libs/jsystem/JSystem/JUtility/JUTXfb.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98 -I@ASSETS@
-src/JSystem/JGadget/std-vector.cpp	-Iinclude -I@ASSETS@ -Isrc -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/PPC_EABI/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C++/MSL_Common/Include -Isrc/PowerPC_EABI_Support/Runtime/Inc -DVERSION=0 -DNDEBUG=1 --language=c++ --std=c++98
-src/JSystem/JUtility/JUTFader.cpp	-Iinclude -I@ASSETS@ -Isrc -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/PPC_EABI/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C++/MSL_Common/Include -Isrc/PowerPC_EABI_Support/Runtime/Inc -DVERSION=0 -DNDEBUG=1 --language=c++ --std=c++98
-src/game/RailBase.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_advance_notice_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_after_goal_opening_8011CEC8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_all_enemies_defeated.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_all_enemies_defeated_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_antlion_80212E3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_armos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_arrow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_arrow_marker.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_attack_hitbox_when_player_is_thrown.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ball_and_chain_soldier_80170008.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bandit_herding_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_battle_royale_end_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_beamos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bee_80343A70.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bee_formation_803489A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bee_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bg_rewrite_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bgm_change_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_big_moldorm_80147B50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_big_moldorm_tail_8018EB94.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_big_poe_2_8018A8D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_big_poe_801618D0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bird_formation_8020B354.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bird_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_blade_trap.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_blindfold.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_blizzard_8033F448.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_blizzard_battle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_block_for_2_3_players.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bombchu.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_boss_display_test_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_boulder_800F46C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bow_soldier_801555D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bti_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_bumper.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_burning_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_buzz_blob.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cactus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_candlestick_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cannon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_carrot.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_chain_chomp_80184D64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_chain_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cheep_cheep.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_chief_soldier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cloud.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_coconut.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_colour_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_coloured_floor_toggle_8012DAC0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_crystal_ball.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_crystal_ball_generator_801291A0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_crystal_cutscene_80113788.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_crystal_demo_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cucco.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_cucco_herding_npc_8034AA40.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_damage_npc_802E6EC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_deadrock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_debug_warp_settings.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_digging_game.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_dodongo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_door.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_dropped_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_dummy_conversation.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ending_map_skipper.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_enemy_count_wipe_out_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_enemy_for_ending_control.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_enemy_generator_2_802E2074.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_enemy_generator_3.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_enemy_spawn_area.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_environment_control_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_environment_switch_control_802B3674.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_escort_woman.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_escorted_woman_arrival_point_80125B58.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_explosion.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_extending_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_eyeball_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_eyegore.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fairy.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fairy_invincible.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fairy_revival.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_falling_floor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fire_bar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fire_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fire_rod_fire.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fireball_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fish.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_flame.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_floormaster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_flying_tile.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_focus_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_buried.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_fleeing.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_rain.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_shadow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_winged.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_gem_wooden.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_force_like.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_girls_control_8036FB60.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_person_pull_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_person_pull_switch_pswb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_person_pull_switch_pswk.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_person_switch_8034DFF0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_switch_monitor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_four_sword_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_frostare_child_frosteye_801DB18C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_frostare_tail.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_fuse_point.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gambling_chest.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gambling_shop.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ganon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gba_appear.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gba_window.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_geldman_80183544.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_giant_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_giant_generator_effect_802ED538.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gibdo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_global_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_goal_2_802E2990.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_goal_802A4654.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_goal_warp_801B6C50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gohma.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_grass.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_gravestone.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_great_fairy_bfry.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_great_fairy_spfr.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_hammer_bulge.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_hammer_shop_minigame_800FF060.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_hardhat_beetle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_heart_container.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_helmaroc_king_8017EF40.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_hinox.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_horse_race_end_area.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_horse_race_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_hyrule_castle_barrier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ice_floor_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ice_floor_check_npc_monitor_8012F8AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ice_melted_by_four_players.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ice_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_icicle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_inextinguishable_flame.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_invisible_npc_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_invisible_npc_wall_tomi.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_iron_ball_80333958.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_iron_ball_homing_80334318.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_iron_ball_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_iron_pot_801E6D48.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_item_pedestal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_kaepora_gaebora.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_kaepora_gaebora_8021AF28.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_kaepora_gaebora_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_keeps_escorted_girl_from_going_8012FBCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_keese.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_keese_swarm_801A8194.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_knight_of_hyrule.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_leaf_effect_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_leaf_effect_npc_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_leever_80182914.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_life_meter.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_liftable_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_liftable_wood.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_light_environment_control_802EF76C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_link_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_link_ending_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_local_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_log_80354D64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_log_monitor_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_logic_switch_control_80104C3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_lotus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_magic_circle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_magic_circle_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_magic_jar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_maiden_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_maiden_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_malon_and_talon_controller_80130310.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_manhandla_801A908C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_merchant.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_message_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_mojamoja_unidentified_enemy_80166BD0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_moving_house_802957CC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_navi.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_navi_after_crystal_cutscene_8013394C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_navi_maiden_crystal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_npc_ride_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_obj_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_octorok.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_octorok_rock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_off_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_okame_san_801AE9C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_old_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_on_off_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_opening_goal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_opening_narration_801286C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_oshin_unidentified_803276C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_other_characters_ending_80362634.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_panel_rewrite_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_panel_rewrite_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_particle_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pengator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_phantom_ganon_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_phantom_ganon_8017C01C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_play_specified_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_player_effect.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_player_start_position.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_player_sword_level_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_poe.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_point_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_popo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_post_warp_pillar_handling.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pot.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pot_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pot_2_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pot_smoke.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_ganon_battle_80197070.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_motion_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_spawner_801B0A00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_princess_zelda_spawner_escape_801B27DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_pull_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_push_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_push_switch_in_pyramid.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_quicksand.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rainbow_bridge.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_random_toggle_switch_8011E96C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rank_display.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rat.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_reaper_shinigami_802B7C78.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_recovery_heart.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_red_blue_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rock_dropped_into_the_river_11_80376FA0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_room_transfer_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_room_warp_for_l72_8012EA00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rope.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_rotating_skull_802B214C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_sand_crab.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_sandstorm.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_score.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_searchlight.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_seesaw_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801C5B08.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801C6A4C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801C71BC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801C9AF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801D3320.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_801D3CBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_2_8021CDE4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_bow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_fire_minor_80222CC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_giant_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_hammer_minor_80221B44.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_jump.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shadow_link_thwomp_minor_802233A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shooting_gallery.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shop_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shovel_old_timer.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_shutter.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_side_view_gate_display_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_sign.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_slime_formation_80209C14.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_slime_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_slingshot_seed.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_small_key.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_snow_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_snowball.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_somaria_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_special_bg_draw_object.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_special_conversation_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spike_floor_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spiral_staircase_8028DD78.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spotlight.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spotlight_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_spreading_fire.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stage_info_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stalfos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stone.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stone_arrghus_800F7FCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stone_disguised_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_stop_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_story_demo_control_npc_8011A0F8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_strange_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_switch_or.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_switch_related_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_sword_soldier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_talking_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_talking_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_talking_sign.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tektite.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_temple_bti_display.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tennis_shop_801A0710.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_terrorpin.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thief.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thief_80206B30.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thief_8020F798.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thwomp.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thwomp_launch_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thwomp_launch_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_thwomp_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_803D9944.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_buster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_first.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_time_up_803536C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_time_up_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_tower.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingle_wallet.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tingles_tower_warp_801B4D0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_torch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tower_appearance_demo_8012A5EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tower_collapse_effect.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_treasure_chest.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_treasure_mark.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_trick_floor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_trick_floor_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_tutorial_old_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_two_person_liftable_rock_8034C950.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_two_sword_motion.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_bgbl_801D7AFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_bome_801688AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_dmyk_802F3B74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_endm_802E9428.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_fbal_802201D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_form_8029C584.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_fsob_801E801C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_gsck_802F4AEC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_htmk_8034A6B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_ibbm_8020FE50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_lnbm_801BEDBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_slef_80213E00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_unknown_swbm_8017A44C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_ura_colour.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_boss.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_boss_801E3618.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_boss_801E4D54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_boss_801EDBA4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_buster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vaati_time_up.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_view_mode.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_vulture.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_wait_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_wallmaster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_warp.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_warp_cannon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_warp_entrance_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_warp_pillar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_wave_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_whack_a_mole_shop_8010089C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_wind_environment.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_wizzrobe.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zelda_scroll_lock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zol_small_slime_8020C0A8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zoom.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zoom_out_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zora.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zora_escort.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zora_escort_goal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zora_fish_herder.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/act_zora_lotus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/actor_base_801A3C50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/actor_base_801EE24C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/actor_manager_801F6058.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/actor_sound_obj_80455CA4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/actor_sub_1_dc_801EAB0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/adv_entry_screen_803E1668.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/adventure_hud_80418B64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/anim_frame_seq_800FE8C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/audio_mgr_80457DFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/audio_res_loader_80442810.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/battle_hud_8042165C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/battle_stage_select_80414F6C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/bg_rewrite_8029D898.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/black_fade_802AC8AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/bomb_drop_timer_802188B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/boot_loader_803FF2C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/button_icons_80440BF4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/camera_8030C058.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/card_mgr_803B9940.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/collect_screen_8044C7F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/collision_box_list_8020D58C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/connect_screen_803F0A54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/demo_actor_base_8010DF44.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/dvd_mount_aram_archive_command_80401848.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/effect_system_8013C5C8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/emitter_move_seq_8021F4B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/enemy_base_801CDC8C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/escort_actor_list_80131D98.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/escort_base_801213EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/file_select_803BC6F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/flying_pieces_8021C2B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/frame_count_seq_8021C848.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_mode_803DAC3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_over_screen_80438C68.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_root_80134C04.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_root_sub_04_80139BE8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_root_sub_20_801902C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_root_sub_24_8016A2B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/game_view_802D39B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/gba_connect_error_window_80441A1C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/gba_window_80432638.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/head_sway_8021A570.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/horse_race_table_80215A94.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/hud_mgr_8043A0E8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/ice_floor_check_list_8012F3E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/map_ed_overlay_804432DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/map_screen_80403D84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/map_yagura_window_80443B0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/message_manager_8037DF68.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/message_window_80390818.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_fishing_screen_8044998C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_horse_race_screen_804455E0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_kokko_screen_80447618.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_oni_screen_804465B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_shooting_screen_80447FAC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/mg_volleyball_screen_8044A828.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/navi_list_8021F064.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/pane_ctrl_804023D0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/pause_screen_80453AF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_8023FBF0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_80256C74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_8025EB18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_80264998.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_8026FC20.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_8027E5BC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_80285E58.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_8028FBA0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_sound_obj_8045B010.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/player_window_select_80441318.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/press_start_overlay_803DA6B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/prologue_overlay_8044C028.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/result_screen_803A8DFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/rule_screen_80434370.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/rupee_digit_sprites_8045560C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/save_data_803B8C74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/save_screen_803D2C34.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/sequencer_801DA7C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/shadow_circle_80158624.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/shadow_link_base_80220F54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/shadow_link_fight_801C0D70.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/singleton_801DAC6C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/sound_effect_seq_80316E34.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/sprite_anim_801D1C18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/staff_roll_loader_8044B80C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/stopwatch_801ED3DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/sword_hit_box_8021693C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/thp_read_thread_80427D2C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tile_map_802F5040.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/title_803A3484.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/total_screen_803D7098.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80021840.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_800F39EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80118384.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8012FF9C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801344C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8013AAD4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8015F454.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801BD8C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801CB270.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801D11FC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801D2918.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801D2C60.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801D6CEC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801D8400.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801DCC98.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801DD1AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801DE714.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801E2540.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801E4A18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801E5FC8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801E667C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801E9AFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801EB00C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_801F9484.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80204638.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80207548.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8020CCA8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80210630.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80212AC0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80214244.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802144F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802153A8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802157B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8021827C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8021BCBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8021BFA8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8021FDB8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802242F4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8022461C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8022AD64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802684A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802B1558.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_802BA334.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803006E8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80301CD0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803099FC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8030AE84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80379F84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8037ACC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8039003C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803944C8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803A60E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803A85E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803B7DCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_803BACF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80400DC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80448940.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_80457C08.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8045A640.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8045B6F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/tu_8045BA84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/vaati_emitters_8021775C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/wander_steer_timer_8021B904.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/wander_turn_timer_80217374.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/warning_window_8042E964.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/game/zora_escort_goal_list_80127E20.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
+libs/jsystem/JSystem/JUtility/JUTAssert.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTConsole.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTDbPrint.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTDirectFile.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTDirectPrint.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTException.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTFont.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTFontData_Ascfont_fix12.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTGamePad.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTGraphFifo.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTNameTab.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTPalette.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTProcBar.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTResFont.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTResource.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTTexture.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTVideo.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+libs/jsystem/JSystem/JUtility/JUTXfb.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+src/JSystem/JGadget/std-vector.cpp	-Iinclude -Isrc -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/PPC_EABI/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C++/MSL_Common/Include -Isrc/PowerPC_EABI_Support/Runtime/Inc -DVERSION=0 -DNDEBUG=1 --language=c++ --std=c++98
+src/JSystem/JUtility/JUTFader.cpp	-Iinclude -Isrc -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C/PPC_EABI/Include -Isrc/PowerPC_EABI_Support/MSL/MSL_C++/MSL_Common/Include -Isrc/PowerPC_EABI_Support/Runtime/Inc -DVERSION=0 -DNDEBUG=1 --language=c++ --std=c++98
+src/game/RailBase.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_advance_notice_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_after_goal_opening_8011CEC8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_all_enemies_defeated.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_all_enemies_defeated_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_antlion_80212E3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_armos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_arrow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_arrow_marker.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_attack_hitbox_when_player_is_thrown.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ball_and_chain_soldier_80170008.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bandit_herding_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_battle_royale_end_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_beamos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bee_80343A70.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bee_formation_803489A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bee_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bg_rewrite_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bgm_change_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_big_moldorm_80147B50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_big_moldorm_tail_8018EB94.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_big_poe_2_8018A8D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_big_poe_801618D0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bird_formation_8020B354.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bird_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_blade_trap.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_blindfold.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_blizzard_8033F448.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_blizzard_battle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_block_for_2_3_players.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bombchu.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_boss_display_test_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_boulder_800F46C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bow_soldier_801555D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bti_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_bumper.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_burning_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_buzz_blob.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cactus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_candlestick_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cannon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_carrot.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_chain_chomp_80184D64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_chain_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_check_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cheep_cheep.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_chief_soldier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cloud.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_coconut.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_colour_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_coloured_floor_toggle_8012DAC0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_crystal_ball.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_crystal_ball_generator_801291A0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_crystal_cutscene_80113788.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_crystal_demo_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cucco.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_cucco_herding_npc_8034AA40.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_damage_npc_802E6EC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_deadrock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_debug_warp_settings.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_digging_game.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_dodongo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_door.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_dropped_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_dummy_conversation.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ending_map_skipper.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_enemy_count_wipe_out_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_enemy_for_ending_control.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_enemy_generator_2_802E2074.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_enemy_generator_3.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_enemy_spawn_area.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_environment_control_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_environment_switch_control_802B3674.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_escort_woman.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_escorted_woman_arrival_point_80125B58.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_explosion.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_extending_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_eyeball_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_eyegore.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fairy.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fairy_invincible.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fairy_revival.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_falling_floor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fire_bar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fire_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fire_rod_fire.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fireball_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fish.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_flame.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_floormaster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_flying_tile.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_focus_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_buried.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_fleeing.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_rain.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_shadow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_winged.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_gem_wooden.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_force_like.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_girls_control_8036FB60.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_person_pull_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_person_pull_switch_pswb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_person_pull_switch_pswk.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_person_switch_8034DFF0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_switch_monitor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_four_sword_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_frostare_child_frosteye_801DB18C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_frostare_tail.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_fuse_point.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gambling_chest.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gambling_shop.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ganon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gba_appear.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gba_window.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_geldman_80183544.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_giant_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_giant_generator_effect_802ED538.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gibdo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_global_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_goal_2_802E2990.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_goal_802A4654.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_goal_warp_801B6C50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gohma.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_grass.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_gravestone.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_great_fairy_bfry.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_great_fairy_spfr.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_hammer_bulge.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_hammer_shop_minigame_800FF060.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_hardhat_beetle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_heart_container.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_helmaroc_king_8017EF40.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_hinox.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_horse_race_end_area.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_horse_race_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_hyrule_castle_barrier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ice_floor_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ice_floor_check_npc_monitor_8012F8AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ice_melted_by_four_players.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ice_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_icicle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_inextinguishable_flame.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_invisible_npc_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_invisible_npc_wall_tomi.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_iron_ball_80333958.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_iron_ball_homing_80334318.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_iron_ball_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_iron_pot_801E6D48.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_item_pedestal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_kaepora_gaebora.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_kaepora_gaebora_8021AF28.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_kaepora_gaebora_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_keeps_escorted_girl_from_going_8012FBCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_keese.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_keese_swarm_801A8194.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_knight_of_hyrule.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_leaf_effect_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_leaf_effect_npc_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_leever_80182914.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_life_meter.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_liftable_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_liftable_wood.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_light_environment_control_802EF76C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_link_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_link_ending_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_local_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_log_80354D64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_log_monitor_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_logic_switch_control_80104C3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_lotus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_magic_circle.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_magic_circle_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_magic_jar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_maiden_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_maiden_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_malon_and_talon_controller_80130310.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_manhandla_801A908C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_merchant.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_message_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_mojamoja_unidentified_enemy_80166BD0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_moving_house_802957CC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_navi.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_navi_after_crystal_cutscene_8013394C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_navi_maiden_crystal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_npc_ride_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_obj_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_octorok.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_octorok_rock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_off_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_okame_san_801AE9C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_old_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_on_off_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_opening_goal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_opening_narration_801286C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_oshin_unidentified_803276C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_other_characters_ending_80362634.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_panel_rewrite_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_panel_rewrite_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_particle_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pengator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_phantom_ganon_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_phantom_ganon_8017C01C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_play_specified_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_player_effect.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_player_start_position.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_player_sword_level_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_poe.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_point_check_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_popo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_post_warp_pillar_handling.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pot.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pot_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pot_2_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pot_smoke.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_ending.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_ganon_battle_80197070.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_motion_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_spawner_801B0A00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_princess_zelda_spawner_escape_801B27DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_pull_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_push_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_push_switch_in_pyramid.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_quicksand.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rainbow_bridge.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_random_toggle_switch_8011E96C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rank_display.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rat.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_reaper_shinigami_802B7C78.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_recovery_heart.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_red_blue_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rock_dropped_into_the_river_11_80376FA0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_room_transfer_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_room_warp_for_l72_8012EA00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rope.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_rotating_skull_802B214C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_sand_crab.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_sandstorm.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_score.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_searchlight.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_seesaw_lift.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801C5B08.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801C6A4C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801C71BC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801C9AF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801D3320.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_801D3CBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_2_8021CDE4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_bow.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_fire_minor_80222CC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_generator.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_giant_bomb.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_hammer_minor_80221B44.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_jump.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shadow_link_thwomp_minor_802233A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shooting_gallery.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shop_item.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shovel_old_timer.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_shutter.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_side_view_gate_display_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_sign.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_slime_formation_80209C14.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_slime_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_slingshot_seed.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_small_key.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_snow_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_snowball.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_somaria_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spawner.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_special_bg_draw_object.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_special_conversation_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spike_floor_check.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spiral_staircase_8028DD78.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spotlight.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spotlight_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_spreading_fire.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stage_info_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stalfos.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stone.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stone_arrghus_800F7FCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stone_disguised_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_stop_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_story_demo_control_npc_8011A0F8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_strange_block.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_switch_or.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_switch_related_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_sword_soldier.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_talking_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_talking_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_talking_sign.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tektite.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_temple_bti_display.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tennis_shop_801A0710.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_terrorpin.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thief.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thief_80206B30.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thief_8020F798.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thwomp.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thwomp_launch_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thwomp_launch_npc_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_thwomp_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_803D9944.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_buster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_first.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_time_up_803536C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_time_up_manager.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_tower.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingle_wallet.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tingles_tower_warp_801B4D0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_torch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tower_appearance_demo_8012A5EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tower_collapse_effect.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_treasure_chest.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_treasure_mark.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_trick_floor.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_trick_floor_2.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_tutorial_old_man.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_two_person_liftable_rock_8034C950.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_two_sword_motion.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_bgbl_801D7AFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_bome_801688AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_dmyk_802F3B74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_endm_802E9428.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_fbal_802201D8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_form_8029C584.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_fsob_801E801C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_gsck_802F4AEC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_htmk_8034A6B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_ibbm_8020FE50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_lnbm_801BEDBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_slef_80213E00.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_unknown_swbm_8017A44C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_ura_colour.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_boss.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_boss_801E3618.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_boss_801E4D54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_boss_801EDBA4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_buster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_demo.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vaati_time_up.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_view_mode.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_vulture.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_wait_switch.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_wallmaster.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_warp.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_warp_cannon.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_warp_entrance_wall.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_warp_pillar.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_wave_se.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_whack_a_mole_shop_8010089C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_wind_environment.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_wizzrobe.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zelda_scroll_lock.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zol_small_slime_8020C0A8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zoom.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zoom_out_npc.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zora.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zora_escort.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zora_escort_goal.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zora_fish_herder.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/act_zora_lotus.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/actor_base_801A3C50.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/actor_base_801EE24C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/actor_manager_801F6058.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/actor_sound_obj_80455CA4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/actor_sub_1_dc_801EAB0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/adv_entry_screen_803E1668.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/adventure_hud_80418B64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/anim_frame_seq_800FE8C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/audio_mgr_80457DFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/audio_res_loader_80442810.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/battle_hud_8042165C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/battle_stage_select_80414F6C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/bg_rewrite_8029D898.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/black_fade_802AC8AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/bomb_drop_timer_802188B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/boot_loader_803FF2C4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/button_icons_80440BF4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/camera_8030C058.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/card_mgr_803B9940.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/collect_screen_8044C7F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/collision_box_list_8020D58C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/connect_screen_803F0A54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/demo_actor_base_8010DF44.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/dvd_mount_aram_archive_command_80401848.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/effect_system_8013C5C8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/emitter_move_seq_8021F4B0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/enemy_base_801CDC8C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/escort_actor_list_80131D98.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/escort_base_801213EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/file_select_803BC6F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/flying_pieces_8021C2B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/frame_count_seq_8021C848.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_mode_803DAC3C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_over_screen_80438C68.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_root_80134C04.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_root_sub_04_80139BE8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_root_sub_20_801902C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_root_sub_24_8016A2B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/game_view_802D39B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/gba_connect_error_window_80441A1C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/gba_window_80432638.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/head_sway_8021A570.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/horse_race_table_80215A94.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/hud_mgr_8043A0E8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/ice_floor_check_list_8012F3E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/map_ed_overlay_804432DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/map_screen_80403D84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/map_yagura_window_80443B0C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/message_manager_8037DF68.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/message_window_80390818.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_fishing_screen_8044998C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_horse_race_screen_804455E0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_kokko_screen_80447618.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_oni_screen_804465B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_shooting_screen_80447FAC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/mg_volleyball_screen_8044A828.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/navi_list_8021F064.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/pane_ctrl_804023D0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/pause_screen_80453AF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_8023FBF0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_80256C74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_8025EB18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_80264998.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_8026FC20.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_8027E5BC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_80285E58.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_8028FBA0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_sound_obj_8045B010.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/player_window_select_80441318.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/press_start_overlay_803DA6B4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/prologue_overlay_8044C028.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/result_screen_803A8DFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/rule_screen_80434370.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/rupee_digit_sprites_8045560C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/save_data_803B8C74.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/save_screen_803D2C34.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/sequencer_801DA7C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/shadow_circle_80158624.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/shadow_link_base_80220F54.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/shadow_link_fight_801C0D70.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/singleton_801DAC6C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/sound_effect_seq_80316E34.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/sprite_anim_801D1C18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/staff_roll_loader_8044B80C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/stopwatch_801ED3DC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/sword_hit_box_8021693C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/thp_read_thread_80427D2C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tile_map_802F5040.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/title_803A3484.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/total_screen_803D7098.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80021840.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_800F39EC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80118384.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8012FF9C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801344C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8013AAD4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8015F454.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801BD8C0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801CB270.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801D11FC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801D2918.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801D2C60.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801D6CEC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801D8400.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801DCC98.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801DD1AC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801DE714.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801E2540.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801E4A18.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801E5FC8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801E667C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801E9AFC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801EB00C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_801F9484.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80204638.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80207548.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8020CCA8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80210630.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80212AC0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80214244.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802144F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802153A8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802157B8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8021827C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8021BCBC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8021BFA8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8021FDB8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802242F4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8022461C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8022AD64.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802684A4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802B1558.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_802BA334.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803006E8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80301CD0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803099FC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8030AE84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80379F84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8037ACC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8039003C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803944C8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803A60E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803A85E4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803B7DCC.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_803BACF8.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80400DC4.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80448940.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_80457C08.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8045A640.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8045B6F0.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/tu_8045BA84.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/vaati_emitters_8021775C.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/wander_steer_timer_8021B904.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/wander_turn_timer_80217374.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/warning_window_8042E964.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/game/zora_escort_goal_list_80127E20.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
 @GENERATED@/globals.c	-Ilibs/sdk/include -DNDEBUG=1 --std=c99
-src/port/missing_functions.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
+src/port/missing_functions.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
 src/port/jsystem_statics.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
-src/port/harness_state.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
-src/port/gba_gcview.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -I@ASSETS@ -DNDEBUG=1
+src/port/harness_state.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
+src/port/gba_gcview.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
 libs/jsystem/JSystem/JAudio/System/JASWaveBank.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98

@@ -18,7 +18,7 @@ Conventions as in MULTIPLAYER.md: **verified** = seen in a run or in the bytes;
 | disc | `/GC4Sword_usa/Agb/client_thread.arc` (FST; 33,728 bytes at disc offset 0x4E009C), a RARC archive, **not** Yaz0, one directory `agb` with one file (verified: parsed from G4SE01.iso) |
 | file | `client_thread.bin`, **33,436 bytes (0x829C)**, stored uncompressed in the archive; SHA-1 `05025ac26d3a3342163194be9b5e6f1a6533ff25` (verified) |
 | loaded by | `BootLoader` mounts the archive (`boot_loader_803FF2C4.cpp:68`, `requestMountMemArchive_80401E10("/GC4Sword_usa/agb/client_thread.arc")`); `startGbaClients_803007D0` (`tu_803006E8.cpp:555-580`) takes `getResource('????', "client_thread.bin")` and its size, patches the header and hands it to `GBAJoyBoot` (read) |
-| port pipeline | none of its own: the port reads it from the disc image like every other file (the DVD layer); it is not in `FSA_ASSETS` and not extracted. The native endpoint (`platform/gba_link.cpp`) receives the pointer in `GBAJoyBoot` and ignores the bytes (verified) |
+| port pipeline | none of its own: the port reads it from the disc image like every other file (the DVD layer); it is not among the blobs the port copies from main.dol (tools/gen_globals.py ASSETS). The native endpoint (`platform/gba_link.cpp`) receives the pointer in `GBAJoyBoot` and ignores the bytes (verified) |
 
 ## What it is
 

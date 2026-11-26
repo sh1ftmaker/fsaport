@@ -41,14 +41,11 @@ static const BlackTex_80479C60 lbl_80479C60 = {
 
 // The screen's message file (MESGbmg1: Reading the Game Disc, Disc Cover is
 // open, ...; tp's msg_data) and its font (FONTbfn1; tp's font_data). Both are
-// extracted from the original at build time (config.yml extract:).
-static const u8 lbl_80479CA0[0x260] = {
-#include "assets/game/tu_80400DC4/msg_data.inc"
-};
-
-static const u8 lbl_80479F00[0x12260] = {
-#include "assets/game/tu_80400DC4/font_data.inc"
-};
+// game data with no source form (config.yml extract:): the build defines the
+// storage (tools/gen_globals.py, ASSETS) and platform/dol_data.cpp copies the
+// bytes from the player's main.dol at startup.
+extern const u8 lbl_80479CA0[0x260];
+extern const u8 lbl_80479F00[0x12260];
 
 // The message file's INF1 block, 0x20 bytes in (after the file header): the
 // offset of each message in the DAT1 block that follows it (tp's BMG_INF1).

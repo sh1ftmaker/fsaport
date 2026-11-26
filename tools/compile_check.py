@@ -5,7 +5,7 @@
     python3 tools/compile_check.py [-j 16] [--filter SUBSTR] [--syntax-only]
 
 Objects go to build/obj/<unit>.o, the full log to build/compile_report.txt.
-The asset headers must exist first (tools/extract_assets.py main.dol build/assets).
+build/generated/globals.c must exist first (make assets: tools/gen_globals.py emit build/generated).
 """
 import argparse
 import collections
@@ -38,9 +38,8 @@ PORT_FLAGS = [
 def units():
     for line in open(os.path.join(GAME, "units.txt")):
         path, flags = line.rstrip("\n").split("\t")
-        # @GENERATED@: sources generated from the user's main.dol (tools/gen_globals.py emit).
+        # @GENERATED@: sources generated from tools/globals_layout.json (tools/gen_globals.py emit).
         path = path.replace("@GENERATED@", os.path.join(BUILD, "generated"))
-        flags = flags.replace("@ASSETS@", os.path.join(BUILD, "assets"))
         # GNU modes: no trigraphs (the game spells resource types '????'), as MWCC.
         flags = flags.replace("--std=c++98", "--std=gnu++17").replace("--std=c99", "--std=gnu99").split()
         yield path, flags

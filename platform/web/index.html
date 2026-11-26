@@ -73,6 +73,7 @@
   }
   .card h2 { margin: 0 0 8px; font-size: 18px; }
   .card p { margin: 8px 0; color: var(--muted); }
+  .card #discerr { color: #ff9c8f; }
   .filebtn {
     display: inline-block; margin: 10px 0 4px; padding: 10px 18px; border-radius: 999px;
     background: var(--accent); color: #08111d; font-weight: 600; cursor: pointer;
@@ -270,6 +271,7 @@
       <h2>The Legend of Zelda: Four Swords Adventures</h2>
       <p>This port ships no game data. Choose your own Four Swords Adventures
         disc image (.iso) to play. It is read in this page only and never uploaded.</p>
+      <p id="discerr" role="alert" hidden></p>
       <label class="filebtn pick" for="file">Choose disc image…</label>
       <p class="pick"><small>…or drop the .iso anywhere on this page</small></p>
       <div id="dl" role="progressbar" aria-label="Loading disc image" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -423,15 +425,23 @@
       log(`[page] preferred canvas format ${navigator.gpu.getPreferredCanvasFormat()}`);
     }).catch((e) => log('[page] WebGPU requestAdapter failed: ' + e));
   }
+  // The runtime starts (constructors, then main) only after main.dol has been
+  // read from the chosen disc and checked (fsa_disc.js, Module.fsaDolLoad): the
+  // game's data with no source form comes from it, not from fsa.wasm.
+  let runtimeReadyResolve;
+  const runtimeReady = new Promise((r) => { runtimeReadyResolve = r; });
   var Module = {
     canvas: document.getElementById('canvas'),
     print: log,
     printErr: log,
     fsaDiag: window.fsaDiag,
-    onRuntimeInitialized() {
-      if (!document.body.classList.contains('downloading')) statusEl.textContent = 'Ready: choose a disc image.';
+    fsaLog: log,
+    // The game code is loaded (preRun): waiting for a disc.
+    fsaCodeReady() {
+      if (!document.body.classList.contains('downloading') && !started) statusEl.textContent = 'Ready: choose a disc image.';
       maybeAutoStart();
     },
+    onRuntimeInitialized() { runtimeReadyResolve(); },
     onAbort(what) { statusEl.textContent = 'Stopped: ' + what; },
     // Fetch and instantiate fsa.wasm ourselves, retrying: on a phone over the
     // proxy the download sometimes fails outright ("Load failed"), and
@@ -488,12 +498,30 @@
   fit();
 
   let started = false;
+  const discErrEl = document.getElementById('discerr');
   async function startWith(disc) {
     if (started) return;
     started = true;
     if (discAbort) discAbort.abort();
+    statusEl.textContent = 'Reading the disc…';
+    discErrEl.hidden = true;
+    try {
+      if (!Module.fsaDolLoad) throw new Error('The game code has not loaded yet; try again in a moment.');
+      await Module.fsaDolLoad(disc);
+    } catch (e) {
+      // Not the right disc (or unreadable): say so and let the player choose again.
+      log('[disc] refused: ' + (e.message || e));
+      discErrEl.textContent = e.message || String(e);
+      discErrEl.hidden = false;
+      statusEl.textContent = 'Choose your Four Swords Adventures disc image.';
+      document.getElementById('file').value = '';
+      started = false;
+      return;
+    }
     document.body.classList.add('running');
     fit();
+    statusEl.textContent = 'Starting…';
+    await runtimeReady;
     statusEl.textContent = 'Running';
     Module.fsaDisc = traceDisc(disc);
     if (discQuery.get('discrecord') === '1') recordDiscBlocks(Module.fsaDisc);

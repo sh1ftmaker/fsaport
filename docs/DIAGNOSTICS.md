@@ -285,7 +285,6 @@ coverage gives regions, branch sides, and lines directly.
 ```sh
 source ../fsadecomp/tools/emsdk/emsdk_env.sh
 emcmake cmake -S . -B build/coverage -G Ninja -DCMAKE_BUILD_TYPE=Release -DFSA_COVERAGE=ON \
-  -DFSA_ASSETS=... -DFSA_GENERATED=... \
   -DFSA_DECOMP_SYMBOLS=../fsadecomp/fsa-decomp/config/G4SE01/symbols.txt
 ninja -C build/coverage fsa
 cp build/web/disc-manifest.json build/coverage/   # optional, as for the other builds
@@ -883,7 +882,7 @@ memory is not zero.
 
 ```sh
 cmake -S . -B build/web-uninit -G Ninja -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_TOOLCHAIN_FILE=.../Emscripten.cmake -DFSA_ASSETS=... -DFSA_GENERATED=... \
+  -DCMAKE_TOOLCHAIN_FILE=.../Emscripten.cmake \
   -DFSA_DIAG_UNINIT=ON -DFSA_DECOMP_SYMBOLS=/path/to/fsa-decomp/config/G4SE01/symbols.txt
 ninja -C build/web-uninit fsa
 python3 tools/serve.py --dir build/web-uninit --iso ... --diag logs/diag
