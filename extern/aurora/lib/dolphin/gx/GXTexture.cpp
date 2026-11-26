@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -8,6 +9,10 @@
 #include <algorithm>
 
 #include "tracy/Tracy.hpp"
+
+extern "C" {
+int aurora_gx_reusable_ids = 0;  // fsaport netplay: see next_tex_obj_id
+}
 
 namespace {
 constexpr u8 GXTexMode0Ids[8] = {0x80, 0x81, 0x82, 0x83, 0xA0, 0xA1, 0xA2, 0xA3};
@@ -22,9 +27,19 @@ constexpr u8 GX2HWFiltConv[6] = {0x00, 0x04, 0x01, 0x05, 0x02, 0x06};
 u32 sNextTexObjId = 1;
 u32 sNextTlutObjId = 1;
 
+// fsaport netplay (docs/NETPLAY.md): the two counters are part of a rollback
+// snapshot (tools/net_regions.py), so a re-simulated GXInitTexObj gets the id it
+// got the first time and the game's memory is the same bytes again. An id handed
+// out again may still have a cache entry from the abandoned future: with
+// aurora_gx_reusable_ids set, every new id first evicts it (in FIFO order,
+// as GXDestroyTexObj does).
 u32 next_tex_obj_id() {
   if (sNextTexObjId == 0) {
     FATAL("texObj ID overflow");
+  }
+  if (aurora_gx_reusable_ids) {
+    GX_WRITE_AURORA(GX_LOAD_AURORA_DESTROY_TEXOBJ);
+    GX_WRITE_U32(sNextTexObjId);
   }
   return sNextTexObjId++;
 }
@@ -32,6 +47,10 @@ u32 next_tex_obj_id() {
 u32 next_tlut_obj_id() {
   if (sNextTlutObjId == 0) {
     FATAL("tlutObj ID overflow");
+  }
+  if (aurora_gx_reusable_ids) {
+    GX_WRITE_AURORA(GX_LOAD_AURORA_DESTROY_TLUT);
+    GX_WRITE_U32(sNextTlutObjId);
   }
   return sNextTlutObjId++;
 }
@@ -105,12 +124,14 @@ void emit_loaded_tlut_metadata(const GXTlutObj_& obj, u32 idx) {
 extern "C" {
 void GXInitTexObj(GXTexObj* obj_, const void* data, u16 width, u16 height, GXTexFmt format, GXTexWrapMode wrapS,
                   GXTexWrapMode wrapT, GXBool mipmap) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   init_texobj_common(*obj, data, width, height, format, wrapS, wrapT, mipmap);
 }
 
 void GXInitTexObjCI(GXTexObj* obj_, const void* data, u16 width, u16 height, GXCITexFmt format, GXTexWrapMode wrapS,
                     GXTexWrapMode wrapT, GXBool mipmap, u32 tlut) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   init_texobj_common(*obj, data, width, height, format, wrapS, wrapT, mipmap);
   obj->tlut = static_cast<GXTlut>(tlut);
@@ -119,6 +140,7 @@ void GXInitTexObjCI(GXTexObj* obj_, const void* data, u16 width, u16 height, GXC
 
 void GXInitTexObjLOD(GXTexObj* obj_, GXTexFilter minFilt, GXTexFilter magFilt, float minLod, float maxLod,
                      float lodBias, GXBool biasClamp, GXBool doEdgeLod, GXAnisotropy maxAniso) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   const float clampedBias = std::clamp(lodBias, -4.0f, 3.99f);
   const auto lbias = static_cast<u8>(32.0f * clampedBias);
@@ -138,18 +160,21 @@ void GXInitTexObjLOD(GXTexObj* obj_, GXTexFilter minFilt, GXTexFilter magFilt, f
 }
 
 void GXInitTexObjData(GXTexObj* obj_, const void* data) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   obj->data = data;
   ++obj->texDataVersion;
 }
 
 void GXInitTexObjWrapMode(GXTexObj* obj_, GXTexWrapMode wrapS, GXTexWrapMode wrapT) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   SET_REG_FIELD(0, obj->mode0, 2, 0, wrapS);
   SET_REG_FIELD(0, obj->mode0, 2, 2, wrapT);
 }
 
 void GXInitTexObjTlut(GXTexObj* obj_, u32 tlut) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   obj->tlut = static_cast<GXTlut>(tlut);
 }
@@ -165,6 +190,7 @@ void GXInitTexObjTlut(GXTexObj* obj_, u32 tlut) {
 // TODO GXGetTexObjUserData
 
 void GXLoadTexObj(GXTexObj* obj_, GXTexMapID id) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTexObj_*>(obj_);
   SET_REG_FIELD(0, obj->mode0, 8, 24, GXTexMode0Ids[id]);
   SET_REG_FIELD(0, obj->mode1, 8, 24, GXTexMode1Ids[id]);
@@ -199,6 +225,7 @@ void GXLoadTexObj(GXTexObj* obj_, GXTexMapID id) {
 }
 
 u32 GXGetTexBufferSize(u16 width, u16 height, u32 fmt, GXBool mips, u8 maxLod) {
+  AURORA_HOST_ALLOC;
   s32 shiftX = 0;
   s32 shiftY = 0;
   switch (fmt) {
@@ -267,6 +294,7 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 fmt, GXBool mips, u8 maxLod) {
 }
 
 void GXInitTlutObj(GXTlutObj* obj_, const void* data, GXTlutFmt format, u16 entries) {
+  AURORA_HOST_ALLOC;
   memset(obj_, 0, sizeof(GXTlutObj));
   auto* obj = reinterpret_cast<GXTlutObj_*>(obj_);
   obj->data = data;
@@ -281,12 +309,14 @@ void GXInitTlutObj(GXTlutObj* obj_, const void* data, GXTlutFmt format, u16 entr
 }
 
 void GXInitTlutObjData(GXTlutObj* obj_, const void* data) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<GXTlutObj_*>(obj_);
   obj->data = data;
   ++obj->tlutDataVersion;
 }
 
 void GXLoadTlut(const GXTlutObj* obj_, u32 idx) {
+  AURORA_HOST_ALLOC;
   auto* obj = reinterpret_cast<const GXTlutObj_*>(obj_);
   __GXFlushTextureState();
   GX_WRITE_RAS_REG(obj->loadTlut0);
@@ -308,6 +338,7 @@ void GXLoadTlut(const GXTlutObj* obj_, u32 idx) {
 // TODO GXInvalidateTexRegion
 
 void GXInvalidateTexAll() {
+  AURORA_HOST_ALLOC;
   // no-op?
 }
 
@@ -316,6 +347,7 @@ void GXInvalidateTexAll() {
 // TODO GXSetTlutRegionCallback
 // TODO GXLoadTexObjPreLoaded
 void GXSetTexCoordScaleManually(GXTexCoordID coord, GXBool enable, u16 ss, u16 ts) {
+  AURORA_HOST_ALLOC;
   __gx->tcsManEnab = (__gx->tcsManEnab & ~(1 << coord)) | (enable << coord);
   if (enable) {
     SET_REG_FIELD(0, __gx->suTs0[coord], 16, 0, static_cast<u16>(ss - 1));
@@ -327,6 +359,7 @@ void GXSetTexCoordScaleManually(GXTexCoordID coord, GXBool enable, u16 ss, u16 t
 }
 
 void GXSetTexCoordCylWrap(GXTexCoordID coord, GXBool s_enable, GXBool t_enable) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->suTs0[coord], 1, 17, s_enable);
   SET_REG_FIELD(0, __gx->suTs1[coord], 1, 17, t_enable);
   if (__gx->tcsManEnab & (1 << coord)) {
@@ -337,6 +370,7 @@ void GXSetTexCoordCylWrap(GXTexCoordID coord, GXBool s_enable, GXBool t_enable) 
 }
 
 void GXSetTexCoordBias(GXTexCoordID coord, GXBool s_enable, GXBool t_enable) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->suTs0[coord], 1, 16, s_enable);
   SET_REG_FIELD(0, __gx->suTs1[coord], 1, 16, t_enable);
   if (__gx->tcsManEnab & (1 << coord)) {

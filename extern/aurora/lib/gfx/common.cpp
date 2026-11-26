@@ -1,3 +1,4 @@
+#include "../host_alloc.hpp"
 #include "common.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -197,6 +198,7 @@ static absl::flat_hash_map<OffscreenCacheKey, OffscreenCacheEntry> g_offscreenCa
 std::vector<TextureUpload> g_textureUploads;
 
 static inline void push_command(CommandType type, const Command::Data& data) {
+  AURORA_HOST_ALLOC;
   if (g_currentRenderPass == UINT32_MAX)
     UNLIKELY {
       Log.warn("Dropping command {}", magic_enum::enum_name(type));

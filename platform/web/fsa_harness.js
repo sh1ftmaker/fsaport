@@ -9,6 +9,8 @@
 Module.fsaHarnessInit = async function () {
   const q = new URLSearchParams(location.search);
   const log = (s) => (window.fsaLog || console.log)('[harness] ' + s);
+  // ?allocprobe=1: host allocations in the game's JKR heaps (platform/alloc_probe.cpp).
+  if (q.get('allocprobe') === '1') Module._fsa_alloc_probe(1);
   const record = q.get('record') === '1';
   const inputs = q.get('inputs');
   const script = q.get('script');

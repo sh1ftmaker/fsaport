@@ -1,3 +1,4 @@
+#include "../../host_alloc.hpp"
 #include "gx.hpp"
 #include "__gx.h"
 
@@ -5,6 +6,7 @@
 
 extern "C" {
 void GXSetFog(GXFogType type, float startZ, float endZ, float nearZ, float farZ, GXColor color) {
+  AURORA_HOST_ALLOC;
   // Compute fog coefficients matching SDK
   f32 A, B, C;
   if (farZ == nearZ || endZ == startZ) {
@@ -79,6 +81,7 @@ void GXSetFog(GXFogType type, float startZ, float endZ, float nearZ, float farZ,
 }
 
 void GXSetFogColor(GXColor color) {
+  AURORA_HOST_ALLOC;
   // BP FOGCLR (0xF2)
   u32 fogclr = 0;
   SET_REG_FIELD(0, fogclr, 8, 0, color.b);
@@ -90,6 +93,7 @@ void GXSetFogColor(GXColor color) {
 }
 
 void GXSetFogRangeAdj(GXBool enable, u16 center, GXFogAdjTable* table) {
+  AURORA_HOST_ALLOC;
   u32 i;
   u32 range_adj;
   u32 range_c;
@@ -112,6 +116,7 @@ void GXSetFogRangeAdj(GXBool enable, u16 center, GXFogAdjTable* table) {
 }
 
 void GXSetBlendMode(GXBlendMode mode, GXBlendFactor src, GXBlendFactor dst, GXLogicOp op) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->cmode0, 1, 0, (mode == GX_BM_BLEND || mode == GX_BM_SUBTRACT));
   SET_REG_FIELD(0, __gx->cmode0, 1, 11, (mode == GX_BM_SUBTRACT));
   SET_REG_FIELD(0, __gx->cmode0, 1, 1, (mode == GX_BM_LOGIC));
@@ -123,18 +128,21 @@ void GXSetBlendMode(GXBlendMode mode, GXBlendFactor src, GXBlendFactor dst, GXLo
 }
 
 void GXSetColorUpdate(GXBool enabled) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->cmode0, 1, 3, enabled);
   GX_WRITE_RAS_REG(__gx->cmode0);
   __gx->bpSent = 1;
 }
 
 void GXSetAlphaUpdate(bool enabled) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->cmode0, 1, 4, enabled);
   GX_WRITE_RAS_REG(__gx->cmode0);
   __gx->bpSent = 1;
 }
 
 void GXSetZMode(bool compare_enable, GXCompare func, bool update_enable) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->zmode, 1, 0, compare_enable);
   SET_REG_FIELD(0, __gx->zmode, 3, 1, func);
   SET_REG_FIELD(0, __gx->zmode, 1, 4, update_enable);
@@ -143,12 +151,14 @@ void GXSetZMode(bool compare_enable, GXCompare func, bool update_enable) {
 }
 
 void GXSetZCompLoc(GXBool before_tex) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->peCtrl, 1, 6, before_tex);
   GX_WRITE_RAS_REG(__gx->peCtrl);
   __gx->bpSent = 1;
 }
 
 void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt) {
+  AURORA_HOST_ALLOC;
   u32 oldPeCtrl = __gx->peCtrl;
   u8 hwPixelFmt = 0;
 
@@ -194,12 +204,14 @@ void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt) {
 }
 
 void GXSetDither(GXBool dither) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->cmode0, 1, 2, dither);
   GX_WRITE_RAS_REG(__gx->cmode0);
   __gx->bpSent = 1;
 }
 
 void GXSetDstAlpha(bool enabled, u8 value) {
+  AURORA_HOST_ALLOC;
   SET_REG_FIELD(0, __gx->cmode1, 8, 0, value);
   SET_REG_FIELD(0, __gx->cmode1, 1, 8, enabled);
   GX_WRITE_RAS_REG(__gx->cmode1);
@@ -207,6 +219,7 @@ void GXSetDstAlpha(bool enabled, u8 value) {
 }
 
 void GXSetFieldMask(GXBool odd_mask, GXBool even_mask) {
+  AURORA_HOST_ALLOC;
   u32 reg;
 
   reg = 0;
@@ -218,6 +231,7 @@ void GXSetFieldMask(GXBool odd_mask, GXBool even_mask) {
 }
 
 void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio) {
+  AURORA_HOST_ALLOC;
   u32 reg;
 
   SET_REG_FIELD(0x21A, __gx->lpSize, 1, 22, half_aspect_ratio);

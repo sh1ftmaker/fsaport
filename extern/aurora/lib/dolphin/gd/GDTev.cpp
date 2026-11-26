@@ -1,7 +1,9 @@
+#include "../../host_alloc.hpp"
 #include <dolphin/gd.h>
 #include <dolphin/os.h>
 
 void GDSetTevOp(GXTevStageID stage, GXTevMode mode) {
+  AURORA_HOST_ALLOC;
     GXTevColorArg carg = GX_CC_RASC;
     GXTevAlphaArg aarg = GX_CA_RASA;
 
@@ -41,6 +43,7 @@ void GDSetTevColorCalc(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b,
                        GXTevColorArg c, GXTevColorArg d, GXTevOp op,
                        GXTevBias bias, GXTevScale scale, u8 clamp,
                        GXTevRegID out_reg) {
+  AURORA_HOST_ALLOC;
     if (op <= GX_TEV_SUB) {
         GDWriteBPCmd(BP_TEV_COLOR(d, c, b, a, bias, op & 1, clamp, scale, out_reg, stage * 2 + 0xC0));
     } else {
@@ -53,6 +56,7 @@ void GDSetTevAlphaCalcAndSwap(GXTevStageID stage, GXTevAlphaArg a,
                               GXTevOp op, GXTevBias bias, GXTevScale scale,
                               u8 clamp, GXTevRegID out_reg,
                               GXTevSwapSel ras_sel, GXTevSwapSel tex_sel) {
+  AURORA_HOST_ALLOC;
     if (op <= GX_TEV_SUB) {
         GDWriteBPCmd(BP_TEV_ALPHA(ras_sel, tex_sel, d, c, b, a, bias, op & 1, clamp, scale, out_reg, stage * 2 + 0xC1));
     } else {
@@ -61,6 +65,7 @@ void GDSetTevAlphaCalcAndSwap(GXTevStageID stage, GXTevAlphaArg a,
 }
 
 void GDSetTevColor(GXTevRegID reg, GXColor color) {
+  AURORA_HOST_ALLOC;
     u32 regRA;
     u32 regBG;
 
@@ -74,6 +79,7 @@ void GDSetTevColor(GXTevRegID reg, GXColor color) {
 }
 
 void GDSetTevColorS10(GXTevRegID reg, GXColorS10 color) {
+  AURORA_HOST_ALLOC;
     u32 regRA;
     u32 regBG;
 
@@ -87,6 +93,7 @@ void GDSetTevColorS10(GXTevRegID reg, GXColorS10 color) {
 }
 
 void GDSetTevKColor(GXTevKColorID reg, GXColor color) {
+  AURORA_HOST_ALLOC;
     u32 regRA;
     u32 regBG;
 
@@ -100,6 +107,7 @@ void GDSetTevKColor(GXTevKColorID reg, GXColor color) {
 void GDSetTevKonstantSel(GXTevStageID evenStage, GXTevKColorSel kcsel0,
                          GXTevKAlphaSel kasel0, GXTevKColorSel kcsel1,
                          GXTevKAlphaSel kasel1) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(0xFEFFFFF0);
     GDWriteBPCmd(BP_TEV_KSEL(0, 0, kcsel0, kasel0, kcsel1, kasel1, evenStage / 2 + 0xF6));
 }
@@ -107,6 +115,7 @@ void GDSetTevKonstantSel(GXTevStageID evenStage, GXTevKColorSel kcsel0,
 void GDSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red,
                            GXTevColorChan green, GXTevColorChan blue,
                            GXTevColorChan alpha) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(0xFE00000F);
     GDWriteBPCmd(BP_TEV_KSEL(red, green, 0, 0, 0, 0, table * 2 + 0xF6));
 
@@ -115,10 +124,12 @@ void GDSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red,
 }
 
 void GDSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, u8 ref1) {
+  AURORA_HOST_ALLOC;
     GDWriteBPCmd(BP_ALPHA_COMPARE(ref0, ref1, comp0, comp1, op, 0xF3));
 }
 
 void GDSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias) {
+  AURORA_HOST_ALLOC;
     u32 zfmt;
 
     switch (fmt) {
@@ -144,6 +155,7 @@ void GDSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias) {
 void GDSetTevOrder(GXTevStageID evenStage, GXTexCoordID coord0, GXTexMapID map0,
                    GXChannelID color0, GXTexCoordID coord1, GXTexMapID map1,
                    GXChannelID color1) {
+  AURORA_HOST_ALLOC;
     static u8 c2r[] = { 0, 1, 0, 1, 0, 1, 7, 5, 6, 0, 0, 0, 0, 0, 0, 7 };
     GDWriteBPCmd(BP_TEV_ORDER(
         map0 & 7,
