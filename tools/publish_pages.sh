@@ -27,7 +27,7 @@ if [ ! -e "$WT/.git" ]; then
     git -C "$ROOT" worktree add --orphan -b "$BRANCH" "$WT"
   fi
 fi
-[ "$(git -C "$WT" rev-parse --abbrev-ref HEAD)" = "$BRANCH" ] || { echo "$WT is not on $BRANCH" >&2; exit 1; }
+[ "$(git -C "$WT" symbolic-ref --short HEAD)" = "$BRANCH" ] || { echo "$WT is not on $BRANCH" >&2; exit 1; }
 
 # Replace everything but .git with the site.
 find "$WT" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
@@ -38,6 +38,6 @@ if git -C "$WT" diff --cached --quiet; then
   exit 0
 fi
 SRC=$(git -C "$ROOT" rev-parse --short HEAD)
-git -C "$WT" commit -q -m "Site built from $SRC (tools/build_pages.sh)"
+git -C "$WT" commit -q -m "Site built from $SRC (tools/build_pages.sh)" ${FSA_COMMIT_TRAILER:+-m "$FSA_COMMIT_TRAILER"}
 git -C "$WT" log --oneline -1
 echo "committed to $BRANCH in $WT (not pushed): git -C $WT push origin $BRANCH"
