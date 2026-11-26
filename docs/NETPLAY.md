@@ -185,8 +185,8 @@ players, or join by code), or by URL:
 - `?room=new&seats=2` creates a room; the URL becomes `?room=CODE`, which the
   others open (`&seat=N` asks for a seat). Choose the disc; the lobby shows the
   seats; player 1 presses Start.
-- Behind the terminal proxy: `https://terminal.sels.tech/lp/8848/?room=new&seats=2`
-  (the relay is then `wss://terminal.sels.tech/lp/8858/`, found automatically;
+- Behind the terminal proxy: `https://<your-proxy-host>/lp/8848/?room=new&seats=2`
+  (the relay is then `wss://<your-proxy-host>/lp/8858/`, found automatically;
   `?relay=URL` overrides).
 - Phones: the on-screen pad drives port 0 of that browser, which is its seat.
   Keyboard and gamepads likewise.
