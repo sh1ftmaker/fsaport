@@ -1,0 +1,139 @@
+{
+"version": 1,
+"bytes": 3126030,
+"ranges": [
+[
+550584,
+550592
+],
+[
+553232,
+553240
+],
+[
+553272,
+559012
+],
+[
+560132,
+560152
+],
+[
+560160,
+560892
+],
+[
+561216,
+569440
+],
+[
+569456,
+569984
+],
+[
+570128,
+580816
+],
+[
+580820,
+580880
+],
+[
+609664,
+714520
+],
+[
+741832,
+741876
+],
+[
+741904,
+742660
+],
+[
+742704,
+768192
+],
+[
+768204,
+1058368
+],
+[
+1058392,
+1059588
+],
+[
+1060332,
+1060336
+],
+[
+3126176,
+4175872
+],
+[
+4175888,
+4176340
+],
+[
+4176388,
+4204020
+],
+[
+4204128,
+4310204
+],
+[
+4310224,
+4320420
+],
+[
+4321088,
+5777764
+],
+[
+5777812,
+5777836
+],
+[
+5777840,
+5786964
+],
+[
+5811584,
+5829008
+],
+[
+5965856,
+5965912
+],
+[
+6228064,
+6228065
+],
+[
+6228980,
+6229137
+]
+],
+"objects": {
+"libaurora_gx.a(GXTexture.cpp.o)": 8,
+"libfsa_platform.a(os_misc.cpp.o)": 733,
+"libaurora_os.a(AR.cpp.o)": 25,
+"libfsa_platform.a(hw_stubs.cpp.o)": 848,
+"libfsa_units_0.a": 90590,
+"libfsa_platform.a(audio_dsp.cpp.o)": 265381,
+"libfsa_platform.a(audio.cpp.o)": 74,
+"libfsa_platform.a(gba_link.cpp.o)": 1049708,
+"libfsa_units_2.a": 1607395,
+"libaurora_os.a(OSAlloc.cpp.o)": 20,
+"libfsa_units_3.a": 104800,
+"libaurora_os.a(OSMemory.cpp.o)": 12,
+"libaurora_os.a(OSTime.cpp.o)": 28,
+"libaurora_os.a(OSArena.cpp.o)": 8,
+"libaurora_si.a(si.cpp.o)": 4,
+"libfsa_platform.a(dvd.cpp.o)": 4964,
+"libfsa_platform.a(vi.cpp.o)": 28,
+"libfsa_platform.a(harness.cpp.o)": 52,
+"libaurora_os.a(OSInit.cpp.o)": 1
+}
+}

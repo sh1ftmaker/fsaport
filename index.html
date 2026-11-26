@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- "static" on a static host (GitHub Pages; tools/build_pages.sh sets it): no
+     tools/serve.py behind the page, so no log / diagnostics POSTs, and online
+     rooms only with ?relay=URL. -->
+<meta name="fsa-hosting" content="static">
+<!-- viewport-fit=cover so the pads can use the safe-area insets; no user
+     zoom, because a pinch on the game is never a request to zoom the page. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>fsaport</title>
+<style>
+  :root {
+    --bg: #0d0f14; --fg: #e6e6e6; --muted: #8a8f99; --accent: #6fb2ff;
+    --hair: rgba(255, 255, 255, .16);
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-l: env(safe-area-inset-left, 0px);
+  }
+  html { height: 100%; background: var(--bg); }
+  body {
+    margin: 0; height: 100vh; overflow: hidden; overscroll-behavior: none;
+    background: var(--bg); color: var(--fg);
+    font: 14px/1.4 system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    display: grid; grid-template-rows: minmax(0, 1fr);
+
+    /*--------------------------------------------------------------
+      Touch-control geometry, on body because the portrait band below
+      the picture is a grid row of *this* element and must come from the
+      same numbers as the pads that sit in it. vh, not dvh: a pad that
+      moved whenever the URL bar did would jump under the thumb.
+    --------------------------------------------------------------*/
+    --gut:   max(14px, 3.2vw);
+    --stick: min(42vw, 28vh, 210px);
+    --face:  min(17vw, 11vh, 78px);              /* A */
+    --small: calc(var(--face) * .66);            /* B, X, Y */
+    --sh-h:  calc(var(--face) * .58);            /* L, R, Z, Start */
+    --x-l:   calc(var(--safe-l) + var(--gut));
+    --x-r:   calc(var(--safe-r) + var(--gut));
+    --y-b:   calc(var(--safe-b) + var(--gut));
+    --row-2: calc(var(--y-b) + var(--stick) + 14px);  /* L / Z / Start / R row */
+    --band:  calc(var(--row-2) + var(--sh-h) + 14px);
+  }
+  @supports (height: 100dvh) { body { height: 100dvh; } }
+
+  /* Portrait with the pads on: the picture sits above a band that holds
+     them, so no thumb ever covers the game. */
+  @media (orientation: portrait) {
+    body.touch-on.running { grid-template-rows: minmax(0, 1fr) var(--band); }
+  }
+
+  #stage {
+    position: relative; min-height: 0; min-width: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: calc(var(--safe-t) + 8px) calc(var(--safe-r) + 8px) 8px calc(var(--safe-l) + 8px);
+    touch-action: none;
+  }
+  /* Sized by fit() in pixels: SDL writes the canvas's own size attributes,
+     and a percentage here would fight it. */
+  #canvas { display: block; background: #000; outline: none; touch-action: none; }
+
+  #curtain {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 16px; z-index: 3;
+  }
+  body.running #curtain { display: none; }
+  .card {
+    max-width: 440px; padding: 20px 22px; border-radius: 14px; border: 1px solid var(--hair);
+    background: rgba(24, 27, 33, .92); text-align: center;
+  }
+  .card h2 { margin: 0 0 8px; font-size: 18px; }
+  .card p { margin: 8px 0; color: var(--muted); }
+  .card #discerr { color: #ff9c8f; }
+  .filebtn {
+    display: inline-block; margin: 10px 0 4px; padding: 10px 18px; border-radius: 999px;
+    background: var(--accent); color: #08111d; font-weight: 600; cursor: pointer;
+  }
+  #file { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  body.dragging .card { outline: 2px dashed var(--accent); outline-offset: 6px; }
+
+  /* Disc download progress, in the card, while ?iso= loads. */
+  #dl { display: none; margin-top: 4px; text-align: left; }
+  body.downloading #dl { display: block; }
+  body.downloading .card .pick { display: none; }
+  #dlbar-track {
+    height: 8px; margin: 12px 0 8px; border-radius: 999px; overflow: hidden;
+    background: rgba(255, 255, 255, .08); border: 1px solid var(--hair);
+  }
+  #dlbar { height: 100%; width: 0; border-radius: 999px; background: var(--accent); transition: width .12s linear; }
+  #dl .row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted);
+             font-size: 12px; font-variant-numeric: tabular-nums; }
+  #dl .row b { color: var(--fg); font-weight: 600; }
+
+  /* Small controls in the top corner, over the picture. */
+  #bar {
+    position: fixed; z-index: 8; top: calc(var(--safe-t) + 8px); right: calc(var(--safe-r) + 8px);
+    display: flex; gap: 6px;
+  }
+  #bar button {
+    min-width: 34px; height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--hair);
+    background: rgba(24, 27, 33, .72); color: #c9d1dc; font: 600 12px system-ui, sans-serif;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); touch-action: manipulation;
+  }
+  #bar button svg { display: block; margin: auto; }
+  #bar button[aria-pressed="true"] { color: #fff; border-color: rgba(150, 200, 255, .7); }
+
+  #status { position: fixed; z-index: 7; left: calc(var(--safe-l) + 10px); top: calc(var(--safe-t) + 12px);
+            color: var(--muted); font-size: 12px; pointer-events: none; }
+  body.running.touch-on #status { display: none; }
+
+  #log {
+    position: fixed; z-index: 9; left: 8px; right: 8px; bottom: calc(var(--safe-b) + 8px);
+    height: 38vh; margin: 0; padding: 8px; overflow: auto; border-radius: 10px; border: 1px solid var(--hair);
+    background: rgba(10, 12, 16, .94); color: var(--muted); font: 11px/1.35 ui-monospace, monospace;
+    white-space: pre-wrap; display: none; -webkit-user-select: text; user-select: text; touch-action: pan-y;
+  }
+  body.log-open #log { display: block; }
+  #logfirst:empty { display: none; }
+  #logfirst {
+    margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--hair); color: #f0b45a;
+  }
+
+  /*====================================================================
+    On-screen controller (platform/web/touch.js)
+
+    The overlay is fixed and inert; only the controls inside it take
+    pointer input, and touch.js hit-tests them by coordinate from cached
+    geometry, so the visible shapes are the targets plus a slop margin.
+  ====================================================================*/
+  #touch { display: none; position: fixed; inset: 0; z-index: 6; pointer-events: none; touch-action: none; }
+  body.touch-on.running:not(.log-open) #touch { display: block; }
+
+  .tpad, #stick {
+    position: absolute; pointer-events: auto; touch-action: none;
+    transition: background .07s linear, color .07s linear, box-shadow .07s linear, scale .07s ease-out;
+  }
+  .tpad {
+    display: flex; align-items: center; justify-content: center;
+    color: #b3bcc9; font-weight: 700; letter-spacing: .06em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .55);
+    background: linear-gradient(180deg, rgba(56, 63, 75, .78), rgba(24, 27, 33, .80));
+    border: 1px solid var(--hair);
+    /* The dark outer ring keeps the pads findable over bright screens. */
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .12),
+                0 8px 20px -10px rgba(0, 0, 0, .95);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  }
+  .tpad.down {
+    color: #fff; scale: .94;
+    background: linear-gradient(180deg, rgba(120, 184, 255, .46), rgba(72, 128, 202, .38));
+    border-color: rgba(150, 200, 255, .85);
+    box-shadow: inset 0 3px 10px rgba(0, 0, 0, .45), 0 0 20px -2px rgba(111, 178, 255, .6);
+  }
+
+  /* Face buttons in the GameCube's arrangement: a big A, B low-left of it,
+     X to its right and Y above, so the thumb rests on A and rolls out. */
+  #tb-a, #tb-b, #tb-x, #tb-y { border-radius: 50%; letter-spacing: 0; }
+  #tb-a {
+    width: var(--face); height: var(--face); font-size: calc(var(--face) * .40);
+    right: calc(var(--x-r) + var(--small) * .95);
+    bottom: calc(var(--y-b) + var(--small) * .62 + var(--face-lift));
+    color: #a6e3b4; border-color: rgba(120, 220, 150, .35);
+  }
+  #tb-b {
+    width: var(--small); height: var(--small); font-size: calc(var(--small) * .42);
+    right: calc(var(--x-r) + var(--small) * .95 + var(--face) * .86);
+    bottom: calc(var(--y-b) + var(--face-lift));
+    color: #f0a4a4; border-color: rgba(240, 130, 130, .35);
+  }
+  #tb-x {
+    width: var(--small); height: var(--small); font-size: calc(var(--small) * .40);
+    right: var(--x-r);
+    bottom: calc(var(--y-b) + var(--small) * .62 + var(--face) * .5 + var(--face-lift));
+  }
+  #tb-y {
+    width: var(--small); height: var(--small); font-size: calc(var(--small) * .40);
+    right: calc(var(--x-r) + var(--small) * .95 + var(--face) * .5 - var(--small) * .2);
+    bottom: calc(var(--y-b) + var(--small) * .62 + var(--face) * 1.04 + var(--face-lift));
+  }
+  /* Lifts the face cluster so its centre lines up with the stick's. */
+  body { --face-lift: max(0px, calc((var(--stick) - var(--small) * .62 - var(--face) * 1.04 - var(--small)) / 2)); }
+
+  #tb-l, #tb-r, #tb-z, #tb-start { height: var(--sh-h); font-size: 12px; }
+  #tb-l, #tb-r { width: calc(var(--face) * 1.30); border-radius: 12px; font-size: 14px; }
+  #tb-z { width: calc(var(--face) * .92); border-radius: 12px; font-size: 13px; color: #c8b6f0; }
+  #tb-l { left: var(--x-l); }
+  #tb-r { right: var(--x-r); }
+  #tb-z { right: calc(var(--x-r) + var(--face) * 1.30 + 10px); }
+  #tb-start { padding: 0 16px; border-radius: 999px; }
+
+  @media (orientation: portrait) {
+    /* One row above the stick and buttons, inside the reserved band:
+       L and Start on the left, Z and R on the right. */
+    #tb-l, #tb-r, #tb-z, #tb-start { bottom: var(--row-2); }
+    #tb-start { left: calc(var(--x-l) + var(--face) * 1.30 + 10px); }
+  }
+  @media (orientation: landscape) {
+    /* The pads live in the margins beside the 4:3 picture, sized by the
+       short side. Shoulders under the index fingers; Start above the stick. */
+    body { --stick: min(40vh, 190px); --face: min(19vh, 80px); --small: calc(var(--face) * .68); }
+    #tb-l, #tb-r, #tb-z { top: calc(var(--safe-t) + var(--gut) + 34px); }
+    #tb-start { left: calc(var(--x-l) + var(--stick) / 2); translate: -50% 0;
+                bottom: calc(var(--y-b) + var(--stick) + 16px); }
+    /* Over the picture here, so the pads step back until touched. */
+    #touch { opacity: .62; transition: opacity .18s; }
+    body.touching #touch { opacity: 1; }
+  }
+
+  /*---- Control stick -------------------------------------------------
+    One round control: the knob follows the thumb (clamped to the rim)
+    and the lit wedge points where the stick is being pushed, so what is
+    shown is exactly what the game is sent.
+  --------------------------------------------------------------------*/
+  #stick {
+    left: var(--x-l); bottom: var(--y-b); width: var(--stick); height: var(--stick); border-radius: 50%;
+    background: radial-gradient(circle at 50% 32%, rgba(60, 68, 82, .82), rgba(22, 25, 31, .84) 72%);
+    border: 1px solid var(--hair);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .12),
+                0 12px 30px -14px rgba(0, 0, 0, .95);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  }
+  /* The octagonal gate of a GameCube stick, as a faint guide. */
+  #gate {
+    position: absolute; inset: 9%; pointer-events: none; opacity: .5;
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+    background: rgba(0, 0, 0, .28);
+  }
+  #shi {
+    position: absolute; inset: 3%; border-radius: 50%; opacity: 0; pointer-events: none;
+    background: conic-gradient(from calc(var(--dir, 0deg) - 30deg),
+                rgba(111, 178, 255, calc(var(--mag, 0) * .42)) 0deg 60deg, rgba(0, 0, 0, 0) 60deg);
+    transition: opacity .07s linear;
+  }
+  #stick.on #shi { opacity: 1; }
+  #knob {
+    position: absolute; left: 50%; top: 50%; width: 42%; height: 42%; border-radius: 50%;
+    translate: calc(-50% + var(--kx, 0px)) calc(-50% + var(--ky, 0px)); pointer-events: none;
+    background: radial-gradient(circle at 50% 35%, rgba(170, 178, 192, .9), rgba(84, 92, 106, .92) 70%);
+    border: 1px solid rgba(255, 255, 255, .22);
+    box-shadow: 0 6px 14px -6px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .3);
+  }
+  #stick.on #knob { background: radial-gradient(circle at 50% 35%, rgba(190, 220, 255, .95), rgba(90, 130, 190, .92) 70%); }
+  /* Shown while the game waits on the network for disc data. */
+  #discwait {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    display: none; align-items: center; gap: 8px; padding: 6px 12px;
+    border-radius: 999px; background: rgba(0, 0, 0, 0.6); color: #fff;
+    font: 600 13px/1 system-ui, sans-serif; pointer-events: none; z-index: 5;
+  }
+  body.disc-wait #discwait { display: flex; }
+  #discwait::before {
+    content: ""; width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff;
+    animation: discspin 0.8s linear infinite;
+  }
+  @keyframes discspin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { #discwait::before { animation: none; } }
+</style>
+</head>
+<body>
+<input type="file" id="file" accept=".iso,.gcm">
+
+<div id="stage">
+  <canvas id="canvas" tabindex="0"></canvas>
+  <div id="discwait" role="status" aria-live="polite">Loading…</div>
+  <div id="curtain">
+    <div class="card">
+      <h2>The Legend of Zelda: Four Swords Adventures</h2>
+      <p>This port ships no game data. Choose your own Four Swords Adventures
+        disc image (.iso) to play. It is read in this page only and never uploaded.</p>
+      <p id="discerr" role="alert" hidden></p>
+      <label class="filebtn pick" for="file">Choose disc image…</label>
+      <p class="pick"><small>…or drop the .iso anywhere on this page</small></p>
+      <p class="pick" id="savednote" hidden><small>The disc image you choose is kept in this browser's
+        private storage, so a reload starts without choosing it again (Forget disc removes it).</small></p>
+      <div id="dl" role="progressbar" aria-label="Loading disc image" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="dlbar-track"><div id="dlbar"></div></div>
+        <div class="row"><span><b id="dlpct">0%</b> <span id="dlbytes"></span></span><span id="dlrate"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="status">Loading…</div>
+<div id="bar">
+  <button id="touchtoggle" type="button" aria-pressed="false" title="On-screen controller">Pad</button>
+  <button id="fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9"/></svg></button>
+  <button id="logtoggle" type="button" aria-pressed="false" title="Log">Log</button>
+  <button id="forgetdisc" type="button" title="Delete the disc image kept in this browser" hidden>Forget disc</button>
+</div>
+<div id="log"><div id="logfirst"></div><div id="logbody"></div></div>
+
+<!-- On-screen controller. Not focusable and not announced: it duplicates the
+     keyboard and gamepad, and every element is hit-tested by coordinate. -->
+<div id="touch" aria-hidden="true">
+  <div id="stick"><div id="gate"></div><div id="shi"></div><div id="knob"></div></div>
+  <div class="tpad" id="tb-l" data-btn="L">L</div>
+  <div class="tpad" id="tb-z" data-btn="Z">Z</div>
+  <div class="tpad" id="tb-r" data-btn="R">R</div>
+  <div class="tpad" id="tb-start" data-btn="START">START</div>
+  <div class="tpad" id="tb-y" data-btn="Y">Y</div>
+  <div class="tpad" id="tb-x" data-btn="X">X</div>
+  <div class="tpad" id="tb-b" data-btn="B">B</div>
+  <div class="tpad" id="tb-a" data-btn="A">A</div>
+</div>
+
+<script>
+  const logEl = document.getElementById('log');
+  const logBody = document.getElementById('logbody');
+  const logFirst = document.getElementById('logfirst');
+  const statusEl = document.getElementById('status');
+  // The log keeps the first few distinct errors pinned at the top (a later
+  // error is often only a consequence of the first), and folds runs of the
+  // same line into one with a count.
+  const firstErrors = new Map();
+  let lastLine = null, repeats = 0;
+  function pinError(line) {
+    if (!/error|abort|exception/i.test(line)) return;
+    const key = line.replace(/\d+/g, '#');
+    if (firstErrors.has(key)) { firstErrors.get(key).n++; }
+    else if (firstErrors.size < 8) firstErrors.set(key, { line, n: 1 });
+    else return;
+    logFirst.textContent = 'First errors:\n' + [...firstErrors.values()]
+      .map((e) => e.line + (e.n > 1 ? `  (x${e.n})` : '')).join('\n');
+  }
+  // Remote log: the lines also go to the server this page came from
+  // (tools/serve.py --logs), batched, so a phone's log can be read on the
+  // machine running the server. Turned off for good if the server says no.
+  const fsaStatic = (document.querySelector('meta[name="fsa-hosting"]') || {}).content === 'static';
+  window.fsaHosting = fsaStatic ? 'static' : 'server';
+  const remote = { id: Math.random().toString(36).slice(2, 10), buf: [], sent: 0, on: !fsaStatic, timer: 0 };
+  function remoteQueue(line, urgent) {
+    if (!remote.on || remote.sent > (4 << 20)) return;
+    remote.buf.push(`${(performance.now() / 1000).toFixed(2)} ${line}`);
+    if (!remote.timer) remote.timer = setTimeout(remoteFlush, urgent ? 250 : 2000);
+  }
+  function remoteFlush(beacon) {
+    clearTimeout(remote.timer); remote.timer = 0;
+    if (!remote.on || !remote.buf.length) return;
+    const body = remote.id + '\n' + remote.buf.join('\n') + '\n';
+    remote.buf = []; remote.sent += body.length;
+    if (beacon && navigator.sendBeacon) { navigator.sendBeacon('log', body); return; }
+    fetch('log', { method: 'POST', body, keepalive: body.length < 60000 })
+      .then((r) => { if (r.status === 404 || r.status === 501) remote.on = false; })
+      .catch(() => {});
+  }
+  // Diagnostics streams (platform/diag.cpp): JSON lines per stream name,
+  // posted to tools/serve.py --diag as "<run>\t<name>\n<lines>". One run per
+  // page load: <date>-<time>-<session id>.
+  const diag = { run: new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15) + '-' + remote.id,
+                 bufs: new Map(), timer: 0, on: !fsaStatic };
+  function diagFlush(beacon) {
+    clearTimeout(diag.timer); diag.timer = 0;
+    if (!diag.on) return;
+    for (const [name, lines] of diag.bufs) {
+      if (!lines.length) continue;
+      diag.bufs.set(name, []);
+      // At most ~6 MB per POST (serve.py takes 8 MB); a single line is never split.
+      for (let i = 0; i < lines.length;) {
+        let j = i, len = 0;
+        do { len += lines[j].length + 1; j++; } while (j < lines.length && len + lines[j].length < 6e6);
+        const body = `${diag.run}\t${name}\n${lines.slice(i, j).join('\n')}\n`;
+        i = j;
+        if (beacon && navigator.sendBeacon) { navigator.sendBeacon('diag', body); continue; }
+        fetch('diag', { method: 'POST', body })
+          .then((r) => { if (r.status === 404 || r.status === 501) diag.on = false; }).catch(() => {});
+      }
+    }
+  }
+  window.fsaDiag = (name, line) => {
+    if (!diag.on) return;
+    if (!diag.bufs.has(name)) diag.bufs.set(name, []);
+    diag.bufs.get(name).push(line);
+    if (!diag.timer) diag.timer = setTimeout(diagFlush, 2000);
+  };
+  // The diagnostics build (docs/DIAGNOSTICS.md) also writes out its counters.
+  const diagFinal = () => {
+    try { if (Module._fsa_diag_flush_all) Module._fsa_diag_flush_all(); } catch (e) {}
+    // The branch coverage build: its counters as a .profraw image.
+    try { if (Module._fsa_cov_dump) Module._fsa_cov_dump(); } catch (e) {}
+  };
+  window.fsaDiagFlush = () => { diagFinal(); diagFlush(false); };
+  addEventListener('pagehide', () => { diagFinal(); diagFlush(true); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { diagFinal(); diagFlush(true); } });
+  addEventListener('pagehide', () => remoteFlush(true));
+  document.addEventListener('visibilitychange', () => {
+    log(`[page] ${document.hidden ? 'hidden' : 'visible'}`);
+    if (document.hidden) remoteFlush(true);
+  });
+  // Chrome freezes background tabs after a while (Page Lifecycle).
+  document.addEventListener('freeze', () => { log('[page] frozen'); remoteFlush(true); });
+  document.addEventListener('resume', () => log('[page] resumed'));
+  addEventListener('error', (e) => log(`[page error] ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`));
+  addEventListener('unhandledrejection', (e) => log(`[page error] unhandled rejection: ${e.reason && (e.reason.stack || e.reason)}`));
+
+  function log(line) {
+    console.log(line);
+    pinError(line);
+    if (line === lastLine) {
+      repeats++;
+      if (repeats === 1 || repeats % 60 === 0) {
+        remoteQueue(`  (previous line repeated ${repeats}x)`);
+        logBody.textContent = logBody.textContent.replace(/(  \(repeated \d+x\))?\n$/, `  (repeated ${repeats}x)\n`);
+      }
+      return;
+    }
+    lastLine = line; repeats = 0;
+    remoteQueue(line, /error|abort|exception/i.test(line));
+    logBody.textContent += line + '\n';
+    if (logBody.textContent.length > 200000) logBody.textContent = logBody.textContent.slice(-100000);
+    if (document.body.classList.contains('log-open')) logEl.scrollTop = logEl.scrollHeight;
+  }
+  window.fsaLog = log;
+  log('[page] ' + navigator.userAgent + (navigator.gpu ? '' : '  (no navigator.gpu: WebGPU unavailable)'));
+  // Telemetry: what the device is and what its WebGPU adapter can do.
+  log(`[page] screen ${screen.width}x${screen.height} dpr ${devicePixelRatio} viewport ${innerWidth}x${innerHeight}` +
+      ` touch ${navigator.maxTouchPoints} jspi ${typeof WebAssembly.Suspending === 'function'}`);
+  if (navigator.gpu) {
+    navigator.gpu.requestAdapter().then((a) => {
+      if (!a) { log('[page] WebGPU: no adapter'); return; }
+      const i = a.info || {};
+      log(`[page] WebGPU adapter: vendor ${i.vendor || '?'} arch ${i.architecture || '?'} device ${i.device || '?'} ${i.description || ''}`);
+      log('[page] WebGPU features: ' + [...a.features].sort().join(' '));
+      const lim = [];
+      for (const k in a.limits) lim.push(`${k}=${a.limits[k]}`);
+      log('[page] WebGPU limits: ' + lim.join(' '));
+      log(`[page] preferred canvas format ${navigator.gpu.getPreferredCanvasFormat()}`);
+    }).catch((e) => log('[page] WebGPU requestAdapter failed: ' + e));
+  }
+  // The runtime starts (constructors, then main) only after main.dol has been
+  // read from the chosen disc and checked (fsa_disc.js, Module.fsaDolLoad): the
+  // game's data with no source form comes from it, not from fsa.wasm.
+  let runtimeReadyResolve;
+  const runtimeReady = new Promise((r) => { runtimeReadyResolve = r; });
+  var Module = {
+    canvas: document.getElementById('canvas'),
+    print: log,
+    printErr: log,
+    fsaDiag: window.fsaDiag,
+    fsaLog: log,
+    // The game code is loaded (preRun): waiting for a disc.
+    fsaCodeReady() {
+      if (!document.body.classList.contains('downloading') && !started) statusEl.textContent = 'Ready: choose a disc image.';
+      maybeAutoStart();
+    },
+    onRuntimeInitialized() { runtimeReadyResolve(); },
+    onAbort(what) { statusEl.textContent = 'Stopped: ' + what; },
+    // Fetch and instantiate fsa.wasm ourselves, retrying: on a phone over the
+    // proxy the download sometimes fails outright ("Load failed"), and
+    // emscripten's own loader then aborts the page.
+    instantiateWasm(imports, receive) {
+      (async () => {
+        for (let attempt = 1; ; attempt++) {
+          try {
+            const r = await fetch('fsa.wasm', { cache: attempt > 1 ? 'reload' : 'default', credentials: 'same-origin' });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            let result;
+            if (WebAssembly.instantiateStreaming && (r.headers.get('Content-Type') || '').includes('application/wasm')) {
+              result = await WebAssembly.instantiateStreaming(r, imports);
+            } else {
+              result = await WebAssembly.instantiate(await r.arrayBuffer(), imports);
+            }
+            receive(result.instance, result.module);
+            return;
+          } catch (e) {
+            if (attempt >= 4) {
+              log(`[page] game code failed to load after ${attempt} tries: ${e}`);
+              statusEl.textContent = 'Could not load the game code; please reload.';
+              return;
+            }
+            log(`[page] game code load failed (${e}); retrying (${attempt}/3)`);
+            await new Promise((res) => setTimeout(res, 1000 * attempt));
+          }
+        }
+      })();
+      return {};
+    },
+  };
+
+  // The picture: the largest box of the picture's aspect (4:3 unless the
+  // Picture setting says otherwise: view.js) that fits the stage, in whole pixels.
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('canvas');
+  const layoutHooks = window.layoutHooks = [];
+  function fit() {
+    const cs = getComputedStyle(stage);
+    const w = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const h = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const a = window.fsaView ? window.fsaView.aspect() : 4 / 3;
+    const s = Math.max(1, Math.min(w / a, h));
+    canvas.style.width = Math.floor(s * a) + 'px';
+    canvas.style.height = Math.floor(s) + 'px';
+    for (const f of layoutHooks) f();
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', () => setTimeout(fit, 250));
+  document.addEventListener('fullscreenchange', fit);
+  if (window.visualViewport) visualViewport.addEventListener('resize', fit);
+  new ResizeObserver(fit).observe(stage);
+  fit();
+
+  let started = false;
+  const discErrEl = document.getElementById('discerr');
+  // file: the File the disc came from (picked or dropped), kept in OPFS once
+  // its main.dol checks out (disc_store.js); fromStore: it came from there.
+  async function startWith(disc, file, fromStore) {
+    if (started) return;
+    started = true;
+    if (discAbort) discAbort.abort();
+    statusEl.textContent = 'Reading the disc…';
+    discErrEl.hidden = true;
+    try {
+      if (!Module.fsaDolLoad) throw new Error('The game code has not loaded yet; try again in a moment.');
+      await Module.fsaDolLoad(disc);
+    } catch (e) {
+      // Not the right disc (or unreadable): say so and let the player choose again.
+      log('[disc] refused: ' + (e.message || e));
+      discErrEl.textContent = e.message || String(e);
+      discErrEl.hidden = false;
+      statusEl.textContent = 'Choose your Four Swords Adventures disc image.';
+      document.getElementById('file').value = '';
+      if (fromStore) { await window.fsaDiscStore.forget(); updateForget(); }
+      started = false;
+      return;
+    }
+    if (file && window.fsaDiscStore && window.fsaDiscStore.supported && discQuery.get('keepdisc') !== '0') {
+      log(`[disc] keeping ${file.name} (${MB(file.size)} MB) in this browser's storage…`);
+      const t0 = performance.now();
+      window.fsaDiscStore.save(file, (done, total) => log(`[disc] kept ${MB(done)} / ${MB(total)} MB`))
+        .then(() => { log(`[disc] kept in this browser (${((performance.now() - t0) / 1000).toFixed(1)} s): a reload starts without choosing it`); updateForget(); })
+        .catch((e) => { log('[disc] ' + e.message); updateForget(); });
+    }
+    document.body.classList.add('running');
+    fit();
+    statusEl.textContent = 'Starting…';
+    await runtimeReady;
+    statusEl.textContent = 'Running';
+    Module.fsaDisc = traceDisc(disc);
+    if (discQuery.get('discrecord') === '1') recordDiscBlocks(Module.fsaDisc);
+    await Module.fsaSaveInit();
+    // ?stage=S or ?stage=S-L: skip the menus and start in stage S, level L.
+    const stageArg = /^(\d+)(?:-(\d+))?$/.exec(new URLSearchParams(location.search).get('stage') || '');
+    if (stageArg) {
+      log('[stage] jump to stage ' + stageArg[1] + ' level ' + (stageArg[2] || 0));
+      Module._fsa_debug_set_stage(Number(stageArg[1]), Number(stageArg[2] || 0));
+    }
+    // ?room=CODE: join a netplay room and wait for its start (docs/NETPLAY.md);
+    // the room's options (seats = GBAs, script) apply to what follows.
+    if (Module.fsaNetLobby) {
+      try { await Module.fsaNetLobby(); } catch (e) { log('[room] ' + e); statusEl.textContent = 'Online: ' + e.message; return; }
+    }
+    await Module.fsaHarnessInit();  // ?record=1 / ?inputs=URL (docs/HARNESS.md)
+    if (Module.fsaGbaInit) Module.fsaGbaInit();  // ?gba=N: native GBAs in ports 0..N-1 (docs/MULTIPLAYER.md)
+    if (Module.fsaNetInit) await Module.fsaNetInit();  // ?room=CODE / ?rbtest=E,R: netplay (docs/NETPLAY.md)
+    if (Module.fsaFntraceInit) await Module.fsaFntraceInit();  // ?trace=URL (FSA_DIAG builds; docs/DIAGNOSTICS.md)
+    Module.fsaClock.start();
+    try { await Module.callMain([]); } catch (e) { log('main: ' + e + '\n' + (e.stack || '')); statusEl.textContent = 'Crashed: ' + e; }
+  }
+  // ?iso=URL: the disc from a server. By default (?disc=smart) the blocks in
+  // disc-manifest.json (the ones the game read to boot, through the menus and
+  // into stages: recorded with ?discrecord=1 and tools/serve.py
+  // --record-manifest) are fetched up front with a progress bar and kept, and
+  // every other read goes to the server on demand. Without a manifest that
+  // fits the image, everything is read on demand.
+  // ?disc=full: the whole image is fetched
+  // up front in one streaming GET (as fast as the link goes, with a progress
+  // bar) and kept in memory in 16 MiB pieces, so the game's reads never wait
+  // on the network. iOS kills a tab that holds ~1.4 GB, so there (or with
+  // ?disc=lazy) it is read on demand instead: each read fetches all the
+  // blocks it spans in parallel, plus a little readahead. ?disc=full forces
+  // the preload.
+  const DISC_PIECE = 16 << 20;
+  const MB = (n) => (n / 1048576).toFixed(n < 100 * 1048576 ? 1 : 0);
+  let discAbort = null;
+
+  function discFromPieces(size, pieces) {
+    return {
+      size,
+      async read(offset, length) {
+        length = Math.max(0, Math.min(length, size - offset));
+        const i = Math.floor(offset / DISC_PIECE), at = offset - i * DISC_PIECE;
+        if (at + length <= DISC_PIECE) return pieces[i].subarray(at, at + length);
+        const out = new Uint8Array(length);
+        for (let done = 0; done < length;) {
+          const pos = offset + done, k = Math.floor(pos / DISC_PIECE), s = pos - k * DISC_PIECE;
+          const n = Math.min(length - done, pieces[k].length - s);
+          out.set(pieces[k].subarray(s, s + n), done);
+          done += n;
+        }
+        return out;
+      },
+    };
+  }
+
+  // Disc cache: every 1 MiB block fetched from the server is kept in Cache
+  // Storage (works in Safari too), so a later visit reads it locally. Keyed by
+  // the image's URL, size and Last-Modified; caches of other images are
+  // dropped. ?disccache=0 turns it off; window.fsaDiscCacheClear() empties it.
+  const CACHE_BLOCK = 1 << 20;
+  const discCache = {
+    cache: null, tag: '', hits: 0, stored: 0,
+    async open(url, size, lastMod) {
+      if (discQuery.get('disccache') === '0' || !window.caches || !window.isSecureContext && location.hostname !== '127.0.0.1') return;
+      try {
+        let h = 0;
+        for (const ch of `${new URL(url, location.href).pathname}|${size}|${lastMod}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+        this.tag = h.toString(36);
+        const name = 'fsa-disc-' + this.tag;
+        for (const k of await caches.keys()) if (k.startsWith('fsa-disc-') && k !== name) await caches.delete(k);
+        this.cache = await caches.open(name);
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+        const n = (await this.cache.keys()).length;
+        log(`[disc] browser cache: ${n} MB of this image stored`);
+      } catch (e) { this.cache = null; log(`[disc] browser cache unavailable (${e})`); }
+    },
+    key(b) { return `${location.origin}/__fsa_disc/${this.tag}/${b}`; },
+    async get(b) {
+      if (!this.cache) return null;
+      try {
+        const r = await this.cache.match(this.key(b));
+        if (!r) return null;
+        this.hits++;
+        return new Uint8Array(await r.arrayBuffer());
+      } catch (e) { return null; }
+    },
+    put(b, bytes) {
+      if (!this.cache) return;
+      this.cache.put(this.key(b), new Response(bytes.slice())).then(() => { this.stored++; },
+        (e) => { if (this.cache) { log(`[disc] browser cache full or failed (${e}); not caching more`); this.cache = null; } });
+    },
+    // Stores the 1 MiB blocks of a fetched range that starts at a block boundary.
+    putRange(off, bytes) {
+      for (let at = 0; at < bytes.length; at += CACHE_BLOCK) this.put((off + at) / CACHE_BLOCK, bytes.subarray(at, at + CACHE_BLOCK));
+    },
+  };
+  window.fsaDiscCacheClear = async () => {
+    for (const k of await caches.keys()) if (k.startsWith('fsa-disc-')) await caches.delete(k);
+    log('[disc] browser cache cleared');
+  };
+
+  function discLazy(url, size) {
+    // 128 MiB of blocks in memory at most. Read-ahead grows while reads move
+    // forward through the image (a movie streaming): up to 8 blocks (32 MiB)
+    // in flight, so a slow link keeps up; a jump elsewhere resets it to 2.
+    const BLOCK = 4 << 20, KEEP = 32, AHEAD_MIN = 2, AHEAD_MAX = 8;
+    let ahead = AHEAD_MIN, lastBlock = -10;
+    let waiting = 0, waitTimer = 0;
+    const cache = new Map();  // block -> Promise<Uint8Array>, in LRU order
+    let fetched = 0;
+    function block(i) {
+      let p = cache.get(i);
+      if (p) { cache.delete(i); cache.set(i, p); return p; }
+      const off = i * BLOCK, end = Math.min(size, off + BLOCK) - 1;
+      const fromNet = () => fetch(url, { headers: { Range: `bytes=${off}-${end}` } })
+        .then((r) => { if (!r.ok) throw new Error(`disc read ${off}: HTTP ${r.status}`); return r.arrayBuffer(); })
+        .then((b) => { fetched += b.byteLength; const u = new Uint8Array(b); discCache.putRange(off, u); return u; });
+      p = (async () => {
+        if (discCache.cache) {
+          const n = Math.ceil((end + 1 - off) / CACHE_BLOCK), parts = [];
+          for (let k = 0; k < n; k++) {
+            const part = await discCache.get(off / CACHE_BLOCK + k);
+            if (!part) return fromNet();
+            parts.push(part);
+          }
+          const out = new Uint8Array(end + 1 - off);
+          parts.forEach((part, k) => out.set(part, k * CACHE_BLOCK));
+          return out;
+        }
+        return fromNet();
+      })();
+      p.catch(() => cache.delete(i));
+      cache.set(i, p);
+      while (cache.size > KEEP) cache.delete(cache.keys().next().value);
+      return p;
+    }
+    return {
+      size,
+      get fetched() { return fetched; },
+      async read(offset, length) {
+        length = Math.max(0, Math.min(length, size - offset));
+        const first = Math.floor(offset / BLOCK), last = Math.floor((offset + Math.max(length, 1) - 1) / BLOCK);
+        ahead = first >= lastBlock && first <= lastBlock + 1 ? Math.min(AHEAD_MAX, ahead + (first > lastBlock ? 1 : 0)) : AHEAD_MIN;
+        lastBlock = last;
+        const want = [];
+        for (let i = first; i <= last; i++) want.push(block(i));
+        for (let i = last + 1; i <= last + ahead && i * BLOCK < size; i++) if (!cache.has(i)) block(i);
+        // Say so on screen when the game waits on the network for a while.
+        waiting++;
+        if (!waitTimer) waitTimer = setTimeout(() => { if (waiting) document.body.classList.add('disc-wait'); }, 400);
+        let blocks;
+        try { blocks = await Promise.all(want); }
+        finally {
+          if (--waiting === 0) { clearTimeout(waitTimer); waitTimer = 0; document.body.classList.remove('disc-wait'); }
+        }
+        if (first === last) { const s = offset - first * BLOCK; return blocks[0].subarray(s, s + length); }
+        const out = new Uint8Array(length);
+        for (let done = 0, k = 0; done < length; k++) {
+          const s = k ? 0 : offset - first * BLOCK, n = Math.min(length - done, blocks[k].length - s);
+          out.set(blocks[k].subarray(s, s + n), done);
+          done += n;
+        }
+        return out;
+      },
+    };
+  }
+
+  const dl = {
+    el: document.getElementById('dl'), bar: document.getElementById('dlbar'),
+    pct: document.getElementById('dlpct'), bytes: document.getElementById('dlbytes'),
+    rate: document.getElementById('dlrate'), t0: 0, last: 0, shown: 0,
+    show(got, total, force) {
+      const now = performance.now();
+      if (!force && now - this.shown < 100) return;
+      this.shown = now;
+      const secs = Math.max(0.001, (now - this.t0) / 1000), bps = got / secs;
+      const f = total ? Math.min(1, got / total) : 0;
+      this.bar.style.width = (f * 100).toFixed(1) + '%';
+      this.el.setAttribute('aria-valuenow', Math.round(f * 100));
+      this.pct.textContent = total ? Math.floor(f * 100) + '%' : MB(got) + ' MB';
+      this.bytes.textContent = total ? `${MB(got)} / ${MB(total)} MB` : '';
+      const left = total && bps > 0 ? Math.ceil((total - got) / bps) : 0;
+      this.rate.textContent = `${MB(bps)} MB/s` + (left && got < total ? ` · ${left} s left` : '');
+    },
+  };
+
+  async function discPreload(url, ctl) {
+    const r = await fetch(url, { signal: ctl.signal });
+    if (!r.ok || !r.body) throw new Error(`HTTP ${r.status}`);
+    // Not Content-Length when the response may arrive compressed.
+    let total = r.headers.get('Content-Encoding') ? 0 : Number(r.headers.get('Content-Length')) || 0;
+    if (!total) {
+      const h = await fetch(url, { method: 'HEAD' }).catch(() => null);
+      total = (h && Number(h.headers.get('Content-Length'))) || 0;
+    }
+    document.body.classList.add('downloading');
+    statusEl.textContent = 'Loading disc image…';
+    dl.t0 = performance.now();
+    const pieces = [];
+    let got = 0, piece = null;
+    const reader = r.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      for (let v = value; v.length;) {
+        const at = got % DISC_PIECE;
+        if (!at) {
+          const left = total ? total - got : DISC_PIECE;
+          piece = new Uint8Array(Math.min(DISC_PIECE, Math.max(left, v.length)));
+          pieces.push(piece);
+        }
+        const n = Math.min(v.length, piece.length - at);
+        piece.set(v.subarray(0, n), at);
+        got += n; v = v.subarray(n);
+      }
+      dl.show(got, total);
+    }
+    if (total && got !== total) throw new Error(`got ${got} of ${total} bytes`);
+    if (!total) pieces[pieces.length - 1] = piece.subarray(0, got - (pieces.length - 1) * DISC_PIECE);
+    dl.show(got, got, true);
+    const secs = (performance.now() - dl.t0) / 1000;
+    statusEl.textContent = 'Starting…';
+    log(`[disc] loaded ${MB(got)} MB in ${secs.toFixed(1)} s (${MB(got / secs)} MB/s)`);
+    return discFromPieces(got, pieces);
+  }
+
+  const MANI_BLOCK = 1 << 20;  // the manifest's block size
+  const discTrace = new Set();  // manifest blocks the game has read
+
+  // Records which 1 MiB blocks the game reads (for ?discrecord=1).
+  function traceDisc(disc) {
+    const read = disc.read.bind(disc);
+    disc.read = (offset, length) => {
+      const last = Math.floor((offset + Math.max(length, 1) - 1) / MANI_BLOCK);
+      for (let b = Math.floor(offset / MANI_BLOCK); b <= last; b++) discTrace.add(b);
+      return read(offset, length);
+    };
+    return disc;
+  }
+  window.fsaDiscBlocks = () => [...discTrace].sort((a, b) => a - b);
+
+  // ?discrecord=1: send the blocks read so far to the server every 5 s (it
+  // merges them into disc-manifest.json when run with --record-manifest).
+  async function recordDiscBlocks(disc) {
+    const head = await disc.read(0, 6);
+    const id = String.fromCharCode(...head);
+    let sent = 0;
+    log(`[disc] recording the blocks read for disc-manifest.json (${id})`);
+    setInterval(() => {
+      if (discTrace.size === sent) return;
+      sent = discTrace.size;
+      fetch('disc-manifest', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, size: disc.size, block: MANI_BLOCK, blocks: window.fsaDiscBlocks() }) })
+        .then((r) => { if (!r.ok) log(`[disc] manifest not recorded: HTTP ${r.status} (serve.py --record-manifest?)`); })
+        .catch(() => {});
+    }, 5000);
+  }
+
+  // Fetches the manifest's blocks (adjacent ones merged into requests of at
+  // most 8 MiB, six at a time) with the progress bar; returns block -> bytes.
+  async function discPrefetch(url, size, blocks, ctl) {
+    const pinned = new Map();
+    let fromCache = 0;
+    for (const b of blocks) {
+      const bytes = await discCache.get(b);
+      if (bytes) { pinned.set(b, bytes); fromCache += bytes.length; }
+    }
+    if (fromCache) log(`[disc] ${MB(fromCache)} MB of the prefetch came from the browser cache`);
+    blocks = blocks.filter((b) => !pinned.has(b));
+    const runs = [];
+    for (const b of blocks) {
+      const r = runs[runs.length - 1];
+      if (r && r.end === b && r.end - r.start < 8) r.end++;
+      else runs.push({ start: b, end: b + 1 });
+    }
+    const total = runs.reduce((n, r) => n + Math.min(size, r.end * MANI_BLOCK) - r.start * MANI_BLOCK, 0);
+    if (!runs.length) return pinned;
+    let got = 0, next = 0;
+    document.body.classList.add('downloading');
+    statusEl.textContent = 'Loading disc image…';
+    dl.t0 = performance.now();
+    dl.show(0, total, true);
+    async function worker() {
+      while (next < runs.length) {
+        const r = runs[next++], off = r.start * MANI_BLOCK, end = Math.min(size, r.end * MANI_BLOCK) - 1;
+        const res = await fetch(url, { headers: { Range: `bytes=${off}-${end}` }, signal: ctl.signal });
+        if (res.status !== 206) throw new Error(`HTTP ${res.status} for bytes ${off}-${end}`);
+        const buf = new Uint8Array(await res.arrayBuffer());
+        discCache.putRange(off, buf);
+        for (let b = r.start; b < r.end; b++) pinned.set(b, buf.subarray((b - r.start) * MANI_BLOCK, (b - r.start + 1) * MANI_BLOCK));
+        got += buf.length;
+        dl.show(got, total);
+      }
+    }
+    await Promise.all(Array.from({ length: 6 }, worker));
+    dl.show(got, total, true);
+    const secs = (performance.now() - dl.t0) / 1000;
+    log(`[disc] prefetched ${blocks.length} blocks (${MB(got)} MB) in ${secs.toFixed(1)} s (${MB(got / secs)} MB/s); the rest on demand`);
+    return pinned;
+  }
+
+  // Reads from the prefetched blocks when they cover the read, else from the
+  // on-demand reader.
+  function discSmart(lazy, pinned) {
+    return {
+      size: lazy.size,
+      get fetched() { return lazy.fetched; },
+      read(offset, length) {
+        length = Math.max(0, Math.min(length, lazy.size - offset));
+        const first = Math.floor(offset / MANI_BLOCK), last = Math.floor((offset + Math.max(length, 1) - 1) / MANI_BLOCK);
+        for (let b = first; b <= last; b++) if (!pinned.has(b)) return lazy.read(offset, length);
+        const s = offset - first * MANI_BLOCK;
+        if (first === last) return Promise.resolve(pinned.get(first).subarray(s, s + length));
+        const out = new Uint8Array(length);
+        for (let done = 0, b = first; done < length; b++) {
+          const at = b === first ? s : 0, piece = pinned.get(b), n = Math.min(length - done, piece.length - at);
+          out.set(piece.subarray(at, at + n), done);
+          done += n;
+        }
+        return Promise.resolve(out);
+      },
+    };
+  }
+
+  async function discSmartFromUrl(url) {
+    const h = await fetch(url, { method: 'HEAD' });
+    const size = Number(h.headers.get('Content-Length'));
+    await discCache.open(url, size, h.headers.get('Last-Modified') || h.headers.get('ETag') || '');
+    const lazy = discLazy(url, size);
+    let mani = null;
+    try {
+      const r = await fetch('disc-manifest.json', { cache: 'no-store' });
+      if (r.ok) mani = await r.json();
+    } catch (e) { /* none */ }
+    if (!mani || mani.size !== size || mani.block !== MANI_BLOCK || !Array.isArray(mani.blocks)) {
+      log(`[disc] ${mani ? 'disc-manifest.json is for another image' : 'no disc-manifest.json'}; reading ${url} on demand (${MB(size)} MB)`);
+      return lazy;
+    }
+    discAbort = new AbortController();
+    let pinned;
+    try { pinned = await discPrefetch(url, size, mani.blocks.filter((b) => b >= 0 && b * MANI_BLOCK < size), discAbort); }
+    catch (e) { if (!started) log(`[disc] prefetch failed (${e}); reading on demand`); return lazy; }
+    finally { discAbort = null; document.body.classList.remove('downloading'); }
+    const id = pinned.has(0) ? String.fromCharCode(...pinned.get(0).subarray(0, 6)) : '';
+    if (id && id !== mani.id) {
+      log(`[disc] disc-manifest.json is for ${mani.id}, this image is ${id}; reading on demand`);
+      return lazy;
+    }
+    statusEl.textContent = 'Starting…';
+    return discSmart(lazy, pinned);
+  }
+
+  // Starts with the page, alongside the wasm download; the game starts when
+  // both are in.
+  async function loadDiscFromUrl(iso, q) {
+    const mode = q.get('disc') || 'smart';
+    let disc = null;
+    if (mode === 'smart') {
+      disc = await discSmartFromUrl(iso);
+      return started ? null : disc;
+    }
+    if (mode === 'full') {
+      discAbort = new AbortController();
+      try { disc = await discPreload(iso, discAbort); }
+      catch (e) { if (!started) log(`[disc] preload failed (${e}); reading on demand instead`); }
+      discAbort = null;
+      document.body.classList.remove('downloading');
+    }
+    if (started) return null;  // a file was chosen meanwhile
+    if (!disc) {
+      const h = await fetch(iso, { method: 'HEAD' });
+      await discCache.open(iso, Number(h.headers.get('Content-Length')), h.headers.get('Last-Modified') || h.headers.get('ETag') || '');
+      disc = discLazy(iso, Number(h.headers.get('Content-Length')));
+      log(`[disc] reading ${iso} on demand (${MB(disc.size)} MB)`);
+    }
+    return disc;
+  }
+  const discQuery = new URLSearchParams(location.search);
+  const discFromUrl = discQuery.get('iso') ? loadDiscFromUrl(discQuery.get('iso'), discQuery) : null;
+  async function maybeAutoStart() {
+    if (!discFromUrl) {
+      // The disc kept in this browser (disc_store.js), unless ?keepdisc=0.
+      if (!window.fsaDiscStore || discQuery.get('keepdisc') === '0') return;
+      const file = await window.fsaDiscStore.load();
+      if (file && !started) {
+        log(`[disc] using ${file.name} (${MB(file.size)} MB) kept in this browser`);
+        startWith(Module.fsaDiscFromFile(file), null, true);
+      }
+      return;
+    }
+    const disc = await discFromUrl;
+    if (disc) startWith(disc);
+  }
+  // "Forget disc": shown while a disc image is kept in this browser.
+  const forgetBtn = document.getElementById('forgetdisc');
+  async function updateForget() {
+    const info = window.fsaDiscStore && window.fsaDiscStore.supported ? await window.fsaDiscStore.info() : null;
+    forgetBtn.hidden = !(info && info.complete);
+  }
+  forgetBtn.addEventListener('click', async () => {
+    if (!confirm('Delete the disc image kept in this browser? You will choose it again next time.')) return;
+    await window.fsaDiscStore.forget();
+    location.reload();
+  });
+  // (disc_store.js loads after this script.)
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.fsaDiscStore || !window.fsaDiscStore.supported) return;
+    document.getElementById('savednote').hidden = false;
+    updateForget();
+  });
+  document.getElementById('file').addEventListener('change', (e) => {
+    if (e.target.files[0]) startWith(Module.fsaDiscFromFile(e.target.files[0]), e.target.files[0]);
+  });
+  window.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragging'); });
+  window.addEventListener('dragleave', () => document.body.classList.remove('dragging'));
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    document.body.classList.remove('dragging');
+    if (e.dataTransfer.files[0]) startWith(Module.fsaDiscFromFile(e.dataTransfer.files[0]), e.dataTransfer.files[0]);
+  });
+
+  // Fullscreen (with the orientation lock where the browser allows it) and the log.
+  document.getElementById('fullscreen').addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else {
+        await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+        try { await screen.orientation.lock('landscape'); } catch (e) { /* not on this device */ }
+      }
+    } catch (e) { /* not available (iOS Safari): Add to Home Screen instead */ }
+  });
+  const logBtn = document.getElementById('logtoggle');
+  logBtn.addEventListener('click', () => {
+    const open = document.body.classList.toggle('log-open');
+    logBtn.setAttribute('aria-pressed', open);
+    if (open) logEl.scrollTop = logEl.scrollHeight;
+    fit();
+  });
+</script>
+<script src="disc_store.js"></script>
+<script src="view.js"></script>
+<script src="touch.js"></script>
+<script src="gputrace.js"></script>
+<script src="fsa.js"></script>
+</body>
+</html>
