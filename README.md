@@ -30,6 +30,36 @@ before any game code runs (`platform/web/fsa_disc.js`, `platform/dol_data.cpp`).
 | Saves | not yet |
 | GBA link (branch `deluxe`) | native GBAs in ports 1-4 (`?gba=N`): the game accepts 2-4 players and plays them; GBA screens are a debug view so far (docs/MULTIPLAYER.md) |
 
+## Play in the browser (GitHub Pages)
+
+https://sh1ftmaker.github.io/fsaport/ runs the `deluxe` build. **Bring your
+own disc:** choose your *The Legend of Zelda: Four Swords Adventures* (USA,
+`G4SE01`) disc image (`.iso` / `.gcm`, 1.4 GB) with the button or drop it on
+the page. It is read in the browser only and never uploaded; the page checks
+its `main.dol` and refuses any other disc. The image is kept in the browser's
+private storage (Origin Private File System), so a reload starts without
+choosing it again; **Forget disc** (top right) deletes it. Where there is not
+enough storage (some phones) you choose it again after a reload. Memory-card
+saves stay in the browser (IndexedDB).
+
+Browser: WebGPU and JavaScript Promise Integration (JSPI) are both needed.
+Chrome or Edge 137+ on desktop and Android; on iPhone and iPad, iOS 27 (any
+iOS browser: they all use Safari's engine; tested on 27.2); Safari on macOS
+of the same release. Firefox only where it has both WebGPU and JSPI on.
+No special headers are needed (no SharedArrayBuffer).
+
+Controls: a gamepad (standard mapping), or the keyboard: WASD = stick,
+Space = A, Left Shift = B, E = X, Q = Y, Enter = Start, Z = L, C = R, F = Z,
+arrow keys = C-stick. On touch screens an on-screen controller appears
+(**Pad** toggles it). Online rooms need a relay server (`netplay/relay.mjs`,
+docs/NETPLAY.md): on the site they are offered only when the page is opened
+with `?relay=wss://your-relay/`.
+
+To build the site: `tools/build_pages.sh build/site` (a plain release build;
+`FSA_CHECK_DOL=path/to/main.dol` also runs `tools/check_no_game_data.py`), then
+`tools/publish_pages.sh build/site` commits it to the `gh-pages` branch (in a
+worktree at `build/gh-pages`; it does not push).
+
 ## Build and run (browser)
 
 Needs emscripten 5.0.6 and Chrome/Edge 137+ (WebGPU and JSPI).

@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(FSA_GAME ${CMAKE_SOURCE_DIR}/game)
 option(FSA_DEBUG_LINES "keep DWARF line tables in fsa.wasm (llvm-symbolizer; links with -O1)" OFF)
 
+# __FILE__ (assert and panic messages) relative to the source tree: no paths
+# of the machine that built it in fsa.wasm.
+add_compile_options(-fmacro-prefix-map=${CMAKE_SOURCE_DIR}/=)
+
 # The emscripten toolchain can leave CMAKE_AR empty in subdirectory scopes
 # ("" qc ... -> exit 127); Aurora's CMakeLists reads it back from the cache.
 set(CMAKE_AR "$ENV{EMSDK}/upstream/bin/llvm-ar" CACHE FILEPATH "" FORCE)
@@ -263,6 +267,7 @@ add_custom_command(TARGET fsa POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/index.html ${CMAKE_BINARY_DIR}/index.html
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/touch.js ${CMAKE_BINARY_DIR}/touch.js
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/view.js ${CMAKE_BINARY_DIR}/view.js
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/disc_store.js ${CMAKE_BINARY_DIR}/disc_store.js
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/platform/web/gputrace.js ${CMAKE_BINARY_DIR}/gputrace.js)
 
 # --- Diagnostics build: uninitialised reads (docs/DIAGNOSTICS.md) --------------

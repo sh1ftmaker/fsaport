@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- "static" on a static host (GitHub Pages; tools/build_pages.sh sets it): no
+     tools/serve.py behind the page, so no log / diagnostics POSTs, and online
+     rooms only with ?relay=URL. -->
+<meta name="fsa-hosting" content="server">
 <!-- viewport-fit=cover so the pads can use the safe-area insets; no user
      zoom, because a pinch on the game is never a request to zoom the page. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -274,6 +278,8 @@
       <p id="discerr" role="alert" hidden></p>
       <label class="filebtn pick" for="file">Choose disc image…</label>
       <p class="pick"><small>…or drop the .iso anywhere on this page</small></p>
+      <p class="pick" id="savednote" hidden><small>The disc image you choose is kept in this browser's
+        private storage, so a reload starts without choosing it again (Forget disc removes it).</small></p>
       <div id="dl" role="progressbar" aria-label="Loading disc image" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="dlbar-track"><div id="dlbar"></div></div>
         <div class="row"><span><b id="dlpct">0%</b> <span id="dlbytes"></span></span><span id="dlrate"></span></div>
@@ -287,6 +293,7 @@
   <button id="touchtoggle" type="button" aria-pressed="false" title="On-screen controller">Pad</button>
   <button id="fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9"/></svg></button>
   <button id="logtoggle" type="button" aria-pressed="false" title="Log">Log</button>
+  <button id="forgetdisc" type="button" title="Delete the disc image kept in this browser" hidden>Forget disc</button>
 </div>
 <div id="log"><div id="logfirst"></div><div id="logbody"></div></div>
 
@@ -326,7 +333,9 @@
   // Remote log: the lines also go to the server this page came from
   // (tools/serve.py --logs), batched, so a phone's log can be read on the
   // machine running the server. Turned off for good if the server says no.
-  const remote = { id: Math.random().toString(36).slice(2, 10), buf: [], sent: 0, on: true, timer: 0 };
+  const fsaStatic = (document.querySelector('meta[name="fsa-hosting"]') || {}).content === 'static';
+  window.fsaHosting = fsaStatic ? 'static' : 'server';
+  const remote = { id: Math.random().toString(36).slice(2, 10), buf: [], sent: 0, on: !fsaStatic, timer: 0 };
   function remoteQueue(line, urgent) {
     if (!remote.on || remote.sent > (4 << 20)) return;
     remote.buf.push(`${(performance.now() / 1000).toFixed(2)} ${line}`);
@@ -346,7 +355,7 @@
   // posted to tools/serve.py --diag as "<run>\t<name>\n<lines>". One run per
   // page load: <date>-<time>-<session id>.
   const diag = { run: new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15) + '-' + remote.id,
-                 bufs: new Map(), timer: 0, on: true };
+                 bufs: new Map(), timer: 0, on: !fsaStatic };
   function diagFlush(beacon) {
     clearTimeout(diag.timer); diag.timer = 0;
     if (!diag.on) return;
@@ -499,7 +508,9 @@
 
   let started = false;
   const discErrEl = document.getElementById('discerr');
-  async function startWith(disc) {
+  // file: the File the disc came from (picked or dropped), kept in OPFS once
+  // its main.dol checks out (disc_store.js); fromStore: it came from there.
+  async function startWith(disc, file, fromStore) {
     if (started) return;
     started = true;
     if (discAbort) discAbort.abort();
@@ -515,8 +526,16 @@
       discErrEl.hidden = false;
       statusEl.textContent = 'Choose your Four Swords Adventures disc image.';
       document.getElementById('file').value = '';
+      if (fromStore) { await window.fsaDiscStore.forget(); updateForget(); }
       started = false;
       return;
+    }
+    if (file && window.fsaDiscStore && window.fsaDiscStore.supported && discQuery.get('keepdisc') !== '0') {
+      log(`[disc] keeping ${file.name} (${MB(file.size)} MB) in this browser's storage…`);
+      const t0 = performance.now();
+      window.fsaDiscStore.save(file, (done, total) => log(`[disc] kept ${MB(done)} / ${MB(total)} MB`))
+        .then(() => { log(`[disc] kept in this browser (${((performance.now() - t0) / 1000).toFixed(1)} s): a reload starts without choosing it`); updateForget(); })
+        .catch((e) => { log('[disc] ' + e.message); updateForget(); });
     }
     document.body.classList.add('running');
     fit();
@@ -905,19 +924,45 @@
   const discQuery = new URLSearchParams(location.search);
   const discFromUrl = discQuery.get('iso') ? loadDiscFromUrl(discQuery.get('iso'), discQuery) : null;
   async function maybeAutoStart() {
-    if (!discFromUrl) return;
+    if (!discFromUrl) {
+      // The disc kept in this browser (disc_store.js), unless ?keepdisc=0.
+      if (!window.fsaDiscStore || discQuery.get('keepdisc') === '0') return;
+      const file = await window.fsaDiscStore.load();
+      if (file && !started) {
+        log(`[disc] using ${file.name} (${MB(file.size)} MB) kept in this browser`);
+        startWith(Module.fsaDiscFromFile(file), null, true);
+      }
+      return;
+    }
     const disc = await discFromUrl;
     if (disc) startWith(disc);
   }
+  // "Forget disc": shown while a disc image is kept in this browser.
+  const forgetBtn = document.getElementById('forgetdisc');
+  async function updateForget() {
+    const info = window.fsaDiscStore && window.fsaDiscStore.supported ? await window.fsaDiscStore.info() : null;
+    forgetBtn.hidden = !(info && info.complete);
+  }
+  forgetBtn.addEventListener('click', async () => {
+    if (!confirm('Delete the disc image kept in this browser? You will choose it again next time.')) return;
+    await window.fsaDiscStore.forget();
+    location.reload();
+  });
+  // (disc_store.js loads after this script.)
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.fsaDiscStore || !window.fsaDiscStore.supported) return;
+    document.getElementById('savednote').hidden = false;
+    updateForget();
+  });
   document.getElementById('file').addEventListener('change', (e) => {
-    if (e.target.files[0]) startWith(Module.fsaDiscFromFile(e.target.files[0]));
+    if (e.target.files[0]) startWith(Module.fsaDiscFromFile(e.target.files[0]), e.target.files[0]);
   });
   window.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragging'); });
   window.addEventListener('dragleave', () => document.body.classList.remove('dragging'));
   window.addEventListener('drop', (e) => {
     e.preventDefault();
     document.body.classList.remove('dragging');
-    if (e.dataTransfer.files[0]) startWith(Module.fsaDiscFromFile(e.dataTransfer.files[0]));
+    if (e.dataTransfer.files[0]) startWith(Module.fsaDiscFromFile(e.dataTransfer.files[0]), e.dataTransfer.files[0]);
   });
 
   // Fullscreen (with the orientation lock where the browser allows it) and the log.
@@ -938,6 +983,7 @@
     fit();
   });
 </script>
+<script src="disc_store.js"></script>
 <script src="view.js"></script>
 <script src="touch.js"></script>
 <script src="gputrace.js"></script>

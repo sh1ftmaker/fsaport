@@ -35,6 +35,8 @@ Module.fsaNetLobby = async function () {
   const discId = String.fromCharCode(...head.subarray(0, 6)) + '-' + head[7] + '-' + (await sha(await Module.fsaDisc.read(0, 1 << 20))).slice(0, 12);
 
   let relay = q.get('relay');
+  if (!relay && window.fsaHosting === 'static')
+    throw new Error('online play needs a relay server: open the page with ?relay=wss://your-relay/ (docs/NETPLAY.md)');
   if (!relay) {
     const m = /^\/lp\/\d+\//.exec(location.pathname);
     relay = m ? `wss://${location.host}/lp/8858/` : `ws://${location.hostname || '127.0.0.1'}:8858/`;
@@ -266,6 +268,8 @@ function netUi() {
     const card = document.querySelector('#curtain .card');
     if (!card || document.getElementById('fsa-net-entry')) return;
     const q = new URLSearchParams(location.search);
+    // A static host (GitHub Pages) has no relay: rooms only with ?relay=URL.
+    if (window.fsaHosting === 'static' && !q.get('relay')) return;
     const box = document.createElement('div');
     box.id = 'fsa-net-entry';
     box.style.cssText = 'margin-top:14px;padding-top:10px;border-top:1px solid rgba(128,128,128,.4);font-size:14px';
