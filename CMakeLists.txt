@@ -198,6 +198,7 @@ target_link_options(fsa PRIVATE
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_audio.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_gba.js"
+  "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_pads.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_coop.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_net.js"
   "SHELL:--pre-js ${CMAKE_SOURCE_DIR}/platform/web/fsa_net_room.js"
@@ -207,7 +208,7 @@ target_link_options(fsa PRIVATE
 set_property(TARGET fsa APPEND PROPERTY LINK_DEPENDS
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_sched.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_disc.js
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_save.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_audio.js
-  ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_gba.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_coop.js
+  ${CMAKE_SOURCE_DIR}/platform/web/fsa_harness.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_gba.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_pads.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_coop.js
   ${CMAKE_SOURCE_DIR}/platform/web/fsa_net.js ${CMAKE_SOURCE_DIR}/platform/web/fsa_net_room.js)
 # Netplay (deluxe, docs/NETPLAY.md): the static memory a rollback snapshot covers.
 add_custom_command(TARGET fsa POST_BUILD

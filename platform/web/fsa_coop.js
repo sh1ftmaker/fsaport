@@ -6,16 +6,21 @@
 //
 //   devices   keyboard set A (WASD, Space, Left Shift, E, Q, Enter, Z, C, F),
 //             keyboard set B (the arrows and . , / ; ' M and Right Shift, or the
-//             numpad), the on-screen touch pad, and each Gamepad API pad
-//             (standard mapping, as Aurora maps it: A B X Y, Start, Back = Z,
-//             shoulders L R, triggers analog, d-pad, both sticks).
+//             numpad), the on-screen touch pad, and each Gamepad API pad:
+//             Xbox / XInput pads, DualShock 4 / DualSense, Switch Pro, Joy-Cons,
+//             8BitDo and others, recognised from gamepad.id and read with the
+//             browser's "standard" mapping or a per-family raw layout
+//             (fsa_pads.js; docs/MULTIPLAYER.md "Controllers"): face buttons,
+//             Start, RB / LB = Z, analog triggers = L / R (click at full
+//             press), d-pad, left stick, right stick = C stick.
 //   follow    a device nobody has joined drives player 1. One person with any
 //             device plays exactly as before.
-//   join      Start on a gamepad that is not the one player 1 is using, set B's
-//             Start, a parked device's Start, or Join in the roster: the device
-//             becomes the next free player (P2..P4). That press does not reach
-//             the game.
-//   leave     hold Back (gamepad) / Backspace (set B) / ` (set A) for a
+//   join      Start or Guide on a gamepad that is not the one player 1 is
+//             using (or A, as the press that makes the browser show the pad),
+//             set B's Start, a parked device's Start, or Join in the roster:
+//             the device becomes the next free player (P2..P4). That press
+//             does not reach the game.
+//   leave     hold Back / View (gamepad) / Backspace (set B) / ` (set A) for a
 //             second and a half, or the roster's x, or a gamepad unplugged for
 //             three seconds. The device follows player 1 again (P1's own
 //             device stays with P1).
@@ -27,9 +32,18 @@
 // platform/coop.cpp applies at the next pad read. So moving a device between
 // players changes nothing but which inputs drive which player.
 //
+//   rumble    the game's PADControlMotor per port (platform/coop.cpp) goes to
+//             the pad playing that port: vibrationActuator 'dual-rumble'
+//             (Chrome, Edge, Safari) or hapticActuators (Firefox); stopped
+//             when the player leaves, the pad goes, or the tab is hidden.
+//
 //   ?coop=0        off: Aurora's own keyboard / gamepad routing, as before
 //   ?coop=N        start with players 1..N joined (devices still to claim)
-//   window.fsaCoop  state(), join(dev|null), leave(slot), assign(dev, slot), devices()
+//   ?rumble=0      no rumble (also the roster's Rumble toggle, remembered)
+//   ?padtest=1     the controller test panel open at start (roster: Pads)
+//   ?padface= ?deadzone= ?padjoin=   gamepad options (fsa_pads.js)
+//   window.fsaCoop  state(), join(dev|null), leave(slot), assign(dev, slot), devices(),
+//                   rumble(on?), motors(), padtest(on?)
 //
 // Off by default in harness runs (?script= / ?inputs=: the script drives the
 // pads) and in netplay rooms (each browser is one seat; its devices all drive
@@ -72,7 +86,8 @@ Module.fsaCoopInit = function () {
   const device = (id, kind, name) => {
     let d = devs.get(id);
     if (!d) {
-      d = { id, kind, name, slot: -1, st: zero(), prevStart: false, swallow: false, leaveSince: 0, lostAt: 0, last: 0 };
+      d = { id, kind, name, slot: -1, st: zero(), prevStart: false, swallow: false, leaveSince: 0, lostAt: 0, last: 0,
+            fresh: true, gp: null, gpid: '', lg: null, rumbleAt: 0, rumbling: false };
       devs.set(id, d);
     }
     return d;
@@ -137,22 +152,21 @@ Module.fsaCoopInit = function () {
     if (!enabled && realTouch) realTouch(b, sx, sy, tl, tr);
   };
 
-  // Gamepads (standard mapping, as Aurora's SDL mapping).
-  const axis = (v) => Math.round(Math.max(-1, Math.min(1, v || 0)) * 127);
-  function padState(gp) {
-    const st = zero(), b = gp.buttons || [], ax = gp.axes || [];
-    const on = (i) => !!(b[i] && (b[i].pressed || b[i].value > 0.5));
-    const MAP = [[0, P.A], [1, P.B], [2, P.X], [3, P.Y], [9, P.START], [8, P.Z], [4, P.L], [5, P.R],
-                 [12, P.UP], [13, P.DOWN], [14, P.LEFT], [15, P.RIGHT]];
-    for (const [i, bit] of MAP) if (on(i)) st.buttons |= bit;
-    st.sx = axis(ax[0]); st.sy = -axis(ax[1]); st.cx = axis(ax[2]); st.cy = -axis(ax[3]);
-    const trig = (i) => Math.round(Math.max(0, Math.min(1, b[i] ? b[i].value : 0)) * 255);
-    st.tl = trig(6); st.tr = trig(7);
-    if (st.tl > 200) st.buttons |= P.L;
-    if (st.tr > 200) st.buttons |= P.R;
-    // Dead zone, so an idle stick is not input.
-    for (const k of ['sx', 'sy', 'cx', 'cy']) if (Math.abs(st[k]) < 20) st[k] = 0;
-    return st;
+  // Gamepads: fsa_pads.js recognises the pad and reads it with the browser's
+  // standard mapping or its family's raw layout.
+  const popts = FsaPads.options(q);
+  function padRead(d, gp) {
+    if (!d.lay || d.gpid !== gp.id || d.mapping !== gp.mapping) {
+      d.lay = FsaPads.layoutFor(gp);
+      d.gpid = gp.id;
+      d.mapping = gp.mapping;
+      d.mem = {};
+      d.gmem = {};
+      log(`${d.name}: ${d.lay.info.family}, mapping "${gp.mapping}", layout ${d.lay.name}`);
+    }
+    d.gp = gp;
+    d.lg = FsaPads.read(gp, d.lay, d.mem);
+    return FsaPads.toGC(d.lg, popts, d.gmem);
   }
   const active = (st) => st.buttons || st.sx || st.sy || st.cx || st.cy || st.tl > 30 || st.tr > 30;
 
@@ -226,26 +240,47 @@ Module.fsaCoopInit = function () {
     const seen = new Set();
     for (const gp of gps) {
       if (!gp || !gp.connected) continue;
+      padSeen = true;
       const id = 'pad' + gp.index;
+      let d = devs.get(id);
+      // Another controller on a reused index: the old one is gone.
+      if (d && d.gpid && d.gpid !== gp.id) { padGone(d); d = null; }
+      // A pad that went away and came back on another index keeps its player.
+      if (!d) {
+        const back = [...devs.values()].find((x) => x.kind === 'pad' && x.lostAt && x.gpid === gp.id);
+        if (back) {
+          devs.delete(back.id);
+          if (p1Recent === back.id) p1Recent = id;
+          back.id = id;
+          devs.set(id, back);
+          if (back.slot >= 0) slots[back.slot] = id;
+          d = back;
+        }
+      }
       seen.add(id);
-      const d = device(id, 'pad', (gp.id || 'Gamepad').replace(/\s*\(.*$/, '').slice(0, 24) || 'Gamepad ' + (gp.index + 1));
-      d.lostAt = 0;
-      d.st = padState(gp);
+      if (!d) d = device(id, 'pad', FsaPads.identify(gp).name.slice(0, 24) || 'Gamepad ' + (gp.index + 1));
+      if (d.lostAt) { log(`${d.name} is back`); d.lostAt = 0; }
+      d.st = padRead(d, gp);
     }
-    for (const d of devs.values()) {
+    for (const d of [...devs.values()]) {
       if (d.kind !== 'pad' || seen.has(d.id)) continue;
       d.st = zero();
+      d.lg = null;
+      d.gp = null;
       if (!d.lostAt) d.lostAt = t;
-      if (t - d.lostAt > GRACE_MS) {  // unplugged: the player leaves
-        if (d.slot > 0) leave(d.slot);
-        else if (d.slot === 0) { slots[0] = null; d.slot = -1; }
-        devs.delete(d.id);
-        roster();
-      }
+      if (t - d.lostAt > GRACE_MS) padGone(d);  // unplugged: the player leaves
     }
     for (const d of devs.values()) {
       const st = d.st;
-      const start = !!(st.buttons & P.START);
+      // The join press: Start; on a gamepad also Guide, and A as the press
+      // that made the browser show it (?padjoin=). Held, it stays "pressed"
+      // until every one of them is up.
+      let start = !!(st.buttons & P.START);
+      if (d.kind === 'pad' && d.lg) {
+        const lg = d.lg;
+        start = (lg.start && popts.join.has('start')) || (lg.guide && popts.join.has('guide')) ||
+                (d.fresh && lg.a && popts.join.has('a')) || (d.prevStart && (lg.start || lg.guide || lg.a));
+      }
       const pressed = start && !d.prevStart;
       d.prevStart = start;
       if (pressed && d.slot < 0 && !net) {
@@ -254,17 +289,18 @@ Module.fsaCoopInit = function () {
         const p1Dev = slots[0] || p1Recent;
         if (d.kind === 'kbB' || ((d.kind === 'pad' || d.kind === 'touch') && p1Dev && p1Dev !== d.id)) join(d);
       }
-      if (active(st)) {
+      if (active(st) || (d.lg && (d.lg.guide || d.lg.back))) {
         d.last = t;
+        d.fresh = false;
         if (d.slot < 0 && !d.swallow && (!p1Recent || !(st.buttons & P.START))) p1Recent = d.id;
       }
       // Leave by holding Back / the set's leave key.
-      const leaveHeld = d.kind === 'pad' ? (st.buttons & P.Z) && padBack(d) : d.kind in LEAVE_KEY && down.has(LEAVE_KEY[d.kind]);
+      const leaveHeld = d.kind === 'pad' ? !!(d.lg && d.lg.back) : d.kind in LEAVE_KEY && down.has(LEAVE_KEY[d.kind]);
       if (leaveHeld && d.slot > 0) {
         if (!d.leaveSince) d.leaveSince = t;
         else if (t - d.leaveSince > HOLD_LEAVE_MS) { d.leaveSince = 0; leave(d.slot); }
       } else d.leaveSince = 0;
-      if (d.swallow) { if (!active(st)) d.swallow = false; }
+      if (d.swallow) { if (!active(st) && !(d.lg && d.lg.guide)) d.swallow = false; }
     }
     // The four pads. A slot in the game but without a device is a connected,
     // idle pad (its Link stands still).
@@ -284,13 +320,84 @@ Module.fsaCoopInit = function () {
       const connected = s === 0 || (joined >> s & 1) || any;
       Module._fsa_coop_pad(s, connected ? 1 : 0, acc.buttons, acc.sx, acc.sy, acc.cx, acc.cy, acc.tl, acc.tr);
     }
+    rumbleTick(t);
     tick();
   }
-  // A gamepad's Back is mapped to Z (as Aurora does); a leave needs the Back
-  // button itself, not a trigger mapped there.
-  function padBack(d) {
-    const gp = (navigator.getGamepads ? navigator.getGamepads() : [])[Number(d.id.slice(3))];
-    return !!(gp && gp.buttons[8] && gp.buttons[8].pressed);
+  function padGone(d) {
+    if (d.slot > 0) leave(d.slot);
+    else if (d.slot === 0) { slots[0] = null; d.slot = -1; }
+    if (p1Recent === d.id) p1Recent = null;
+    rumbleStop(d);
+    devs.delete(d.id);
+    log(`${d.name} disconnected`);
+    roster();
+  }
+  let padSeen = false;
+  addEventListener('gamepadconnected', (e) => {
+    padSeen = true;
+    log(`gamepad ${e.gamepad.index} connected: ${e.gamepad.id} (mapping "${e.gamepad.mapping}")`);
+    if (enabled) roster();
+  });
+  addEventListener('gamepaddisconnected', (e) => {
+    const d = devs.get('pad' + e.gamepad.index);
+    log(`gamepad ${e.gamepad.index} disconnected: ${e.gamepad.id}`);
+    if (d && !d.lostAt) { d.lostAt = now(); rumbleStop(d); d.gp = null; }
+  });
+
+  // --- Rumble ---------------------------------------------------------------------
+  // The game's motor commands per port (Module.fsaPadMotor, from
+  // platform/coop.cpp's hook in Aurora's PADControlMotor; PAD_MOTOR_STOP 0,
+  // RUMBLE 1, STOP_HARD 2) go to the pad playing that port; port 0 without an
+  // owner: the pad player 1 used last. (The game itself rumbles port 0 only:
+  // GameRoot startRumble_80134DE4 and its frame update use getGamePad(0); a
+  // multiplayer player is a GBA, which has no motor.) A GameCube pad has one
+  // on/off motor; here it is both motors of a dual-rumble pad, strong 0.6 and
+  // weak 0.4 (Aurora's default intensity is 0.5 / 0.5, pad.cpp
+  // m_rumbleIntensityLow/High). While on, the effect is renewed every 150 ms
+  // for 250 ms (Chrome caps an effect at 5 s, and a stop that never comes must
+  // not leave a pad buzzing).
+  const motor = [0, 0, 0, 0];
+  let rumbleOn = q.get('rumble') !== '0';
+  try { if (q.get('rumble') === null && localStorage.getItem('fsaRumble') === '0') rumbleOn = false; } catch (e) {}
+  let rumbleCalls = 0;
+  Module.fsaPadMotor = (chan, cmd) => {
+    if (chan >= 0 && chan < SLOTS) motor[chan] = cmd === 1 ? 1 : 0;
+  };
+  function actuate(d, on) {
+    const gp = d.gp;
+    if (!gp) return;
+    try {
+      const va = gp.vibrationActuator;
+      if (va && va.playEffect && (!va.effects || va.effects.includes('dual-rumble'))) {
+        rumbleCalls++;
+        if (on) va.playEffect('dual-rumble', { startDelay: 0, duration: 250, strongMagnitude: 0.6, weakMagnitude: 0.4 }).catch(() => {});
+        else if (va.reset) va.reset().catch(() => {});
+        else va.playEffect('dual-rumble', { startDelay: 0, duration: 0, strongMagnitude: 0, weakMagnitude: 0 }).catch(() => {});
+        return;
+      }
+      const ha = gp.hapticActuators && gp.hapticActuators[0];
+      if (ha && ha.pulse) { rumbleCalls++; ha.pulse(on ? 0.6 : 0, on ? 250 : 0); }
+    } catch (e) {}
+  }
+  function rumbleStop(d) { if (d.rumbling) { actuate(d, false); d.rumbling = false; } }
+  function rumbleTick(t) {
+    const hidden = document.hidden;
+    for (const d of devs.values()) {
+      if (d.kind !== 'pad') continue;
+      const port = d.slot >= 0 ? d.slot : d.id === p1Recent && !slots[0] ? 0 : -1;
+      const want = rumbleOn && !hidden && !d.lostAt && port >= 0 && motor[port] === 1;
+      if (want && (!d.rumbling || t - d.rumbleAt > 150)) { actuate(d, true); d.rumbling = true; d.rumbleAt = t; }
+      else if (!want && d.rumbling) rumbleStop(d);
+    }
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) for (const d of devs.values()) rumbleStop(d); });
+  function setRumble(on) {
+    rumbleOn = !!on;
+    try { localStorage.setItem('fsaRumble', rumbleOn ? '1' : '0'); } catch (e) {}
+    if (!rumbleOn) for (const d of devs.values()) rumbleStop(d);
+    log('rumble ' + (rumbleOn ? 'on' : 'off'));
+    roster(true);
+    return rumbleOn;
   }
 
   // --- Roster -------------------------------------------------------------------
@@ -324,7 +431,7 @@ Module.fsaCoopInit = function () {
       if (s === 0 && !id) dev = dev + (devs.size > 1 ? ' (all free devices)' : '');
       rows.push([s, dev, !id && s > 0]);
     }
-    const key = JSON.stringify(rows) + (now() < hintUntil);
+    const key = JSON.stringify(rows) + (now() < hintUntil) + padSeen + rumbleOn + !!testPanel;
     if (key === lastRoster && !force) return;
     lastRoster = key;
     box.replaceChildren();
@@ -345,23 +452,116 @@ Module.fsaCoopInit = function () {
       }
       box.append(r);
     }
-    if (!net && freeSlot() >= 0) {
-      const j = document.createElement('button');
-      j.textContent = '+ Join';
-      j.title = 'A new player with the touch pad (or press Start on a gamepad, ; on the keyboard)';
-      j.onclick = () => { if (!join(touch)) { const d = [...devs.values()].find((x) => x.slot < 0 && x.id !== p1Recent); if (d) join(d); } };
-      box.append(j);
-      if (now() < hintUntil) {
-        const h = document.createElement('div');
-        h.className = 'hint';
-        h.textContent = 'Join: Start on another gamepad, ; (arrow keys player), or + Join';
-        box.append(h);
-      }
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const btn = (text, title, fn, on) => {
+      const b = document.createElement('button');
+      b.textContent = text;
+      b.title = title;
+      if (on !== undefined) b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.onclick = fn;
+      bar.append(b);
+    };
+    if (!net && freeSlot() >= 0)
+      btn('+ Join', 'A new player with the touch pad (or press Start / Guide on a gamepad, ; on the keyboard)',
+          () => { if (!join(touch)) { const d = [...devs.values()].find((x) => x.slot < 0 && x.id !== p1Recent); if (d) join(d); } });
+    if (padSeen) btn(rumbleOn ? 'Rumble on' : 'Rumble off', 'Controller rumble (?rumble=0 turns it off)', () => setRumble(!rumbleOn), rumbleOn);
+    btn('Pads', 'Controller test: each pad\'s raw buttons and axes and what the game gets', () => padtest(!testPanel), !!testPanel);
+    box.append(bar);
+    // Browsers show no gamepad to a page until one of its buttons is pressed.
+    if (!padSeen && navigator.getGamepads) {
+      const h = document.createElement('div');
+      h.className = 'hint';
+      h.textContent = 'Controller? Press any button on it to connect it';
+      box.append(h);
+    }
+    if (!net && freeSlot() >= 0 && now() < hintUntil) {
+      const h = document.createElement('div');
+      h.className = 'hint';
+      h.textContent = 'Join: Start or Guide on another gamepad, ; (arrow keys player), or + Join';
+      box.append(h);
     }
   }
   function tick() {
     roster();
   }
+
+  // --- Controller test panel (?padtest=1, roster: Pads) ----------------------------
+  // Each pad the browser shows: its id, mapping and the layout read with, the
+  // raw buttons (lit when pressed, analog value under it) and axes, the GameCube
+  // pad it makes and the player it drives, and a rumble test.
+  let testPanel = null;
+  function padtest(on) {
+    if (on === undefined) return !!testPanel;
+    if (!on) { if (testPanel) { clearInterval(testPanel.timer); testPanel.el.remove(); testPanel = null; } roster(true); return false; }
+    if (testPanel) return true;
+    const el = document.createElement('div');
+    el.id = 'padtest';
+    el.innerHTML = '<div class="hd"><b>Controllers</b> <span class="sub">press a button on a pad to show it</span>' +
+                   '<button type="button" class="x" title="Close">×</button></div><div class="pads"></div>';
+    el.querySelector('.x').onclick = () => padtest(false);
+    document.body.append(el);
+    const list = el.querySelector('.pads');
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const draw = () => {
+      const gps = [...(navigator.getGamepads ? navigator.getGamepads() : [])].filter((g) => g && g.connected);
+      if (!gps.length) { list.innerHTML = '<div class="none">No controller yet. Browsers show a pad only after one of its buttons is pressed on this page.</div>'; return; }
+      list.innerHTML = gps.map((gp) => {
+        const d = devs.get('pad' + gp.index);
+        const lay = d && d.lay ? d.lay : FsaPads.layoutFor(gp);
+        const st = d ? d.st : FsaPads.toGC(FsaPads.read(gp, lay, {}), popts, {});
+        const who = !d ? '' : d.slot >= 0 ? `P${d.slot + 1}` : d.id === p1Recent || !p1Recent ? 'P1 (follows)' : 'free (Start / Guide joins)';
+        const col = d && d.slot >= 0 ? COLORS[d.slot] : '#888';
+        const bs = [...gp.buttons].map((b, i) => `<span class="b${b.pressed ? ' on' : ''}" title="button ${i}">${i}` +
+                     (b.value > 0 && b.value < 1 ? `<i>${b.value.toFixed(2)}</i>` : '') + '</span>').join('');
+        const as = [...gp.axes].map((v, i) => `<span class="a" title="axis ${i}"><em style="left:${(Math.max(-1, Math.min(1, v)) + 1) * 50}%"></em>` +
+                     `<i>${i}: ${v.toFixed(2)}</i></span>`).join('');
+        const lg = d && d.lg ? Object.keys(d.lg).filter((k) => d.lg[k] === true).join(' ') : '';
+        return `<div class="pad" style="--c:${col}"><div class="t"><b>#${gp.index}</b> ${esc(gp.id)}</div>` +
+               `<div class="m">mapping "${esc(gp.mapping)}" · ${esc(lay.info.family)} · layout <b>${esc(lay.name)}</b>` +
+               ` · <span style="color:${col}">${esc(who)}</span>` +
+               `${d && d.rumbling ? ' · <b>rumbling</b>' : ''}${gp.vibrationActuator || gp.hapticActuators ? '' : ' · no rumble API'}</div>` +
+               `<div class="row">${bs}</div><div class="row">${as}</div>` +
+               `<div class="gc">GameCube: <b>${FsaPads.buttonNames(st.buttons).join(' ') || '-'}</b>` +
+               ` stick ${st.sx},${st.sy} C ${st.cx},${st.cy} L ${st.tl} R ${st.tr}` +
+               (lg ? ` <span class="sub">(${esc(lg)})</span>` : '') + '</div>' +
+               `<button type="button" data-rumble="${gp.index}">Test rumble</button></div>`;
+      }).join('');
+    };
+    list.addEventListener('click', (e) => {
+      const i = e.target.dataset && e.target.dataset.rumble;
+      if (i === undefined) return;
+      const d = devs.get('pad' + i);
+      if (d) { actuate(d, true); setTimeout(() => actuate(d, false), 400); }
+    });
+    draw();
+    testPanel = { el, timer: setInterval(draw, 100) };
+    roster(true);
+    return true;
+  }
+  const css3 = document.createElement('style');
+  css3.textContent = `
+#coop .bar{display:flex;gap:3px;justify-content:flex-end;flex-wrap:wrap}
+#coop button[aria-pressed=false]{opacity:.7}
+#padtest{position:fixed;left:50%;top:44px;transform:translateX(-50%);z-index:70;width:min(720px,calc(100vw - 32px));
+  max-height:calc(100vh - 60px);overflow:auto;background:rgba(14,16,20,.94);color:#e6e6e6;border:1px solid #444;
+  border-radius:8px;padding:8px 10px;font:12px/1.35 system-ui,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+#padtest .hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+#padtest .hd .x{margin-left:auto}
+#padtest .sub{opacity:.65}
+#padtest button{font:inherit;padding:2px 8px;border-radius:4px;border:1px solid #555;background:#222;color:#ddd;cursor:pointer}
+#padtest .pad{border-left:4px solid var(--c);padding:4px 8px;margin:6px 0;background:rgba(255,255,255,.04);border-radius:4px}
+#padtest .t{font-weight:600;word-break:break-all}
+#padtest .m,#padtest .gc{margin:2px 0}
+#padtest .row{display:flex;flex-wrap:wrap;gap:3px;margin:3px 0}
+#padtest .b{min-width:22px;text-align:center;border:1px solid #555;border-radius:4px;padding:1px 2px;font-variant-numeric:tabular-nums}
+#padtest .b.on{background:var(--c);color:#000;border-color:var(--c)}
+#padtest .b i,#padtest .a i{display:block;font-style:normal;font-size:10px;opacity:.8}
+#padtest .a{position:relative;width:84px;height:28px;border:1px solid #555;border-radius:4px;overflow:hidden}
+#padtest .a em{position:absolute;top:0;bottom:0;width:3px;margin-left:-1px;background:var(--c)}
+#padtest .a i{position:absolute;left:4px;bottom:1px}
+#padtest .none{opacity:.75;padding:6px 0}`;
+  document.head.append(css3);
 
   // --- GBA views on the shared screen ---------------------------------------------
   // In multiplayer a player in a house, cave or the underground sees that room
@@ -457,13 +657,18 @@ Module.fsaCoopInit = function () {
   }
 
   window.fsaCoop = {
-    state: () => ({ joined, slots: slots.slice(), devices: [...devs.values()].map((d) => ({ id: d.id, kind: d.kind, name: d.name, slot: d.slot })) }),
+    state: () => ({ joined, slots: slots.slice(), devices: [...devs.values()].map((d) => ({ id: d.id, kind: d.kind, name: d.name, slot: d.slot,
+      layout: d.lay ? d.lay.name : undefined, family: d.lay ? d.lay.info.family : undefined,
+      rumbling: d.rumbling || undefined, lost: !!d.lostAt || undefined, pad: d.kind === 'pad' ? d.st : undefined })) }),
     devices: () => [...devs.keys()],
     join: (id, slot) => join(id ? devs.get(id) || device(id, 'virtual', id) : touch, slot),
     leave,
     assign,
     request,
     poll,
+    rumble: (on) => (on === undefined ? rumbleOn : setRumble(on)),
+    motors: () => ({ motor: motor.slice(), calls: rumbleCalls }),
+    padtest,
     colors: COLORS,
   };
 
@@ -481,6 +686,7 @@ Module.fsaCoopInit = function () {
   const loop = () => { poll(); requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
   setInterval(() => { if (document.hidden) poll(); }, 50);  // rAF stops in a hidden tab
-  log('on: devices follow P1; press Start on another gamepad (or ; ) to join');
+  log('on: devices follow P1; press Start or Guide on another gamepad (or ; ) to join');
   roster(true);
+  if (q.get('padtest') === '1') padtest(true);
 };

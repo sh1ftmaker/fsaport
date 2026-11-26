@@ -819,8 +819,15 @@ uint32_t PADRead(PADStatus* status) {
   return rumbleSupport;
 }
 
+// The port (fsaport platform/coop.cpp): while local co-op routes the devices,
+// the page drives each player's rumble; 1 = handled there.
+extern "C" int fsa_pad_motor(int32_t chan, uint32_t command);
+
 void PADControlMotor(int32_t chan, uint32_t command) {
   AURORA_HOST_ALLOC;
+  if (fsa_pad_motor(chan, command)) {
+    return;
+  }
   auto controller = aurora::input::get_controller_for_player(chan);
   auto instance = aurora::input::get_instance_for_player(chan);
   if (controller == nullptr) {

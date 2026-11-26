@@ -441,24 +441,27 @@ Every connected device is a potential player:
 |---|---|---|---|
 | keyboard set A | WASD, Space A, Left Shift B, E X, Q Y, Enter Start, Z L, C R, F Z (the old port-0 keys, arrows excepted) | (it is player 1's by default) | `` ` `` |
 | keyboard set B | arrows, `.` A, `,` B, `/` X, M Y, `;` Start, `'` Z, L L, Right Shift R; or the numpad (8456, 0 A, . B, 1 X, 2 Y, Enter Start) | `;` / Numpad Enter | Backspace |
-| each Gamepad API pad | standard mapping as Aurora maps it (A B X Y, Start, Back = Z, shoulders / triggers L R, d-pad, sticks) | Start | Back |
+| each Gamepad API pad (Xbox / XInput, DualShock 4 / DualSense, Switch Pro, Joy-Cons, 8BitDo, others; [Controllers](#controllers-fsa_padsjs)) | A B X Y, Start, RB / LB = Z, triggers = analog L R (click at full press), d-pad, left stick, right stick = C stick | Start or Guide (or A, as the press that makes the browser show the pad) | Back / View |
 | the touch pad | the on-screen controller | **+ Join** in the roster, or its START once someone else is P1 | the roster's × |
 
 - **Follow.** A device nobody has joined drives player 1. One person with any
   device, or several devices for one person, plays as before. The first
   device anyone uses is P1's.
-- **Drop in.** Start on a gamepad (or the touch pad) that is not P1's, set B's
-  Start, or **+ Join**: the device becomes the next free player (P2-P4); that
-  Start does not reach the game. From then on P1's own device is P1's (it no
-  longer collects every free device).
+- **Drop in.** Start or Guide on a gamepad (or Start on the touch pad) that is
+  not P1's, A as a gamepad's first press, set B's Start, or **+ Join**: the
+  device becomes the next free player (P2-P4); that press does not reach the
+  game. From then on P1's own device is P1's (it no longer collects every free
+  device).
 - **Drop out.** Hold Back / the set's leave key, press × in the roster, or
   unplug a gamepad for 3 s. The device follows P1 again.
 - **Roster.** Top right: P1-P4 in the Links' colours (green, red, blue, purple)
-  with each player's device, × to remove one, + Join while a player is free.
+  with each player's device, × to remove one, + Join while a player is free,
+  **Rumble on/off** once a pad is seen, **Pads** (the controller test), and
+  "Controller? Press any button on it to connect it" until a pad is seen.
 - `?coop=0` turns it off (Aurora's own keyboard / gamepad routing, as before);
   `?coop=N` starts with N players wanted (their GBAs are plugged at boot, so the
   menus offer N players); `window.fsaCoop` has `state()`, `join(dev, slot)`,
-  `leave(slot)`, `assign(dev, slot)`.
+  `leave(slot)`, `assign(dev, slot)`, `rumble(on)`, `motors()`, `padtest(on)`.
 
 Only two things cross into the game: the four `PADStatus` of each pad read
 (`fsa_coop_pad`; `platform/coop.cpp` replaces what Aurora read, before the
@@ -467,6 +470,178 @@ Moving a device between players therefore changes nothing but which input
 drives which port. The page is off in harness runs (the script drives the
 pads; its `set` steps `coop_join` / `coop_leave` make the requests) and limited
 in netplay rooms (below).
+
+### Controllers (`fsa_pads.js`)
+
+In a browser every controller arrives through the Gamepad API. Two things make
+that unreliable as it stood (the device core read every pad as W3C "standard"):
+
+- **Mappings.** Chrome and Edge on Windows read Xbox and XInput-mode pads
+  through XInput and report `mapping: "standard"` (id
+  `Xbox 360 Controller (XInput STANDARD GAMEPAD)`, no vendor id, at most four
+  pads: XInput's limit). Chromium also maps the devices in its
+  `gamepad_standard_mappings_{linux,mac,win}.cc` and its own Switch / Joy-Con
+  driver; Firefox remaps a list of its own (`dom/gamepad/GamepadRemapping.cpp`)
+  and reports XInput pads on Windows as id `xinput`, standard; Safari maps what
+  GameController.framework knows. Everything else comes as `mapping: ""`: the
+  device's raw order, which depends on the OS driver (Firefox on Linux reads
+  an Xbox pad through xpad: Start is button 7, the triggers are axes 2 / 5
+  resting at -1, the d-pad axes 6 / 7).
+- **Visibility.** Browsers show no pad to a page until one of its buttons is
+  pressed after the page loaded (fingerprinting protection); then
+  `gamepadconnected` fires and the pad is in `navigator.getGamepads()`.
+
+`platform/web/fsa_pads.js` (pure functions; `fsa_coop.js` calls them per pad
+and frame, `tools/pads_test.mjs` in node) does the reading:
+
+1. **Recognise** the pad from `gamepad.id`, in each browser's format (Chrome
+   `... (STANDARD GAMEPAD Vendor: 045e Product: 0b13)`, Firefox
+   `045e-028e-name`, Safari `45e-b13-name`, `xinput`, `XInput STANDARD
+   GAMEPAD`, names with Xbox / X-Box): Microsoft 045e and the XInput third
+   parties (PDP 0e6f, Hori 0f0d, PowerA 24c6 / 20d6, Mad Catz 0738, Razer 1532,
+   Nacon 146b, Hyperkin 2e24, Logitech F310 / F510 / F710 in XInput mode) are
+   Xbox; Sony 054c PlayStation; Nintendo 057e Switch Pro, or Joy-Con L / R /
+   pair by product; 8BitDo 2dc8 (in XInput mode an 8BitDo reports 045e:028e
+   and is an Xbox pad).
+2. **Layout.** `mapping: "standard"` is read as the W3C layout whatever the
+   family. A raw pad is read with its family's layout for the OS, from SDL's
+   community database (gamecontrollerdb.txt; SDL enumerates evdev and HID in
+   the order the browsers do, so its `bN` / `aN` are `buttons[N]` /
+   `axes[N]`); each table in the file names the GUID it is from. Unknown pads
+   get a generic guess (W3C button order, axes 0-3 the sticks).
+3. **The hat.** Raw HID d-pads differ by browser: Chrome reports a hat
+   switch as one axis (axis 9: HID usages from X 0x30 to hat 0x39 are axes
+   0-9), eight directions as -1 .. 1 in steps of 2/7 and 9/7 at rest; Firefox
+   adds four buttons after the others (up, right, down, left); Linux evdev
+   gives two axes (-1 / 0 / 1). The reader finds whichever is there.
+4. **Triggers.** An axis trigger rests at -1; Linux and Chrome report 0 for
+   an axis that has sent no event yet, which would read as half pressed, so an
+   axis trigger counts only once it has been seen anywhere but 0. Combined
+   DirectInput trigger axes (LT +, RT -) and digital triggers (Switch ZL / ZR,
+   some 8BitDo firmware) are read too.
+
+| family | ids | standard mapping from | raw layouts (`mapping: ""`) | source |
+|---|---|---|---|---|
+| Xbox 360 / One / Series, XInput pads | 045e, XInput third parties, `xinput`, `XInput STANDARD GAMEPAD` | Chrome / Edge Windows (XInput), Chrome Linux / macOS (known PIDs), Firefox Windows (`xinput`) and its Xbox One S BT remap, Safari | `xbox-linux` (xpad: Back 6, Start 7, Guide 8, LT / RT axes 2 / 5, d-pad axes 6 / 7), `xbox-mac-usb` (360Controller driver: d-pad buttons 11-14, Start 8, Back 9, Guide 10), `xbox-mac-bt` (One S / Series Bluetooth: X 3, Y 4, LB 6, RB 7, View 10, Menu 11, Guide 12, RT / LT axes 4 / 5, hat), `xbox-win-hid` (DirectInput: one trigger axis 2, hat) | gamecontrollerdb `030000005e0400008e02000004010000` (Linux), `…8e02000000000000` (Mac OS X, Windows), `030000005e040000130b000011050000` (Mac OS X) |
+| DualShock 4 / DualSense | 054c 05c4 / 09cc / 0ba0 / 0ce6 / 0df2 | Chrome, Firefox (remap), Safari | `ps-linux` (hid-sony / hid-playstation: cross 0, circle 1, triangle 2, square 3, L2 / R2 axes 2 / 5, d-pad axes 6 / 7), `ps-hid` (Windows / macOS HID: square 0, cross 1, circle 2, triangle 3, L2 / R2 axes 3 / 4, right stick 2 / 5, hat) | `030000004c050000c405000000810000`, `…e60c000011810000` (Linux), `…c405000000000000` (Windows / Mac OS X) |
+| Switch Pro | 057e 2009 | Chrome (own driver), Firefox (remap), Safari | `switch-linux` (hid-nintendo: ZL / ZR buttons 7 / 8, + 10, d-pad axes 4 / 5), `switch-hid` (ZL / ZR 6 / 7, + 9, hat) | `030000007e0500000920000011810000` (Linux), `…0920000000000000` (Windows / Mac OS X) |
+| Joy-Con | 057e 2006 / 2007 / 200e | Chrome (pair as one pad) | `joycon-pair` (Linux joycond "Combined Joy-Cons"), `joycon-l` / `joycon-r` (one held sideways: its face buttons, SL / SR, the stick a hat) | `060000007e0500000620000000000000`, `030000007e0500000620000001000000`, `…0720000000000000` |
+| 8BitDo (D-input mode) | 2dc8 | Firefox (remap), Chrome for some PIDs | `8bitdo-linux` (b1 A / b0 B, Y 3, X 4, LB 6, RB 7, triggers axes 5 / 4 or buttons 8 / 9, hat), `8bitdo-hid` (triggers buttons 8 / 9, right stick 3 / 4) | `03000000c82d00000660000011010000`, `03000000c82d00001590000011010000` (Linux), `03000000c82d00000660000000000000` (Windows) |
+| anything else | | | `generic` (W3C button order, axes 0 / 1 and 2 / 3, the hat found at run time) | a guess |
+
+(gamecontrollerdb as of `01af257a`, 2026-11-26. SDL's names are positional:
+`a` is the bottom face button whatever is printed on it.)
+
+**GameCube mapping.** Positional, as Aurora's SDL mapping: bottom face button
+(Xbox A, cross, Nintendo B) -> **A**, right (Xbox B) -> **B**, left (Xbox X)
+-> **X**, top -> **Y**. On an Xbox pad the letters are then the GameCube's; the
+GameCube itself has B left of A and X right of it, so `?padface=gc` maps by
+those positions instead (left / Xbox X -> B, right / Xbox B -> X). Menu /
+Start / Options / + -> **START**; **RB -> Z** (LB too: the GameCube has one
+shoulder button; Aurora maps Back to Z, here Back / View is the leave button
+only); LT / RT -> **L / R analog** 0-255 (a 4 % rest band) with the digital
+**L / R click at 90 %** of travel (released below 80 %; Aurora clicks at 95 %);
+the left stick -> main stick, the right stick -> **C stick**; d-pad -> d-pad;
+**Guide / Xbox / PS / Home** (button 16 where the browser exposes it) joins and
+never reaches the game; **Back / View held 1.5 s** leaves.
+
+**Sticks.** A radial dead zone of 15 % (`?deadzone=`, 0-0.5), then scaled so
+the first step past it is 16 of 127, just past the 15 that `PADClamp` (Aurora
+`ClampRegion`, which `JUTGamePad::read` applies after the page's values) cuts
+itself, and full at 95 % of the throw (the Xbox's round gate rarely reaches
+1.0 on an axis). The direction is kept, y flipped to the GameCube's up-positive.
+So a resting stick with the usual drift (< 10 %) is centre, the game's
+stick-as-d-pad threshold (`sPressPoint` 0.5) falls about half way as on a
+GameCube stick, and full deflection reaches the clamp's 72. (Aurora's own path
+cuts at 8000 / 32768 = 24 % without rescaling; the touch pad cuts 16 % of
+its radius, rescaled.)
+
+**Joining** (`?padjoin=`, default `start,guide,a`): a pad that is not P1's
+joins with Start or Guide; with A only as its first press, the one that made
+the browser show it, so picking up a new pad and pressing A (as people do) is
+a join, while A on a pad that is already there and free is a normal press for
+P1. The press is swallowed until every button of the pad is up. With no other
+device used yet, the first pad is P1's and its press is game input as before.
+`gamepadconnected` / `gamepaddisconnected` are followed: a pad that goes keeps
+its player for 3 s (an unplug and replug, Bluetooth hiccups; the same
+controller coming back on another index is recognised by its id); after that
+the player leaves. Another controller on a reused index is a new device. Up to
+four players (the game's limit; Chrome on Windows also shows at most four
+XInput pads); a fifth device follows P1.
+
+**Rumble.** The game's `PADControlMotor` (via `JUTGamePad::CRumble`) is
+hooked at the top of Aurora's `PADControlMotor` (`extern/aurora/lib/dolphin/
+pad/pad.cpp` -> `fsa_pad_motor`, `platform/coop.cpp`): while co-op is on, the
+command of port p goes to the page (`Module.fsaPadMotor`) instead of SDL, and
+the page drives the pad playing port p (port 0 with no owner: the pad P1 used
+last): `vibrationActuator.playEffect('dual-rumble', {strongMagnitude 0.6,
+weakMagnitude 0.4, duration 250 ms})` renewed every 150 ms while the motor is
+on (Chrome, Edge, Safari; Firefox's `hapticActuators[0].pulse()` where present),
+`reset()` when it stops, the player leaves, the pad goes, the tab is hidden or
+rumble is turned off (`?rumble=0`, the roster's **Rumble** button, remembered in
+the browser). With co-op off Aurora rumbles through SDL as before. Note: the
+game rumbles **port 0 only** (`startRumble_80134DE4` and the frame update use
+`getGamePad(0)`; hits, landings, bombs, bosses); in multiplayer the other
+players were GBAs, which have no motor, so only P1's pad rumbles in play. The
+per-port routing is there for any port the game does drive.
+
+**Test view.** `?padtest=1` or the roster's **Pads**: each pad the browser
+shows, with its id, mapping, family and layout, the raw buttons (lit, analog
+values) and axes, the GameCube pad it makes, the player it drives, whether it
+is rumbling, and a **Test rumble** button. For players to check a pad, and for
+reports of a pad that maps wrongly (its id, mapping and raw indices are all
+there).
+
+**Browser notes.**
+
+- Chrome / Edge on Windows: Xbox and XInput-mode pads (8BitDo X mode,
+  Logitech at X) are standard; Guide is not exposed (Windows keeps it for the
+  Game Bar), so those pads join with Start (or A as the first press). Other
+  pads come through raw input / HID with Chrome's hat axis.
+- Firefox: XInput pads on Windows are `xinput`, standard. On Linux and macOS
+  Xbox pads are usually raw: the `xbox-linux` / `xbox-mac-*` layouts apply;
+  rumble needs `dom.gamepad.haptic_feedback.enabled` (off by default), so
+  Firefox usually has none.
+- Safari (macOS / iPadOS): what GameController.framework supports is standard
+  (Xbox, PlayStation, Switch Pro, MFi); rumble through `vibrationActuator`
+  where Safari has it.
+- Linux Chrome: known pads standard (Chromium's table), others evdev raw.
+- Every browser: no pad until a button is pressed on the page (the hint);
+  `gamepadconnected` then fires. A tab in the background gets no input.
+
+**Verified** (no physical controller was available here: nothing was tested
+on real hardware or in Firefox / Safari):
+
+- `node tools/pads_test.mjs`: 264 checks on synthetic Gamepad snapshots built
+  as each browser reports each family (ids in the Chrome / Firefox / Safari
+  formats; every layout's buttons one by one; Xbox standard and the four raw
+  Xbox layouts; DualShock 4 / DualSense, Switch Pro, Joy-Con pair and single,
+  8BitDo, generic; Chrome's hat axis, Firefox's d-pad buttons, evdev hat
+  axes; untouched trigger axes; the combined trigger axis; dead zone and
+  scaling; trigger click hysteresis; options).
+- `tools/web_pads_test.mjs` (headless Chromium, fake pads over CDP: a replaced
+  `navigator.getGamepads`, `gamepadconnected` / `gamepaddisconnected` events,
+  stub `vibrationActuator`s; `?stage=1-0`): 35 / 35 checks
+  (`logs/xinput/live/result.json` in the main checkout). The hint without a
+  pad; an XInput pad ("standard") revealed with A plays P1 (stick, RT analog +
+  R click, RB = Z on port 0); a raw Xbox pad (Firefox / Linux layout,
+  mapping "") joins with Start as P2 (the Start reaches no port; A, LT axis
+  -> L 255 + click, d-pad axis, right stick on port 1 only); a standard Series
+  pad joins with Guide (P3); a raw DualSense joins with its first press
+  (cross, swallowed) as P4; four players in the game (mask 0xF); the game's
+  own rumble request (`Module._fsa_debug_rumble(1)`, through `CRumble` and
+  `PADControlMotor`) gives pad 0 five renewed `dual-rumble` effects over
+  ~0.66 s and a `reset()`, no other pad; port 2's motor reaches pad 2 and
+  stops when P3 holds View and leaves; Rumble off -> no effects; View held
+  0.8 s keeps P2, 2 s leaves (out of the game), Start rejoins; a pad unplugged
+  1 s keeps P4 and its replug press is not a join, unplugged 4 s P4 leaves;
+  a Switch Pro on the reused index is a new device and joins with +; the test
+  panel lists the four pads with the mapped state.
+- Nobody using it: `stage_1_0.json` (`fast=1`, `nosave=1`, harness, so the
+  device core is off) on this build and on deluxe 485788b built in the same
+  worktree: sync 908 / 908, state 904 / 904 identical over 27,878 reads
+  (`logs/diag-xinput/20261126-172843-c69j7oj6` vs `-173952-23s2cmgq`, and vs
+  `-175116-fsmcqvpz` from the final build with the rumble test hook).
 
 ### What the game allows, and the hook (`game/src/port/coop_game.cpp`)
 

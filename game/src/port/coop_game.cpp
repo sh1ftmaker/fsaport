@@ -53,6 +53,7 @@
 #include "game/PlayerBit.h"
 #include "game/cls_804B13D4.h"
 #include "JSystem/J2D/J2DScreen.h"
+#include "game/GameState.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -351,6 +352,20 @@ void fsa_coop_game_frame() {
         sLast7e = r->field_0x7e;
         note("state", -1);
     }
+}
+
+// Testing the rumble path (tools/web_pads_test.mjs): the game's own rumble
+// request, as a hit or a landing makes it (GameRoot startRumble_80134DE4;
+// kind 1 = 30 frames on port 0, run by the frame update fn_80137300 through
+// JUTGamePad::CRumble and PADControlMotor). Only the page calls it, on demand.
+// Returns the game's rumble option (lbl_80529DEC.field_0x246; 0 = off, no
+// rumble), or -1 before the game root exists.
+__attribute__((used, visibility("default"))) int fsa_debug_rumble(int kind) {  // EMSCRIPTEN_KEEPALIVE
+    if (gGameRoot_8053AAF8 == NULL) {
+        return -1;
+    }
+    gGameRoot_8053AAF8->startRumble_80134DE4(kind, 0);
+    return lbl_80529DEC.field_0x246;
 }
 
 }  // extern "C"

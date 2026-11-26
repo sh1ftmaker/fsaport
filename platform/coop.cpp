@@ -77,6 +77,18 @@ void platform_coop_pads(PADStatus* status) {
   memcpy(status, g_pads, sizeof(g_pads));
 }
 
+// Aurora's PADControlMotor, first: while co-op is on, the page owns the
+// devices, so the game's motor command for a port goes to the page, which
+// forwards it to the controller playing that port (fsa_coop.js, "Rumble");
+// Aurora's own SDL rumble (by its own port routing) is skipped. Off: 0, and
+// Aurora rumbles as before. Nothing in the game reads anything back.
+int fsa_pad_motor(s32 chan, u32 command) {
+  if (!g_on)
+    return 0;
+  EM_ASM({ if (Module.fsaPadMotor) Module.fsaPadMotor($0, $1); }, chan, command);
+  return 1;
+}
+
 // fsa_pad_after_read, after the harness: joins and leaves (coop_game.cpp).
 void platform_coop_frame() { fsa_coop_game_frame(); }
 
