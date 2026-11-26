@@ -1,0 +1,358 @@
+{
+ "version": 1,
+ "comment": "local co-op (deluxe): P2 joins before the menus, then mp_2_stage_1_0.json (the 2-player game picked on the player-count screen)",
+ "steps": [
+  {
+   "comment": "a second player joins at boot: the page plugs GBAs into ports 0 and 1, so the menus offer a 2-player game (no ?gba)",
+   "set": {
+    "coop_join": 1
+   }
+  },
+  {
+   "comment": "0: boot loader until the title (mode 1)",
+   "wait": {
+    "mode": 1
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "1: title: START until the main menu (mode 2)",
+   "press": [
+    "START"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 2
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "2: main menu: A on Hyrulean Adventure, then A on its START! button, until the file select (mode 3)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 3
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "3: file select: wait for the 'create a file for this game on the Memory Card in Slot A?' prompt (state 7)",
+   "wait": {
+    "lbl_8053ADB0->mState": 7
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "4: move its cursor to Yes (field_0x114 0)",
+   "press": [
+    "LEFT"
+   ],
+   "every": 10,
+   "until": {
+    "lbl_8053ADB0->field_0x114": 0
+   },
+   "timeout": 300
+  },
+  {
+   "comment": "5: A on Yes: state 8 writes the file, state 9 waits for the card",
+   "press": [
+    "A"
+   ],
+   "every": 10,
+   "until": {
+    "lbl_8053ADB0->mState": [
+     8,
+     9,
+     10
+    ]
+   },
+   "timeout": 300
+  },
+  {
+   "comment": "6: until the card write is done ('file created' message, state 10)",
+   "wait": {
+    "lbl_8053ADB0->mState": 10
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "7: the message closes by itself; wait for the file rows (state 5, picking a file)",
+   "wait": {
+    "lbl_8053ADB0->mState": 5
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "8: A on file 1, then A on its menu, until the stage loader (mode 4)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "mode": 4
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "player count (mode 4): wait for its menu (state 3) with every GBA counted as connected",
+   "wait": {
+    "lbl_8053AD98->field_0x4->field_0x1d4": 3,
+    "lbl_8053AD98->field_0x4->field_0x1d0": 2
+   },
+   "timeout": 1200
+  },
+  {
+   "comment": "DOWN until the cursor is on the 2-player game",
+   "press": [
+    "DOWN"
+   ],
+   "every": 20,
+   "until": {
+    "lbl_8053AD98->field_0x4->field_0x1bc": 1
+   },
+   "timeout": 600
+  },
+  {
+   "comment": "A on the 2-player game and what follows until the stage is chosen (8-3, the opening)",
+   "press": [
+    "A"
+   ],
+   "every": 30,
+   "until": {
+    "stage": 8,
+    "level": 3
+   },
+   "timeout": 1500
+  },
+  {
+   "comment": "enter stage 1-0 instead of the opening, as stage_1_0.json does",
+   "set": {
+    "lbl_80529DEC.mStage_0x118": 1,
+    "lbl_80529DEC.field_0x128": 1,
+    "lbl_80529DEC.mLevel_0x11c": 0,
+    "lbl_80529DEC.field_0x12c": 0,
+    "seed_on_stage": 12345
+   }
+  },
+  {
+   "wait": {
+    "mode": 7,
+    "stage": 1,
+    "level": 0
+   },
+   "timeout": 3000
+  },
+  {
+   "comment": "settle",
+   "wait_reads": 300
+  },
+  {
+   "comment": "advance the fairy's messages (A on pad 0)",
+   "wait_reads": 1
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "A"
+   ],
+   "reads": 3
+  },
+  {
+   "wait_reads": 40
+  },
+  {
+   "comment": "pad 0 (player 1): walk, then swing",
+   "pad": 0,
+   "stick": [
+    127,
+    0
+   ],
+   "reads": 60
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "comment": "pad 1 (player 2): walk, then swing",
+   "pad": 1,
+   "stick": [
+    0,
+    -127
+   ],
+   "reads": 60
+  },
+  {
+   "pad": 1,
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "comment": "pad 0 (player 1): walk, then swing",
+   "pad": 0,
+   "stick": [
+    -127,
+    0
+   ],
+   "reads": 60
+  },
+  {
+   "pad": 0,
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "comment": "pad 1 (player 2): walk, then swing",
+   "pad": 1,
+   "stick": [
+    0,
+    127
+   ],
+   "reads": 60
+  },
+  {
+   "pad": 1,
+   "hold": [
+    "B"
+   ],
+   "reads": 4
+  },
+  {
+   "wait_reads": 20
+  },
+  {
+   "wait_reads": 600
+  },
+  {
+   "end": true
+  }
+ ]
+}

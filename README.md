@@ -51,7 +51,10 @@ No special headers are needed (no SharedArrayBuffer).
 Controls: a gamepad (standard mapping), or the keyboard: WASD = stick,
 Space = A, Left Shift = B, E = X, Q = Y, Enter = Start, Z = L, C = R, F = Z,
 arrow keys = C-stick. On touch screens an on-screen controller appears
-(**Pad** toggles it). Online rooms need a relay server (`netplay/relay.mjs`,
+(**Pad** toggles it). Local co-op: press Start on another gamepad (or `;`
+for a second keyboard player on the arrow keys, or **+ Join** in the roster)
+to drop in as the next Link, mid-stage; hold Back (Backspace) to drop out
+(docs/MULTIPLAYER.md, "Local co-op"). Online rooms need a relay server (`netplay/relay.mjs`,
 docs/NETPLAY.md): on the site they are offered only when the page is opened
 with `?relay=wss://your-relay/`.
 

@@ -38,9 +38,16 @@ extern "C" EMSCRIPTEN_KEEPALIVE void fsa_touch_set(int buttons, int stickX, int 
   g_touch.triggerR = clampTrigger(triggerR);
 }
 
+extern "C" void platform_coop_pads(PADStatus* status);  // platform/coop.cpp (deluxe)
+extern "C" void platform_coop_frame();
+extern "C" int fsa_coop_on();
+
 extern "C" void fsa_pad_after_read(PADStatus* status) {
   PADStatus& p = status[0];
-  if (p.err == PAD_ERR_NONE) {
+  // Local co-op (deluxe, platform/coop.cpp): while it is on, the page's device
+  // core supplies all four pads (touch included).
+  platform_coop_pads(status);
+  if (p.err == PAD_ERR_NONE && !fsa_coop_on()) {
     p.button |= g_touch.buttons;
     p.stickX = further(p.stickX, g_touch.stickX);
     p.stickY = further(p.stickY, g_touch.stickY);
@@ -55,6 +62,8 @@ extern "C" void fsa_pad_after_read(PADStatus* status) {
   // The GBA link's local peer (platform/gba_link.cpp, deluxe) takes each GBA's
   // buttons from the pad of its port, as the game saw it at this read.
   FsaGbaPadsRead(status);
+  // Co-op joins and leaves land here, at a pad read (scripted or live).
+  platform_coop_frame();
 
   // Port 0's buttons in the log whenever they change, so input problems show.
   // The stick counts as changed when it crosses into another of nine zones

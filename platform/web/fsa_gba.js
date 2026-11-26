@@ -71,6 +71,7 @@ Module.fsaGbaInit = function () {
   };
   const held = [0, 0, 0, 0];
   const onKey = (down) => (e) => {
+    if (Module.fsaCoopOn) return;  // local co-op routes the keyboard itself (fsa_coop.js)
     for (const p in KEYS) {
       const name = KEYS[p][e.code];
       if (!name) continue;

@@ -165,6 +165,7 @@ function compileScript(doc) {
       const SETTABLE = { 'lbl_80529DEC.mStage_0x118': 1, stage: 1, 'lbl_80529DEC.mLevel_0x11c': 2, level: 2,
                          'lbl_80529DEC.field_0x128': 3, 'lbl_80529DEC.field_0x12c': 4,
                          seed: 5, 'gGameRoot_8053AAF8->mRandom.seed': 5, seed_on_stage: 6,
+                         coop_join: 7, coop_leave: 8,
                          players_on_stage: 100, kinds_on_stage: 101, pads: 102, gba_link: 103, force: 104,
                          target: 110, hit_type: 111, hit_strength: 112, hit_dy: 113, hit: 114, shake: 115,
                          kill: 116, layer: 117, player_b9c: 120, msg_scan: 130, msg_window: 131, msg_eval: 132 };

@@ -732,3 +732,4 @@ src/port/jsystem_statics.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=
 src/port/harness_state.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
 src/port/gba_gcview.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1
 libs/jsystem/JSystem/JAudio/System/JASWaveBank.cpp	-Ilibs/sdk/include -Ilibs/sdk/msl_include -DNDEBUG=1 --language=c++ --std=c++98
+src/port/coop_game.cpp	--language=c++ --std=c++98 -Ilibs/sdk/include -Ilibs/sdk/msl_include -Iinclude -Isrc -DNDEBUG=1

@@ -111,6 +111,9 @@ iteration's game update and before read n's state record; but the scene
 change to a stage shows at the read AFTER the iteration that built it, when its
 actors have already spawned and drawn from the RNG — so to start a stage from a
 pinned seed, use `seed_on_stage` (e.g. in the same step that sets the stage).
+Deluxe: `coop_join` / `coop_leave` (a player 1-3) ask for a local co-op join or
+leave (docs/MULTIPLAYER.md "Local co-op"), applied at that same pad read;
+`tools/harness_scripts/coop_*.json` use them.
 
 - **Exactly one step is active.** A step is checked at each read before it
   gives input: when it is finished (its COND holds; its N reads are used

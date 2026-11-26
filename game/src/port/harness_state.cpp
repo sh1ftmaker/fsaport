@@ -381,6 +381,7 @@ extern "C" void fsa_harness_seed_on_stage(u32 seed);  // game_root_80134C04.cpp
 #if FSA_DIAG
 extern "C" int fsa_harness_diag_set(int id, double value);  // below
 #endif
+extern "C" int fsa_coop_game_request(int p, int on);  // game/src/port/coop_game.cpp
 extern "C" int fsa_harness_set(int id, double value) {
     s32 v = (s32)value;
 #if FSA_DIAG
@@ -398,6 +399,8 @@ extern "C" int fsa_harness_set(int id, double value) {
     case 4: lbl_80529DEC.field_0x12c = v; return 1;
     case 5: gGameRoot_8053AAF8->mRandom.setSeed((u32)(s64)value); return 1;  // "seed", immediate
     case 6: fsa_harness_seed_on_stage((u32)(s64)value); return 1;            // "seed_on_stage"
+    case 7: return fsa_coop_game_request(v, 1);                              // "coop_join" (deluxe)
+    case 8: return fsa_coop_game_request(v, 0);                              // "coop_leave"
     }
     return 0;
 }

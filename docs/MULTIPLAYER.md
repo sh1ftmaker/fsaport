@@ -15,7 +15,8 @@ This document is five things: what the game does on the link (§1, read from
 the decompilation: `game/src/game/tu_803006E8.cpp`, `tu_803099FC.cpp`,
 `tu_80301CD0.cpp`, `adv_entry_screen_803E1668.cpp`); the seam (§2); what is
 implemented and verified (§3); each player's GBA screen, three approaches
-("GBA screen"); and the options for remote play, with a recommendation (§4).
+("GBA screen"); local co-op on one screen, people dropping in and out ("Local
+co-op"); and the options for remote play, with a recommendation (§4).
 Open questions for the owner are in §5.
 
 Conventions: **verified** = run in this branch's build, with the run named;
@@ -424,6 +425,227 @@ client (C) to fill A's gaps.
 
 ---
 
+## Local co-op: drop in, drop out, one screen
+
+Any number of people (up to four, below) on one screen, each with whatever
+device they have, joining and leaving at any time, without plugging GBAs in
+first: katam-port's drop-in / drop-out local play (`katamport` commit 718786b,
+its `docs/MULTIPLAYER.md` §13) for FSA. Three parts: a device core in the page,
+a join / leave in the game, and the GBA views on the shared screen.
+
+### Devices and players (`platform/web/fsa_coop.js`)
+
+Every connected device is a potential player:
+
+| device | keys | join | leave (hold 1.5 s) |
+|---|---|---|---|
+| keyboard set A | WASD, Space A, Left Shift B, E X, Q Y, Enter Start, Z L, C R, F Z (the old port-0 keys, arrows excepted) | (it is player 1's by default) | `` ` `` |
+| keyboard set B | arrows, `.` A, `,` B, `/` X, M Y, `;` Start, `'` Z, L L, Right Shift R; or the numpad (8456, 0 A, . B, 1 X, 2 Y, Enter Start) | `;` / Numpad Enter | Backspace |
+| each Gamepad API pad | standard mapping as Aurora maps it (A B X Y, Start, Back = Z, shoulders / triggers L R, d-pad, sticks) | Start | Back |
+| the touch pad | the on-screen controller | **+ Join** in the roster, or its START once someone else is P1 | the roster's × |
+
+- **Follow.** A device nobody has joined drives player 1. One person with any
+  device, or several devices for one person, plays as before. The first
+  device anyone uses is P1's.
+- **Drop in.** Start on a gamepad (or the touch pad) that is not P1's, set B's
+  Start, or **+ Join**: the device becomes the next free player (P2-P4); that
+  Start does not reach the game. From then on P1's own device is P1's (it no
+  longer collects every free device).
+- **Drop out.** Hold Back / the set's leave key, press × in the roster, or
+  unplug a gamepad for 3 s. The device follows P1 again.
+- **Roster.** Top right: P1-P4 in the Links' colours (green, red, blue, purple)
+  with each player's device, × to remove one, + Join while a player is free.
+- `?coop=0` turns it off (Aurora's own keyboard / gamepad routing, as before);
+  `?coop=N` starts with N players wanted (their GBAs are plugged at boot, so the
+  menus offer N players); `window.fsaCoop` has `state()`, `join(dev, slot)`,
+  `leave(slot)`, `assign(dev, slot)`.
+
+Only two things cross into the game: the four `PADStatus` of each pad read
+(`fsa_coop_pad`; `platform/coop.cpp` replaces what Aurora read, before the
+harness and netplay see them) and join / leave requests (`fsa_coop_request`).
+Moving a device between players therefore changes nothing but which input
+drives which port. The page is off in harness runs (the script drives the
+pads; its `set` steps `coop_join` / `coop_leave` make the requests) and limited
+in netplay rooms (below).
+
+### What the game allows, and the hook (`game/src/port/coop_game.cpp`)
+
+Read from the decompilation:
+
+- The players are fixed once, on the player-count screen:
+  `mPlayerMask` bits 0-3 "player i takes part", bits 4-7 "its controller is
+  connected"; `field_0x83` two bits per player, the controller kind (1 GBA,
+  2 GameCube pad); `field_0x7e` 0 for single player. Nothing in the game
+  changes them during a stage (every write is in the menus,
+  `adv_entry_screen_803E1668.cpp`, `connect_screen_803F0A54.cpp`, or
+  `resetGameState`).
+- The game's own mid-stage handling is a pause, not a join: when a player's
+  controller stops answering (`game_root_80134C04.cpp` ~395: a kind-1 player
+  whose GBA is stale, `fn_8030A2E4`, or a kind-2 player whose pad is,
+  `fn_8030A364`), GameRoot switches to mode 0x16, the "connect the controller /
+  GBA" window (`gba_connect_error_window_80441A1C.cpp`, messages 0x3B / 0x3A).
+  It closes when the player is back (`fn_8030A258` / `fn_8030A388`) and the
+  stage carries on; after about 8 s it gives up and goes to the title.
+  A re-booted GBA cannot close it by itself: the link code resets the GBA's
+  transfer state after a boot (`fn_80303CE4`), and the flag the window waits
+  for (`lbl_8053ACE4`, "stage files sent") is set only at stage entry
+  (`fn_80303870`). (read; nothing here relies on that window, see below)
+- All four Links exist in an adventure stage whatever the count
+  (`Player::resetSlot_80254744`): an absent player's Link follows a present
+  one (`mLeader_0xd60`) on that player's pad (`mPadPlayer_0x11ec`). In single
+  player all four follow Link 0 on pad 0. Only in the X-2 levels and 7-1
+  (`fn_802DE814`) an absent player's Link is switched off (`mActive`).
+- A player of a multiplayer game is a GBA (the menus count GBAs in ports
+  1..N in a row); its GBA is also what gets the records that are that
+  player's view in houses and caves.
+
+So the game forbids joining mid-stage, and the least invasive hook is a
+port-side change of exactly the state the menus set, at a pad read, driving
+the game's own link for everything else:
+
+- **join p**: plug a native GBA endpoint into port p (the link seam,
+  `FsaGbaAttach`, the local peer: its keys are `PADStatus[p]`), and into port 0
+  if player 1 is on a GameCube pad. The game's own client threads probe, boot
+  and link them (3 pad reads here). Then, in an adventure stage:
+  `mPlayerMask |= 0x11 << p`, kind 1 (player 1 too), `field_0x7e = 1`; Link p
+  leads itself on pad p where it stands (a switched-off Link gets its slot's
+  stage-start reset: active, at the stage's start position); the stage's GBA
+  files are queued for every GBA that the link code reset after its boot
+  (`fn_80303870`, as stage entry does); the HUD is rebuilt for the new players.
+- **leave p**: kind 0 first (a kind-0 player is never "disconnected": the
+  check above skips it), the mask bits off, the GBA unplugged; Link p follows
+  a present player again (or is switched off where the stage does that). When
+  player 1 is alone again, `field_0x7e = 0`: single-player rules (all Links on
+  pad 0, following Link 0). Player 1 stays on its GBA.
+- **while a port changes** between a pad and a GBA the disconnect check would
+  see a stale controller and open its window; the input object's freshness
+  counters of those ports (`field_0xdc` / `field_0xe0` of `lbl_8053AD30`) are
+  held at 0 until the GBA is linked. A port the game knows as a GameCube pad is
+  probed again only when the pad stops answering, so the client's `mState` is
+  cleared once when its GBA is plugged.
+- **roles**: `resetSlot` assumes players 0..count-1 (with players 0 and 2 it
+  would leave Link 1 following nobody). While co-op has changed anything, each
+  pad read checks the Links' roles and fixes only those that are wrong: a
+  present player leads itself; an absent one follows a present player (k-2
+  first, as the 2-player rule; else the one with the fewest followers).
+- **the HUD** (portrait and Force Gem corner per player, or the single-player
+  layout) is built at stage start from `field_0x7e` and the mask
+  (`AdventureHud_804B13D4`'s constructor, `fn_8041FC2C`). After a change it is
+  rebuilt the same way (a new HUD object, then its stage-start reset; the stage
+  title banner that reset raises is put back as it was). A reset alone hides
+  the corners of the players already there.
+- **outside a stage** (title, menus, cutscenes) a join only plugs the GBAs: the
+  player-count screen then offers that many players, the game's own way
+  (`coop_menu_2_stage_1_0.json`: a join at boot, then the 2-player menu path
+  into 1-0 with `mPlayerMask` 0x33, no `?gba`). Players the menu took are
+  co-op players from then on (they can leave).
+- Not in battle / Tetra's Trackers games (`field_0x7f` 0): a join there is
+  refused (players are fixed per round; absent Links are switched off).
+
+Nothing runs until a join is requested: a game nobody joins is unchanged.
+
+### GBA views on the shared screen
+
+When a player of a multiplayer game is in a house, cave or the underground,
+their view is on their GBA in the original. Here the page shows each such
+player's room view beside the 4:3 picture, in the window's side space when it
+fits (a 16:9 window with the 4:3 picture), else as a picture-in-picture corner
+(P1 top left, P2 top right, P3 bottom left, P4 bottom right), framed in the
+player's colour, only while they are in a room. It is drawn by the game's own
+GameCube renderer of that player's GBA record (approach B, exact for rooms;
+`?coopview=native` for approach A, `?coopview=0` for none). With one player
+the game shows the room on the TV itself, so no panel. With `?gba=N`'s panel
+(fsa_gba.js) on, that panel shows the views instead.
+
+![two players in rooms: P1 in the cave, P2 in the house, beside the picture](multiplayer/coop-rooms-panels.png)
+
+### Verified
+
+Build of this branch, `tools/serve.py --diag logs/diag-coop` (run directories
+in the main checkout's `logs/diag-coop/`, screenshots in `logs/coop/`), own
+Xvfb and Chromium.
+
+- **Join and leave mid-stage, scripted** (`tools/harness_scripts/coop_stage_1_0.json`,
+  `fast=1`, no `?gba`; run `20261126-075151-y9svq1og`): single-player 1-0, P1
+  walks (all four Links follow); P2 joins (read 1915, in the game at 1918:
+  mask 0x33), walks down on pad 1 alone (y 472 -> 520) while P1 walks left;
+  P3 joins (0x77), walks and swings on pad 2; P2 leaves (0x55; Link 1 follows
+  P1 again, x 111 -> 32 beside it); P2 rejoins (0x77) and walks up on pad 1;
+  P4 joins (0xFF), walks on pad 3; P2-P4 leave at once (0x11, single player,
+  the four Links fall in behind P1 as it walks). No controller window, no
+  stall; the HUD switches between the single-player layout and the player
+  corners (`coop-hud-three-players.png`, below). The same script twice: sync 117/117,
+  state 113/113 identical (`-075151-y9svq1og` vs `-075214-snqkm8ds`).
+- **Rooms** (`coop_stage_1_2_rooms.json`, paced, 1600 x 900, run
+  `20261126-075244-uv2d75cd`): single-player
+  1-2 (a level where absent Links are switched off: Link 1 is activated at its
+  start position), P2 drops in, P1 walks into the cave (layer 12), P2 into the
+  house (layer 9); both room views beside the picture (the picture above);
+  P2 leaves inside the house (Link 1 switched off again, single player).
+- **Live devices** (no harness; `?stage=1-0`; three fake Gamepad API pads
+  injected through CDP, `navigator.getGamepads` replaced): pad 1 plays P1;
+  pad 2's Start makes it P2, pad 3's Start P3; pad 2 held Back -> P2 leaves;
+  pad 2's Start again -> P2. The roster follows each step
+  (`coop-live-roster.png`, below).
+
+  ![three players joined mid-stage: the HUD's player corners](multiplayer/coop-hud-three-players.png)
+  ![live: three gamepads, the roster at the top right](multiplayer/coop-live-roster.png)
+- **Joining before the menus** (`coop_menu_2_stage_1_0.json`): the menu
+  offers and takes 2 players, stage 1-0 with mask 0x33.
+- **Nobody joins = unchanged**: `stage_1_0.json` (`fast=1`, `nosave=1`) on
+  this branch and on deluxe 600df11 (built in the same worktree before the
+  change): sync 915/915, state 911/911 identical over 28,298 reads
+  (`20261126-071255-04q88fbo` vs `-074934-t1oy041h`).
+- **Netplay**: `tools/net_run.sh` with `mp_2_stage_1_0.json`, rollback, two
+  Chromiums: 0 desyncs, sync 115/115 and state 108/108 identical between the
+  seats (`net_compare`, room COOPNET24765). A live room (no script, the device
+  core on in both browsers): 0 desyncs over ~2,000 reads.
+
+Not verified: joins in a dungeon / boss level with a real fight; leaving
+while carrying something or mid-warp; a stage change after a mid-stage join
+(the new stage's `resetSlot` builds the roles from the mask, and the role
+check fixes gaps; read, not run); after going back to single player the
+single-player hearts are not shown again until (presumably) the life changes
+(the rebuilt HUD has not read the life yet; seen in the scripted run, not
+fixed).
+
+### Netplay
+
+In a room each browser is one seat (one port); the device core is on, every
+device of a browser drives its seat (port 0's pad, as before), and joining is
+off (the roster shows no + Join). Local co-op inside a netplay room would need
+the extra local players in the room's seats and the join / leave as a timeline
+event (Katam's `PORT_LN_EV_HUMAN`); not done. The co-op state is static game
+memory (in the snapshot), and harness `set` joins are at a pad read, so a
+scripted join is deterministic.
+
+### More than four players
+
+Not feasible without large risk; capped at four (the page offers P1-P4, a
+fifth device follows P1). What assumes four (read; cf. katam-port edbe786):
+
+- `PlayerManager_804A6F28::mPlayers[4]` and its per-player arrays; every
+  per-player global of the link (`lbl_804DB798[4]` clients, `lbl_8053ACE4[4]`,
+  transfer queues `lbl_804FBC18[4][32]`, records `lbl_80506DE8[4]`) and the
+  input object's four slots (`cls_804AA8C8`); `getPlayerInputSlot_8030AAF4`
+  maps only 0-3; `isPlayerActive` rejects 4 and up.
+- `mPlayerMask` is one byte, four "takes part" bits and four "connected"
+  bits; `field_0x83` is four 2-bit kinds; ~200 sites test `1 << player` on it.
+- The record length table `lbl_80541618` is indexed by the GBA count 1-4 (the
+  link's bandwidth split four ways); SI has four channels.
+- Follow offsets `lbl_8046C018[4][4][2]`; the HUD's four corners and per-player
+  arrays (`cls_804B13D4.h`); four Link colours (the GBA palette each GBA is
+  booted with, `{2,4,0,6}[port]`; the Link models and textures per player,
+  assumed).
+- The rules themselves: `resetSlot` has a branch for single player and for
+  2, 3 and 4 players (partners, formation), none for more.
+
+Five or more would mean widening all of these in the decompiled game (a
+fork of the game's data layout, out of step with the decomp) or running a
+second game instance per four players (not one world). Neither is small.
+
+---
+
 ## 4. Remote play: the options, mapped from katam-port
 
 What Katam learned (`katamport/port/docs/NETPLAY.md`, `NETPLAY-HANDOFF.md`):
@@ -542,3 +764,13 @@ a mode: docs/NETPLAY.md (design, protocol, how to run, measurements).
    until the client's decompilation says (GBA-CLIENT.md, item 1).
 6. The four-pad harness extension (`"pad"`) and the entry-screen globals are
    generic: forward them to main?
+7. **Local co-op** ("Local co-op"): (a) on by default (any second device's
+   Start joins) or opt-in (`?coop=1`)? It is on by default now; `?coop=0` is the
+   old routing. (b) A joiner in an X-2 level appears at its slot's start
+   position, elsewhere where its following Link stands; should a joiner always
+   appear next to P1? (c) Leaving keeps the Link (it follows someone); should a
+   leaver's Force Gems / items go anywhere? (d) Local co-op inside a netplay
+   room (several people per browser) is not built.
+8. **Keyboard set B / leave keys**: `;` joins, Backspace held leaves (set A:
+   `` ` ``). The old live keys for GBA ports 2-4 (IJKL, TFGH, arrows; fsa_gba.js)
+   are off while co-op is on. Keep that?

@@ -366,6 +366,14 @@ creator's URL).
 4. **A desync is reported, not repaired.** With bit-identical runs there is
    nothing to repair so far; a repair would be a snapshot transfer from a
    majority peer (19 MB, deflates well: 3,373 of 4,695 pages are non-zero).
-5. `client_thread.bin`-free GBA screens are the other deluxe agent's; each
+5. Local co-op (docs/MULTIPLAYER.md "Local co-op") in a room: the page's
+   device core is on, every device of a browser drives its seat (port 0, as
+   before; `platform/coop.cpp` replaces Aurora's pads before the timeline takes
+   them), and joining is off. A join is a pad-read event in the game
+   (`coop_game.cpp`, static memory in the snapshot), so making it a timeline
+   event (like a `leave`) would let a browser hold several seats; not built.
+   Verified unchanged: `mp_2_stage_1_0` two-browser rollback run, 0 desyncs,
+   identical streams; a live room with the device core on, 0 desyncs.
+6. `client_thread.bin`-free GBA screens are the other deluxe agent's; each
    browser could show its own seat's GBA view (the view is local, not netplay
    state).
