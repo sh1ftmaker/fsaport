@@ -1,5 +1,4 @@
-# Build output, including the asset headers extracted from your own main.dol.
-# Those are game data: never commit them.
+# Build output. Never commit game data (disc images, main.dol, anything extracted from them).
 /build/
 *.o
 /extern/aurora/build/
@@ -7,3 +6,4 @@
 
 # Port diagnostics output (tools/serve.py --diag logs/diag)
 /logs/
+__pycache__/

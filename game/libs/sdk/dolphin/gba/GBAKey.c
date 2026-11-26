@@ -5,12 +5,10 @@
 // keep their symbols.txt placeholders (fn_, lbl_).
 
 // GBA key-exchange DSP microcode (0x380 bytes at 0x804985D0). It is DSP code
-// with no source form, so it isn't written here: the build extracts it from
-// orig/sys/main.dol (config.yml extract:) into build/G4SE01/include/assets/.
-// No ATTRIBUTE_ALIGN(32): the original is only 16-byte aligned (0x...D0).
-static u8 lbl_804985D0[0x380] = {
-#include "assets/dolphin/gba/GBAKey_ucode.inc"
-};
+// with no source form, so it isn't written here: the port's build defines the
+// storage (tools/gen_globals.py, ASSETS; 16-byte aligned as the original
+// 0x...D0) and platform/dol_data.cpp copies it from the player's main.dol.
+extern u8 lbl_804985D0[0x380];
 
 static inline s32 F152(DSPTaskInfo* task) {
     s32 chan;

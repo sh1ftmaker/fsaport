@@ -6,10 +6,13 @@ later native desktop), built from the
 fork in the way katam-port is: the decompiled sources live here and are changed
 freely for the port, and the GameCube's hardware is replaced, not emulated.
 
-**This repository contains no game data.** You supply your own disc. The few
-blobs the sources include directly (two fonts, a message file, a DSP microcode
-fragment) are extracted from your own `main.dol` into `build/`, which is never
-committed.
+**This repository and its builds contain no game data.** You supply your own
+disc. The game data with no source form (two fonts, a message file, a DSP
+microcode fragment, and the tables listed in `tools/globals_layout.json`) is
+not compiled in either: the build reserves its storage, and at startup the page
+reads `main.dol` from the disc you chose, checks it (SHA-256 of the G4SE01
+`main.dol`; any other disc is refused with a message) and copies the bytes in
+before any game code runs (`platform/web/fsa_disc.js`, `platform/dol_data.cpp`).
 
 ## Status
 
@@ -32,8 +35,6 @@ Needs emscripten 5.0.6 and Chrome/Edge 137+ (WebGPU and JSPI).
 
 ```sh
 source ../fsadecomp/tools/emsdk/emsdk_env.sh
-python3 tools/extract_assets.py path/to/main.dol build/assets
-python3 tools/gen_globals.py emit path/to/main.dol build/generated
 emcmake cmake -S . -B build/web -G Ninja -DCMAKE_BUILD_TYPE=Release
 ninja -C build/web fsa
 python3 tools/serve.py --port 8811 --dir build/web          # then open it and drop your disc image
@@ -57,7 +58,7 @@ play. It lists block numbers only (no disc data) and stays in `build/`.
 Every block fetched is also kept in the browser's Cache Storage, so later
 visits read it locally (`?disccache=0` turns that off; `fsaDiscCacheClear()` in
 the console empties it).
-`main.dol` is the one on your own disc. docs/PORTING.md has the architecture.
+docs/PORTING.md has the architecture.
 
 ## Compile check only
 

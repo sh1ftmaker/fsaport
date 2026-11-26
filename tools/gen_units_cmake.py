@@ -6,15 +6,13 @@ groups = collections.OrderedDict()
 for line in open(sys.argv[1]):
     path, flags = line.rstrip('\n').split('\t')
     groups.setdefault(flags, []).append(path)
-# @GENERATED@ paths are generated from the user's main.dol (tools/gen_globals.py emit) into
-# build/generated, next to build/assets; FSA_GENERATED may point elsewhere.
-out = ['if(NOT DEFINED FSA_GENERATED)',
-       '  set(FSA_GENERATED ${CMAKE_SOURCE_DIR}/build/generated CACHE PATH "sources generated from main.dol by tools/gen_globals.py")',
-       'endif()']
+# @GENERATED@ paths are generated into the build directory (FSA_GENERATED_DIR; CMakeLists.txt
+# runs tools/gen_globals.py emit): storage only, no game bytes.
+out = []
 
 
 def src(p):
-    return p.replace('@GENERATED@', '${FSA_GENERATED}') if p.startswith('@GENERATED@') else f'${{FSA_GAME}}/{p}'
+    return p.replace('@GENERATED@', '${FSA_GENERATED_DIR}') if p.startswith('@GENERATED@') else f'${{FSA_GAME}}/{p}'
 
 
 for i, (flags, paths) in enumerate(groups.items()):
@@ -25,7 +23,7 @@ for i, (flags, paths) in enumerate(groups.items()):
     out.append(f'add_library({lib} STATIC')
     out += [f'  {src(p)}' for p in paths]
     out.append(')')
-    inc = ' '.join('${FSA_ASSETS}' if x == '@ASSETS@' else f'${{FSA_GAME}}/{x}' for x in incs)
+    inc = ' '.join(f'${{FSA_GAME}}/{x}' for x in incs)
     out.append(f'target_include_directories({lib} PRIVATE {inc})')
     if defs:
         out.append(f'target_compile_definitions({lib} PRIVATE {" ".join(defs)})')

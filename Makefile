@@ -1,8 +1,7 @@
-# make compile DOL=path/to/your/main.dol
+# make compile
 #
 # Needs emscripten on PATH (source ../fsadecomp/tools/emsdk/emsdk_env.sh).
 
-DOL ?= ../fsadecomp/fsa-decomp/orig/sys/main.dol
 JOBS ?= $(shell nproc)
 
 .PHONY: compile assets undefined clean
@@ -12,14 +11,12 @@ compile: assets
 	python3 tools/undef_report.py > build/undefined.txt
 	@head -1 build/undefined.txt
 
-assets: build/assets/assets/JSystem/JUtility/Ascfont_fix12.inc build/generated/globals.c
+assets: build/generated/globals.c
 
-build/assets/assets/JSystem/JUtility/Ascfont_fix12.inc: tools/extract_assets.py
-	python3 tools/extract_assets.py $(DOL) build/assets
-
-# The game's global data that no unit defines, filled in from your main.dol.
+# The storage of the game's global data that no unit defines (no game bytes:
+# the game fills it from the player's main.dol at startup).
 build/generated/globals.c: tools/gen_globals.py tools/globals_layout.json
-	python3 tools/gen_globals.py emit $(DOL) build/generated
+	python3 tools/gen_globals.py emit build/generated
 
 clean:
 	rm -rf build
